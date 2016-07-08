@@ -43,7 +43,7 @@ import java.util.logging.Logger;
 public class NetworkHelper {
 
     public static final String ENTRY_ID = "q1";
-    private static final String URL = "https://raw.githubusercontent.com/mw5tj/EssentialSurgery.techconnect/master/JSON/";
+    private static final String URL = "https://raw.githubusercontent.com/PhaniGaddipati/TechConnectApp/master/JSON/";
     private static final String INDEX_FILE = "index.json";
     private Context context;
 
@@ -113,7 +113,14 @@ public class NetworkHelper {
 
         for (String url : toLoadURLs) {
             if (!ResourceHandler.get().hasStringResource(url)) {
-                String file = downloadImage(url);
+                String file;
+                try {
+                    file = downloadImage(url);
+                } catch (IOException e) {
+                    //Image can't be loaded, eh ignore it for now.
+                    //TODO somehow inform user of failed image loading
+                    file = null;
+                }
                 ResourceHandler.get().addStringResource(url, file);
             }
         }
