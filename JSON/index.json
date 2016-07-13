@@ -16,8 +16,7 @@
 		"name":"testyMcTesterson",
 		"chart":"test.json",
 		"clin_chart":"test.json",
-		"resources":[],
-		"entryId":"153762769"
+		"resources":[]
 	},
 	"callDir": "calldir.json"
 }
