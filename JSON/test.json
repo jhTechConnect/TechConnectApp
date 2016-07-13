@@ -1,0 +1,49 @@
+[
+  {
+    "id": "817696241",
+    "question": "Select one of the following tasks to learn",
+    "details": "",
+    "options": [
+      "Create a new edge",
+      "Create a new node"
+    ],
+    "next_question": [
+      "705307765",
+      "528694815"
+    ]
+  },
+  {
+    "id": "153762769",
+    "question": "Is this the first time you\u0027ve used this file?",
+    "details": "",
+    "options": [
+      "No",
+      "Yes"
+    ],
+    "next_question": [
+      "900002214",
+      "817696241"
+    ]
+  },
+  {
+    "id": "705307765",
+    "question": "",
+    "details": "",
+    "options": [],
+    "next_question": []
+  },
+  {
+    "id": "528694815",
+    "question": "",
+    "details": "",
+    "options": [],
+    "next_question": []
+  },
+  {
+    "id": "900002214",
+    "question": "Then simply make a copy of this file and get to work!",
+    "details": "",
+    "options": [],
+    "next_question": []
+  }
+]
