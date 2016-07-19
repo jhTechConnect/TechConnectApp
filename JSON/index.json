@@ -1,5 +1,5 @@
 {
-	"deviceids":["pulseox", "autoclave", "autobpmonitor"],
+	"deviceids":["pulseox", "autoclave", "autobpmonitor","bililight","man_bp_monitor","cellcounter"],
 	"pulseox": {
 		"name":"Pulse Oximeter",
 		"chart":"pulse_oximeter.json",
@@ -16,6 +16,24 @@
 		"name":"Auto Blood Pressure Monitor",
 		"chart":"auto_bp_monitor.json",
 		"clin_chart":"auto_bp_monitor.json",
+		"resources":[]
+	},
+		"bililight":{
+		"name":"Bililight",
+		"chart":"bililight.json",
+		"clin_chart":"bililight.json",
+		"resources":[]
+	},
+		"man_bp_monitor":{
+		"name":"Manual Blood Pressure Monitor",
+		"chart":"man_bp_monitor.json",
+		"clin_chart":"man_bp_monitor.json",
+		"resources":[]
+	},
+		"cellcounter":{
+		"name":"Cell Counter",
+		"chart":"cellcounter.json",
+		"clin_chart":"cellcounter.json",
 		"resources":[]
 	},
 	"callDir": "calldir.json"

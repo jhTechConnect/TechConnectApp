@@ -1,0 +1,372 @@
+[
+  {
+    "id": "8690534",
+    "question": "BP cuff is working properly.",
+    "details": "",
+    "options": [
+      "Done"
+    ],
+    "next_question": [
+      null
+    ]
+  },
+  {
+    "id": "78790977",
+    "question": "Does the cuff have a mercury manometer?",
+    "details": "",
+    "options": [
+      "No",
+      "Yes"
+    ],
+    "next_question": [
+      "391086555",
+      "781124544"
+    ]
+  },
+  {
+    "id": "256028273",
+    "question": "Clean filter between the bulb and cuff connection.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "573851791"
+    ]
+  },
+  {
+    "id": "q1",
+    "question": "Manual Blood Pressure Cuff",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "78790977"
+    ]
+  },
+  {
+    "id": "221969015",
+    "question": "Test for accuracy and calibrate if necessary.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "8690534"
+    ]
+  },
+  {
+    "id": "142762433",
+    "question": "Check the valve. Ensure that the knob is turned completely counterclockwise.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "256028273"
+    ]
+  },
+  {
+    "id": "584225322",
+    "question": "Is the mercury level at zero when no pressure is in the cuff?",
+    "details": "",
+    "options": [
+      "No",
+      "Yes"
+    ],
+    "next_question": [
+      "640245890",
+      "785992748"
+    ]
+  },
+  {
+    "id": "829226678",
+    "question": "Is any black powder present?",
+    "details": "",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "726254295",
+      "584225322"
+    ]
+  },
+  {
+    "id": "453505930",
+    "question": "Dissemble apparatus, and check gaskets, filters, and tubing for leaks. Replace as needed.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "781124544"
+    ]
+  },
+  {
+    "id": "781124544",
+    "question": "Is mercury leaking from the apparatus?",
+    "details": "",
+    "options": [
+      "No",
+      "Yes"
+    ],
+    "next_question": [
+      "829226678",
+      "453505930"
+    ]
+  },
+  {
+    "id": "391086555",
+    "question": "Before applying pressure in the cuff, is the needle at zero?",
+    "details": "",
+    "options": [
+      "No",
+      "Yes"
+    ],
+    "next_question": [
+      "815698500",
+      "989175894"
+    ]
+  },
+  {
+    "id": "640245890",
+    "question": "Begin pumping air into meter. Ensure that the mercury column lever is open.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "345352436"
+    ]
+  },
+  {
+    "id": "785992748",
+    "question": "Add/remove merury to column as needed.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "584225322"
+    ]
+  },
+  {
+    "id": "726254295",
+    "question": "Dissemble and clean specific parts accordingly.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "829226678"
+    ]
+  },
+  {
+    "id": "319292177",
+    "question": "Do bubbles appear in mercury column?",
+    "details": "",
+    "options": [
+      "No",
+      "Yes"
+    ],
+    "next_question": [
+      "98509111",
+      "498494795"
+    ]
+  },
+  {
+    "id": "498494795",
+    "question": "Add mercury to column as needed.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "319292177"
+    ]
+  },
+  {
+    "id": "601762483",
+    "question": "Does the pressure level rise over time?",
+    "details": "",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "532741689",
+      "319292177"
+    ]
+  },
+  {
+    "id": "532741689",
+    "question": "Investigate leather seal and washer. Replace as needed.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "601762483"
+    ]
+  },
+  {
+    "id": "345352436",
+    "question": "Does the pressure level lower over time?",
+    "details": "",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "25802089",
+      "601762483"
+    ]
+  },
+  {
+    "id": "25802089",
+    "question": "Check for any leaks in meter or between connections.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "345352436"
+    ]
+  },
+  {
+    "id": "989175894",
+    "question": "Can air be pumped into the cuff?",
+    "details": "",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "624485648",
+      "252615665"
+    ]
+  },
+  {
+    "id": "98509111",
+    "question": "Reattach cuff to mercury meter.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "989175894"
+    ]
+  },
+  {
+    "id": "252615665",
+    "question": "Check the valve. Ensure that the knob is turned completely clockwise.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "683900658"
+    ]
+  },
+  {
+    "id": "815698500",
+    "question": "Open meter and manually twist the needle to zero.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "391086555"
+    ]
+  },
+  {
+    "id": "167601633",
+    "question": "",
+    "details": "",
+    "options": [],
+    "next_question": []
+  },
+  {
+    "id": "674208912",
+    "question": "Test for leaks in tubing, cuff, and between connections.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "531798880"
+    ]
+  },
+  {
+    "id": "613520888",
+    "question": "Release the air from the cuff by opening the valve.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "573851791"
+    ]
+  },
+  {
+    "id": "573851791",
+    "question": "Is air being released from the cuff?",
+    "details": "",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "221969015",
+      "142762433"
+    ]
+  },
+  {
+    "id": "683900658",
+    "question": "Clean filter between the bulb and the cuff connection.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "931852833"
+    ]
+  },
+  {
+    "id": "931852833",
+    "question": "Check the bulb. Replace if necessary.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "989175894"
+    ]
+  },
+  {
+    "id": "624485648",
+    "question": "Pump air to a particular pressure, and hold for at least 10 seconds.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "531798880"
+    ]
+  },
+  {
+    "id": "531798880",
+    "question": "Does the pressure drop significantly?",
+    "details": "",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "674208912",
+      "613520888"
+    ]
+  }
+]
