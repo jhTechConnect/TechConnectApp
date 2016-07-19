@@ -1,0 +1,252 @@
+[
+  {
+    "id": "491862187",
+    "question": "Does the machine power on?",
+    "details": "",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "409575822",
+      "204921711"
+    ]
+  },
+  {
+    "id": "46850173",
+    "question": "Troubleshoot the electrical connections around pump. Repair or replace any components as needed.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "762701012"
+    ]
+  },
+  {
+    "id": "q1",
+    "question": "Automatic Blood Pressure Cuff",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "491862187"
+    ]
+  },
+  {
+    "id": "884731394",
+    "question": "",
+    "details": "",
+    "options": [],
+    "next_question": []
+  },
+  {
+    "id": "8191083",
+    "question": "Change paramters as needed if original range is too narrow.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "338393940"
+    ]
+  },
+  {
+    "id": "145748766",
+    "question": "Repair and replace parts as needed.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "296771814"
+    ]
+  },
+  {
+    "id": "80418057",
+    "question": "Troubleshoot the pump and pump motor. Replace pump as needed",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "762701012"
+    ]
+  },
+  {
+    "id": "762701012",
+    "question": "Can air be pumped into the cuff?",
+    "details": "",
+    "options": [
+      "No",
+      "Yes"
+    ],
+    "next_question": [
+      "641758517",
+      "338393940"
+    ]
+  },
+  {
+    "id": "537913757",
+    "question": "Press \"start\".",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "762701012"
+    ]
+  },
+  {
+    "id": "409575822",
+    "question": "Wrap cuff around arm.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "537913757"
+    ]
+  },
+  {
+    "id": "204921711",
+    "question": "Troubleshoot power supply (separate flowchart); Change battery if necessary.",
+    "details": "",
+    "options": [
+      "Finish"
+    ],
+    "next_question": [
+      null
+    ]
+  },
+  {
+    "id": "857082737",
+    "question": "Is the correct amount of input voltage entering the pump?",
+    "details": "",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "80418057",
+      "46850173"
+    ]
+  },
+  {
+    "id": "210107345",
+    "question": "Open up apparatus and assess inside tubing for cracks, leaks, and occulusions, as needed. Ensure good pneumatic connections.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "857082737"
+    ]
+  },
+  {
+    "id": "641758517",
+    "question": "Test for leaks and cracks in tubing, connections, and cuff outside machinery.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "210107345"
+    ]
+  },
+  {
+    "id": "338393940",
+    "question": "Do any alarms go off to indicate blood pressure is too high or too low?",
+    "details": "",
+    "options": [
+      "No",
+      "Yes"
+    ],
+    "next_question": [
+      "296771814",
+      "8191083"
+    ]
+  },
+  {
+    "id": "190993190",
+    "question": "Is a service manual available?",
+    "details": "",
+    "options": [
+      "No",
+      "Yes"
+    ],
+    "next_question": [
+      "895092801",
+      "879131750"
+    ]
+  },
+  {
+    "id": "879131750",
+    "question": "Use manual to interpret the meaning of display and respond appropriately.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "895092801",
+    "question": "Open up apparatus and confirm good electrical connections. Especially between BP module and display.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "145748766"
+    ]
+  },
+  {
+    "id": "296771814",
+    "question": "Is BP measurement displayed?",
+    "details": "",
+    "options": [
+      "No",
+      "Yes"
+    ],
+    "next_question": [
+      "689058584",
+      "872520142"
+    ]
+  },
+  {
+    "id": "872520142",
+    "question": "Ensure cuff accuracy by comparing with manual method.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "692478343"
+    ]
+  },
+  {
+    "id": "689058584",
+    "question": "Ensure proper cuff usage.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "190993190"
+    ]
+  },
+  {
+    "id": "692478343",
+    "question": "Cuff is working properly.",
+    "details": "",
+    "options": [
+      "Finish"
+    ],
+    "next_question": [
+      null
+    ]
+  }
+]
