@@ -1,0 +1,182 @@
+[
+  {
+    "id": "792009837",
+    "question": "Does device power on?",
+    "details": "",
+    "options": [
+      "No",
+      "Yes"
+    ],
+    "next_question": [
+      "402099926",
+      "88938850"
+    ]
+  },
+  {
+    "id": "89878760",
+    "question": "Replace bulbs.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "q1",
+    "question": "Bililight",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "792009837"
+    ]
+  },
+  {
+    "id": "161657769",
+    "question": "Check for bad switches or knobs",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "274935796"
+    ]
+  },
+  {
+    "id": "55592812",
+    "question": "Revise intensity contorl knob.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "161657769"
+    ]
+  },
+  {
+    "id": "685012782",
+    "question": "Does power reach the bulb?",
+    "details": "",
+    "options": [
+      "No",
+      "Yes"
+    ],
+    "next_question": [
+      "55592812",
+      "89878760"
+    ]
+  },
+  {
+    "id": "709711281",
+    "question": "Is the light intensity \u003e 4 uW/cm^2/nm?",
+    "details": "",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "396688797",
+      "925875275"
+    ]
+  },
+  {
+    "id": "402099926",
+    "question": "Troubleshoot power supply (separate flowchart); Change battery if necessary.",
+    "details": "",
+    "options": [
+      "Done"
+    ],
+    "next_question": [
+      null
+    ]
+  },
+  {
+    "id": "88938850",
+    "question": "Do lights come on?",
+    "details": "",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "709711281",
+      "685012782"
+    ]
+  },
+  {
+    "id": "688813275",
+    "question": "Clean interior of the machine.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "88938850"
+    ]
+  },
+  {
+    "id": "522263546",
+    "question": "Revise intensity control knob.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "688813275"
+    ]
+  },
+  {
+    "id": "925875275",
+    "question": "Reposition light source.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "522263546"
+    ]
+  },
+  {
+    "id": "396688797",
+    "question": "Bililight is working properly.",
+    "details": "",
+    "options": [
+      "Done"
+    ],
+    "next_question": [
+      null
+    ]
+  },
+  {
+    "id": "274935796",
+    "question": "Check for bad connections and open circuits.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "787263042"
+    ]
+  },
+  {
+    "id": "787263042",
+    "question": "Ensure device is not overheating/ Repair/maintain fans and filters if necessary.",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "955366812",
+    "question": "",
+    "details": "",
+    "options": [],
+    "next_question": []
+  }
+]
