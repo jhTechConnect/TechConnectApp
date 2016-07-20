@@ -8,7 +8,7 @@
 	},
 	"autoclave": {
 		"name":"Autoclave",
-		"chart":"autoclave.json",
+		"chart": "autoclave_updated.json",
 		"clin_chart":"clin_autoclave.json",
 		"resources":["https://www.dropbox.com/s/z3yafea0sags17z/autoclave_manual_USAID.pdf?raw=1","https://www.dropbox.com/s/8gu7udchrj63s6e/autoclave_packet_by_EWH.pdf?raw=1","https://www.dropbox.com/s/tinyyt8g4rm1ur4/autoclave_Franks_Hospital.pdf?raw=1","https://www.dropbox.com/s/wvr7wugmqzpruo9/autoclave_factsheet_USAID.pdf?raw=1","https://www.dropbox.com/s/9ul3b65ndldd39j/care_and_safe_use_of_autoclaves.pdf?raw=1","https://www.dropbox.com/s/no1a88i8zojx43l/generic_standard_operating_procedure.pdf?raw=1","https://www.dropbox.com/s/lasxagr6e7qjgv3/use_and_principles_of_operation_autoclave_EWH.pdf?raw=1"]
 	},
