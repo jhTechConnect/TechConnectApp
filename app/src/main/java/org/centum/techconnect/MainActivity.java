@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final int FRAGMENT_SELF_HELP = 0;
     private static final int FRAGMENT_LOGS = 1;
-
+    private static final int TUTORIAL_ACTIVITY = 2;
     @Bind(R.id.nav_view)
     NavigationView navigationView;
 
@@ -94,8 +95,16 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             protected void onPostExecute(Void aVoid) {
-                dialog.dismiss();
                 Intent intent = new Intent(MainActivity.this, IntroTutorial.class);
+                new CountDownTimer(2000,100) {
+                    public void onFinish() {
+                        dialog.dismiss();
+                    }
+
+                    public void onTick(long millisUntilFinish) {
+
+                    }
+                }.start();
                 startActivity(intent);
                 setFragment(fragToOpen);
             }
@@ -113,8 +122,12 @@ public class MainActivity extends AppCompatActivity
                 }
                 return null;
             }
+
         }.execute();
     }
+
+
+
 
 
     @Override
