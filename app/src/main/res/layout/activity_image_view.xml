@@ -6,7 +6,7 @@
     android:background="#a4000000"
     tools:context="org.centum.techconnect.activities.ImageViewActivity">
 
-    <ImageView
+    <pl.droidsonroids.gif.GifImageView
         android:id="@+id/photoImageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
