@@ -135,22 +135,13 @@
         android:text="End Session" />
 
     <Button
-        android:id="@+id/callDirBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/end_session_button"
-        android:layout_alignLeft="@+id/textView5"
-        android:layout_alignStart="@+id/textView5"
-        android:text="Call Help" />
-
-    <Button
         android:id="@+id/resourcesButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/end_session_button"
-        android:layout_alignLeft="@+id/department_textView"
-        android:layout_alignStart="@+id/department_textView"
-        android:layout_toLeftOf="@+id/end_session_button"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/end_session_button"
+        android:layout_marginLeft="16dp"
         android:text="Resources" />
 
 </org.centum.techconnect.views.SelfHelpSlidingView>

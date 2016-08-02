@@ -16,7 +16,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+<<<<<<< HEAD
 import org.centum.techconnect.activities.IntroTutorial;
+=======
+import org.centum.techconnect.activities.CallActivity;
+>>>>>>> upstream/master
 import org.centum.techconnect.fragments.ReportsFragment;
 import org.centum.techconnect.fragments.SelfHelpFragment;
 import org.centum.techconnect.resources.ResourceHandler;
@@ -135,6 +139,11 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else if (fragment == FRAGMENT_SELF_HELP) {
+            if (!((SelfHelpFragment) fragments[FRAGMENT_SELF_HELP]).onBack()) {
+                // Fragment didn't consume back event
+                super.onBackPressed();
+            }
         } else {
             super.onBackPressed();
         }
@@ -144,11 +153,16 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
-        int fragment = -1;
+        int newFrag = -1;
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (id == R.id.nav_self_help) {
-            fragment = FRAGMENT_SELF_HELP;
+            newFrag = FRAGMENT_SELF_HELP;
         } else if (id == R.id.nav_reports) {
-            fragment = FRAGMENT_LOGS;
+            newFrag = FRAGMENT_LOGS;
+        } else if (id == R.id.call_dir) {
+            startActivity(new Intent(this, CallActivity.class));
+            drawer.closeDrawer(GravityCompat.START);
+            return true;
         } else if (id == R.id.nav_refresh) {
             ResourceHandler.get().clear();
             new AlertDialog.Builder(this).setTitle("Sync")
@@ -158,9 +172,8 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
-        setFragment(fragment);
+        setFragment(newFrag);
         return true;
     }
 

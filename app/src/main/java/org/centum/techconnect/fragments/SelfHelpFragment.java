@@ -146,4 +146,8 @@ public class SelfHelpFragment extends Fragment implements View.OnClickListener {
         currentSession = null;
         updateViews();
     }
+
+    public boolean onBack() {
+        return flowView != null && flowView.goBack();
+    }
 }

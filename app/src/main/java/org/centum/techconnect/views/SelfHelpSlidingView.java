@@ -15,7 +15,6 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import org.centum.techconnect.R;
-import org.centum.techconnect.activities.CallActivity;
 import org.centum.techconnect.model.Session;
 
 import java.text.SimpleDateFormat;
@@ -26,7 +25,7 @@ import butterknife.ButterKnife;
 
 /**
  * Created by Phani on 1/26/2016.
- *
+ * <p/>
  * The pull-up menu always visisble.
  */
 public class SelfHelpSlidingView extends RelativeLayout implements View.OnClickListener {
@@ -47,8 +46,6 @@ public class SelfHelpSlidingView extends RelativeLayout implements View.OnClickL
     Button endSessionButton;
     @Bind(R.id.resourcesButton)
     Button resourcesButton;
-    @Bind(R.id.callDirBtn)
-    Button callDirBtn;
 
     private Session session;
     private OnClickListener endListener;
@@ -88,10 +85,8 @@ public class SelfHelpSlidingView extends RelativeLayout implements View.OnClickL
             deviceTextView.setText("");
             endSessionButton.setOnClickListener(null);
             resourcesButton.setOnClickListener(null);
-            callDirBtn.setOnClickListener(null);
         } else {
             resourcesButton.setOnClickListener(this);
-            callDirBtn.setOnClickListener(this);
             if (session.getDevice().getImageURL() == null) {
                 Picasso.with(getContext())
                         .load(R.drawable.ic_devices_black)
@@ -121,8 +116,6 @@ public class SelfHelpSlidingView extends RelativeLayout implements View.OnClickL
     public void onClick(View view) {
         if (view.getId() == R.id.resourcesButton) {
             showResources();
-        } else if (view.getId() == R.id.callDirBtn) {
-            getContext().startActivity(new Intent(getContext(), CallActivity.class));
         }
     }
 
