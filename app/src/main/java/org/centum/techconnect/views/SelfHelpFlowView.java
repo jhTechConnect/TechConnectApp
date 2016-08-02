@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -30,7 +31,7 @@ import butterknife.ButterKnife;
 
 /**
  * Created by Phani on 1/27/2016.
- *
+ * <p/>
  * The primary flowchart view. This view shows the question, details, attachments, etc.
  * This flow view updates its content based on the Flowchart object given.
  */
@@ -200,8 +201,18 @@ public class SelfHelpFlowView extends ScrollView implements View.OnClickListener
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.back_button) {
+            goBack();
+        }
+    }
+
+    public boolean goBack() {
+        Log.d("SelfHelpFlowView", "goBack");
+        if (session.hasPrevious()) {
+            Log.d("SelfHelpFlowView", "goBack yup");
             session.goBack();
             updateViews();
+            return true;
         }
+        return false;
     }
 }

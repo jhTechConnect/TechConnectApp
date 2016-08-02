@@ -118,6 +118,11 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else if (fragment == FRAGMENT_SELF_HELP) {
+            if (!((SelfHelpFragment) fragments[FRAGMENT_SELF_HELP]).onBack()) {
+                // Fragment didn't consume back event
+                super.onBackPressed();
+            }
         } else {
             super.onBackPressed();
         }
