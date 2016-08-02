@@ -1,6 +1,7 @@
 package org.centum.techconnect;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -14,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import org.centum.techconnect.activities.IntroTutorial;
 import org.centum.techconnect.fragments.ReportsFragment;
 import org.centum.techconnect.fragments.SelfHelpFragment;
 import org.centum.techconnect.resources.ResourceHandler;
@@ -93,6 +95,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             protected void onPostExecute(Void aVoid) {
                 dialog.dismiss();
+                Intent intent = new Intent(MainActivity.this, IntroTutorial.class);
+                startActivity(intent);
                 setFragment(fragToOpen);
             }
 
