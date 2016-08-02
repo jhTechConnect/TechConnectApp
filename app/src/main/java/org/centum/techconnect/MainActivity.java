@@ -16,11 +16,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-<<<<<<< HEAD
 import org.centum.techconnect.activities.IntroTutorial;
-=======
 import org.centum.techconnect.activities.CallActivity;
->>>>>>> upstream/master
 import org.centum.techconnect.fragments.ReportsFragment;
 import org.centum.techconnect.fragments.SelfHelpFragment;
 import org.centum.techconnect.resources.ResourceHandler;
