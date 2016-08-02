@@ -3,7 +3,7 @@
   "id":"q1",
   "question":"What is the power source?",
   "details":"",
-  "image":["https://www.dropbox.com/home/Public?preview=adv_45_right_21_strain.gif","https://www.dropbox.com/s/7q4u5t51yx76j4q/Outlet.png?raw=1"],
+  "image":[" https://www.dropbox.com/s/zykdan7au5mzuyo/adv_45_right_21_strain.gif?raw=1","https://www.dropbox.com/s/7q4u5t51yx76j4q/Outlet.png?raw=1"],
   "attachment":null,
   "options":["Battery", "Outlet and plug"],
   "next_question":["bat","outlet_and_plug"]
