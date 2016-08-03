@@ -1,0 +1,160 @@
+[
+  {
+    "id": "q1",
+    "question": "Is the device free of any dirt/contamination?",
+    "details": "Inspect ophthalmoscope for external cracks, damage and dirt.",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "390299414",
+      "150915801"
+    ]
+  },
+  {
+    "id": "150915801",
+    "question": "Clean device using cloth moistened with alcohol.",
+    "details": "Examine the device for dirt and contamination. See BTA skills on Mechanical Cleaning.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "390299414",
+    "question": "Does the light bulb power on with battery?",
+    "details": "Power on the device with battery. Examine whether light bulb gives sufficient illumination.",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "268908353",
+      "31402985"
+    ]
+  },
+  {
+    "id": "31402985",
+    "question": "Rotate the aperture dial so they are not in- between positions.",
+    "details": "Aperture dial can be in-between positions.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "316332567"
+    ]
+  },
+  {
+    "id": "316332567",
+    "question": "Recharge battery if applicable or replace it.",
+    "details": "Refer BTA skill set on Batteries to identify and replace damaged batteries.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "159677445"
+    ]
+  },
+  {
+    "id": "159677445",
+    "question": "Replace bulb if necessary.",
+    "details": "Refer BTA skill set on Lighting/Indicators to replace non-functional light bulbs.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "270169240"
+    ]
+  },
+  {
+    "id": "270169240",
+    "question": "Inspect and fix broken wires or bad connections between battery and bulb.",
+    "details": "Inspect wires and connections from battery to bulb using multimeter. Refer BTA skill set on Connections for identifying and fixing broken wires and bad connections.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "661275002"
+    ]
+  },
+  {
+    "id": "661275002",
+    "question": "Clean lenses with cotton swab.",
+    "details": "Clean lenses to remove any dirt and contamination. See BTA skills on Mechanical Cleaning.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "390299414"
+    ]
+  },
+  {
+    "id": "268908353",
+    "question": "Are the lenses and mirror free from cracks/defects?",
+    "details": "Any defect in the lenses and mirror will not provide a clear view.",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "285874018",
+      "697287528"
+    ]
+  },
+  {
+    "id": "697287528",
+    "question": "Replace lenses and mirror if necessary.",
+    "details": "Replace lenses and mirror if necessary. Identify and replace with a suitable lens to get a clear view.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "268908353"
+    ]
+  },
+  {
+    "id": "285874018",
+    "question": "Does the device provide a sharp focus and free from any glare?",
+    "details": "The lenses and mirror are dirty.",
+    "options": [
+      "Yes",
+      null
+    ],
+    "next_question": [
+      "662637930",
+      "753459259"
+    ]
+  },
+  {
+    "id": "662637930",
+    "question": "Perform preventive maintenance on ophthalmoscope. Return device to clinical personnel.",
+    "details": "Ophthalmoscope is working properly. Perform preventive maintenance before returning the device to clinical personnel.",
+    "options": [
+      "Done"
+    ],
+    "next_question": [
+      null
+    ]
+  },
+  {
+    "id": "753459259",
+    "question": "Clean lenses and mirror with cotton swab.",
+    "details": "Clean lenses and mirror to remove any dirt and contamination.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "285874018"
+    ]
+  },
+  {
+    "id": "724005051",
+    "question": "Done",
+    "details": "",
+    "options": [],
+    "next_question": []
+  }
+]

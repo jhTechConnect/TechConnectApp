@@ -1,0 +1,377 @@
+[
+  {
+    "id": "q1",
+    "question": "Do all bulbs illuminate? ",
+    "details": "Provide the light with power and observe whether or not all of the  bulbs produce light. ",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "456776174",
+      "347774314"
+    ]
+  },
+  {
+    "id": "347774314",
+    "question": "Is voltage delivered to nond functional bulbs? ",
+    "details": "If some of the bulbs do not illuminate, it could be due to issues with the  bulb or the power supply. Use a multimeter to check that appropriate  voltage is being delivered to the bulb housings.  See BTA skills on  Electrical Lighting/Indicators. ",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "816078722",
+      "727323992"
+    ]
+  },
+  {
+    "id": "816078722",
+    "question": "Are bulbs incandescent?",
+    "details": "Incandescent light bulbs use a tungsten filament encased inside a glass  housing. ",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "568724774",
+      "758073701"
+    ]
+  },
+  {
+    "id": "758073701",
+    "question": "Are bulbs halogen?",
+    "details": "Halogen bulbs have a tungsten filament encased inside a quartz  housing. The housing is much closer to the filament than in  incandescent light bulbs. ",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "262028257",
+      "147174387"
+    ]
+  },
+  {
+    "id": "147174387",
+    "question": "Are bulbs fluorescent?",
+    "details": "Fluorescent bulbs have a sealed glass tube filled with mercury and an  inert gas. ",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "942677778",
+      "428408584"
+    ]
+  },
+  {
+    "id": "727323992",
+    "question": "Troubleshoot bulb connections.",
+    "details": "If bulbs do not illuminate and are not receiving power, then there may  be something wrong with the connections from the bulb housing to the  bulb itself. Inspect the housing, clean any residue on connections and  mend poor connections. ",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "713797697"
+    ]
+  },
+  {
+    "id": "713797697",
+    "question": "Check continuity of power supply  wires to bulb housings.",
+    "details": "Ensure that the bulb housings are connected to the power supply. Use a  multimeter to check the continuity of the wires running from the power  supply to the bulbs.  ",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "161992220"
+    ]
+  },
+  {
+    "id": "161992220",
+    "question": "Troubleshoot power supply.",
+    "details": "If the device is connected to power but does not turn on, there is a  problem with the power supply. This could be a problem with the  wiring or connections within the device. See BTA skills on Power Supply. ",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "568724774",
+    "question": "Use replacement bulb from  manufacturer if available.",
+    "details": "Acquire the bulb designed for the OR lamp unit by the same  manufacturer as the unit. Use this replacement bulb to replace any broken bulbs in the lamp.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "222529388"
+    ]
+  },
+  {
+    "id": "141889533",
+    "question": "Do not use bulbs without filter.",
+    "details": "DO NOT use the lamp if any illuminating bulbs do not have a filter. This  filter is necessary to ensure the safety of patients.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "26988661"
+    ]
+  },
+  {
+    "id": "222529388",
+    "question": "Find incandescent bulb replacement.",
+    "details": "Match the voltage capacity and wattage of replacement bulb to  original.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "542046170"
+    ]
+  },
+  {
+    "id": "542046170",
+    "question": "Use CFL, LED, or halogen  replacement bulb.",
+    "details": "If a CFL or LED bulb can be found that matches the voltage of the  original incandescent bulb, then it may be used to replace the original  bulb. ",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "470497862"
+    ]
+  },
+  {
+    "id": "907553133",
+    "question": "Done",
+    "details": "",
+    "options": [],
+    "next_question": []
+  },
+  {
+    "id": "26988661",
+    "question": "Replace missing filters.",
+    "details": "Insert infrared filters wherever missing. These filters can be taken from  bulb housings containing nondfunctional bulbs or from other OR lamp  units. DO NOT handle filters with bare hands. ",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "456776174"
+    ]
+  },
+  {
+    "id": "262028257",
+    "question": "Use replacement bulb from  manufacturer if available.",
+    "details": "Acquire the bulb designed for the OR lamp unit by the same manufacturer as the unit. Use this replacement bulb to replace any broken bulbs in the lamp. ",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "19290153"
+    ]
+  },
+  {
+    "id": "470497862",
+    "question": "If using CFL or LED, match lumens  of replacement to original bulb.",
+    "details": "If using a CFL or LED as a replacement, ensure that the lumens value of  the replacement bulb matches that of the original. ",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "465982384"
+    ]
+  },
+  {
+    "id": "389594595",
+    "question": "Use CFL or LED replacement bulb.",
+    "details": "If a CFL or LED bulb can be found that matches the voltage of the  original incandescent bulb, then it may be used to replace the original  bulb. ",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "465982384"
+    ]
+  },
+  {
+    "id": "19290153",
+    "question": "Find halogen bulb replacement.",
+    "details": "Match the voltage capacity and wattage of replacement bulb to  original.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "389594595"
+    ]
+  },
+  {
+    "id": "942677778",
+    "question": "Use replacement bulb from  manufacturer if available.",
+    "details": "Acquire the bulb designed for the OR lamp unit by the same  manufacturer as the unit. Use this replacement bulb to replace any broken bulbs in the lamp. ",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "251932838"
+    ]
+  },
+  {
+    "id": "465982384",
+    "question": "Match voltage capacity of  replacement bulb to original.",
+    "details": "If the bulb type of the original is unknown, then the voltage capacity  alone may be used to find a replacement. Match this value of the  replacement bulb to that of the original. ",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "788977651"
+    ]
+  },
+  {
+    "id": "915965468",
+    "question": "Check ballasts and replace if  necessary.",
+    "details": "Reference instruction document. ",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "28101382"
+    ]
+  },
+  {
+    "id": "251932838",
+    "question": "Find fluorescent bulb  replacement.",
+    "details": "Match the voltage capacity and wattage of replacement bulb to  original. ",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "915965468"
+    ]
+  },
+  {
+    "id": "28101382",
+    "question": "Use incandescent bulb  replacement.",
+    "details": "If an incandescent bulb can be found that matches the voltage of the  original incandescent bulb, then it may be used to replace the original  bulb.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "465982384"
+    ]
+  },
+  {
+    "id": "788977651",
+    "question": "If necessary retrofit light socket  to fit replacement bulb.",
+    "details": "Reference BTA skills: Unit: Lighting/Indicators, Skill: Fixtures. ",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "428408584",
+    "question": "If bulb type is unknown, use only  the voltage capacity to determine  the replacement.",
+    "details": "Reference BTA skills: Unit: Lighting/Indicators, Skill: Fixtures. ",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "788977651"
+    ]
+  },
+  {
+    "id": "203712844",
+    "question": "Do all parts of light and support  move freely?",
+    "details": "Manipulate the lamp to ensure that all moving parts can be easily  adjusted. ",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "43453957",
+      "977738439"
+    ]
+  },
+  {
+    "id": "456776174",
+    "question": "Do all bulb have an IR filter in  front of them?",
+    "details": "Check that all of the functional bulbs have infrared filters between the  bulb and the operating field. This filter usually looks like a plastic sheet sitting in front of the bulb in its housing. ",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "203712844",
+      "141889533"
+    ]
+  },
+  {
+    "id": "479939946",
+    "question": "Loosen braking screws.",
+    "details": "Locate the braking screws on the lamp unit. Loosen these screws to  allow for more fluid movement. ",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "526317801"
+    ]
+  },
+  {
+    "id": "977738439",
+    "question": "Add grease to resistive parts.",
+    "details": "If any moving parts of the lamp resist adjustment, lubricate these parts  using grease or oil. ",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "479939946"
+    ]
+  },
+  {
+    "id": "43453957",
+    "question": "Does light stay in place after  adjustment?",
+    "details": "Ensure that the lamp stays in place after it has been adjusted. Try  several manipulations of the lamp and let lamp stand in each for a few  minutes. Observe any deviations from the original adjustment.",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "415891999",
+      "968584019"
+    ]
+  },
+  {
+    "id": "526317801",
+    "question": "Adjust spring force screws.",
+    "details": "Locate and adjust the tightness of spring force screws on the lamp unit  to change the amount of tension in the lamp supports.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "203712844"
+    ]
+  },
+  {
+    "id": "415891999",
+    "question": "Light is functioning properly.",
+    "details": "",
+    "options": [
+      "Done"
+    ],
+    "next_question": [
+      null
+    ]
+  },
+  {
+    "id": "968584019",
+    "question": "Tighten braking screws.",
+    "details": "If lamp moves after adjustment, tighten the braking screws to prevent  this movement.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "43453957"
+    ]
+  }
+]
