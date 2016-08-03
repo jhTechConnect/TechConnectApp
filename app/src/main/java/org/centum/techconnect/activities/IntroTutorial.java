@@ -30,14 +30,10 @@ public class IntroTutorial extends AppIntro {
         addSlide(AppIntroFragment.newInstance("Self Help Homescreen", "This is the self help start screen", R.drawable.home, darkGreen));
         addSlide(AppIntroFragment.newInstance("Enter Room and Device", "Enter the name of the room the device is in and select the type of device from the drop-down menu", R.drawable.expanded, darkGreen));
         addSlide(AppIntroFragment.newInstance("Add Notes and Start", "Add any additional notes then press \"Start Session\" to start", R.drawable.addnotes, darkGreen));
-        addSlide(AppIntroFragment.newInstance("Work Through Troubleshooting Steps", "You will be guided through a series of questions. Answer each question based on how the device is responding", R.drawable.options, darkGreen));
-        addSlide(AppIntroFragment.newInstance("Read Skills Tutorials", "If a repair step requires knowledge that you do not have, helpful resources will be provided for your reference", R.drawable.helpoptions, darkGreen));
-        addSlide(AppIntroFragment.newInstance("Finish Repair", "At some point, you will completely repair the device. Success!", R.drawable.success, darkGreen));
-        addSlide(AppIntroFragment.newInstance("Additional Features", "When you tap the expanded menu button at the upper left, you will be able to access other features such as reports and syncing", R.drawable.swipe, darkGreen));
-
-
-
-
+        addSlide(AppIntroFragment.newInstance("Work Through Troubleshooting Steps", "You will be guided through a series of questions. Answer each question based on how the device is responding", R.drawable.tutorial_options, darkGreen));
+        addSlide(AppIntroFragment.newInstance("Read Skills Tutorials", "If a repair step requires knowledge that you do not have, helpful resources will be provided for your reference", R.drawable.tutorial_help_options, darkGreen));
+        addSlide(AppIntroFragment.newInstance("Finish Repair", "At some point, you will completely repair the device. Success!", R.drawable.tutorial_success, darkGreen));
+        addSlide(AppIntroFragment.newInstance("Additional Features", "When you tap the expanded menu button at the upper left, you will be able to access other features such as reports and syncing", R.drawable.tutorial_swipe, darkGreen));
     }
 
     @Override
