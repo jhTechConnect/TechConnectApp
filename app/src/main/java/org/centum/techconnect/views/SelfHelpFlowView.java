@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -206,9 +205,7 @@ public class SelfHelpFlowView extends ScrollView implements View.OnClickListener
     }
 
     public boolean goBack() {
-        Log.d("SelfHelpFlowView", "goBack");
         if (session.hasPrevious()) {
-            Log.d("SelfHelpFlowView", "goBack yup");
             session.goBack();
             updateViews();
             return true;
