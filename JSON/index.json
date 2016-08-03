@@ -18,23 +18,41 @@
 		"clin_chart":"auto_bp_monitor.json",
 		"resources":[]
 	},
-		"bililight":{
+	"bililight":{
 		"name":"Bililight",
 		"chart":"bililight.json",
 		"clin_chart":"bililight.json",
 		"resources":[]
 	},
-		"man_bp_monitor":{
+	"man_bp_monitor":{
 		"name":"Manual Blood Pressure Monitor",
 		"chart":"man_bp_monitor.json",
 		"clin_chart":"man_bp_monitor.json",
 		"resources":[]
 	},
-		"cellcounter":{
+	"cellcounter":{
 		"name":"Cell Counter",
 		"chart":"cellcounter.json",
 		"clin_chart":"cellcounter.json",
 		"resources":[]
 	},
+	"suction":{
+		"name":"Suction Machine",
+		"chart":"suction.json",
+		"clin_chart":"suction.json",
+		"resources":[]
+	},
+	"jet_nebulizer":{
+		"name":"Jet Nebulizer",
+		"chart":"jet_nebulizer.json",
+		"clin_chart":"jet_nebulizer.json",
+		"resources":[]
+	},
+	"ox_conc":{
+		"name":"Oxygen Concentrator",
+		"chart":"ox_conc.json",
+		"clin_chart":"ox_conc.json",
+		"resources":[]
+		},
 	"callDir": "calldir.json"
 }
