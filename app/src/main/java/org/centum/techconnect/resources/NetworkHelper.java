@@ -1,8 +1,6 @@
 package org.centum.techconnect.resources;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 
 import org.centum.techconnect.model.Contact;
@@ -14,7 +12,6 @@ import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -315,29 +312,25 @@ public class NetworkHelper {
      * @throws IOException
      */
     private String downloadImage(String imageUrl) throws IOException {
-        Bitmap bitmap = null;
-        HttpURLConnection connection = null;
-        InputStream is = null;
-        ByteArrayOutputStream out = null;
-
-        connection = (HttpURLConnection) new URL(imageUrl).openConnection();
-        is = connection.getInputStream();
-        bitmap = BitmapFactory.decodeStream(is);
-        if (connection != null)
-            connection.disconnect();
-        if (out != null) {
-            out.flush();
-            out.close();
-        }
-        if (is != null) {
-            is.close();
-        }
-
         String fileName = "i" + (int) Math.round(Integer.MAX_VALUE * Math.random());
-        FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-        fos.flush();
-        fos.close();
+        HttpURLConnection connection = (HttpURLConnection) new URL(imageUrl).openConnection();
+
+        FileOutputStream fileOutputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+        InputStream inputStream = connection.getInputStream();
+
+        int readBytes;
+        byte buffer[] = new byte[1024];
+        if (inputStream != null) {
+            while ((readBytes = inputStream.read(buffer)) > -1) {
+                fileOutputStream.write(buffer, 0, readBytes);
+            }
+            inputStream.close();
+        }
+
+        connection.disconnect();
+        fileOutputStream.flush();
+        fileOutputStream.close();
+
         Logger.getLogger(getClass().getName()).log(Level.INFO, "Loaded image: " + imageUrl + " --> " + fileName);
         return fileName;
     }
