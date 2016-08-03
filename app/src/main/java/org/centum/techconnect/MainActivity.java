@@ -2,6 +2,7 @@ package org.centum.techconnect;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -16,8 +17,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import org.centum.techconnect.activities.IntroTutorial;
 import org.centum.techconnect.activities.CallActivity;
+import org.centum.techconnect.activities.IntroTutorial;
 import org.centum.techconnect.fragments.ReportsFragment;
 import org.centum.techconnect.fragments.SelfHelpFragment;
 import org.centum.techconnect.resources.ResourceHandler;
@@ -33,7 +34,6 @@ public class MainActivity extends AppCompatActivity
 
     private static final int FRAGMENT_SELF_HELP = 0;
     private static final int FRAGMENT_LOGS = 1;
-    private static final int TUTORIAL_ACTIVITY = 2;
     @Bind(R.id.nav_view)
     NavigationView navigationView;
 
@@ -96,17 +96,20 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             protected void onPostExecute(Void aVoid) {
-                Intent intent = new Intent(MainActivity.this, IntroTutorial.class);
-                new CountDownTimer(2000,100) {
+                new CountDownTimer(1000, 100) {
                     public void onFinish() {
                         dialog.dismiss();
+                        SharedPreferences prefs = MainActivity.this.getSharedPreferences("main", MODE_PRIVATE);
+                        if (!prefs.getBoolean("showed_tutorial", false)) {
+                            prefs.edit().putBoolean("showed_tutorial", true).apply();
+                            startActivity(new Intent(MainActivity.this, IntroTutorial.class));
+                        }
                     }
 
                     public void onTick(long millisUntilFinish) {
 
                     }
                 }.start();
-                startActivity(intent);
                 setFragment(fragToOpen);
             }
 
@@ -126,9 +129,6 @@ public class MainActivity extends AppCompatActivity
 
         }.execute();
     }
-
-
-
 
 
     @Override
