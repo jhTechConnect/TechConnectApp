@@ -27,8 +27,8 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
         android:layout_toRightOf="@+id/device_imageView"
-        android:text="Pulse Oximeter"
-        android:textSize="16dp"
+        android:text=""
+        android:textSize="16sp"
         android:textStyle="bold" />
 
     <TextView
@@ -55,8 +55,8 @@
         android:layout_below="@+id/problem_textView"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:text="Start Date"
-        android:textSize="16dp"
+        android:text="@string/start_date"
+        android:textSize="16sp"
         android:textStyle="bold" />
 
     <TextView
@@ -67,8 +67,8 @@
         android:layout_alignStart="@+id/textView2"
         android:layout_below="@+id/textView2"
         android:layout_marginTop="8dp"
-        android:text="Department"
-        android:textSize="16dp"
+        android:text="@string/department"
+        android:textSize="16sp"
         android:textStyle="bold" />
 
     <TextView
@@ -79,8 +79,8 @@
         android:layout_alignStart="@+id/textView3"
         android:layout_below="@+id/textView3"
         android:layout_marginTop="8dp"
-        android:text="Notes"
-        android:textSize="16dp"
+        android:text="@string/notes"
+        android:textSize="16sp"
         android:textStyle="bold" />
 
     <TextView
@@ -132,7 +132,7 @@
         android:layout_marginBottom="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
-        android:text="End Session" />
+        android:text="@string/end_session" />
 
     <Button
         android:id="@+id/resourcesButton"
@@ -142,6 +142,6 @@
         android:layout_alignParentStart="true"
         android:layout_alignTop="@+id/end_session_button"
         android:layout_marginLeft="16dp"
-        android:text="Resources" />
+        android:text="@string/resources" />
 
 </org.centum.techconnect.views.SelfHelpSlidingView>

@@ -18,7 +18,7 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:gravity="center"
-            android:text="Question"
+            android:text="@string/question"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -55,7 +55,7 @@
             android:layout_below="@+id/options_linearLayout"
             android:layout_marginTop="16dp"
             android:enabled="true"
-            android:text="Back" />
+            android:text="@string/back" />
 
         <HorizontalScrollView
             android:id="@+id/flow_imageScrollView"

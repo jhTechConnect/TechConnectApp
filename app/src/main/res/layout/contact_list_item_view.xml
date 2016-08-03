@@ -32,7 +32,7 @@
                 android:id="@+id/textView14"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="Title:"
+                android:text="@string/contact_title"
                 android:textSize="16sp" />
 
             <TextView
@@ -52,7 +52,7 @@
                 android:id="@+id/textView12"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="Location"
+                android:text="@string/contact_location"
                 android:textSize="16sp" />
 
             <TextView

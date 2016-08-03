@@ -51,9 +51,8 @@ public class Flowchart {
                 imageURLs[i] = arr.getString(i);
             }
         }
-        Flowchart flowchart = new Flowchart(object.getString("question"),
+        return new Flowchart(object.getString("question"),
                 object.getString("details"), attachmentsStr, imageURLs, key);
-        return flowchart;
     }
 
     public void addChild(String option, Flowchart child) {
