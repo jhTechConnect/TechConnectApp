@@ -2,10 +2,8 @@ package org.centum.techconnect;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -96,20 +94,8 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             protected void onPostExecute(Void aVoid) {
-                new CountDownTimer(1000, 100) {
-                    public void onFinish() {
-                        dialog.dismiss();
-                        SharedPreferences prefs = MainActivity.this.getSharedPreferences("main", MODE_PRIVATE);
-                        if (!prefs.getBoolean("showed_tutorial", false)) {
-                            prefs.edit().putBoolean("showed_tutorial", true).apply();
-                            startActivity(new Intent(MainActivity.this, IntroTutorial.class));
-                        }
-                    }
-
-                    public void onTick(long millisUntilFinish) {
-
-                    }
-                }.start();
+                startActivity(new Intent(MainActivity.this, IntroTutorial.class));
+                dialog.dismiss();
                 setFragment(fragToOpen);
             }
 
