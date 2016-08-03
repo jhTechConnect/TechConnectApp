@@ -2,7 +2,6 @@ package org.centum.techconnect.resources;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import org.centum.techconnect.model.Contact;
 import org.centum.techconnect.model.Device;
@@ -313,7 +312,6 @@ public class NetworkHelper {
      * @throws IOException
      */
     private String downloadImage(String imageUrl) throws IOException {
-        Log.d("NetworkHelper", imageUrl);
         String fileName = "i" + (int) Math.round(Integer.MAX_VALUE * Math.random());
         HttpURLConnection connection = (HttpURLConnection) new URL(imageUrl).openConnection();
 
