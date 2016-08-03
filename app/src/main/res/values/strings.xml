@@ -9,4 +9,20 @@
     <string name="menu_resources">Resources</string>
     <string name="title_activity_intro_tutorial">IntroTutorial</string>
     <string name="call_directory">Call Directory</string>
+    <string name="tutorial_title_welcome">Welcome to Tech Connect!</string>
+    <string name="tutorial_title_self_help_home">Self Help Homescreen</string>
+    <string name="tutorial_title_select_room_device">Enter Room and Device</string>
+    <string name="tutorial_title_add_notes">Add Notes and Start</string>
+    <string name="tutorial_title_troubleshoot">Work Through Troubleshooting Steps</string>
+    <string name="tutorial_title_tutorials">Read Skills Tutorials</string>
+    <string name="tutorial_title_finish_repair">Finish Repair</string>
+    <string name="tutorial_title_additional_features">Additional Features</string>
+    <string name="tutorial_msg_welcome">Swipe for some quick tips</string>
+    <string name="tutorial_msg_self_help_home">This is the self help start screen</string>
+    <string name="tutorial_msg_select_room_device">Enter the name of the room the device is in and select the type of device from the drop-down menu</string>
+    <string name="tutorial_msg_add_notes">Add any additional notes then press \"Start Session\" to start</string>
+    <string name="tutorial_msg_troubleshoot">You will be guided through a series of questions. Answer each question based on how the device is responding</string>
+    <string name="tutorial_msg_tutorials">If a repair step requires knowledge that you do not have, helpful resources will be provided for your reference</string>
+    <string name="tutorial_msg_finish_repair">At some point, you will completely repair the device. Success!</string>
+    <string name="tutorial_msg_additional_features">When you tap the expanded menu button at the upper left, you will be able to access other features such as reports and syncing</string>
 </resources>

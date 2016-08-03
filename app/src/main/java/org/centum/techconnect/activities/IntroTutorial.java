@@ -13,9 +13,6 @@ public class IntroTutorial extends AppIntro {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_intro_tutorial);
-        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
         setDepthAnimation();
         showSkipButton(true);
         setProgressIndicator();
@@ -24,30 +21,42 @@ public class IntroTutorial extends AppIntro {
 
         int white = getResources().getColor(android.R.color.white);
         int black = getResources().getColor(android.R.color.black);
-        int primeGreen = getResources().getColor(R.color.colorPrimary);
         int darkGreen = getResources().getColor(R.color.colorPrimaryDark);
-        addSlide(AppIntroFragment.newInstance("Welcome to Tech Connect", "This is a quick tutorial on how to use this app", R.drawable.tech_connect_app_icon, white, black, black));
-        addSlide(AppIntroFragment.newInstance("Self Help Homescreen", "This is the self help start screen", R.drawable.home, darkGreen));
-        addSlide(AppIntroFragment.newInstance("Enter Room and Device", "Enter the name of the room the device is in and select the type of device from the drop-down menu", R.drawable.expanded, darkGreen));
-        addSlide(AppIntroFragment.newInstance("Add Notes and Start", "Add any additional notes then press \"Start Session\" to start", R.drawable.addnotes, darkGreen));
-        addSlide(AppIntroFragment.newInstance("Work Through Troubleshooting Steps", "You will be guided through a series of questions. Answer each question based on how the device is responding", R.drawable.tutorial_options, darkGreen));
-        addSlide(AppIntroFragment.newInstance("Read Skills Tutorials", "If a repair step requires knowledge that you do not have, helpful resources will be provided for your reference", R.drawable.tutorial_help_options, darkGreen));
-        addSlide(AppIntroFragment.newInstance("Finish Repair", "At some point, you will completely repair the device. Success!", R.drawable.tutorial_success, darkGreen));
-        addSlide(AppIntroFragment.newInstance("Additional Features", "When you tap the expanded menu button at the upper left, you will be able to access other features such as reports and syncing", R.drawable.tutorial_swipe, darkGreen));
+        addSlide(AppIntroFragment.newInstance(getString(R.string.tutorial_title_welcome),
+                getString(R.string.tutorial_msg_welcome),
+                R.drawable.tech_connect_app_icon, white, black, black));
+        addSlide(AppIntroFragment.newInstance(getString(R.string.tutorial_title_self_help_home),
+                getString(R.string.tutorial_msg_self_help_home),
+                R.drawable.home, darkGreen));
+        addSlide(AppIntroFragment.newInstance(getString(R.string.tutorial_title_select_room_device),
+                getString(R.string.tutorial_msg_select_room_device),
+                R.drawable.expanded, darkGreen));
+        addSlide(AppIntroFragment.newInstance(getString(R.string.tutorial_title_add_notes),
+                getString(R.string.tutorial_msg_add_notes),
+                R.drawable.addnotes, darkGreen));
+        addSlide(AppIntroFragment.newInstance(getString(R.string.tutorial_title_troubleshoot),
+                getString(R.string.tutorial_msg_troubleshoot),
+                R.drawable.tutorial_options, darkGreen));
+        addSlide(AppIntroFragment.newInstance(getString(R.string.tutorial_title_tutorials),
+                getString(R.string.tutorial_msg_tutorials),
+                R.drawable.tutorial_help_options, darkGreen));
+        addSlide(AppIntroFragment.newInstance(getString(R.string.tutorial_title_finish_repair),
+                getString(R.string.tutorial_msg_finish_repair),
+                R.drawable.tutorial_success, darkGreen));
+        addSlide(AppIntroFragment.newInstance(getString(R.string.tutorial_title_additional_features),
+                getString(R.string.tutorial_msg_additional_features),
+                R.drawable.tutorial_swipe, darkGreen));
     }
 
     @Override
     public void onSkipPressed(Fragment currentFragment) {
         super.onSkipPressed(currentFragment);
-        // Do something when users tap on Skip button.
         finish();
-
     }
 
     @Override
     public void onDonePressed(Fragment currentFragment) {
         super.onDonePressed(currentFragment);
-        // Do something when users tap on Done button.
         finish();
     }
 
