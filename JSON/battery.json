@@ -161,15 +161,15 @@
 	"question":"The battery is working.",
 	"details":"Troubleshoot, calibrate, and appropriately test the device before releasing to the clinician.",
 	"attachment":null,
-	"options":["Back to pulse oximeter troubleshooting","Back to autoclave troubleshooting","Back to power supply troubleshooting"],
-	"next_question":["pulse_oximeter.json","autoclave.json","ps_continued.json"]
+	"options":["Back to pulse oximeter troubleshooting","Back to autoclave troubleshooting","Back to suction troubleshooting","Back to nebulizer troubleshooting","Back to oxygen concentrator troubleshooting","Back to power supply troubleshooting"],
+	"next_question":["pulse_oximeter.json","autoclave.json","suction.json","jet_nebulizer.json","ox_conc.json", "ps_continued.json"]
 	},
 	{
 	"id":"yes_8",
 	"question":"The battery is working.",
 	"details":"Troubleshoot, calibrate, and appropriately test the device before releasing to the clinician.",
 	"attachment":null,
-	"options":["Back to pulse oximeter troubleshooting","Back to autoclave troubleshooting","Back to power supply troubleshooting"],
-	"next_question":["pulse_oximeter.json","autoclave.json","ps_continued.json"]
+	"options":["Back to pulse oximeter troubleshooting","Back to autoclave troubleshooting","Back to suction troubleshooting","Back to nebulizer troubleshooting","Back to oxygen concentrator troubleshooting","Back to power supply troubleshooting"],
+	"next_question":["pulse_oximeter.json","autoclave.json","suction.json","jet_nebulizer.json","ox_conc.json", "ps_continued.json"]
 	}
 ]

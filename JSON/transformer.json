@@ -61,8 +61,8 @@
 	"question":"The transformer is working properly.",
 	"details":"",
 	"attachment":null,
-	"options":["Back to pulse oximeter troubleshooting","Back to autoclave troubleshooting","Return to beginning of power supply troubleshooting","Continue power supply troubleshooting (if applicable)","Back to outlet and plug troubleshooting"],
-	"next_question":["pulse_oximeter.json","autoclave.json","ps_continued.json","ps_continued.json/ok_3","outlet_plug.json"]
+	"options":["Back to pulse oximeter troubleshooting","Back to autoclave troubleshooting","Back to suction troubleshooting","Back to nebulizer troubleshooting","Back to oxygen concentrator troubleshooting","Back to power supply troubleshooting"],
+	"next_question":["pulse_oximeter.json","autoclave.json","suction.json","jet_nebulizer.json","ox_conc.json", "ps_continued.json"]
 	},
 	{
 	"id":"no_4",
