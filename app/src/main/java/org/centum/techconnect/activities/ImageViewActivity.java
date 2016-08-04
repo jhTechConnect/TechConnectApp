@@ -2,6 +2,7 @@ package org.centum.techconnect.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -24,6 +25,8 @@ public class ImageViewActivity extends AppCompatActivity {
     public static final String EXTRA_PATH = "path";
     @Bind(R.id.container)
     FrameLayout container;
+    @Bind(R.id.close_btn)
+    ImageView closeBtn;
 
     ImageView imageView;
     GifImageView gifImageView;
@@ -36,6 +39,12 @@ public class ImageViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_image_view);
         ButterKnife.bind(this);
 
+        closeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ImageViewActivity.this.finish();
+            }
+        });
         if (getIntent() != null && getIntent().getStringExtra(EXTRA_PATH) != null) {
             String path = getIntent().getStringExtra(EXTRA_PATH);
             updateImage(path);
