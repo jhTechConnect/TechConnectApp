@@ -3,7 +3,6 @@ package org.centum.techconnect.views;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -18,6 +17,7 @@ import com.squareup.picasso.Picasso;
 
 import org.centum.techconnect.R;
 import org.centum.techconnect.activities.ImageViewActivity;
+import org.centum.techconnect.activities.PDFActivity;
 import org.centum.techconnect.model.Flowchart;
 import org.centum.techconnect.model.Session;
 import org.centum.techconnect.model.SessionCompleteListener;
@@ -170,8 +170,10 @@ public class SelfHelpFlowView extends ScrollView implements View.OnClickListener
     }
 
     private void openAttachment(String att) {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(att));
-        getContext().startActivity(browserIntent);
+        Intent intent = new Intent(getContext(), PDFActivity.class);
+        intent.putExtra(PDFActivity.EXTRA_IS_FILE, true);
+        intent.putExtra(PDFActivity.EXTRA_FILE, getContext().getFileStreamPath(ResourceHandler.get().getStringResource(att)).getAbsolutePath());
+        getContext().startActivity(intent);
     }
 
     /**

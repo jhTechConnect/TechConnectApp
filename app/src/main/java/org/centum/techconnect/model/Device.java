@@ -1,6 +1,5 @@
 package org.centum.techconnect.model;
 
-import org.centum.techconnect.resources.NetworkHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,7 +27,7 @@ public class Device {
         JSONArray arr = obj.getJSONArray("resources");
         String res[] = new String[arr.length()];
         for (int i = 0; i < arr.length(); i++) {
-            res[i] = NetworkHelper.URL + NetworkHelper.RESOURCE_FOLDER + arr.getString(i);
+            res[i] = arr.getString(i);
         }
         device.resources = res;
         return device;

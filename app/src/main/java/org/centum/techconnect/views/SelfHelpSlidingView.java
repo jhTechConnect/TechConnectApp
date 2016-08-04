@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
@@ -15,7 +14,9 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import org.centum.techconnect.R;
+import org.centum.techconnect.activities.PDFActivity;
 import org.centum.techconnect.model.Session;
+import org.centum.techconnect.resources.ResourceHandler;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -139,7 +140,9 @@ public class SelfHelpSlidingView extends RelativeLayout implements View.OnClickL
     }
 
     private void openAttachment(String att) {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(att));
-        getContext().startActivity(browserIntent);
+        Intent intent = new Intent(getContext(), PDFActivity.class);
+        intent.putExtra(PDFActivity.EXTRA_IS_FILE, true);
+        intent.putExtra(PDFActivity.EXTRA_FILE, getContext().getFileStreamPath(ResourceHandler.get().getStringResource(att)).getAbsolutePath());
+        getContext().startActivity(intent);
     }
 }

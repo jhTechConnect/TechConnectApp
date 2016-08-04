@@ -85,22 +85,27 @@ public class NetworkHelper {
                     device.getTechRole().getJsonFile(), ENTRY_ID, useCached));
         }
 
-        //Load images
+        //Load images & resources
         Set<String> toLoad = new HashSet<>();
         Set<Flowchart> visited = new HashSet<>();
         Queue<Flowchart> toVisit = new LinkedList<>();
         for (Device device : deviceList) {
-            if (device.getEndUserRole().getFlowchart() != null)
+            toLoad.addAll(Arrays.asList(device.getResources()));
+            if (device.getEndUserRole().getFlowchart() != null) {
                 toVisit.add(device.getEndUserRole().getFlowchart());
-            if (device.getTechRole().getFlowchart() != null)
+            }
+            if (device.getTechRole().getFlowchart() != null) {
                 toVisit.add(device.getTechRole().getFlowchart());
+            }
         }
 
         while (toVisit.size() > 0) {
             Flowchart flow = toVisit.remove();
             visited.add(flow);
-            if (flow.hasImages())
+            if (flow.hasImages()) {
                 toLoad.addAll(Arrays.asList(flow.getImageURLs()));
+            }
+            toLoad.addAll(Arrays.asList(flow.getAttachments()));
 
             // Add unvisited children
             for (int i = 0; i < flow.getNumChildren(); i++) {
@@ -116,7 +121,7 @@ public class NetworkHelper {
             if (!ResourceHandler.get().hasStringResource(path)) {
                 String file;
                 try {
-                    file = downloadImage(url);
+                    file = downloadFile(url);
                 } catch (IOException e) {
                     //Image can't be loaded, eh ignore it for now.
                     //TODO somehow inform user of failed image loading
@@ -309,13 +314,13 @@ public class NetworkHelper {
     /**
      * Downloads an image.
      *
-     * @param imageUrl
+     * @param fileUrl
      * @return
      * @throws IOException
      */
-    private String downloadImage(String imageUrl) throws IOException {
+    private String downloadFile(String fileUrl) throws IOException {
         String fileName = "i" + (int) Math.round(Integer.MAX_VALUE * Math.random());
-        HttpURLConnection connection = (HttpURLConnection) new URL(imageUrl).openConnection();
+        HttpURLConnection connection = (HttpURLConnection) new URL(fileUrl).openConnection();
 
         FileOutputStream fileOutputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
         InputStream inputStream = connection.getInputStream();
@@ -333,7 +338,7 @@ public class NetworkHelper {
         fileOutputStream.flush();
         fileOutputStream.close();
 
-        Logger.getLogger(getClass().getName()).log(Level.INFO, "Loaded image: " + imageUrl + " --> " + fileName);
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Loaded file: " + fileUrl + " --> " + fileName);
         return fileName;
     }
 
