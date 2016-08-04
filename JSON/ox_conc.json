@@ -1,0 +1,311 @@
+[
+  {
+    "id": "q1",
+    "question": "Does the machine power up? ",
+    "details": "With unit plugged in, and power switch turned on, the  display should light up and compressor should run,  making noise. ",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "964550124",
+      "235426700"
+    ]
+  },
+  {
+    "id": "235426700",
+    "question": "Is the inlet filter in place? ",
+    "details": "Some models require the compressor inlet filter to be  in place in order for machine to start. For all other  models, proceed to step 5. ",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "553530355",
+      "698707736"
+    ]
+  },
+  {
+    "id": "698707736",
+    "question": "Install inlet filter ",
+    "details": "If available, install the foam inlet filter. ",
+    "options": [
+      "Done"
+    ],
+    "next_question": [
+      null
+    ]
+  },
+  {
+    "id": "553530355",
+    "question": "Troubleshoot the power supply (separate chart) ",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "964550124",
+    "question": "Does the alarm sound during power up? ",
+    "details": "Both display lights and an audible alarm should sound  after power switch is turned on. ",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "464901948",
+      "816833830"
+    ]
+  },
+  {
+    "id": "816833830",
+    "question": "Replace 9V battery ",
+    "details": "Unplug machine, ensure current battery has correct  polarity, and replace with a new battery if necessary.  ",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "964550124"
+    ]
+  },
+  {
+    "id": "464901948",
+    "question": "Does the pump create a sufficient flow? ",
+    "details": "Flow is identifiable by the floating ball in the flow  meter and by bubbles in the humidifier. To check if  there is sufficient flow, remove humidifier and place  finger at air outlet. When outlet is covered, the ball  should fall down. When outlet is unobstructed the ball  should float. When flow rate is set to highest setting  (5 liters per minute) the ball should be at its highest  level in flow meter.  ",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "115195725",
+      "247538600"
+    ]
+  },
+  {
+    "id": "247538600",
+    "question": "Is the compressor functioning correctly? ",
+    "details": "Check voltage into leads of compressor, and then  check flow rate at exit. If the compressor is not  producing max flow rate at sufficient voltage (120V),  the compressor is not functioning correctly. ",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "516115209",
+      "127915447"
+    ]
+  },
+  {
+    "id": "516115209",
+    "question": "Clean inlet filter.\n",
+    "details": "Foam inlet filter should be cleaned weekly by washing  with soap and water. Ensure filter is dry before replacing. See BTA skills on Filters (Plumbing)  ",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "10592777"
+    ]
+  },
+  {
+    "id": "10592777",
+    "question": "Ensure that correct sized tubing is used and that  connections are tight. ",
+    "details": "Check that the diameter of all O2Ycarrying tubing  matches the machine inlet diameters. Ensure that all  connections are tight. Also ensure that the tubing  being used cannot diffuse O2.  See BTA skills on  Connections (Plumbing) ",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "66485659"
+    ]
+  },
+  {
+    "id": "66485659",
+    "question": "Look and listen for leaks in tubing ",
+    "details": "While air is flowing, listen for sound of escaping O2  and run hand over tubing to feel stream. If holes exist,  tube should be replaced, not patched. See BTA skills  on Leaking (Plumbing) ",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "157078186"
+    ]
+  },
+  {
+    "id": "127915447",
+    "question": "clean compressor.",
+    "details": "See BTA skills on cleaning/lubricating (Motors).\n",
+    "options": [
+      "Continue",
+      "Continue"
+    ],
+    "next_question": [
+      "464901948",
+      "387628640"
+    ]
+  },
+  {
+    "id": "157078186",
+    "question": "Clean all O2 carrying tubing.",
+    "details": "Dirt or water droplets could block the airway. See  BTA skills on Blockages (Plumbing)",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "464901948"
+    ]
+  },
+  {
+    "id": "115195725",
+    "question": "Is the O2 Concentration over 60%? ",
+    "details": "See BTA skills for Oxygen Concentration  Measurement (MechanicalYCalibration) ",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "990720634",
+      "970327891"
+    ]
+  },
+  {
+    "id": "387628640",
+    "question": "Defective Compressor: Consider replacing.",
+    "details": "If compressor is clean, and is still not producing  correct flow rate it is probably faulty and needs to be  replaced. ",
+    "options": [
+      "Done"
+    ],
+    "next_question": [
+      null
+    ]
+  },
+  {
+    "id": "241109946",
+    "question": "Replace if possible.",
+    "details": "If available, replace expired zeolite canisters with new  granules. ",
+    "options": [],
+    "next_question": []
+  },
+  {
+    "id": "970327891",
+    "question": "Has the zeolite canister expired?",
+    "details": "Zeolite canisters should be replaced every 25,000  hours. The granules start black and appear gray when  they are no longer efficient for use. ",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "241109946",
+      "805494317"
+    ]
+  },
+  {
+    "id": "86605401",
+    "question": "Check for restrictions in muffler and resonator.",
+    "details": "A restricted muffler would prevent waste gas from  exiting the system freely. Disconnect the muffler and  operate unit to see if this fixes concentration. ",
+    "options": [
+      "Continue",
+      "Continue"
+    ],
+    "next_question": [
+      "464901948",
+      "530176652"
+    ]
+  },
+  {
+    "id": "805494317",
+    "question": "Check tubing for kinks or blockages.",
+    "details": "Ensure that all O2Ycarrying tubes are elongated and  not twisted or bent. See BTA skills on Blockages  (Plumbing) ",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "86605401"
+    ]
+  },
+  {
+    "id": "530176652",
+    "question": "Defective part: Consider replacing PC board. ",
+    "details": "PC board could have tears or kinks that may be  irrecoverable.  ",
+    "options": [
+      "Done"
+    ],
+    "next_question": [
+      null
+    ]
+  },
+  {
+    "id": "670065603",
+    "question": "Ensure exhaust vent is at least 3” from wall. ",
+    "details": "The exhaust pipe should be far enough away from  external obstructions that the waste gas can flow  freely into the atmosphere. ",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "450144473"
+    ]
+  },
+  {
+    "id": "990720634",
+    "question": "Does the machine run without overheating and  making excessive noise? ",
+    "details": "The unit should not feel hot to the touch or make loud  excessive noises. ",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "747351352",
+      "670065603"
+    ]
+  },
+  {
+    "id": "198467985",
+    "question": "Check muffler for damage ",
+    "details": "Ensure all tubing to muffler is intact and connected.  Check muffler for cracks, damages. Consider replacing  if broken. ",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "571573152"
+    ]
+  },
+  {
+    "id": "450144473",
+    "question": "Open unit and check foam.",
+    "details": "Foam inside the machine degrades over time and can  fall into compressor. Clean and replace foam if  possible. See BTA skills on Cleaning (Mechanical) ",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "198467985"
+    ]
+  },
+  {
+    "id": "747351352",
+    "question": "Device is working properly. ",
+    "details": "With sufficient air flow and O2 concentration, the  machine can be returned to service. ",
+    "options": [
+      "Done"
+    ],
+    "next_question": [
+      null
+    ]
+  },
+  {
+    "id": "571573152",
+    "question": "Check that fan is connected and installed correctly.",
+    "details": "Ensure leads to fan are connected correctly. Check  that fan is installed in correct direction of airflow.  ",
+    "options": [
+      null
+    ],
+    "next_question": [
+      "990720634"
+    ]
+  },
+  {
+    "id": "378137616",
+    "question": "Done",
+    "details": "",
+    "options": [],
+    "next_question": []
+  }
+]
