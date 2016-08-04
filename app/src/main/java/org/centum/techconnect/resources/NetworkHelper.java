@@ -12,7 +12,6 @@ import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,7 +39,9 @@ import java.util.logging.Logger;
 public class NetworkHelper {
 
     public static final String ENTRY_ID = "q1";
-    private static final String URL = "https://raw.githubusercontent.com/PhaniGaddipati/TechConnectApp/master/JSON/";
+    private static final String URL = "https://s3.amazonaws.com/tech-connect/";
+    private static final String JSON_FOLDER = "json/";
+    private static final String RESOURCE_FOLDER = "resources/";
     private static final String INDEX_FILE = "index.json";
     private Context context;
 
@@ -51,9 +52,9 @@ public class NetworkHelper {
 
     public Contact[] loadCallDirectoryContacts(boolean useCached) throws IOException, JSONException {
         List<Contact> contacts = new LinkedList<>();
-        JSONObject index = new JSONObject(downloadFileAsStr(URL + INDEX_FILE, useCached));
+        JSONObject index = new JSONObject(downloadFileAsStr(URL + JSON_FOLDER + INDEX_FILE, useCached));
         String dirFile = index.getString("callDir");
-        JSONArray jsonContacts = new JSONArray(downloadFileAsStr(URL + dirFile, useCached));
+        JSONArray jsonContacts = new JSONArray(downloadFileAsStr(URL + JSON_FOLDER + dirFile, useCached));
         for (int i = 0; i < jsonContacts.length(); i++) {
             contacts.add(Contact.fromJSON(jsonContacts.getJSONObject(i)));
         }
@@ -71,19 +72,21 @@ public class NetworkHelper {
     public Device[] loadDevices(boolean useCached) throws IOException, JSONException {
         //Load the devices first
         List<Device> deviceList = new LinkedList<>();
-        JSONObject index = new JSONObject(downloadFileAsStr(URL + INDEX_FILE, useCached));
+        JSONObject index = new JSONObject(downloadFileAsStr(URL + JSON_FOLDER + INDEX_FILE, useCached));
         JSONArray devicesids = index.getJSONArray("deviceids");
         for (int i = 0; i < devicesids.length(); i++) {
             deviceList.add(Device.fromJSON(index.getJSONObject(devicesids.getString(i))));
         }
         //Now load all of the flowcharts for the device/deviceproblems
         for (Device device : deviceList) {
-            device.getEndUserRole().setFlowchart(loadFlowchart(URL, device.getEndUserRole().getJsonFile(), ENTRY_ID, useCached));
-            device.getTechRole().setFlowchart(loadFlowchart(URL, device.getTechRole().getJsonFile(), ENTRY_ID, useCached));
+            device.getEndUserRole().setFlowchart(loadFlowchart(URL + JSON_FOLDER,
+                    device.getEndUserRole().getJsonFile(), ENTRY_ID, useCached));
+            device.getTechRole().setFlowchart(loadFlowchart(URL + JSON_FOLDER,
+                    device.getTechRole().getJsonFile(), ENTRY_ID, useCached));
         }
 
         //Load images
-        Set<String> toLoadURLs = new HashSet<>();
+        Set<String> toLoad = new HashSet<>();
         Set<Flowchart> visited = new HashSet<>();
         Queue<Flowchart> toVisit = new LinkedList<>();
         for (Device device : deviceList) {
@@ -97,7 +100,7 @@ public class NetworkHelper {
             Flowchart flow = toVisit.remove();
             visited.add(flow);
             if (flow.hasImages())
-                toLoadURLs.addAll(Arrays.asList(flow.getImageURLs()));
+                toLoad.addAll(Arrays.asList(flow.getImageURLs()));
 
             // Add unvisited children
             for (int i = 0; i < flow.getNumChildren(); i++) {
@@ -108,7 +111,8 @@ public class NetworkHelper {
             }
         }
 
-        for (String url : toLoadURLs) {
+        for (String path : toLoad) {
+            String url = URL + RESOURCE_FOLDER + path;
             if (!ResourceHandler.get().hasStringResource(url)) {
                 String file;
                 try {
@@ -118,7 +122,7 @@ public class NetworkHelper {
                     //TODO somehow inform user of failed image loading
                     file = null;
                 }
-                ResourceHandler.get().addStringResource(url, file);
+                ResourceHandler.get().addStringResource(path, file);
             }
         }
 
@@ -137,13 +141,11 @@ public class NetworkHelper {
      */
     private Flowchart loadFlowchart(String path, String filename, String entry, boolean useCached) throws JSONException {
         Map<String, JSONObject> elements = deepLoadElements(path, filename, useCached);
-        Map<JSONObject, Flowchart> flowchartsByJSON = new HashMap<>();
         Map<String, Flowchart> flowchartsByID = new HashMap<>();
         //Create maps
         for (String key : elements.keySet()) {
             JSONObject obj = elements.get(key);
             Flowchart chart = Flowchart.fromJSON(obj, key);
-            flowchartsByJSON.put(obj, chart);
             flowchartsByID.put(key, chart);
         }
 
@@ -258,7 +260,7 @@ public class NetworkHelper {
      */
     private Map<String, JSONObject> loadElements(String path, String jsonName, boolean useCached) throws JSONException {
         Map<String, JSONObject> elements = new HashMap<>();
-        String abspath = path + File.separator + jsonName;
+        String abspath = path + jsonName;
         String json = null;
         try {
             json = downloadFileAsStr(abspath, useCached);
