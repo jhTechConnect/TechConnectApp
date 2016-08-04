@@ -1,5 +1,5 @@
 {
-	"deviceids":["pulseox", "autoclave", "autobpmonitor","bililight","man_bp_monitor","cellcounter"],
+	"deviceids":["pulseox", "autoclave", "autobpmonitor","bililight","man_bp_monitor","cellcounter","suction","jet_nebulizer","ox_conc"],
 	"pulseox": {
 		"name":"Pulse Oximeter",
 		"chart":"pulse_oximeter.json",
