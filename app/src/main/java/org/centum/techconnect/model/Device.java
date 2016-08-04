@@ -1,12 +1,13 @@
 package org.centum.techconnect.model;
 
+import org.centum.techconnect.resources.NetworkHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
  * Created by Phani on 1/22/2016.
- *
+ * <p/>
  * A device represents its roles, and the flowcharts for those roles.
  * Metadata about the device is also stored.
  */
@@ -27,7 +28,7 @@ public class Device {
         JSONArray arr = obj.getJSONArray("resources");
         String res[] = new String[arr.length()];
         for (int i = 0; i < arr.length(); i++) {
-            res[i] = arr.getString(i);
+            res[i] = NetworkHelper.URL + NetworkHelper.RESOURCE_FOLDER + arr.getString(i);
         }
         device.resources = res;
         return device;

@@ -39,9 +39,9 @@ import java.util.logging.Logger;
 public class NetworkHelper {
 
     public static final String ENTRY_ID = "q1";
-    private static final String URL = "https://s3.amazonaws.com/tech-connect/";
-    private static final String JSON_FOLDER = "json/";
-    private static final String RESOURCE_FOLDER = "resources/";
+    public static final String URL = "https://s3.amazonaws.com/tech-connect/";
+    public static final String JSON_FOLDER = "json/";
+    public static final String RESOURCE_FOLDER = "resources/";
     private static final String INDEX_FILE = "index.json";
     private Context context;
 

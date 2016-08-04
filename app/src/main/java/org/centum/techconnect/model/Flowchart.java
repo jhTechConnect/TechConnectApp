@@ -1,5 +1,6 @@
 package org.centum.techconnect.model;
 
+import org.centum.techconnect.resources.NetworkHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,7 +41,7 @@ public class Flowchart {
             JSONArray attachments = object.getJSONArray("attachment");
             attachmentsStr = new String[attachments.length()];
             for (int i = 0; i < attachments.length(); i++) {
-                attachmentsStr[i] = attachments.getString(i);
+                attachmentsStr[i] = NetworkHelper.URL + NetworkHelper.RESOURCE_FOLDER + attachments.getString(i);
             }
         }
         String imageURLs[] = new String[0];
