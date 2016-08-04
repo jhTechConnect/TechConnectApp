@@ -125,6 +125,7 @@ public class NetworkHelper {
                 } catch (IOException e) {
                     //Image can't be loaded, eh ignore it for now.
                     //TODO somehow inform user of failed image loading
+                    e.printStackTrace();
                     file = null;
                 }
                 ResourceHandler.get().addStringResource(path, file);
@@ -320,7 +321,7 @@ public class NetworkHelper {
      */
     private String downloadFile(String fileUrl) throws IOException {
         String fileName = "i" + (int) Math.round(Integer.MAX_VALUE * Math.random());
-        HttpURLConnection connection = (HttpURLConnection) new URL(fileUrl).openConnection();
+        HttpURLConnection connection = (HttpURLConnection) new URL(fileUrl.replace(" ", "%20")).openConnection();
 
         FileOutputStream fileOutputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
         InputStream inputStream = connection.getInputStream();
