@@ -113,7 +113,7 @@ public class NetworkHelper {
 
         for (String path : toLoad) {
             String url = URL + RESOURCE_FOLDER + path;
-            if (!ResourceHandler.get().hasStringResource(url)) {
+            if (!ResourceHandler.get().hasStringResource(path)) {
                 String file;
                 try {
                     file = downloadImage(url);
