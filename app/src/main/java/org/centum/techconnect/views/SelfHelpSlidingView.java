@@ -88,6 +88,7 @@ public class SelfHelpSlidingView extends RelativeLayout implements View.OnClickL
             resourcesButton.setOnClickListener(null);
         } else {
             resourcesButton.setOnClickListener(this);
+            resourcesButton.setVisibility(session.getDevice().getResources().length > 0 ? VISIBLE : GONE);
             if (session.getDevice().getImageURL() == null) {
                 Picasso.with(getContext())
                         .load(R.drawable.ic_devices_black)
