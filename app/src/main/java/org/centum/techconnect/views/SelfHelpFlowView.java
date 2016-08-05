@@ -46,6 +46,8 @@ public class SelfHelpFlowView extends ScrollView implements View.OnClickListener
     Button backButton;
     @Bind(R.id.imageViewLinearLayout)
     LinearLayout imageLinearLayout;
+    @Bind(R.id.img_preview_hint)
+    TextView imgPreviewHintTextView;
 
     private Session session;
     private SessionCompleteListener listener;
@@ -162,9 +164,10 @@ public class SelfHelpFlowView extends ScrollView implements View.OnClickListener
                     });
                 }
             }
-
+            imgPreviewHintTextView.setVisibility(VISIBLE);
         } else {
             imageLinearLayout.setVisibility(GONE);
+            imgPreviewHintTextView.setVisibility(INVISIBLE);
         }
     }
 
