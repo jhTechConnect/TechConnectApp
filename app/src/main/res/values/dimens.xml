@@ -6,4 +6,6 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <!-- Width of image preview in the flowchart view -->
+    <dimen name="flow_view_img_preview_width_dp">150dp</dimen>
 </resources>
