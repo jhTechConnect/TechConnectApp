@@ -60,7 +60,11 @@ public class MainActivity extends AppCompatActivity
         if (savedInstanceState == null) {
             loadResources(FRAGMENT_SELF_HELP);
         } else {
-            loadResources(savedInstanceState.getInt("frag", FRAGMENT_SELF_HELP));
+            int frag = savedInstanceState.getInt("frag", FRAGMENT_SELF_HELP);
+            if (frag < 0) {
+                frag = FRAGMENT_SELF_HELP;
+            }
+            loadResources(frag);
         }
     }
 

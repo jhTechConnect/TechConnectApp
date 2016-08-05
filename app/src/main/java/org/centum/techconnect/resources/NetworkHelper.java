@@ -2,6 +2,7 @@ package org.centum.techconnect.resources;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import org.centum.techconnect.model.Contact;
 import org.centum.techconnect.model.Device;
@@ -125,7 +126,7 @@ public class NetworkHelper {
                 } catch (IOException e) {
                     //Image can't be loaded, eh ignore it for now.
                     //TODO somehow inform user of failed image loading
-                    e.printStackTrace();
+                    Log.e(NetworkHelper.class.getName(), "Failed to load: " + url);
                     file = null;
                 }
                 ResourceHandler.get().addStringResource(path, file);
