@@ -1,0 +1,188 @@
+[
+  {
+    "id": "q1",
+    "question": "Does the microscope power on when plugged in?",
+    "details": "When plugged in, the microscope should power on completely.",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "363855082",
+      "77484142"
+    ]
+  },
+  {
+    "id": "77484142",
+    "question": "Troubleshoot power supply",
+    "details": "If no power reaches the machine, there may be problems with the switch, fuse, power supply components, or wiring. See flowchart on Power Supply and BTA skills on Power Supply.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "363855082",
+    "question": "Does the light source turn on and stay on?",
+    "details": "The light source should remain constant across the stage when on.",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "422640438",
+      "54723600"
+    ]
+  },
+  {
+    "id": "54723600",
+    "question": "Does the light turn on and flicker?",
+    "details": "If the light turns on but does not remain constant, there may be a minor problem that can be fixed without replacing the bulb completely.",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "30933599",
+      "724270739"
+    ]
+  },
+  {
+    "id": "724270739",
+    "question": "Is the resistance at each end of the filament 0 ohms?",
+    "details": "This checks if the filament in the bulb is functioning.",
+    "options": [
+      "Yes",
+      "No",
+      "No"
+    ],
+    "next_question": [
+      "773987610",
+      "407264526",
+      "407264526"
+    ]
+  },
+  {
+    "id": "407264526",
+    "question": "Replace bulb with same type of bulb",
+    "details": "If the light source still does not turn on, replace the bulb with another of the same type. If the same type of bulb is not available, a new source can be wired in. See BTA skills on Replacement of Light Bulbs and Light Fixtures.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "30933599",
+    "question": "Ensure contact is clean and secure any loose connection",
+    "details": "The inside of the lamp house or the connections may be dirty. The connections should also be secured firmly. See BTA skills for Connections.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "773987610",
+    "question": "Check internal circuitry, dimmer, knob, or diaphram, if applicable",
+    "details": "Ensure that the circuitry that connects to the light source is intact. In addition, ensure the dimmer knob is turned on and that the diaphragm is open.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "422640438",
+    "question": "Set the Kohler illumination and focus the microscope at the lowest objective",
+    "details": "Begin this portion of the diagnostic process at the lowest objective.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "434525856"
+    ]
+  },
+  {
+    "id": "434525856",
+    "question": "Can a specimen be viewed clearly?",
+    "details": "If the specimen is out of focus or cannot be viewed at all, the objectives may need attention.",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "471772382",
+      "242477905"
+    ]
+  },
+  {
+    "id": "242477905",
+    "question": "Clean dirty objective using a soft brush, a lint-free cloth, and lens cleaner",
+    "details": "Objectives can be unscrewed or removed for cleaning. Unscrew eyepiece to use as a magnifying glass if one is not available to inspect objective for scratches, nicks, cracks, deterioration of seal around lens or oil seepage into lens. Blow off any dust with canned air before cleaning. Start cleaning objective lens from center and spiral out with cotton swab or cloth. If lens cleaner is not available, ethyl ether, xylene, petrol can be used. Alcohol, acetones or any other ketones should not be used, as they may dissolve sealants.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "434525856"
+    ]
+  },
+  {
+    "id": "734521865",
+    "question": "Ensure the microscope is covered to avoid ust settling on it",
+    "details": "When covering the microscope, put a small amount of uncooked rice to prevent fungal growth. Replace uncooked rice weekly.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "482310914"
+    ]
+  },
+  {
+    "id": "471772382",
+    "question": "Do the mechanical adjustment knobs turn easily?",
+    "details": "The knobs and stage should be able to move freely and also maintain a steady position. The screws holding each in place may need some adjustment.",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "734521865",
+      "482034933"
+    ]
+  },
+  {
+    "id": "482310914",
+    "question": "Microscope is working properly",
+    "details": "",
+    "options": [
+      "Done"
+    ],
+    "next_question": [
+      null
+    ]
+  },
+  {
+    "id": "482034933",
+    "question": "Ensure the correct amount of lubricant has been used",
+    "details": "Clean off excess lubricant (especially if it has dried and is clumping) using a soft cloth dampened with alcohol. Do not use solvents that leave residue or lint on the surface. Dust, clean (with solvent listed above), polish (with metal polish, if available) and lubricate adjustments if they are stuck or difficult to turn.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "471772382"
+    ]
+  },
+  {
+    "id": "20464603",
+    "question": "Done",
+    "details": "",
+    "options": [],
+    "next_question": []
+  }
+]

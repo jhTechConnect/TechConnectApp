@@ -1,0 +1,444 @@
+[
+  {
+    "id": "q1",
+    "question": "Does it turn on?",
+    "details": "",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "758623161",
+      "500402377"
+    ]
+  },
+  {
+    "id": "500402377",
+    "question": "Troubleshoot Power Supply",
+    "details": "See flowchart on Power Supply and BTA skils on Power Supply",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "758623161",
+    "question": "Does the screen turn on?",
+    "details": "",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "756895257",
+      "864449066"
+    ]
+  },
+  {
+    "id": "756895257",
+    "question": "Does the speaker work?",
+    "details": "",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "120137472",
+      "786743605"
+    ]
+  },
+  {
+    "id": "864449066",
+    "question": "Check circuit components",
+    "details": "Troubleshoot the electrical components. See BTA skills on Electrical Simple",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "786743605",
+    "question": "Check speaker/circuit components",
+    "details": "See BTA skills on Electrical Simple",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "120137472",
+    "question": "Is it measuring a signal?",
+    "details": "Is the monitor/Doppler producing HR sound?",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "133564927",
+      "995554986"
+    ]
+  },
+  {
+    "id": "995554986",
+    "question": "Check if probe is connected",
+    "details": "Check if the probe is connected to the fetal doppler/monitor",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "43547290"
+    ]
+  },
+  {
+    "id": "43547290",
+    "question": "Connect the probe",
+    "details": "See BTA skills on Cleaning",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "58898811"
+    ]
+  },
+  {
+    "id": "367372266",
+    "question": "Is the belt connected?",
+    "details": "Is the belt connected to the fetal monitor?",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "542867304",
+      "930408995"
+    ]
+  },
+  {
+    "id": "58898811",
+    "question": "Check if the probe is clean",
+    "details": "See BTA skills on Cleaning",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "292769202"
+    ]
+  },
+  {
+    "id": "292769202",
+    "question": "Check internal circuitry",
+    "details": "See BTA skills on Electrical Simple",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "290245014"
+    ]
+  },
+  {
+    "id": "49423549",
+    "question": "Check or replace circuitry",
+    "details": "Replace the contraction belt or troubleshoot the circuit - See troubelshooting guide",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "542867304",
+    "question": "Does the tachometer record force?",
+    "details": "Does the tachometer record force numbers?",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "258885387",
+      "49423549"
+    ]
+  },
+  {
+    "id": "133564927",
+    "question": "Is the heart rate in a normal range?",
+    "details": "",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "684668482",
+      "636409702"
+    ]
+  },
+  {
+    "id": "100014944",
+    "question": "Check the circuitry",
+    "details": "See BTA skills on Electrical Simple",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "290245014",
+    "question": "Check if you need more gel",
+    "details": "Apply ultrasound gel to the probe",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "343197107",
+    "question": "Check internal circuitry",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "684668482",
+    "question": "Does the printer print?",
+    "details": "Is there marking on the paper?",
+    "options": [
+      "Yes",
+      null
+    ],
+    "next_question": [
+      "951174104",
+      "716066152"
+    ]
+  },
+  {
+    "id": "258885387",
+    "question": "The fetal doppler device is working",
+    "details": "",
+    "options": [
+      "Done"
+    ],
+    "next_question": [
+      null
+    ]
+  },
+  {
+    "id": "636409702",
+    "question": "Check circuitry and check gel",
+    "details": "Troubleshoot the electrical components and apply ultrasound gel to the probe as necessary. See BTA skills on Electrical Simple",
+    "options": [
+      null
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "930408995",
+    "question": "Connect the belt",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "189599348",
+    "question": "Check paper",
+    "details": "Check to see whether paper is full",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "716066152",
+    "question": "Is the correct paper loaded?",
+    "details": "Do you have the proper thermal paper?",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "790301781",
+      "189599348"
+    ]
+  },
+  {
+    "id": "19993830",
+    "question": "Done",
+    "details": "",
+    "options": [],
+    "next_question": []
+  },
+  {
+    "id": "813766258",
+    "question": "Close the printer door",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "790301781",
+    "question": "Is it callibrated?",
+    "details": "Is the proper Heart Rate, timing, and contraction output? Is the proper calibration signal upon start?",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "524285297",
+      "813766258"
+    ]
+  },
+  {
+    "id": "524285297",
+    "question": "Does the needle work?",
+    "details": "",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "153707256",
+      "553144537"
+    ]
+  },
+  {
+    "id": "153707256",
+    "question": "Does the motor run?",
+    "details": "",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "32047690",
+      "360224126"
+    ]
+  },
+  {
+    "id": "553144537",
+    "question": "Clean or replace needle",
+    "details": "See BTA skills on Mechanical",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "32047690",
+    "question": "Does the roller work?",
+    "details": "Does the roller move the paper at the correct rate without slipping? Are there cracks or damage to the roller? Is the roller hard and showing signs of age?",
+    "options": [
+      "No"
+    ],
+    "next_question": [
+      "494663233"
+    ]
+  },
+  {
+    "id": "360224126",
+    "question": "Check motor",
+    "details": "",
+    "options": [],
+    "next_question": []
+  },
+  {
+    "id": "951174104",
+    "question": "Is the machine reading the contractions?",
+    "details": "Does the machine show numbers for the uterine contractions?",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "481942164",
+      "299166076"
+    ]
+  },
+  {
+    "id": "494663233",
+    "question": "Fix or replace roller",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "508872694",
+    "question": "Fasten belt",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "299166076",
+    "question": "Is the belt fastened?",
+    "details": "",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "q1",
+      "508872694"
+    ]
+  },
+  {
+    "id": "153208146",
+    "question": "Does the machine give the appropriate metrics?",
+    "details": "Does the machine output sensible numbers for contraction force and frequency?",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "367372266",
+      "100014944"
+    ]
+  },
+  {
+    "id": "481942164",
+    "question": "Does the signal make sense?",
+    "details": "Does the uterine contraction signal correlate with the contractions the mother is having?",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "153208146",
+      "343197107"
+    ]
+  }
+]

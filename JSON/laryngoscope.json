@@ -1,0 +1,184 @@
+[
+  {
+    "id": "q1",
+    "question": "Is the laryngoscope free of any external damage/defects?",
+    "details": "Inspect laryngoscope for external cracks, damage, or dirt.",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "453607073",
+      "212807738"
+    ]
+  },
+  {
+    "id": "212807738",
+    "question": "Rinse blade under tap water and disinfect/sterilize",
+    "details": "Clean and dry the blade.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "647610284"
+    ]
+  },
+  {
+    "id": "647610284",
+    "question": "Clean any build-up of material on contact strips",
+    "details": "Examine the contact strips (blade-handle interface) of laryngoscope for dirt.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "34068958"
+    ]
+  },
+  {
+    "id": "34068958",
+    "question": "Remove any peeling chrome (from blade) with a scalpel blade and rub over the edge with sandpaper",
+    "details": "Examine the blade for any peeling chrome and remove peels with care. Ensure that there is no damage to the blade during the removal process.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "453607073",
+    "question": "Does the light bulb power on with battery?",
+    "details": "Power on the device with battery. Examine whether light bulb gives sufficient illumination.",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "572494305",
+      "498694409"
+    ]
+  },
+  {
+    "id": "498694409",
+    "question": "Recharge battery if applicable or replace it",
+    "details": "Refer BTA skill set on Batteries to identify and replace damaged batteries.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "447857646"
+    ]
+  },
+  {
+    "id": "447857646",
+    "question": "Replace bulb if necessary",
+    "details": "Refer BTA skill set on Lighting/Indicators to replace non-functional light bulbs.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "924447770"
+    ]
+  },
+  {
+    "id": "924447770",
+    "question": "Inspect wires and connections from battery to bulb using multimeter. ",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "516023368"
+    ]
+  },
+  {
+    "id": "516023368",
+    "question": "Does the device use a fiber optic cable and still the light bulb doesn\u0027t power on with battery?",
+    "details": "There are two types of laryngoscopes:\n• Conventional laryngoscope\n• Fiber optic laryngoscope\nIf the bulb still doesn’t power on then there might be cracks in the fiber optic strands. So the unit might have to be replaced.",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "677964375",
+      "453607073"
+    ]
+  },
+  {
+    "id": "677964375",
+    "question": "Inspect for cracks in fiber optic strands and replace the unit if necessary",
+    "details": "If the illumination is not sufficient then inspect for cracks in fiber optic strands.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "445318094"
+    ]
+  },
+  {
+    "id": "445318094",
+    "question": "Laryngoscope is working properly.",
+    "details": "Perform preventive maintenance before returning the device to clinical personnel.",
+    "options": [
+      "Done"
+    ],
+    "next_question": [
+      null
+    ]
+  },
+  {
+    "id": "850437808",
+    "question": "Is the blade and handle connected properly?",
+    "details": "Improper connection between blade and handle may result in faulty operation of the device.",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "445318094",
+      "193608657"
+    ]
+  },
+  {
+    "id": "572494305",
+    "question": "Is the lens free from cracks/defects?",
+    "details": "Any defect in the lens obstructs vision of larynx and vocal cords.",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "850437808",
+      "731262471"
+    ]
+  },
+  {
+    "id": "193608657",
+    "question": "Refer device manual to assemble the parts",
+    "details": "Follow instructions in the device manual to assemble the parts.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "850437808"
+    ]
+  },
+  {
+    "id": "731262471",
+    "question": "Replace lens if necessary",
+    "details": "Identify and replace with a suitable lens.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "572494305"
+    ]
+  },
+  {
+    "id": "388787054",
+    "question": "Done",
+    "details": "",
+    "options": [],
+    "next_question": []
+  }
+]

@@ -1,8 +1,286 @@
 [
   {
-    "id": "8690534",
-    "question": "BP cuff is working properly.",
+    "id": "q1",
+    "question": "Does the cuff have a mercury manometer?",
+    "details": "There are two types of manual blood pressure cuffs, one with a mercury manometer and an aneroid sphygmomenometer with just a small pressure dial",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "689308512",
+      "928974656"
+    ]
+  },
+  {
+    "id": "689308512",
+    "question": "Is mercury leaking from the apparatus?",
+    "details": "If there is any mercury escaping the reservoir, proceed with extreme caution and follow mercury-handling protocols. See BTA skills for Leakage and Blockages",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "243751070",
+      "285741999"
+    ]
+  },
+  {
+    "id": "243751070",
+    "question": "Dissemble apparatus, and check gaskets, filters, and tubing for leaks. Replace as needed.",
+    "details": "Assess each part for any leaks and cracks. Replace or repair faulty parts as necessary. See BTA skills on Plumbing and Mechanical",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "689308512"
+    ]
+  },
+  {
+    "id": "285741999",
+    "question": "Is any black powder present?",
+    "details": "The black powder is oxidized mercury and needs to be removed",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "474547664",
+      "551888069"
+    ]
+  },
+  {
+    "id": "551888069",
+    "question": "Is the mercury level at zero when no pressure is in the cuff?",
+    "details": "Meter should be at zero when no pressure is applied",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "596521878",
+      "625692190"
+    ]
+  },
+  {
+    "id": "474547664",
+    "question": "Dissemble and clean specific parts accordingly.",
+    "details": "If oxide if in rise tube and mercury tank:\n-Using a stuff wire, push a small piece of cotton or gauze throught the ride tube several times\n-Gently tap mercury tank (with opening facing downwards) onto tray to make sure all mercury has been removed\n-Wash tube and tank in a detergent and water solution\n-Dry thoroughly",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "285741999"
+    ]
+  },
+  {
+    "id": "596521878",
+    "question": "Add/remove merury to column as needed.",
+    "details": "Follow mercury- handling protocol. Any added mercury can be taken from another existing meter that doesn\u0027t work corectly or isn\u0027t in use",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "551888069"
+    ]
+  },
+  {
+    "id": "625692190",
+    "question": "Begin pumping air into meter. Ensure that the mercury column lever is open.",
+    "details": "If possible, disassemble tubing, and attach the bulb and its tubing to the meter so that the cuff is not involved in meter testing. Be sure that the mercury column lever is open, or else no mercury will come up the rise tube",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "432966505"
+    ]
+  },
+  {
+    "id": "928974656",
+    "question": "Before applying pressure in the cuff, is the needle at zero?",
+    "details": "Needle in the dial should be at zero when no pressure is applied",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "670242977",
+      "880897468"
+    ]
+  },
+  {
+    "id": "657972969",
+    "question": "Done",
     "details": "",
+    "options": [],
+    "next_question": []
+  },
+  {
+    "id": "670242977",
+    "question": "Can air be pumped into the cuff?",
+    "details": "Try putting cuff around your arm or a bottle before pumping air. Is there any difficulty in pushing air into the cuff? Does it deflate immediately?",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "766057256",
+      "309929807"
+    ]
+  },
+  {
+    "id": "880897468",
+    "question": "Open meter and manually twist the needle to zero.",
+    "details": "Screw off dial cover and use a screwdriver to loosen or remove needle. Reassemble once needle is back at zero",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "928974656"
+    ]
+  },
+  {
+    "id": "500613252",
+    "question": "Clean filter between the bulb and the cuff connection.",
+    "details": "Remove the valve from the bulb and cuff tubing. Use a screwdriver to scrape out any dirt in valve connection, or see BTA skills on Blockages Reassemble bulb, valve, and cuff tubing.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "544658149"
+    ]
+  },
+  {
+    "id": "309929807",
+    "question": "Check the valve. Ensure that the knob is turned completely clockwise.",
+    "details": "Valve must be turned completely clockwise to inflate the cuff",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "500613252"
+    ]
+  },
+  {
+    "id": "766057256",
+    "question": "Pump air to a particular pressure, and hold for at least 10 seconds.",
+    "details": "Pump air to a pressure of approximately 180 mmHg for a human arm",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "374819658"
+    ]
+  },
+  {
+    "id": "544658149",
+    "question": "Check the bulb. Replace if necessary.",
+    "details": "Is the bulb able to pump air? Are there any holes or leakages in the bulb? Repair with silicon if possible. Bulbs will typically need to be replaced. See BTA skills on Seals and Leaking.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "670242977"
+    ]
+  },
+  {
+    "id": "863008233",
+    "question": "Test for leaks in tubing, cuff, and between connections.",
+    "details": "Use BTA skills for cracks or leaks",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "374819658"
+    ]
+  },
+  {
+    "id": "374819658",
+    "question": "Does the pressure drop significantly?",
+    "details": "If the pressure drops mor than 5 mmHg in 10 seconds, there is probably a leak",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "863008233",
+      "856515392"
+    ]
+  },
+  {
+    "id": "956767953",
+    "question": "Is air being released from the cuff?",
+    "details": "You will hear air being released from the valve, and the cuff should deflate with no difficulty",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "691507758",
+      "850181894"
+    ]
+  },
+  {
+    "id": "856515392",
+    "question": "Release the air from the cuff by opening the valve.",
+    "details": "Turn knob completely counterclockwise",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "956767953"
+    ]
+  },
+  {
+    "id": "850181894",
+    "question": "Check the valve. Ensure that the knob is turned completely counterclockwise.",
+    "details": "Valve must be turned completely clockwise to deflate the cuff",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "696960204"
+    ]
+  },
+  {
+    "id": "696960204",
+    "question": "Clean filter between the bulb and cuff connection.",
+    "details": "Remove the valve from the bulb and cuff tubing. Use a screwdriver to scrape out any dirt in vlave connection, or see BTA skills on Blockages. Reassemble bulb, valve, and cuff tubing.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "956767953"
+    ]
+  },
+  {
+    "id": "691507758",
+    "question": "Test for accuracy and calibrate if necessary.",
+    "details": "Use BTA skills on Calibration to calibrate sphygmometer",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "77379923"
+    ]
+  },
+  {
+    "id": "432966505",
+    "question": "Does the pressure level lower over time?",
+    "details": "The mercury level will fall if there any cracks or leaks",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "742854227",
+      "383909831"
+    ]
+  },
+  {
+    "id": "77379923",
+    "question": "BP cuff is working properly.",
+    "details": "Return appratus to clinical staff",
     "options": [
       "Done"
     ],
@@ -11,362 +289,73 @@
     ]
   },
   {
-    "id": "78790977",
-    "question": "Does the cuff have a mercury manometer?",
-    "details": "",
-    "options": [
-      "No",
-      "Yes"
-    ],
-    "next_question": [
-      "391086555",
-      "781124544"
-    ]
-  },
-  {
-    "id": "256028273",
-    "question": "Clean filter between the bulb and cuff connection.",
-    "details": "",
-    "options": [
-      "Continue"
-    ],
-    "next_question": [
-      "573851791"
-    ]
-  },
-  {
-    "id": "q1",
-    "question": "Manual Blood Pressure Cuff",
-    "details": "",
-    "options": [
-      "Continue"
-    ],
-    "next_question": [
-      "78790977"
-    ]
-  },
-  {
-    "id": "221969015",
-    "question": "Test for accuracy and calibrate if necessary.",
-    "details": "",
-    "options": [
-      "Continue"
-    ],
-    "next_question": [
-      "8690534"
-    ]
-  },
-  {
-    "id": "142762433",
-    "question": "Check the valve. Ensure that the knob is turned completely counterclockwise.",
-    "details": "",
-    "options": [
-      "Continue"
-    ],
-    "next_question": [
-      "256028273"
-    ]
-  },
-  {
-    "id": "584225322",
-    "question": "Is the mercury level at zero when no pressure is in the cuff?",
-    "details": "",
-    "options": [
-      "No",
-      "Yes"
-    ],
-    "next_question": [
-      "640245890",
-      "785992748"
-    ]
-  },
-  {
-    "id": "829226678",
-    "question": "Is any black powder present?",
-    "details": "",
-    "options": [
-      "Yes",
-      "No"
-    ],
-    "next_question": [
-      "726254295",
-      "584225322"
-    ]
-  },
-  {
-    "id": "453505930",
-    "question": "Dissemble apparatus, and check gaskets, filters, and tubing for leaks. Replace as needed.",
-    "details": "",
-    "options": [
-      "Continue"
-    ],
-    "next_question": [
-      "781124544"
-    ]
-  },
-  {
-    "id": "781124544",
-    "question": "Is mercury leaking from the apparatus?",
-    "details": "",
-    "options": [
-      "No",
-      "Yes"
-    ],
-    "next_question": [
-      "829226678",
-      "453505930"
-    ]
-  },
-  {
-    "id": "391086555",
-    "question": "Before applying pressure in the cuff, is the needle at zero?",
-    "details": "",
-    "options": [
-      "No",
-      "Yes"
-    ],
-    "next_question": [
-      "815698500",
-      "989175894"
-    ]
-  },
-  {
-    "id": "640245890",
-    "question": "Begin pumping air into meter. Ensure that the mercury column lever is open.",
-    "details": "",
-    "options": [
-      "Continue"
-    ],
-    "next_question": [
-      "345352436"
-    ]
-  },
-  {
-    "id": "785992748",
-    "question": "Add/remove merury to column as needed.",
-    "details": "",
-    "options": [
-      "Continue"
-    ],
-    "next_question": [
-      "584225322"
-    ]
-  },
-  {
-    "id": "726254295",
-    "question": "Dissemble and clean specific parts accordingly.",
-    "details": "",
-    "options": [
-      "Continue"
-    ],
-    "next_question": [
-      "829226678"
-    ]
-  },
-  {
-    "id": "319292177",
-    "question": "Do bubbles appear in mercury column?",
-    "details": "",
-    "options": [
-      "No",
-      "Yes"
-    ],
-    "next_question": [
-      "98509111",
-      "498494795"
-    ]
-  },
-  {
-    "id": "498494795",
-    "question": "Add mercury to column as needed.",
-    "details": "",
-    "options": [
-      "Continue"
-    ],
-    "next_question": [
-      "319292177"
-    ]
-  },
-  {
-    "id": "601762483",
+    "id": "383909831",
     "question": "Does the pressure level rise over time?",
-    "details": "",
+    "details": "Leather seal and washer may be cracked/broken",
     "options": [
       "Yes",
       "No"
     ],
     "next_question": [
-      "532741689",
-      "319292177"
+      "350742369",
+      "517641907"
     ]
   },
   {
-    "id": "532741689",
-    "question": "Investigate leather seal and washer. Replace as needed.",
-    "details": "",
-    "options": [
-      "Continue"
-    ],
-    "next_question": [
-      "601762483"
-    ]
-  },
-  {
-    "id": "345352436",
-    "question": "Does the pressure level lower over time?",
-    "details": "",
-    "options": [
-      "Yes",
-      "No"
-    ],
-    "next_question": [
-      "25802089",
-      "601762483"
-    ]
-  },
-  {
-    "id": "25802089",
+    "id": "742854227",
     "question": "Check for any leaks in meter or between connections.",
-    "details": "",
+    "details": "Use BTA skills on Leaking and Scales to assess for cracks and leaks",
     "options": [
       "Continue"
     ],
     "next_question": [
-      "345352436"
+      "432966505"
     ]
   },
   {
-    "id": "989175894",
-    "question": "Can air be pumped into the cuff?",
-    "details": "",
+    "id": "517641907",
+    "question": "Do bubbles appear in mercury column?",
+    "details": "Small air pockets will form if not enough mercury is in the tank",
     "options": [
       "Yes",
       "No"
     ],
     "next_question": [
-      "624485648",
-      "252615665"
+      "202476816",
+      "766808266"
     ]
   },
   {
-    "id": "98509111",
+    "id": "350742369",
+    "question": "Investigate leather seal and washer. Replace as needed.",
+    "details": "Use BTA skills to assess for cracks or leaks. Leather seal and washer will usually need to be replaced. See BTA skills on Leaking, Seals, and Connections",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "383909831"
+    ]
+  },
+  {
+    "id": "766808266",
     "question": "Reattach cuff to mercury meter.",
-    "details": "",
+    "details": "Reassemble cuff to meter if the apparatus was dissembled",
     "options": [
       "Continue"
     ],
     "next_question": [
-      "989175894"
+      "670242977"
     ]
   },
   {
-    "id": "252615665",
-    "question": "Check the valve. Ensure that the knob is turned completely clockwise.",
-    "details": "",
+    "id": "202476816",
+    "question": "Add mercury to column as needed.",
+    "details": "Follow mercury-handling protocol. Any added mercury can be taken from another existing meter that doesn\u0027t work correctly or isn\u0027t in use",
     "options": [
       "Continue"
     ],
     "next_question": [
-      "683900658"
-    ]
-  },
-  {
-    "id": "815698500",
-    "question": "Open meter and manually twist the needle to zero.",
-    "details": "",
-    "options": [
-      "Continue"
-    ],
-    "next_question": [
-      "391086555"
-    ]
-  },
-  {
-    "id": "167601633",
-    "question": "",
-    "details": "",
-    "options": [],
-    "next_question": []
-  },
-  {
-    "id": "674208912",
-    "question": "Test for leaks in tubing, cuff, and between connections.",
-    "details": "",
-    "options": [
-      "Continue"
-    ],
-    "next_question": [
-      "531798880"
-    ]
-  },
-  {
-    "id": "613520888",
-    "question": "Release the air from the cuff by opening the valve.",
-    "details": "",
-    "options": [
-      "Continue"
-    ],
-    "next_question": [
-      "573851791"
-    ]
-  },
-  {
-    "id": "573851791",
-    "question": "Is air being released from the cuff?",
-    "details": "",
-    "options": [
-      "Yes",
-      "No"
-    ],
-    "next_question": [
-      "221969015",
-      "142762433"
-    ]
-  },
-  {
-    "id": "683900658",
-    "question": "Clean filter between the bulb and the cuff connection.",
-    "details": "",
-    "options": [
-      "Continue"
-    ],
-    "next_question": [
-      "931852833"
-    ]
-  },
-  {
-    "id": "931852833",
-    "question": "Check the bulb. Replace if necessary.",
-    "details": "",
-    "options": [
-      "Continue"
-    ],
-    "next_question": [
-      "989175894"
-    ]
-  },
-  {
-    "id": "624485648",
-    "question": "Pump air to a particular pressure, and hold for at least 10 seconds.",
-    "details": "",
-    "options": [
-      "Continue"
-    ],
-    "next_question": [
-      "531798880"
-    ]
-  },
-  {
-    "id": "531798880",
-    "question": "Does the pressure drop significantly?",
-    "details": "",
-    "options": [
-      "Yes",
-      "No"
-    ],
-    "next_question": [
-      "674208912",
-      "613520888"
+      "517641907"
     ]
   }
 ]

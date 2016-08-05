@@ -1,0 +1,282 @@
+[
+  {
+    "id": "q1",
+    "question": "Does warmer power on?",
+    "details": "Lights, displays, and sounds are all indications that the device has powered on.",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "851178845",
+      "523125577"
+    ]
+  },
+  {
+    "id": "523125577",
+    "question": "Troubleshoot power supply",
+    "details": "Most infant warmers have AC-DC power supplies.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "199063444"
+    ]
+  },
+  {
+    "id": "199063444",
+    "question": "Change battery if necessary",
+    "details": "",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "851178845",
+    "question": "Does unit heat when swtiched on?",
+    "details": "Does the device produce heat when the warmer is switched on?",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "457094168",
+      "39955031"
+    ]
+  },
+  {
+    "id": "39955031",
+    "question": "Does power reach the heating element?",
+    "details": "If no heat is produced, test if the proper voltage is reaching the heating element.",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "756111544",
+      "306818143"
+    ]
+  },
+  {
+    "id": "306818143",
+    "question": "Repair any open circuits or bad connections",
+    "details": "If power does not reach the heating element, there might be an open circuit, bad connection, or broken wire.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "372378397"
+    ]
+  },
+  {
+    "id": "372378397",
+    "question": "Replace switch, relay, or triac",
+    "details": "A switch, relay, or triac may be used to control current flow to the heating element. Ensure it is working properly.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "756111544",
+    "question": "Is the heating element resistive?",
+    "details": "Infant warmers typically use a resistive element or a bulb to create heat. Check which one is used in this device.",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "563501207",
+      "331143949"
+    ]
+  },
+  {
+    "id": "563501207",
+    "question": "Replace heating element",
+    "details": "If a resistive element is used and the proper voltage is reaching the resistor, the element must be replaced. Resistive elements can generally be replaced with any resistor or combination of resistors with the same resistance and power ratings as the one being replaced.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "331143949",
+    "question": "Replace bulb",
+    "details": "If a bulb is used the proper voltage is reaching the bulb, it must be replaced.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "457094168",
+    "question": "Is the warmer designed to use a temperature probe?",
+    "details": "If the warmer heats, it\u0027s necessary to check the temperature control methods of the device. Is a temperature probe (thermometer) used, either on the skin of the infant or in the air?",
+    "options": [
+      "Yes"
+    ],
+    "next_question": [
+      "620898130"
+    ]
+  },
+  {
+    "id": "93888545",
+    "question": "Replace probe or improvise thermistor",
+    "details": "If the probe is a thermister, it works by providing a resistance that varies in response to the input temperature. A potentiometer or resistor might be able to be used to improvise the resistance at a particular level to convert the infant warmer to manual mode.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "658558644",
+    "question": "Replace or correct probe",
+    "details": "If the device does not maintain a temperature close to the input, the probe must be replaced or corrected.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "812181893",
+    "question": "Is probe thermistor?",
+    "details": "If there is a temperature probe present, it will be either a thermistor or a thermocouple. Attempt to verify which it is.",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "93888545",
+      "181601913"
+    ]
+  },
+  {
+    "id": "171376737",
+    "question": "Done",
+    "details": "",
+    "options": [],
+    "next_question": []
+  },
+  {
+    "id": "620898130",
+    "question": "Is probe present?",
+    "details": "Confirm that the probe is present. Missing or damaged temperature probes are a common problem. Some warmers may have a manual mode to set a fixed heat output if the temperature probe is missing.",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "463982985",
+      "812181893"
+    ]
+  },
+  {
+    "id": "181601913",
+    "question": "Replace probe or improvise thermocouple",
+    "details": "If the probe is a thermocouple, it works by providing a voltage source that varies in response to the input temperature. A battery and voltage divider might be able to be used to improvise the voltage output at a particular level to convert the infant warmer to manual mode.",
+    "options": [
+      "No"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "54615400",
+    "question": "Is temperature \u003e40 degrees C?",
+    "details": "If there is no thermometer, the temperature must be measured at patient level to ensure it stays at the desired level (typically between 34 and 40 degrees C).",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "28697883",
+      "429979817"
+    ]
+  },
+  {
+    "id": "463982985",
+    "question": "Does warmer maintain temperature within 1 degree C?",
+    "details": "If the probe is present, test the temperature output at various temperature levels to ensure the device can maintain the selected temperature within 1 degree C.",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "348794747",
+      "658558644"
+    ]
+  },
+  {
+    "id": "77111154",
+    "question": "Increase temperature",
+    "details": "Increase the temperature if it is below 34 degrees C. This might be accomplished by using control knobs to increase heat output, moving the heating element closer to the patient, and/or reducing ventilation.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "595757479"
+    ]
+  },
+  {
+    "id": "429979817",
+    "question": "Is temperature \u003c34 degrees C?",
+    "details": "If the termperature is below 40 degrees C, confirm that is above the mimimum temperature (34 degrees C).",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "77111154",
+      "348794747"
+    ]
+  },
+  {
+    "id": "595757479",
+    "question": "Is temperature between 34 and 40 degrees C?",
+    "details": "Does the warmer maintain an appropriate temperature (between 34 and 40 degrees C) when operating in manual mode (without a temperature probe)?",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "348794747",
+      "q1"
+    ]
+  },
+  {
+    "id": "28697883",
+    "question": "Decrease temperature",
+    "details": "Decrease the temperatere if it is above 40 degrees C. This might be accomplished by using the control knob to decrease output of the heating element, moving the element farther from the patient, and/or increasing ventilation.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "595757479"
+    ]
+  },
+  {
+    "id": "348794747",
+    "question": "Infant warmer is working properly",
+    "details": "",
+    "options": [
+      "Done"
+    ],
+    "next_question": [
+      null
+    ]
+  }
+]

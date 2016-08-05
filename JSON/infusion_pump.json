@@ -1,0 +1,370 @@
+[
+  {
+    "id": "q1",
+    "question": "Device turns on?",
+    "details": "Displays, lights, and sounds indicate the machine has turned on.",
+    "options": [
+      "Yes",
+      " No"
+    ],
+    "next_question": [
+      "868985180",
+      "429303312"
+    ]
+  },
+  {
+    "id": "429303312",
+    "question": "Troubleshoot power supply",
+    "details": "Syringe pumps generally have an AC-DC power supply.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "108678039"
+    ]
+  },
+  {
+    "id": "108678039",
+    "question": "Replace battery if necessary",
+    "details": "Old batteries are a common problem with syringe pump batteries.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "868985180",
+    "question": "Device runs on battery only (no AC)?",
+    "details": "Check if the machine will run on battery when power is unplugged. This is a safety feature on many syringe pumps.",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "265040098",
+      "429303312"
+    ]
+  },
+  {
+    "id": "265040098",
+    "question": "Pump creates correct flow rate?",
+    "details": "Measure the flow rate using a container of known- volume to collect the fluid and a stopwatch. For small flow rates, it may be necessary to use a precision scale to measure the fluid output. Flow rate is volume divided by time.",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "569995240",
+      "211625061"
+    ]
+  },
+  {
+    "id": "211625061",
+    "question": "Is flow rate zero?",
+    "details": "Check if the machine will generate any output of fluid.",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "63447011",
+      "98323179"
+    ]
+  },
+  {
+    "id": "98323179",
+    "question": "Is flow rate too high?",
+    "details": "Compare the measured flow rate to the amount programmed in the machine.",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "245717602",
+      "693192068"
+    ]
+  },
+  {
+    "id": "693192068",
+    "question": "Confirm clutch is not slipping",
+    "details": "Low flow can be caused by a clutch slipping on the lead screw. Repair if necessary.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "36866653"
+    ]
+  },
+  {
+    "id": "36866653",
+    "question": "Clean and lubricate lead screw as necessary",
+    "details": "See BTA skills on cleaning and lubrication.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "245717602"
+    ]
+  },
+  {
+    "id": "432624703",
+    "question": "Ensure force sensor cables are properly connected and seated",
+    "details": "See BTA skills on electric connections and connectors.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "245717602",
+    "question": "Confirm syringe is loaded properly",
+    "details": "Incorrect flow rate can be caused by improperly loaded syringe.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "270616984"
+    ]
+  },
+  {
+    "id": "270616984",
+    "question": "Confirm cables to and from sensors and motorare seated properly",
+    "details": "See BTA skills on electric connections and connectors.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "173805579"
+    ]
+  },
+  {
+    "id": "372754449",
+    "question": "Done",
+    "details": "",
+    "options": [],
+    "next_question": []
+  },
+  {
+    "id": "179618707",
+    "question": "Is flow rate correct?",
+    "details": "Measure the flow rate using a container of known- volume to collect the fluid and a stopwatch. For small flow rates, it may be necessary to use a precision scale to measure the fluid output.",
+    "options": [
+      "No"
+    ],
+    "next_question": [
+      "434344584"
+    ]
+  },
+  {
+    "id": "173805579",
+    "question": "Replace/calibrate sensors as necessary; syringe position snesor, and syringe size sensor (if applicable)",
+    "details": "Faulty sensors can cause faults in controlling the flow rate.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "179618707"
+    ]
+  },
+  {
+    "id": "538827294",
+    "question": "Consider replacing/disposing",
+    "details": "If the problem lies with the microprocessor, the machine may need to be disposed and replaced.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "434344584",
+    "question": "There may be a fault with microprocessor",
+    "details": "Possible problem with the microprocessor or computing software.",
+    "options": [
+      "Yes",
+      "Continue"
+    ],
+    "next_question": [
+      "q1",
+      "538827294"
+    ]
+  },
+  {
+    "id": "629659363",
+    "question": "Confirm proper menu settings and options are in use",
+    "details": "User error may be a problem if machine is reported for lack of flow.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "92783838"
+    ]
+  },
+  {
+    "id": "63447011",
+    "question": "Confirm syringe is loaded properly",
+    "details": "Incorrect flow rate can be caused by improperly loaded syringe.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "629659363"
+    ]
+  },
+  {
+    "id": "552164711",
+    "question": "Is flow rate zero?",
+    "details": "Check if the machine will generate any output of fluid.",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "907685385",
+      "q1"
+    ]
+  },
+  {
+    "id": "92783838",
+    "question": "Clean and lubricate lead screw as necessary",
+    "details": "See BTA skills on cleaning and lubrication.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "552164711"
+    ]
+  },
+  {
+    "id": "907685385",
+    "question": "Repair or replace stepper motor",
+    "details": "If corrective measures don\u0027t start fluid output, there may be a problem with the motor that drives the syringe.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  },
+  {
+    "id": "312667273",
+    "question": "Does high pressure alarm sound when tube if pinched after syringe?",
+    "details": "If the output tube is occluded, the machine should emit a high pressure alarm.",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "474031706",
+      "802345711"
+    ]
+  },
+  {
+    "id": "569995240",
+    "question": "Flow ceases when syringe pump is off?",
+    "details": "Verify that the flow ends when the pump is turned off or the control panel is used to end the flow.",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "312667273",
+      "901628234"
+    ]
+  },
+  {
+    "id": "802345711",
+    "question": "Is machine always silent?",
+    "details": "Investigate if machine makes noises due to any other inputs or alarms.",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "997055016",
+      "59587297"
+    ]
+  },
+  {
+    "id": "474031706",
+    "question": "IV pump is working properly",
+    "details": "",
+    "options": [
+      "Done"
+    ],
+    "next_question": [
+      null
+    ]
+  },
+  {
+    "id": "937279221",
+    "question": "Correct leaks in tubing",
+    "details": "See BTA skills on plumbing leaks.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "316474803"
+    ]
+  },
+  {
+    "id": "901628234",
+    "question": "Confirm syringe is loaded properly",
+    "details": "An incorrectly loaded syringe could leak fluid when flow is turned off by controls.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "937279221"
+    ]
+  },
+  {
+    "id": "997055016",
+    "question": "Verify machine not in silent mode",
+    "details": "Silent mode may be preventing the alarm. Turn off silent mode and check alarm again.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "490600857"
+    ]
+  },
+  {
+    "id": "316474803",
+    "question": "Confirm syringe plunger will not move freely without motor",
+    "details": "If plunger moves independently of machine controls, check mechanical connections.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "265040098"
+    ]
+  },
+  {
+    "id": "59587297",
+    "question": "Replace/calibrate force sensor on syringe plunger",
+    "details": "High pressure alarm is not sounding. Check the force sensor that measures the force applied to the syringe plunger.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "432624703"
+    ]
+  },
+  {
+    "id": "490600857",
+    "question": "Replace speaker",
+    "details": "Machine is not in silent mode, but it does not make noise. Replace the speaker.",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "q1"
+    ]
+  }
+]

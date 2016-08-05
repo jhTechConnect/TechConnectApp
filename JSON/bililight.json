@@ -1,29 +1,5 @@
 [
   {
-    "id": "792009837",
-    "question": "Does device power on?",
-    "details": "",
-    "options": [
-      "No",
-      "Yes"
-    ],
-    "next_question": [
-      "402099926",
-      "88938850"
-    ]
-  },
-  {
-    "id": "89878760",
-    "question": "Replace bulbs.",
-    "details": "",
-    "options": [
-      "Continue"
-    ],
-    "next_question": [
-      "q1"
-    ]
-  },
-  {
     "id": "q1",
     "question": "Bililight",
     "details": "",
@@ -31,61 +7,39 @@
       "Continue"
     ],
     "next_question": [
-      "792009837"
+      "477325230"
     ]
   },
   {
-    "id": "161657769",
-    "question": "Check for bad switches or knobs",
-    "details": "",
-    "options": [
-      "Continue"
-    ],
-    "next_question": [
-      "274935796"
-    ]
-  },
-  {
-    "id": "55592812",
-    "question": "Revise intensity contorl knob.",
-    "details": "",
-    "options": [
-      "Continue"
-    ],
-    "next_question": [
-      "161657769"
-    ]
-  },
-  {
-    "id": "685012782",
-    "question": "Does power reach the bulb?",
-    "details": "",
-    "options": [
-      "No",
-      "Yes"
-    ],
-    "next_question": [
-      "55592812",
-      "89878760"
-    ]
-  },
-  {
-    "id": "709711281",
-    "question": "Is the light intensity \u003e 4 uW/cm^2/nm?",
-    "details": "",
+    "id": "477325230",
+    "question": "Does device power on?",
+    "details": "Displays, lights, and sounds are all indicators that the device has turned on",
     "options": [
       "Yes",
       "No"
     ],
     "next_question": [
-      "396688797",
-      "925875275"
+      "491154328",
+      "435077098"
     ]
   },
   {
-    "id": "402099926",
+    "id": "491154328",
+    "question": "Do lights come on?",
+    "details": "Do the blue lights illuminate when they are switched on?",
+    "options": [
+      "Yes",
+      "No"
+    ],
+    "next_question": [
+      "647867579",
+      "619381742"
+    ]
+  },
+  {
+    "id": "435077098",
     "question": "Troubleshoot power supply (separate flowchart); Change battery if necessary.",
-    "details": "",
+    "details": "Most bililights have an AC-DC power supply",
     "options": [
       "Done"
     ],
@@ -94,53 +48,33 @@
     ]
   },
   {
-    "id": "88938850",
-    "question": "Do lights come on?",
-    "details": "",
+    "id": "647867579",
+    "question": "Is the light intensity \u003e 4 uW/cm^2/nm?",
+    "details": "Measure the light output at patient-level. 4 uW/cm^2/nm is the minimum output for a bililight, though many hvae outputs higher than this (e.g. 15 uW/cm^2/nm)",
     "options": [
       "Yes",
       "No"
     ],
     "next_question": [
-      "709711281",
-      "685012782"
+      "772999186",
+      "551786406"
     ]
   },
   {
-    "id": "688813275",
-    "question": "Clean interior of the machine.",
-    "details": "",
+    "id": "619381742",
+    "question": "Does power reach the bulb?",
+    "details": "Does the appropriate voltage reach the input for the bulb?",
     "options": [
-      "Continue"
+      "Yes",
+      "No"
     ],
     "next_question": [
-      "88938850"
+      "781855150",
+      "159066674"
     ]
   },
   {
-    "id": "522263546",
-    "question": "Revise intensity control knob.",
-    "details": "",
-    "options": [
-      "Continue"
-    ],
-    "next_question": [
-      "688813275"
-    ]
-  },
-  {
-    "id": "925875275",
-    "question": "Reposition light source.",
-    "details": "",
-    "options": [
-      "Continue"
-    ],
-    "next_question": [
-      "522263546"
-    ]
-  },
-  {
-    "id": "396688797",
+    "id": "772999186",
     "question": "Bililight is working properly.",
     "details": "",
     "options": [
@@ -151,29 +85,95 @@
     ]
   },
   {
-    "id": "274935796",
-    "question": "Check for bad connections and open circuits.",
-    "details": "",
+    "id": "551786406",
+    "question": "Reposition light source.",
+    "details": "If the intensity is too low, the light source may be position too far from the patient",
     "options": [
       "Continue"
     ],
     "next_question": [
-      "787263042"
+      "165828850"
     ]
   },
   {
-    "id": "787263042",
+    "id": "165828850",
+    "question": "Revise intensity control knob.",
+    "details": "The light intensity might be increased by manipulating the intensity control knob",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "688479547"
+    ]
+  },
+  {
+    "id": "688479547",
+    "question": "Clean interior of the machine.",
+    "details": "If the interior of the machine or bulbs are dirty, it might obstruct the light source or cause overheating of the device",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "491154328"
+    ]
+  },
+  {
+    "id": "781855150",
+    "question": "Replace bulbs.",
+    "details": "Is the appropriate voltage reaches the bulbs and they do not illuminate, the bulbs must be replaced",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "477325230"
+    ]
+  },
+  {
+    "id": "661144019",
+    "question": "Check for bad switches or knobs",
+    "details": "Review switches and potentiometers for faults",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "681427221"
+    ]
+  },
+  {
+    "id": "159066674",
+    "question": "Revise intensity control knob.",
+    "details": "Make sure any intensity control knob is turned up to allow the lights to illuminate",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "661144019"
+    ]
+  },
+  {
+    "id": "326062830",
     "question": "Ensure device is not overheating/ Repair/maintain fans and filters if necessary.",
-    "details": "",
+    "details": "Some bililights hvae a safety mechanism that turns the lights off when the device overheats. If this is the case, try allowing the device to cool before attempting to turn the lights on again. If this was the problem, consider ways to improve ventilation",
     "options": [
       "Continue"
     ],
     "next_question": [
-      "q1"
+      "477325230"
     ]
   },
   {
-    "id": "955366812",
+    "id": "681427221",
+    "question": "Check for bad connections and open circuits.",
+    "details": "Open circuits, bad connections, and bad wires can prevent the lights from illuminating",
+    "options": [
+      "Continue"
+    ],
+    "next_question": [
+      "326062830"
+    ]
+  },
+  {
+    "id": "583577017",
     "question": "",
     "details": "",
     "options": [],

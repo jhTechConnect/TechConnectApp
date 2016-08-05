@@ -88,7 +88,7 @@
       "Next"
     ],
     "next_question": [
-      "912051534"
+      "ps_overall.json"
     ]
   },
   {
@@ -134,7 +134,7 @@
       "Next"
     ],
     "next_question": [
-      "276623526"
+      "ps_overall.json"
     ]
   },
   {
@@ -508,7 +508,7 @@
   },
   {
     "id": "601573737",
-    "question": "Are temperatur and pressure maintained for the right amount of time?",
+    "question": "Are temperature and pressure maintained for the right amount of time?",
     "details": "INSERT CHART HERE!",
     "options": [
       "No",
