@@ -144,8 +144,7 @@ public class SelfHelpFlowView extends ScrollView implements View.OnClickListener
                     final File file = getContext().getFileStreamPath(ResourceHandler.get().getStringResource(url));
                     ImageView imageView = new ImageView(getContext());
                     imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                    final float scale = getContext().getResources().getDisplayMetrics().density;
-                    int pixels = (int) (100 * scale + 0.5f);
+                    int pixels = (int) (getResources().getDimension(R.dimen.flow_view_img_preview_width_dp));
                     imageView.setMaxWidth(pixels);
                     imageView.setAdjustViewBounds(true);
                     imageLinearLayout.addView(imageView);
