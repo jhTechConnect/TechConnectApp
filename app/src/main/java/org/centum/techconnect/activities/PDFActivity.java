@@ -8,6 +8,7 @@ import android.widget.ImageView;
 
 import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.ScrollBar;
+import com.github.barteksc.pdfviewer.exception.FileNotFoundException;
 import com.github.barteksc.pdfviewer.listener.OnErrorListener;
 
 import org.centum.techconnect.R;
@@ -54,20 +55,23 @@ public class PDFActivity extends AppCompatActivity {
                 onLoadError();
             }
         };
-
-        if (getIntent() != null && getIntent().hasExtra(EXTRA_IS_FILE)) {
-            if (getIntent().getBooleanExtra(EXTRA_IS_FILE, false)) {
-                String file = getIntent().getStringExtra(EXTRA_FILE);
-                pdfView.fromFile(new File(file)).onError(onErrorListener).load();
-            } else {
-                String url = getIntent().getStringExtra(EXTRA_URI);
-                try {
-                    pdfView.fromUri(Uri.parse(new URL(url).toURI().toString())).onError(onErrorListener).load();
-                } catch (URISyntaxException | MalformedURLException e) {
-                    e.printStackTrace();
-                    onLoadError();
+        try {
+            if (getIntent() != null && getIntent().hasExtra(EXTRA_IS_FILE)) {
+                if (getIntent().getBooleanExtra(EXTRA_IS_FILE, false)) {
+                    String file = getIntent().getStringExtra(EXTRA_FILE);
+                    pdfView.fromFile(new File(file)).onError(onErrorListener).load();
+                } else {
+                    String url = getIntent().getStringExtra(EXTRA_URI);
+                    try {
+                        pdfView.fromUri(Uri.parse(new URL(url).toURI().toString())).onError(onErrorListener).load();
+                    } catch (URISyntaxException | MalformedURLException e) {
+                        e.printStackTrace();
+                        onLoadError();
+                    }
                 }
             }
+        } catch (FileNotFoundException ex) {
+            onLoadError();
         }
     }
 
