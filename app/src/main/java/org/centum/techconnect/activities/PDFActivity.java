@@ -8,6 +8,7 @@ import android.widget.ImageView;
 
 import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.ScrollBar;
+import com.github.barteksc.pdfviewer.listener.OnErrorListener;
 
 import org.centum.techconnect.R;
 
@@ -31,12 +32,15 @@ public class PDFActivity extends AppCompatActivity {
     ScrollBar scrollBar;
     @Bind(R.id.close_btn)
     ImageView closeBtn;
+    @Bind(R.id.errorImageView)
+    ImageView errorImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pdf);
         ButterKnife.bind(this);
+
         closeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -44,20 +48,32 @@ public class PDFActivity extends AppCompatActivity {
             }
         });
         pdfView.setScrollBar(scrollBar);
+        OnErrorListener onErrorListener = new OnErrorListener() {
+            @Override
+            public void onError(Throwable t) {
+                onLoadError();
+            }
+        };
+
         if (getIntent() != null && getIntent().hasExtra(EXTRA_IS_FILE)) {
             if (getIntent().getBooleanExtra(EXTRA_IS_FILE, false)) {
                 String file = getIntent().getStringExtra(EXTRA_FILE);
-                pdfView.fromFile(new File(file)).load();
+                pdfView.fromFile(new File(file)).onError(onErrorListener).load();
             } else {
                 String url = getIntent().getStringExtra(EXTRA_URI);
                 try {
-                    pdfView.fromUri(Uri.parse(new URL(url).toURI().toString())).load();
-                } catch (URISyntaxException e) {
+                    pdfView.fromUri(Uri.parse(new URL(url).toURI().toString())).onError(onErrorListener).load();
+                } catch (URISyntaxException | MalformedURLException e) {
                     e.printStackTrace();
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
+                    onLoadError();
                 }
             }
         }
+    }
+
+    private void onLoadError() {
+        pdfView.setVisibility(View.GONE);
+        scrollBar.setVisibility(View.GONE);
+        errorImageView.setVisibility(View.VISIBLE);
     }
 }

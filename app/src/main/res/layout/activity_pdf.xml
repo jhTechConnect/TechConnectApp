@@ -28,4 +28,13 @@
         android:background="?android:selectableItemBackground"
         android:src="@android:drawable/ic_menu_close_clear_cancel" />
 
+    <ImageView
+        android:id="@+id/errorImageView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:src="@android:drawable/stat_sys_warning"
+        android:visibility="gone" />
+
 </RelativeLayout>
