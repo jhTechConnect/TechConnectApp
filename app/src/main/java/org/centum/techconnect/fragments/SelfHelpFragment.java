@@ -118,23 +118,27 @@ public class SelfHelpFragment extends Fragment implements View.OnClickListener {
             currentSession = introView.getSession();
             updateViews();
         } else if (view == slidingView) {
-            new AlertDialog.Builder(getContext())
-                    .setTitle("End Session")
-                    .setMessage("Are you sure you want to end the session?")
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                            terminateSession();
-                        }
-                    })
-                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    }).show();
+            showEndSessionDialog();
         }
+    }
+
+    private void showEndSessionDialog() {
+        new AlertDialog.Builder(getContext())
+                .setTitle("End Session")
+                .setMessage("Are you sure you want to end the session?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                        terminateSession();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                }).show();
     }
 
     private void terminateSession() {
@@ -148,6 +152,15 @@ public class SelfHelpFragment extends Fragment implements View.OnClickListener {
     }
 
     public boolean onBack() {
-        return flowView != null && flowView.goBack();
+        if (slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
+            slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+            return true;
+        } else if (flowView != null && flowView.goBack()) {
+            return true;
+        } else if (currentSession != null) {
+            showEndSessionDialog();
+            return true;
+        }
+        return false;
     }
 }
