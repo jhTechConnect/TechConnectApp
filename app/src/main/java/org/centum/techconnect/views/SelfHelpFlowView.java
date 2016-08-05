@@ -174,7 +174,11 @@ public class SelfHelpFlowView extends ScrollView implements View.OnClickListener
     private void openAttachment(String att) {
         Intent intent = new Intent(getContext(), PDFActivity.class);
         intent.putExtra(PDFActivity.EXTRA_IS_FILE, true);
-        intent.putExtra(PDFActivity.EXTRA_FILE, getContext().getFileStreamPath(ResourceHandler.get().getStringResource(att)).getAbsolutePath());
+        if (ResourceHandler.get().hasStringResource(att)) {
+            intent.putExtra(PDFActivity.EXTRA_FILE, getContext().getFileStreamPath(ResourceHandler.get().getStringResource(att)).getAbsolutePath());
+        } else {
+            intent.putExtra(PDFActivity.EXTRA_FILE, "");
+        }
         getContext().startActivity(intent);
     }
 
