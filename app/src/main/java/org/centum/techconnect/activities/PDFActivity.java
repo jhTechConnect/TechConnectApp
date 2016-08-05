@@ -49,6 +49,7 @@ public class PDFActivity extends AppCompatActivity {
             }
         });
         pdfView.setScrollBar(scrollBar);
+        errorImageView.setVisibility(View.GONE);
         OnErrorListener onErrorListener = new OnErrorListener() {
             @Override
             public void onError(Throwable t) {
