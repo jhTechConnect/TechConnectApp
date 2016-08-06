@@ -7,6 +7,8 @@ import org.centum.techconnect.model.Contact;
 import org.centum.techconnect.model.Device;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -50,6 +52,12 @@ public class ResourceHandler {
     public void setDevices(Device[] devices) {
         Device[] oldDevices = this.devices;
         this.devices = devices;
+        Arrays.sort(devices, new Comparator<Device>() {
+            @Override
+            public int compare(Device device, Device t1) {
+                return device.getName().compareTo(t1.getName());
+            }
+        });
         for (ResourceHandlerListener l : listeners) {
             l.onDevicesChanged(oldDevices, devices);
         }
