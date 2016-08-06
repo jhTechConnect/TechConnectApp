@@ -16,7 +16,9 @@ import android.widget.ListView;
 import org.centum.techconnect.R;
 import org.centum.techconnect.adapters.ContactListAdapter;
 import org.centum.techconnect.model.Contact;
+import org.centum.techconnect.model.Device;
 import org.centum.techconnect.resources.ResourceHandler;
+import org.centum.techconnect.resources.ResourceHandlerListener;
 import org.centum.techconnect.views.ContactListItemView;
 
 import java.util.logging.Level;
@@ -33,13 +35,40 @@ public class CallActivity extends AppCompatActivity implements AdapterView.OnIte
     ListView listView;
 
     private Contact currentlyCalling;
+    private ResourceHandlerListener listener = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_call);
         ButterKnife.bind(this);
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ResourceHandler.get().removeListener(listener);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (listener == null) {
+            listener = new ResourceHandlerListener() {
+                @Override
+                public void onDevicesChanged(Device[] oldDevices, Device[] newDevices) {
+                }
+
+                @Override
+                public void onContactsChanged(Contact[] oldContacts, Contact[] newContacts) {
+                    updateContactList();
+                }
+            };
+        }
+        updateContactList();
+    }
+
+    private void updateContactList() {
         listView.setAdapter(new ContactListAdapter(this, ResourceHandler.get().getContacts()));
         listView.setOnItemClickListener(this);
     }

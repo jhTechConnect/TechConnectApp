@@ -1,6 +1,5 @@
-package org.centum.techconnect;
+package org.centum.techconnect.activities;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,13 +12,19 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 
-import org.centum.techconnect.activities.CallActivity;
-import org.centum.techconnect.activities.IntroTutorial;
+import org.centum.techconnect.R;
 import org.centum.techconnect.fragments.ReportsFragment;
 import org.centum.techconnect.fragments.SelfHelpFragment;
+import org.centum.techconnect.model.Contact;
+import org.centum.techconnect.model.Device;
+import org.centum.techconnect.resources.NetworkHelper;
 import org.centum.techconnect.resources.ResourceHandler;
+import org.json.JSONException;
+
+import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -56,15 +61,15 @@ public class MainActivity extends AppCompatActivity
 
         fragmentTitles = getResources().getStringArray(R.array.fragment_titles);
         navigationView.setNavigationItemSelectedListener(this);
-        if (savedInstanceState == null) {
-            loadResources(FRAGMENT_SELF_HELP);
-        } else {
-            int savedFrag = savedInstanceState.getInt("frag", FRAGMENT_SELF_HELP);
-            if (savedFrag < 0) {
-                savedFrag = FRAGMENT_SELF_HELP;
-            }
-            loadResources(savedFrag);
+        int fragToOpen = FRAGMENT_SELF_HELP;
+        if (savedInstanceState != null) {
+            fragToOpen = savedInstanceState.getInt("frag", FRAGMENT_SELF_HELP);
         }
+        setCurrentFragment(fragToOpen);
+        loadResources();
+
+        // Show tutorial
+        startActivity(new Intent(MainActivity.this, IntroTutorial.class));
     }
 
     @Override
@@ -76,48 +81,34 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * Loads the resources in the background, while the splash is showing.
-     * All missing resources are downloaded only, so subsequent runs should
-     * just use the cached stuff.
-     * <p/>
-     * Splash shown for a min of 2000ms
-     *
-     * @param fragToOpen
+     * Loads the resources in the background
      */
-    private void loadResources(final int fragToOpen) {
-        new AsyncTask<Void, Void, Void>() {
-
-            Dialog dialog;
+    private void loadResources() {
+        new AsyncTask<Void, Void, Object[]>() {
 
             @Override
-            protected void onPreExecute() {
-                dialog = new Dialog(MainActivity.this, android.R.style.Theme_Material_Light_NoActionBar_Fullscreen);
-                dialog.setContentView(R.layout.loading_layout);
-                dialog.setCancelable(false);
-                dialog.show();
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                startActivity(new Intent(MainActivity.this, IntroTutorial.class));
-                dialog.dismiss();
-                setCurrentFragment(fragToOpen);
-            }
-
-            @Override
-            protected Void doInBackground(Void... voids) {
-                long time = System.currentTimeMillis();
-                ResourceHandler.get().loadResources();
-                if ((System.currentTimeMillis() - time) < 2000) {
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+            protected Object[] doInBackground(Void... voids) {
+                Log.d(MainActivity.class.getName(), "Loading resources...");
+                try {
+                    NetworkHelper helper = new NetworkHelper(MainActivity.this);
+                    Device[] devices = helper.loadDevices(true);
+                    Contact[] contacts = helper.loadCallDirectoryContacts(true);
+                    return new Object[]{devices, contacts};
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
                 return null;
             }
 
+            @Override
+            protected void onPostExecute(Object[] objects) {
+                if (objects != null) {
+                    ResourceHandler.get().setDevices((Device[]) objects[0]);
+                    ResourceHandler.get().setContacts((Contact[]) objects[1]);
+                }
+            }
         }.execute();
     }
 
