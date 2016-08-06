@@ -128,6 +128,7 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
+        drawer.closeDrawer(GravityCompat.START);
         setCurrentFragment(newFrag);
         return true;
     }
