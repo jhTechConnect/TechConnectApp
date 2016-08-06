@@ -89,6 +89,8 @@ public class ResourceHandler {
 
     public void clear() {
         resourcePrefs.edit().clear().apply();
+        setDevices(new Device[0]);
+        setContacts(new Contact[0]);
     }
 
     public void addListener(ResourceHandlerListener listener) {

@@ -54,4 +54,6 @@
     <string name="tutorial_title_additional_features">Additional Features</string>
     <string name="tutorial_msg_additional_features">When you tap the expanded menu button at the upper left, you will be able to access other features such as reports and syncing</string>
     <string name="click_im_preview">Click an image preview to zoom in</string>
+    <string name="loading_resources">Loading Resources</string>
+    <string name="error_loading_resources">Error loading resources</string>
 </resources>
