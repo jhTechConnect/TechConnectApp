@@ -32,12 +32,11 @@ public class MainActivity extends AppCompatActivity
 
     private static final int FRAGMENT_SELF_HELP = 0;
     private static final int FRAGMENT_LOGS = 1;
+    private final Fragment[] FRAGMENTS = new Fragment[]{new SelfHelpFragment(), new ReportsFragment()};
     @Bind(R.id.nav_view)
     NavigationView navigationView;
-
-    private Fragment[] fragments = new Fragment[]{new SelfHelpFragment(), new ReportsFragment()};
     private String[] fragmentTitles;
-    private int fragment = -1;
+    private int currentFragment = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,18 +59,20 @@ public class MainActivity extends AppCompatActivity
         if (savedInstanceState == null) {
             loadResources(FRAGMENT_SELF_HELP);
         } else {
-            int frag = savedInstanceState.getInt("frag", FRAGMENT_SELF_HELP);
-            if (frag < 0) {
-                frag = FRAGMENT_SELF_HELP;
+            int savedFrag = savedInstanceState.getInt("frag", FRAGMENT_SELF_HELP);
+            if (savedFrag < 0) {
+                savedFrag = FRAGMENT_SELF_HELP;
             }
-            loadResources(frag);
+            loadResources(savedFrag);
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("frag", fragment);
+        if (currentFragment > -1) {
+            outState.putInt("frag", currentFragment);
+        }
     }
 
     /**
@@ -100,7 +101,7 @@ public class MainActivity extends AppCompatActivity
             protected void onPostExecute(Void aVoid) {
                 startActivity(new Intent(MainActivity.this, IntroTutorial.class));
                 dialog.dismiss();
-                setFragment(fragToOpen);
+                setCurrentFragment(fragToOpen);
             }
 
             @Override
@@ -126,8 +127,8 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if (fragment == FRAGMENT_SELF_HELP) {
-            if (!((SelfHelpFragment) fragments[FRAGMENT_SELF_HELP]).onBack()) {
+        } else if (currentFragment == FRAGMENT_SELF_HELP) {
+            if (!((SelfHelpFragment) FRAGMENTS[FRAGMENT_SELF_HELP]).onBack()) {
                 // Fragment didn't consume back event
                 super.onBackPressed();
             }
@@ -160,16 +161,16 @@ public class MainActivity extends AppCompatActivity
         }
 
         drawer.closeDrawer(GravityCompat.START);
-        setFragment(newFrag);
+        setCurrentFragment(newFrag);
         return true;
     }
 
-    private void setFragment(int frag) {
-        if (this.fragment != frag || this.fragment == -1) {
-            this.fragment = frag;
+    private void setCurrentFragment(int frag) {
+        if (this.currentFragment != frag || this.currentFragment == -1) {
+            this.currentFragment = frag;
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.main_fragment_container, fragments[frag])
+                    .replace(R.id.main_fragment_container, FRAGMENTS[frag])
                     .commit();
             setTitle(fragmentTitles[frag]);
             navigationView.getMenu().getItem(frag).setChecked(true);
