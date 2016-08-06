@@ -27,6 +27,7 @@
     <string name="contact_location">Location</string>
     <string name="back">Back</string>
     <string name="help_documents">Help Documents</string>
+    <string name="devices_available">devices available</string>
 
     <!-- Into Tutorial Strings -->
     <string name="tutorial_title_welcome">Welcome to Tech Connect!</string>
