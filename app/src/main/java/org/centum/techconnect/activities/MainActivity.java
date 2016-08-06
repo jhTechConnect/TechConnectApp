@@ -126,6 +126,10 @@ public class MainActivity extends AppCompatActivity
             loadResources();
             drawer.closeDrawer(GravityCompat.START);
             return true;
+        } else if (id == R.id.nav_view_tut) {
+            startActivity(new Intent(this, IntroTutorial.class));
+            drawer.closeDrawer(GravityCompat.START);
+            return true;
         }
 
         drawer.closeDrawer(GravityCompat.START);
