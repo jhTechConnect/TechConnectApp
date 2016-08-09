@@ -6,7 +6,7 @@ import org.json.JSONObject;
 
 /**
  * Created by Phani on 1/22/2016.
- *
+ * <p/>
  * A device represents its roles, and the flowcharts for those roles.
  * Metadata about the device is also stored.
  */
