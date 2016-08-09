@@ -328,6 +328,7 @@ public class NetworkHelper {
      * @throws IOException
      */
     private String downloadFile(String fileUrl) throws IOException {
+        Log.d(NetworkHelper.class.getName(), "Attempting to download " + fileUrl);
         String fileName = "i" + (int) Math.round(Integer.MAX_VALUE * Math.random());
         HttpURLConnection connection = (HttpURLConnection) new URL(fileUrl.replace(" ", "%20")).openConnection();
 

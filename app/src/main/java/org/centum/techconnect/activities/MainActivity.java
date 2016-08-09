@@ -2,11 +2,14 @@ package org.centum.techconnect.activities;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -16,9 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.listener.single.EmptyPermissionListener;
 
 import org.centum.techconnect.R;
 import org.centum.techconnect.asynctasks.LoadResourcesAsyncTask;
@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final int FRAGMENT_SELF_HELP = 0;
     private static final int FRAGMENT_LOGS = 1;
+    private static final int PERMISSIONS_REQUEST_READ_STORAGE = 1;
     private final Fragment[] FRAGMENTS = new Fragment[]{new SelfHelpFragment(), new ReportsFragment()};
     @Bind(R.id.nav_view)
     NavigationView navigationView;
@@ -51,11 +52,11 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Dexter.initialize(this);
         ResourceHandler.get(this);
         ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        loadingLayout.setVisibility(View.GONE);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -70,18 +71,30 @@ public class MainActivity extends AppCompatActivity
             fragToOpen = savedInstanceState.getInt("frag", FRAGMENT_SELF_HELP);
         }
         setCurrentFragment(fragToOpen);
-        loadResources();
+        if (ensurePermissions()) {
+            loadResources();
+        }
 
         // Show tutorial
         startActivity(new Intent(MainActivity.this, IntroTutorial.class));
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (!Dexter.isRequestOngoing() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            Dexter.checkPermission(new EmptyPermissionListener(), Manifest.permission.READ_EXTERNAL_STORAGE);
+    private boolean ensurePermissions() {
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+            return true;
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    PERMISSIONS_REQUEST_READ_STORAGE);
+        }
+        return false;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        loadResources();
     }
 
     private void loadResources() {

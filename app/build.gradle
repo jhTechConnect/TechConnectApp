@@ -31,5 +31,4 @@ dependencies {
     compile 'com.github.paolorotolo:appintro:4.0.0'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.17'
     compile 'com.github.barteksc:android-pdf-viewer:1.4.0'
-    compile 'com.karumi:dexter:2.2.2'
 }
