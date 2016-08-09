@@ -1,22 +1,27 @@
-package org.centum.techconnect;
+package org.centum.techconnect.activities;
 
-import android.app.Dialog;
+import android.Manifest;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
-import org.centum.techconnect.activities.CallActivity;
-import org.centum.techconnect.activities.IntroTutorial;
+import org.centum.techconnect.R;
+import org.centum.techconnect.asynctasks.LoadResourcesAsyncTask;
 import org.centum.techconnect.fragments.ReportsFragment;
 import org.centum.techconnect.fragments.SelfHelpFragment;
 import org.centum.techconnect.resources.ResourceHandler;
@@ -32,12 +37,15 @@ public class MainActivity extends AppCompatActivity
 
     private static final int FRAGMENT_SELF_HELP = 0;
     private static final int FRAGMENT_LOGS = 1;
+    private static final int PERMISSIONS_REQUEST_READ_STORAGE = 1;
+    private final Fragment[] FRAGMENTS = new Fragment[]{new SelfHelpFragment(), new ReportsFragment()};
     @Bind(R.id.nav_view)
     NavigationView navigationView;
+    @Bind(R.id.loading_banner)
+    RelativeLayout loadingLayout;
 
-    private Fragment[] fragments = new Fragment[]{new SelfHelpFragment(), new ReportsFragment()};
     private String[] fragmentTitles;
-    private int fragment = -1;
+    private int currentFragment = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +56,7 @@ public class MainActivity extends AppCompatActivity
         ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        loadingLayout.setVisibility(View.GONE);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -57,73 +66,66 @@ public class MainActivity extends AppCompatActivity
 
         fragmentTitles = getResources().getStringArray(R.array.fragment_titles);
         navigationView.setNavigationItemSelectedListener(this);
-        if (savedInstanceState == null) {
-            loadResources(FRAGMENT_SELF_HELP);
-        } else {
-            loadResources(savedInstanceState.getInt("frag", FRAGMENT_SELF_HELP));
+        int fragToOpen = FRAGMENT_SELF_HELP;
+        if (savedInstanceState != null) {
+            fragToOpen = savedInstanceState.getInt("frag", FRAGMENT_SELF_HELP);
         }
+        setCurrentFragment(fragToOpen);
+        if (ensurePermissions()) {
+            loadResources();
+        }
+
+        // Show tutorial
+        startActivity(new Intent(MainActivity.this, IntroTutorial.class));
+    }
+
+    private boolean ensurePermissions() {
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    PERMISSIONS_REQUEST_READ_STORAGE);
+        }
+        return false;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        loadResources();
+    }
+
+    private void loadResources() {
+        loadingLayout.setVisibility(View.VISIBLE);
+        new LoadResourcesAsyncTask(this, new LoadResourcesAsyncTask.ExecutionCompleteListener() {
+            @Override
+            public void onFinished(boolean error) {
+                loadingLayout.setVisibility(View.GONE);
+                if (error) {
+                    //TODO replace with snackbar
+                    Toast.makeText(MainActivity.this, R.string.error_loading_resources, Toast.LENGTH_LONG).show();
+                }
+            }
+        }).execute();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("frag", fragment);
+        if (currentFragment > -1) {
+            outState.putInt("frag", currentFragment);
+        }
     }
-
-    /**
-     * Loads the resources in the background, while the splash is showing.
-     * All missing resources are downloaded only, so subsequent runs should
-     * just use the cached stuff.
-     * <p/>
-     * Splash shown for a min of 2000ms
-     *
-     * @param fragToOpen
-     */
-    private void loadResources(final int fragToOpen) {
-        new AsyncTask<Void, Void, Void>() {
-
-            Dialog dialog;
-
-            @Override
-            protected void onPreExecute() {
-                dialog = new Dialog(MainActivity.this, android.R.style.Theme_Material_Light_NoActionBar_Fullscreen);
-                dialog.setContentView(R.layout.loading_layout);
-                dialog.setCancelable(false);
-                dialog.show();
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                startActivity(new Intent(MainActivity.this, IntroTutorial.class));
-                dialog.dismiss();
-                setFragment(fragToOpen);
-            }
-
-            @Override
-            protected Void doInBackground(Void... voids) {
-                long time = System.currentTimeMillis();
-                ResourceHandler.get().loadResources();
-                if ((System.currentTimeMillis() - time) < 2000) {
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                return null;
-            }
-
-        }.execute();
-    }
-
 
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if (fragment == FRAGMENT_SELF_HELP) {
-            if (!((SelfHelpFragment) fragments[FRAGMENT_SELF_HELP]).onBack()) {
+        } else if (currentFragment == FRAGMENT_SELF_HELP) {
+            if (!((SelfHelpFragment) FRAGMENTS[FRAGMENT_SELF_HELP]).onBack()) {
                 // Fragment didn't consume back event
                 super.onBackPressed();
             }
@@ -148,24 +150,26 @@ public class MainActivity extends AppCompatActivity
             return true;
         } else if (id == R.id.nav_refresh) {
             ResourceHandler.get().clear();
-            new AlertDialog.Builder(this).setTitle("Sync")
-                    .setMessage("Resources will be synced on next app start")
-                    .setPositiveButton(android.R.string.ok, null)
-                    .show();
+            loadResources();
+            drawer.closeDrawer(GravityCompat.START);
+            return true;
+        } else if (id == R.id.nav_view_tut) {
+            startActivity(new Intent(this, IntroTutorial.class));
+            drawer.closeDrawer(GravityCompat.START);
             return true;
         }
 
         drawer.closeDrawer(GravityCompat.START);
-        setFragment(newFrag);
+        setCurrentFragment(newFrag);
         return true;
     }
 
-    private void setFragment(int frag) {
-        if (this.fragment != frag || this.fragment == -1) {
-            this.fragment = frag;
+    private void setCurrentFragment(int frag) {
+        if (this.currentFragment != frag || this.currentFragment == -1) {
+            this.currentFragment = frag;
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.main_fragment_container, fragments[frag])
+                    .replace(R.id.main_fragment_container, FRAGMENTS[frag])
                     .commit();
             setTitle(fragmentTitles[frag]);
             navigationView.getMenu().getItem(frag).setChecked(true);

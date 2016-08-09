@@ -16,9 +16,12 @@ import android.widget.FrameLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.centum.techconnect.R;
+import org.centum.techconnect.model.Contact;
+import org.centum.techconnect.model.Device;
 import org.centum.techconnect.model.Session;
 import org.centum.techconnect.model.SessionCompleteListener;
 import org.centum.techconnect.resources.ResourceHandler;
+import org.centum.techconnect.resources.ResourceHandlerListener;
 import org.centum.techconnect.views.SelfHelpFlowView;
 import org.centum.techconnect.views.SelfHelpIntroView;
 import org.centum.techconnect.views.SelfHelpSlidingView;
@@ -46,13 +49,13 @@ public class SelfHelpFragment extends Fragment implements View.OnClickListener {
     private SelfHelpIntroView introView;
     private SelfHelpFlowView flowView;
     private Session currentSession = null;
+    private ResourceHandlerListener resourceHandlerListener = null;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_self_help, container, false);
         ButterKnife.bind(this, view);
-        updateViews();
         slidingView.setOnEndSessionListener(this);
         interceptButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,6 +92,32 @@ public class SelfHelpFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        ResourceHandler.get().removeListener(resourceHandlerListener);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (resourceHandlerListener == null) {
+            resourceHandlerListener = new ResourceHandlerListener() {
+                @Override
+                public void onDevicesChanged(Device[] oldDevices, Device[] newDevices) {
+                    updateViews();
+                }
+
+                @Override
+                public void onContactsChanged(Contact[] oldContacts, Contact[] newContacts) {
+
+                }
+            };
+        }
+        ResourceHandler.get().addListener(resourceHandlerListener);
+        updateViews();
+    }
+
     private void updateViews() {
         if (currentSession == null) {
             slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
@@ -118,23 +147,27 @@ public class SelfHelpFragment extends Fragment implements View.OnClickListener {
             currentSession = introView.getSession();
             updateViews();
         } else if (view == slidingView) {
-            new AlertDialog.Builder(getContext())
-                    .setTitle("End Session")
-                    .setMessage("Are you sure you want to end the session?")
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                            terminateSession();
-                        }
-                    })
-                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    }).show();
+            showEndSessionDialog();
         }
+    }
+
+    private void showEndSessionDialog() {
+        new AlertDialog.Builder(getContext())
+                .setTitle("End Session")
+                .setMessage("Are you sure you want to end the session?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                        terminateSession();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                }).show();
     }
 
     private void terminateSession() {
@@ -148,6 +181,15 @@ public class SelfHelpFragment extends Fragment implements View.OnClickListener {
     }
 
     public boolean onBack() {
-        return flowView != null && flowView.goBack();
+        if (slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
+            slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+            return true;
+        } else if (flowView != null && flowView.goBack()) {
+            return true;
+        } else if (currentSession != null) {
+            showEndSessionDialog();
+            return true;
+        }
+        return false;
     }
 }

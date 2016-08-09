@@ -51,7 +51,8 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_alignRight="@+id/department_editText"
-            android:layout_below="@+id/textView7" />
+            android:layout_below="@+id/devices_available_text_view"
+            android:layout_marginTop="8dp" />
 
         <TextView
             android:id="@+id/textView8"
@@ -63,7 +64,8 @@
             android:layout_marginTop="8dp"
             android:text="@string/role"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="gone" />
 
         <Spinner
             android:id="@+id/role_spinner"
@@ -75,7 +77,8 @@
             android:layout_alignParentStart="true"
             android:layout_alignRight="@+id/device_spinner"
             android:layout_below="@+id/textView8"
-            android:spinnerMode="dropdown" />
+            android:spinnerMode="dropdown"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/start_session_button"
@@ -110,5 +113,16 @@
             android:layout_alignRight="@+id/role_spinner"
             android:layout_below="@+id/textView10"
             android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/devices_available_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/textView7"
+            android:layout_marginTop="4dp"
+            android:text="(10 Available)"
+            android:textSize="14sp" />
     </RelativeLayout>
 </org.centum.techconnect.views.SelfHelpIntroView>

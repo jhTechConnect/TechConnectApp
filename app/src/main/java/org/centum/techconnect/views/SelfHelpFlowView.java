@@ -46,6 +46,8 @@ public class SelfHelpFlowView extends ScrollView implements View.OnClickListener
     Button backButton;
     @Bind(R.id.imageViewLinearLayout)
     LinearLayout imageLinearLayout;
+    @Bind(R.id.img_preview_hint)
+    TextView imgPreviewHintTextView;
 
     private Session session;
     private SessionCompleteListener listener;
@@ -162,16 +164,21 @@ public class SelfHelpFlowView extends ScrollView implements View.OnClickListener
                     });
                 }
             }
-
+            imgPreviewHintTextView.setVisibility(VISIBLE);
         } else {
             imageLinearLayout.setVisibility(GONE);
+            imgPreviewHintTextView.setVisibility(INVISIBLE);
         }
     }
 
     private void openAttachment(String att) {
         Intent intent = new Intent(getContext(), PDFActivity.class);
         intent.putExtra(PDFActivity.EXTRA_IS_FILE, true);
-        intent.putExtra(PDFActivity.EXTRA_FILE, getContext().getFileStreamPath(ResourceHandler.get().getStringResource(att)).getAbsolutePath());
+        if (ResourceHandler.get().hasStringResource(att)) {
+            intent.putExtra(PDFActivity.EXTRA_FILE, getContext().getFileStreamPath(ResourceHandler.get().getStringResource(att)).getAbsolutePath());
+        } else {
+            intent.putExtra(PDFActivity.EXTRA_FILE, "");
+        }
         getContext().startActivity(intent);
     }
 
