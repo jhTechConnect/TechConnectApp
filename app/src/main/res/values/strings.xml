@@ -27,6 +27,7 @@
     <string name="contact_location">Location</string>
     <string name="back">Back</string>
     <string name="help_documents">Help Documents</string>
+    <string name="devices_available">devices available</string>
 
     <!-- Into Tutorial Strings -->
     <string name="tutorial_title_welcome">Welcome to Tech Connect!</string>
@@ -53,4 +54,7 @@
     <string name="tutorial_title_additional_features">Additional Features</string>
     <string name="tutorial_msg_additional_features">When you tap the expanded menu button at the upper left, you will be able to access other features such as reports and syncing</string>
     <string name="click_im_preview">Click an image preview to zoom in</string>
+    <string name="loading_resources">Loading Resources</string>
+    <string name="error_loading_resources">Error loading resources</string>
+    <string name="view_tutorial">View Tutorial</string>
 </resources>

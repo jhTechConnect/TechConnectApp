@@ -1,7 +1,9 @@
 package org.centum.techconnect.resources;
 
 import android.content.Context;
+import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import org.centum.techconnect.model.Contact;
 import org.centum.techconnect.model.Device;
@@ -10,15 +12,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,6 +45,9 @@ public class NetworkHelper {
     public static final String JSON_FOLDER = "json/";
     public static final String RESOURCE_FOLDER = "resources/";
     private static final String INDEX_FILE = "index.json";
+    private static final String PACKAGE_DIR = "TechConnect";
+    private static final String DOWNLOAD_DIR = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()
+            + File.separator + PACKAGE_DIR + File.separator;
     private Context context;
 
     public NetworkHelper(Context context) {
@@ -52,13 +57,28 @@ public class NetworkHelper {
 
     public Contact[] loadCallDirectoryContacts(boolean useCached) throws IOException, JSONException {
         List<Contact> contacts = new LinkedList<>();
-        JSONObject index = new JSONObject(downloadFileAsStr(URL + JSON_FOLDER + INDEX_FILE, useCached));
+        String indexJSON = getJSON(INDEX_FILE);
+        JSONObject index = new JSONObject(indexJSON);
         String dirFile = index.getString("callDir");
-        JSONArray jsonContacts = new JSONArray(downloadFileAsStr(URL + JSON_FOLDER + dirFile, useCached));
+        String callJSON = getJSON(dirFile);
+        JSONArray jsonContacts = new JSONArray(callJSON);
         for (int i = 0; i < jsonContacts.length(); i++) {
             contacts.add(Contact.fromJSON(jsonContacts.getJSONObject(i)));
         }
         return contacts.toArray(new Contact[contacts.size()]);
+    }
+
+    @NonNull
+    private String getJSON(String name) throws IOException {
+        String indexJSON;
+        if (!ResourceHandler.get().hasStringResource(name)) {
+            String filePath = copyOrDownloadFile(JSON_FOLDER + name);
+            if (filePath != null) {
+                ResourceHandler.get().addStringResource(name, filePath);
+            }
+        }
+        indexJSON = loadFileAsStr(context.getFileStreamPath(ResourceHandler.get().getStringResource(name)).getAbsolutePath());
+        return indexJSON;
     }
 
     /**
@@ -72,17 +92,15 @@ public class NetworkHelper {
     public Device[] loadDevices(boolean useCached) throws IOException, JSONException {
         //Load the devices first
         List<Device> deviceList = new LinkedList<>();
-        JSONObject index = new JSONObject(downloadFileAsStr(URL + JSON_FOLDER + INDEX_FILE, useCached));
+        JSONObject index = new JSONObject(getJSON(INDEX_FILE));
         JSONArray devicesids = index.getJSONArray("deviceids");
         for (int i = 0; i < devicesids.length(); i++) {
             deviceList.add(Device.fromJSON(index.getJSONObject(devicesids.getString(i))));
         }
         //Now load all of the flowcharts for the device/deviceproblems
         for (Device device : deviceList) {
-            device.getEndUserRole().setFlowchart(loadFlowchart(URL + JSON_FOLDER,
-                    device.getEndUserRole().getJsonFile(), ENTRY_ID, useCached));
-            device.getTechRole().setFlowchart(loadFlowchart(URL + JSON_FOLDER,
-                    device.getTechRole().getJsonFile(), ENTRY_ID, useCached));
+            device.getEndUserRole().setFlowchart(loadFlowchart(device.getEndUserRole().getJsonFile(), ENTRY_ID, useCached));
+            device.getTechRole().setFlowchart(loadFlowchart(device.getTechRole().getJsonFile(), ENTRY_ID, useCached));
         }
 
         //Load images & resources
@@ -116,19 +134,22 @@ public class NetworkHelper {
             }
         }
 
-        for (String path : toLoad) {
-            String url = URL + RESOURCE_FOLDER + path;
-            if (!ResourceHandler.get().hasStringResource(path)) {
-                String file;
+        for (String resourcePath : toLoad) {
+            String url = URL + RESOURCE_FOLDER + resourcePath;
+            if (ResourceHandler.get().hasStringResource(resourcePath)) {
+                Log.d(NetworkHelper.class.getName(), "ResourceHandler has \"" + resourcePath + "\"");
+            } else {
+                String file = null;
                 try {
-                    file = downloadFile(url);
+                    file = copyOrDownloadFile(RESOURCE_FOLDER + resourcePath);
                 } catch (IOException e) {
                     //Image can't be loaded, eh ignore it for now.
                     //TODO somehow inform user of failed image loading
                     e.printStackTrace();
+                    Log.e(NetworkHelper.class.getName(), "Failed to load: " + url);
                     file = null;
                 }
-                ResourceHandler.get().addStringResource(path, file);
+                ResourceHandler.get().addStringResource(resourcePath, file);
             }
         }
 
@@ -145,8 +166,8 @@ public class NetworkHelper {
      * @return
      * @throws JSONException
      */
-    private Flowchart loadFlowchart(String path, String filename, String entry, boolean useCached) throws JSONException {
-        Map<String, JSONObject> elements = deepLoadElements(path, filename, useCached);
+    private Flowchart loadFlowchart(String filename, String entry, boolean useCached) throws JSONException {
+        Map<String, JSONObject> elements = deepLoadElements(filename, useCached);
         Map<String, Flowchart> flowchartsByID = new HashMap<>();
         //Create maps
         for (String key : elements.keySet()) {
@@ -180,7 +201,7 @@ public class NetworkHelper {
      * @throws JSONException
      */
     @NonNull
-    private Map<String, JSONObject> deepLoadElements(String path, String filename, boolean useCached) throws JSONException {
+    private Map<String, JSONObject> deepLoadElements(String filename, boolean useCached) throws JSONException {
         //Map of jsonname/id to JSONObject
         Map<String, JSONObject> loadedElements = new HashMap<>();
         Set<String> loadedJSONs = new HashSet<>();
@@ -189,7 +210,7 @@ public class NetworkHelper {
 
         while (toLoadJSON.size() > 0) {
             String jsonFile = toLoadJSON.poll();
-            Map<String, JSONObject> elements = loadElements(path, jsonFile, useCached);
+            Map<String, JSONObject> elements = loadElements(jsonFile, useCached);
             extendIDs(jsonFile, elements);
             Set<String> referencedJSONs = getReferencedJSONs(elements);
             loadedJSONs.add(jsonFile);
@@ -264,12 +285,11 @@ public class NetworkHelper {
      * @return
      * @throws JSONException
      */
-    private Map<String, JSONObject> loadElements(String path, String jsonName, boolean useCached) throws JSONException {
+    private Map<String, JSONObject> loadElements(String jsonName, boolean useCached) throws JSONException {
         Map<String, JSONObject> elements = new HashMap<>();
-        String abspath = path + jsonName;
-        String json = null;
+        String json;
         try {
-            json = downloadFileAsStr(abspath, useCached);
+            json = getJSON(jsonName);
         } catch (IOException e) {
             e.printStackTrace();
             return elements;
@@ -282,34 +302,22 @@ public class NetworkHelper {
         return elements;
     }
 
-    /**
-     * Downloads a file into a single string.
-     *
-     * @param urlS
-     * @param useCached
-     * @return
-     * @throws IOException
-     */
-    private String downloadFileAsStr(String urlS, boolean useCached) throws IOException {
-        if (useCached && ResourceHandler.get().hasStringResource(urlS)) {
-            Logger.getLogger("NetworkHelper").log(Level.INFO, "Loading from cache: " + urlS);
-            return ResourceHandler.get().getStringResource(urlS);
-        } else {
-            Logger.getLogger("NetworkHelper").log(Level.INFO, "Downloading: " + urlS);
-            java.net.URL url = new URL(urlS);
-            URLConnection conection = url.openConnection();
-            conection.connect();
-            InputStream input = new BufferedInputStream(url.openStream(), 8192);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-            StringBuilder builder = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                builder.append(line).append('\n');
-            }
-            input.close();
-            ResourceHandler.get().addStringResource(urlS, builder.toString());
-            return builder.toString();
+    private String loadFileAsStr(String fileUri) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(fileUri));
+        StringBuilder builder = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            builder.append(line).append("\n");
         }
+        return builder.toString();
+    }
+
+    private String copyOrDownloadFile(String path) throws IOException {
+        String file = copyFile(DOWNLOAD_DIR + path);
+        if (file == null) {
+            file = downloadFile(URL + path);
+        }
+        return file;
     }
 
     /**
@@ -320,6 +328,7 @@ public class NetworkHelper {
      * @throws IOException
      */
     private String downloadFile(String fileUrl) throws IOException {
+        Log.d(NetworkHelper.class.getName(), "Attempting to download " + fileUrl);
         String fileName = "i" + (int) Math.round(Integer.MAX_VALUE * Math.random());
         HttpURLConnection connection = (HttpURLConnection) new URL(fileUrl.replace(" ", "%20")).openConnection();
 
@@ -339,8 +348,43 @@ public class NetworkHelper {
         fileOutputStream.flush();
         fileOutputStream.close();
 
-        Logger.getLogger(getClass().getName()).log(Level.INFO, "Loaded file: " + fileUrl + " --> " + fileName);
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "Downloaded file: " + fileUrl + " --> " + fileName);
         return fileName;
+    }
+
+    /***
+     * @param fileUrl
+     * @return
+     * @throws IOException
+     */
+    private String copyFile(String fileUrl) {
+        String fileName = "i" + (int) Math.round(Integer.MAX_VALUE * Math.random());
+
+        File file = new File(fileUrl);
+        if (!file.exists()) {
+            return null;
+        }
+        FileOutputStream fileOutputStream = null;
+        try {
+            fileOutputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+            InputStream inputStream = new FileInputStream(file);
+
+            int readBytes;
+            byte buffer[] = new byte[204800];
+            while ((readBytes = inputStream.read(buffer)) > -1) {
+                fileOutputStream.write(buffer, 0, readBytes);
+            }
+            inputStream.close();
+
+            fileOutputStream.flush();
+            fileOutputStream.close();
+
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Copied file: " + fileUrl + " --> " + fileName);
+            return fileName;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

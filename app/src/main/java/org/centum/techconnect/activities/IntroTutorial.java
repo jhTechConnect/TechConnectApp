@@ -41,13 +41,13 @@ public class IntroTutorial extends AppIntro {
                 R.drawable.tech_connect_app_icon, white, black, black));
         addSlide(AppIntroFragment.newInstance(getString(R.string.tutorial_title_self_help_home),
                 getString(R.string.tutorial_msg_self_help_home),
-                R.drawable.home, darkGreen));
+                R.drawable.tutorial_home, darkGreen));
         addSlide(AppIntroFragment.newInstance(getString(R.string.tutorial_title_select_room_device),
                 getString(R.string.tutorial_msg_select_room_device),
-                R.drawable.expanded, darkGreen));
+                R.drawable.tutorial_expanded, darkGreen));
         addSlide(AppIntroFragment.newInstance(getString(R.string.tutorial_title_add_notes),
                 getString(R.string.tutorial_msg_add_notes),
-                R.drawable.addnotes, darkGreen));
+                R.drawable.tutorial_addnotes, darkGreen));
         addSlide(AppIntroFragment.newInstance(getString(R.string.tutorial_title_troubleshoot),
                 getString(R.string.tutorial_msg_troubleshoot),
                 R.drawable.tutorial_options, darkGreen));

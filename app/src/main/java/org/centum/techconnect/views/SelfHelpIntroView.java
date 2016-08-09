@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import org.centum.techconnect.R;
 import org.centum.techconnect.model.Device;
@@ -19,7 +20,7 @@ import butterknife.ButterKnife;
 
 /**
  * Created by Phani on 1/26/2016.
- *
+ * <p/>
  * The view to start a session, after getting input from the user.
  */
 public class SelfHelpIntroView extends ScrollView implements View.OnClickListener {
@@ -37,6 +38,8 @@ public class SelfHelpIntroView extends ScrollView implements View.OnClickListene
     EditText notesEditText;
     @Bind(R.id.start_session_button)
     Button startButton;
+    @Bind(R.id.devices_available_text_view)
+    TextView devicesAvailableLabel;
 
     private Device[] devices;
     private OnClickListener clickListener;
@@ -93,6 +96,7 @@ public class SelfHelpIntroView extends ScrollView implements View.OnClickListene
                 roleSpinner.setAdapter(null);
             }
         });
+        devicesAvailableLabel.setText(devices.length + " " + getResources().getString(R.string.devices_available));
     }
 
     private void updateProblemSpinner() {

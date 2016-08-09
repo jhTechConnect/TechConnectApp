@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#a4000000"
-    android:padding="16dp"
     tools:context="org.centum.techconnect.activities.ImageViewActivity">
 
     <FrameLayout
@@ -20,6 +19,7 @@
         android:layout_alignEnd="@+id/container"
         android:layout_alignParentTop="true"
         android:layout_alignRight="@+id/container"
+        android:layout_margin="16dp"
         android:background="?android:selectableItemBackground"
         android:src="@android:drawable/ic_menu_close_clear_cancel" />
 

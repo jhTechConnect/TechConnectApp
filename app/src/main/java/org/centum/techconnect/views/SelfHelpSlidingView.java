@@ -88,6 +88,7 @@ public class SelfHelpSlidingView extends RelativeLayout implements View.OnClickL
             resourcesButton.setOnClickListener(null);
         } else {
             resourcesButton.setOnClickListener(this);
+            resourcesButton.setVisibility(session.getDevice().getResources().length > 0 ? VISIBLE : GONE);
             if (session.getDevice().getImageURL() == null) {
                 Picasso.with(getContext())
                         .load(R.drawable.ic_devices_black)
@@ -142,7 +143,11 @@ public class SelfHelpSlidingView extends RelativeLayout implements View.OnClickL
     private void openAttachment(String att) {
         Intent intent = new Intent(getContext(), PDFActivity.class);
         intent.putExtra(PDFActivity.EXTRA_IS_FILE, true);
-        intent.putExtra(PDFActivity.EXTRA_FILE, getContext().getFileStreamPath(ResourceHandler.get().getStringResource(att)).getAbsolutePath());
+        if (ResourceHandler.get().hasStringResource(att)) {
+            intent.putExtra(PDFActivity.EXTRA_FILE, getContext().getFileStreamPath(ResourceHandler.get().getStringResource(att)).getAbsolutePath());
+        } else {
+            intent.putExtra(PDFActivity.EXTRA_FILE, "");
+        }
         getContext().startActivity(intent);
     }
 }

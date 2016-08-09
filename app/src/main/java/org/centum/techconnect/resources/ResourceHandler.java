@@ -5,13 +5,15 @@ import android.content.SharedPreferences;
 
 import org.centum.techconnect.model.Contact;
 import org.centum.techconnect.model.Device;
-import org.json.JSONException;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Created by Phani on 4/16/2016.
- *
+ * <p/>
  * Manages downloaded resources for offline capability.
  */
 public class ResourceHandler {
@@ -23,6 +25,8 @@ public class ResourceHandler {
 
     private Device[] devices = new Device[0];
     private Contact[] contacts = new Contact[0];
+
+    private List<ResourceHandlerListener> listeners = new ArrayList<>();
 
     public ResourceHandler(Context context) {
         this.context = context;
@@ -45,19 +49,29 @@ public class ResourceHandler {
         return devices;
     }
 
+    public void setDevices(Device[] devices) {
+        Device[] oldDevices = this.devices;
+        this.devices = devices;
+        Arrays.sort(devices, new Comparator<Device>() {
+            @Override
+            public int compare(Device device, Device t1) {
+                return device.getName().compareTo(t1.getName());
+            }
+        });
+        for (ResourceHandlerListener l : listeners) {
+            l.onDevicesChanged(oldDevices, devices);
+        }
+    }
+
     public Contact[] getContacts() {
         return contacts;
     }
 
-    public void loadResources() {
-        try {
-            NetworkHelper helper = new NetworkHelper(context);
-            devices = helper.loadDevices(true);
-            contacts = helper.loadCallDirectoryContacts(true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
+    public void setContacts(Contact[] contacts) {
+        Contact[] oldContacts = this.contacts;
+        this.contacts = contacts;
+        for (ResourceHandlerListener l : listeners) {
+            l.onContactsChanged(oldContacts, contacts);
         }
     }
 
@@ -75,5 +89,17 @@ public class ResourceHandler {
 
     public void clear() {
         resourcePrefs.edit().clear().apply();
+        setDevices(new Device[0]);
+        setContacts(new Contact[0]);
+    }
+
+    public void addListener(ResourceHandlerListener listener) {
+        if (!this.listeners.contains(listener)) {
+            this.listeners.add(listener);
+        }
+    }
+
+    public void removeListener(ResourceHandlerListener listener) {
+        this.listeners.remove(listener);
     }
 }
