@@ -41,7 +41,7 @@ import java.util.logging.Logger;
 public class NetworkHelper {
 
     public static final String ENTRY_ID = "q1";
-    public static final String URL = "https://s3.amazonaws.com/tech-connect/";
+    public static final String URL = "http://tech-connect-database.s3-website-us-west-2.amazonaws.com/";
     public static final String JSON_FOLDER = "json/";
     public static final String RESOURCE_FOLDER = "resources/";
     private static final String INDEX_FILE = "index.json";
@@ -159,7 +159,6 @@ public class NetworkHelper {
     /**
      * Loads a particular flowchart by filename.
      *
-     * @param path
      * @param filename
      * @param entry
      * @param useCached
@@ -194,7 +193,6 @@ public class NetworkHelper {
     /**
      * Loads all json objects referenced by the given file, traversing the entire tree.
      *
-     * @param path
      * @param filename
      * @param useCached
      * @return
@@ -279,7 +277,6 @@ public class NetworkHelper {
     /**
      * Loads the objects of just the given file.
      *
-     * @param path
      * @param jsonName
      * @param useCached
      * @return
