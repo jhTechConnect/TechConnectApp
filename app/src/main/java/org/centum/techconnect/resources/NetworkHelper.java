@@ -32,13 +32,20 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
 /**
  * Created by Phani on 1/14/2016.
+ * Modified by Doran on 9/17/16
  * <p/>
- * Responsible for downloading the resources from the defined URL.
+ * OG - Responsible for downloading the resources from the defined URL.
  * The flowchart is also assembled from the JSON definitions here.
+ *
+ * 9/17/16 - As we developed a new web service for TechConnect based on a REST API, we had to change how we
+ * create and edit objects as well as how we interact with the server. Using Retrofit to set up the
+ * HTTP requests. This class is the controller, and I will be developing model objects
  */
 public class NetworkHelper {
+
 
     public static final String ENTRY_ID = "q1";
     public static final String URL = "http://tech-connect-database.s3-website-us-west-2.amazonaws.com/";
