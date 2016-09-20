@@ -9,18 +9,18 @@ package org.centum.techconnect.model;
 public class DeviceRole {
 
     private String jsonFile;
-    private Flowchart flowchart;
+    private Flowchart_old flowchart;
 
 
     public DeviceRole(String jsonFile) {
         this.jsonFile = jsonFile;
     }
 
-    public Flowchart getFlowchart() {
+    public Flowchart_old getFlowchart() {
         return flowchart;
     }
 
-    public void setFlowchart(Flowchart flowchart) {
+    public void setFlowchart(Flowchart_old flowchart) {
         this.flowchart = flowchart;
     }
 

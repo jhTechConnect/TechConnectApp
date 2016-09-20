@@ -18,10 +18,10 @@ public class Session {
     private Device device;
     private DeviceRole role;
     private String notes;
-    private Flowchart currentFlowchart;
+    private Flowchart_old currentFlowchart;
     //Stack of previous flowcharts shown
-    private Stack<Flowchart> stack = new Stack<>();
-    private List<Flowchart> history = new LinkedList<>();
+    private Stack<Flowchart_old> stack = new Stack<>();
+    private List<Flowchart_old> history = new LinkedList<>();
     private List<String> optionHistory = new LinkedList<>();
 
     public String getReport() {
@@ -74,7 +74,7 @@ public class Session {
         this.notes = notes;
     }
 
-    public Flowchart getCurrentFlowchart() {
+    public Flowchart_old getCurrentFlowchart() {
         return currentFlowchart;
     }
 
@@ -83,7 +83,7 @@ public class Session {
         optionHistory.add(option);
     }
 
-    private void advanceTo(Flowchart newFlowchart) {
+    private void advanceTo(Flowchart_old newFlowchart) {
         stack.push(this.currentFlowchart);
         this.currentFlowchart = newFlowchart;
         history.add(newFlowchart);

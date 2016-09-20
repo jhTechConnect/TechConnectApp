@@ -8,17 +8,17 @@ import com.google.gson.JsonObject;
 import com.tinkerpop.blueprints.impls.tg.TinkerGraph;
 import com.tinkerpop.blueprints.util.io.graphson.GraphSONReader;
 
-import org.centum.techconnect.model.FlowChart_tempo;
+import org.centum.techconnect.model.FlowChart;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 
-public class FlowChartDeserializer implements JsonDeserializer<FlowChart_tempo> {
+public class FlowChartDeserializer implements JsonDeserializer<FlowChart> {
 	
 	@Override
-	public FlowChart_tempo deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) {
+	public FlowChart deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) {
 		final JsonObject jsonObject = json.getAsJsonObject();
 		
 		final String id = jsonObject.get("_id").getAsString();
@@ -29,7 +29,7 @@ public class FlowChartDeserializer implements JsonDeserializer<FlowChart_tempo> 
 		final String owner = jsonObject.get("owner").getAsString();
 		
 		//Now, set all of the fields of the FlowChart object
-		final FlowChart_tempo flowchart = new FlowChart_tempo();
+		final FlowChart flowchart = new FlowChart();
 		flowchart.setId(id);;
 		flowchart.setName(name);
 		flowchart.setDescription(desc);

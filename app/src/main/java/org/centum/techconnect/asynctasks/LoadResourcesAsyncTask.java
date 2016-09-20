@@ -25,6 +25,7 @@ public class LoadResourcesAsyncTask extends AsyncTask<Void, Void, Object[]> {
         this.listener = listener;
     }
 
+    
     @Override
     protected Object[] doInBackground(Void... voids) {
         Log.d(LoadResourcesAsyncTask.class.getName(), "Loading resources...");

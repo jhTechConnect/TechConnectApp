@@ -1,102 +1,163 @@
 package org.centum.techconnect.model;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by Phani on 1/23/2016.
- *
- * The core flowchart object. Each object has the properties
- * loaded from the json files. The children are also stored,
- * creating a n-way tree.
- */
-public class Flowchart {
+import com.tinkerpop.blueprints.impls.tg.TinkerGraph;
 
-    private String key;
-    private String question;
-    private String details;
-    private String[] attachments;
-    private String imageURLs[] = new String[0];
-    private List<String> options = new LinkedList<>();
-    private List<Flowchart> children = new LinkedList<>();
+public class FlowChart {
 
-    public Flowchart(String question, String details, String[] attachments, String imageURLs[], String key) {
-        this.question = question;
-        this.details = details;
-        this.attachments = attachments;
-        this.key = key;
-        this.imageURLs = imageURLs;
-    }
+	private static String START_NODE = "someothernode9999"; //This is the key used to identify the start of the flowchart
+	private String _id;
+	private String name;
+	private String description;
+	private String updatedDate;
+	private String version;
+	private String owner;
+	private TinkerGraph graph; 
+	private List<String> all_res;
+	private List<ChartComment> comments;
+	
+	
+	/**
+	* 
+	* @return
+	* The id
+	*/
+	public String getId() {
+	return _id;
+	}
+	
+	/**
+	* 
+	* @param id
+	* The id
+	*/
+	public void setId(String id) {
+	this._id = id;
+	}
+	
+	/**
+	* 
+	* @return
+	* The name
+	*/
+	public String getName() {
+	return name;
+	}
+	
+	/**
+	* 
+	* @param name
+	* The name
+	*/
+	public void setName(String name) {
+	this.name = name;
+	}
+	
+	/**
+	* 
+	* @return
+	* The description
+	*/
+	public String getDescription() {
+	return description;
+	}
+	
+	/**
+	* 
+	* @param description
+	* The description
+	*/
+	public void setDescription(String description) {
+	this.description = description;
+	}
+	
+	/**
+	* 
+	* @return
+	* The updateDate
+	*/
+	public String getUpdatedDate() {
+	return updatedDate;
+	}
+	
+	/**
+	* 
+	* @param updateDate
+	* The updateDate
+	*/
+	public void setUpdatedDate(String updateDate) {
+	this.updatedDate = updateDate;
+	}
+	
+	/**
+	* 
+	* @return
+	* The version
+	*/
+	public String getVersion() {
+	return version;
+	}
+	
+	/**
+	* 
+	* @param version
+	* The version
+	*/
+	public void setVersion(String version) {
+	this.version = version;
+	}
+	
+	/**
+	* 
+	* @return
+	* The author
+	*/
+	public String getOwner() {
+	return owner;
+	}
+	
+	/**
+	* 
+	* @param author
+	* The author
+	*/
+	public void setOwner(String owner) {
+	this.owner = owner;
+	}
+	
+	/**
+	* 
+	* @return
+	* The graph
+	*/
+	public TinkerGraph getGraph() {
+	return graph;
+	}
+	
+	/**
+	* 
+	* @param graph
+	* The graph
+	*/
+	public void setGraph(TinkerGraph graph) {
+		this.graph = graph;
+	}
+	
+	public List<String> getAllRes() {
+		return this.all_res;
+	}
+	
+	public void setAllRes(List<String> ar) {
+		this.all_res = ar;
+	}
+	
+	public List<ChartComment> getComments() {
+		return this.comments;
+	}
+	
+	public void setComments(List<ChartComment> c) {
+		this.comments = c;
+	}
 
-    public static Flowchart fromJSON(JSONObject object, String key) throws JSONException {
-        String[] attachmentsStr;
-        if (object.isNull("attachment")) {
-            attachmentsStr = new String[0];
-        } else {
-            JSONArray attachments = object.getJSONArray("attachment");
-            attachmentsStr = new String[attachments.length()];
-            for (int i = 0; i < attachments.length(); i++) {
-                attachmentsStr[i] = attachments.getString(i);
-            }
-        }
-        String imageURLs[] = new String[0];
-        if (object.has("image")) {
-            JSONArray arr = object.getJSONArray("image");
-            imageURLs = new String[arr.length()];
-            for (int i = 0; i < imageURLs.length; i++) {
-                imageURLs[i] = arr.getString(i);
-            }
-        }
-        return new Flowchart(object.getString("question"),
-                object.getString("details"), attachmentsStr, imageURLs, key);
-    }
-
-    public void addChild(String option, Flowchart child) {
-        options.add(option);
-        children.add(child);
-    }
-
-    public int getNumChildren() {
-        return children.size();
-    }
-
-    public String[] getOptions() {
-        return options.toArray(new String[options.size()]);
-    }
-
-    public Flowchart getChild(String option) {
-        return children.get(options.indexOf(option));
-    }
-
-    public Flowchart getChildByIndex(int i) {
-        return children.get(i);
-    }
-
-    public String getQuestion() {
-        return question;
-    }
-
-    public String getDetails() {
-        return details;
-    }
-
-    public String[] getAttachments() {
-        return attachments;
-    }
-
-    public String[] getImageURLs() {
-        return imageURLs;
-    }
-
-    public boolean hasImages() {
-        return imageURLs != null && imageURLs.length > 0;
-    }
-
-    public String getKey() {
-        return key;
-    }
 }

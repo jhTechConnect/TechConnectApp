@@ -7,7 +7,7 @@ import android.util.Log;
 
 import org.centum.techconnect.model.Contact;
 import org.centum.techconnect.model.Device;
-import org.centum.techconnect.model.Flowchart;
+import org.centum.techconnect.model.Flowchart_old;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -114,8 +114,8 @@ public class NetworkHelper {
 
         //Load images & resources
         Set<String> toLoad = new HashSet<>();
-        Set<Flowchart> visited = new HashSet<>();
-        Queue<Flowchart> toVisit = new LinkedList<>();
+        Set<Flowchart_old> visited = new HashSet<>();
+        Queue<Flowchart_old> toVisit = new LinkedList<>();
         for (Device device : deviceList) {
             toLoad.addAll(Arrays.asList(device.getResources()));
             if (device.getEndUserRole().getFlowchart() != null) {
@@ -127,7 +127,7 @@ public class NetworkHelper {
         }
 
         while (toVisit.size() > 0) {
-            Flowchart flow = toVisit.remove();
+            Flowchart_old flow = toVisit.remove();
             visited.add(flow);
             if (flow.hasImages()) {
                 toLoad.addAll(Arrays.asList(flow.getImageURLs()));
@@ -136,7 +136,7 @@ public class NetworkHelper {
 
             // Add unvisited children
             for (int i = 0; i < flow.getNumChildren(); i++) {
-                Flowchart child = flow.getChildByIndex(i);
+                Flowchart_old child = flow.getChildByIndex(i);
                 if (!visited.contains(child) && child != null) {
                     toVisit.add(child);
                 }
@@ -174,24 +174,24 @@ public class NetworkHelper {
      * @return
      * @throws JSONException
      */
-    private Flowchart loadFlowchart(String filename, String entry, boolean useCached) throws JSONException {
+    private Flowchart_old loadFlowchart(String filename, String entry, boolean useCached) throws JSONException {
         Map<String, JSONObject> elements = deepLoadElements(filename, useCached);
-        Map<String, Flowchart> flowchartsByID = new HashMap<>();
+        Map<String, Flowchart_old> flowchartsByID = new HashMap<>();
         //Create maps
         for (String key : elements.keySet()) {
             JSONObject obj = elements.get(key);
-            Flowchart chart = Flowchart.fromJSON(obj, key);
+            Flowchart_old chart = Flowchart_old.fromJSON(obj, key);
             flowchartsByID.put(key, chart);
         }
 
         //Create links
         for (String key : flowchartsByID.keySet()) {
-            Flowchart chart = flowchartsByID.get(key);
+            Flowchart_old chart = flowchartsByID.get(key);
             JSONObject obj = elements.get(key);
             JSONArray opts = obj.getJSONArray("options");
             JSONArray next = obj.getJSONArray("next_question");
             for (int i = 0; i < next.length(); i++) {
-                Flowchart child = flowchartsByID.get(next.getString(i));
+                Flowchart_old child = flowchartsByID.get(next.getString(i));
                 chart.addChild(opts.getString(i), child);
             }
         }

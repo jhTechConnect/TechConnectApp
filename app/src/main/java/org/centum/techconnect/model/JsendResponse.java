@@ -1,10 +1,11 @@
 package org.centum.techconnect.model;
 
+import com.google.gson.JsonObject;
 
-public class LoginResponse {
+public class JsendResponse {
 
 	private String status;
-	private Tokens data;
+	private JsonObject data; //This allows us to look for specific keys given the particular call
 	private String message;
 
 	/**
@@ -30,7 +31,7 @@ public class LoginResponse {
 	* @return
 	* The data
 	*/
-	public Tokens getData() {
+	public JsonObject getData() {
 	return data;
 	}
 	
@@ -39,7 +40,7 @@ public class LoginResponse {
 	* @param data
 	* The data
 	*/
-	public void setData(Tokens data) {
+	public void setData(JsonObject data) {
 	this.data = data;
 	}
 	

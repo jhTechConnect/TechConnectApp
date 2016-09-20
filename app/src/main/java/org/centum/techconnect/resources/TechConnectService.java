@@ -1,14 +1,12 @@
 package org.centum.techconnect.resources;
 
-import org.centum.techconnect.model.Catalog;
-import org.centum.techconnect.model.FlowChart_tempo;
-import org.centum.techconnect.model.LoginAttempt;
-import org.centum.techconnect.model.LoginResponse;
-
-import java.util.List;
+import org.centum.techconnect.model.ChartComment;
+import org.centum.techconnect.model.JsendResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
@@ -26,21 +24,27 @@ public interface TechConnectService {
 	
 	//Just want to get the catalog, no input needed
 	@GET("api/v1/catalog") //CHANGE FOR THE REAL THING! This was for testing
-	Call<Catalog> catalog();
+	Call<JsendResponse> catalog();
 	
 	@GET("api/v1/chart/{id}")
-	Call<FlowChart_tempo> flowchart(@Path("id") String id);
+	Call<JsendResponse> flowchart(@Path("id") String id); 
 	
-	@GET("api/v1/charts/{ids}")
-	Call<List<FlowChart_tempo>> flowcharts(@Path("ids") String ids);
+	@FormUrlEncoded
+	@POST("api/v1/charts")
+	Call<JsendResponse> flowcharts(@Field("ids[]") String[] ids);
 	//This String ids is a comma separated list of the ids desired
 	
 	//Login the user
+	@FormUrlEncoded
 	@POST("api/v1/login")
-	Call<LoginResponse> login(@Body LoginAttempt la);
+	Call<JsendResponse> login(@Field("email") String email, @Field("password") String pass);
 	
 	//Logout the user. I don't think that I need to pass in anything? Maybe the user?
 	@POST("api/v1/logout")
-	Call<LoginResponse> logout(@Header("X-Auth-Token") String auth_token, @Header("X-User-Id") String userId);
+	Call<JsendResponse> logout(@Header("X-Auth-Token") String auth_token, @Header("X-User-Id") String userId);
+	
+	//Attempts to post a comment onto a chart or node with id id.
+	@POST("api/v1/chart/{id}/comment")
+	Call<JsendResponse> comment(@Header("X-Auth-Token") String auth_token, @Header("X-User-Id") String userId, @Body ChartComment comment);
 
 }

@@ -18,7 +18,7 @@ import com.squareup.picasso.Picasso;
 import org.centum.techconnect.R;
 import org.centum.techconnect.activities.ImageViewActivity;
 import org.centum.techconnect.activities.PDFActivity;
-import org.centum.techconnect.model.Flowchart;
+import org.centum.techconnect.model.Flowchart_old;
 import org.centum.techconnect.model.Session;
 import org.centum.techconnect.model.SessionCompleteListener;
 import org.centum.techconnect.resources.ResourceHandler;
@@ -32,7 +32,7 @@ import butterknife.ButterKnife;
  * Created by Phani on 1/27/2016.
  * <p/>
  * The primary flowchart view. This view shows the question, details, attachments, etc.
- * This flow view updates its content based on the Flowchart object given.
+ * This flow view updates its content based on the Flowchart_old object given.
  */
 public class SelfHelpFlowView extends ScrollView implements View.OnClickListener {
 
@@ -71,7 +71,7 @@ public class SelfHelpFlowView extends ScrollView implements View.OnClickListener
     }
 
     private void updateViews() {
-        Flowchart flow = session.getCurrentFlowchart();
+        Flowchart_old flow = session.getCurrentFlowchart();
         questionTextView.setText(flow.getQuestion());
         detailsTextView.setText(flow.getDetails());
 
@@ -81,7 +81,7 @@ public class SelfHelpFlowView extends ScrollView implements View.OnClickListener
         backButton.setEnabled(session.hasPrevious());
     }
 
-    private void updateAttachments(Flowchart flow) {
+    private void updateAttachments(Flowchart_old flow) {
         final String[] attachments = flow.getAttachments();
         if (attachments.length > 0) {
             TextView tv = new TextView(getContext());
@@ -112,7 +112,7 @@ public class SelfHelpFlowView extends ScrollView implements View.OnClickListener
         }
     }
 
-    private void updateOptions(Flowchart flow) {
+    private void updateOptions(Flowchart_old flow) {
         for (int i = 0; i < optionsLinearLayout.getChildCount(); i++) {
             optionsLinearLayout.getChildAt(i).setOnClickListener(null);
         }
@@ -133,7 +133,7 @@ public class SelfHelpFlowView extends ScrollView implements View.OnClickListener
         }
     }
 
-    private void updateImageThumbnails(Flowchart flow) {
+    private void updateImageThumbnails(Flowchart_old flow) {
         for (int i = 0; i < imageLinearLayout.getChildCount(); i++) {
             imageLinearLayout.getChildAt(i).setOnClickListener(null);
         }

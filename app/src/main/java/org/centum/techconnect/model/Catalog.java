@@ -5,14 +5,14 @@ import java.util.List;
 
 public class Catalog {
 
-	private List<FlowChart_tempo> flowcharts = new ArrayList<FlowChart_tempo>();
+	private List<FlowChart> flowcharts = new ArrayList<FlowChart>();
 	
 	/**
 	* 
 	* @return
 	* The flowcharts
 	*/
-	public List<FlowChart_tempo> getFlowCharts() {
+	public List<FlowChart> getFlowCharts() {
 	return flowcharts;
 	}
 	
@@ -21,7 +21,7 @@ public class Catalog {
 	* @param flowcharts
 	* The flowcharts
 	*/
-	public void setFlowcharts(List<FlowChart_tempo> flowcharts) {
+	public void setFlowcharts(List<FlowChart> flowcharts) {
 	this.flowcharts = flowcharts;
 }
 
