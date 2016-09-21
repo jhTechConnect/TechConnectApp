@@ -1,19 +1,19 @@
-package org.centum.techconnect.resources;
+package com.java;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import org.centum.techconnect.model.ChartComment;
-import org.centum.techconnect.model.FlowChart;
-import org.centum.techconnect.model.JsendResponse;
-import org.centum.techconnect.model.Tokens;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
+import main.java.model.ChartComment;
+import main.java.model.FlowChart;
+import main.java.model.JsendResponse;
+import main.java.model.Tokens;
+import main.java.model.Vertex;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -104,6 +104,9 @@ public class TechConnectNetworkHelper {
 	public void login(String email, String password) throws IOException {
 		JsendResponse resp = service.login(email,password).execute().body();
 		//First check to see if the request succeeded
+		if (resp == null) {
+			System.out.println("Null response");
+		}
 		if (resp.getStatus().equalsIgnoreCase("error")) {
 			throw new IOException(resp.getMessage());
 		} else {
@@ -136,6 +139,7 @@ public class TechConnectNetworkHelper {
 		
 		gsonBuilder.registerTypeAdapter(FlowChart.class, new FlowChartDeserializer());
 		gsonBuilder.registerTypeAdapter(JsendResponse.class, new JsendResponseDeserializer());
+		gsonBuilder.registerTypeAdapter(Vertex.class, new VertexDeserializer());
 		Gson myGson = gsonBuilder.create();
 		
 		return myGson;

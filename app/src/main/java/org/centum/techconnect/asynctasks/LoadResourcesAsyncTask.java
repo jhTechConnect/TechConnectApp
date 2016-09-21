@@ -14,6 +14,7 @@ import java.io.IOException;
 
 /**
  * Created by Phani on 8/6/2016.
+ * Modified by Doran on 9/20/2016 for new REST API
  */
 public class LoadResourcesAsyncTask extends AsyncTask<Void, Void, Object[]> {
 
@@ -25,7 +26,7 @@ public class LoadResourcesAsyncTask extends AsyncTask<Void, Void, Object[]> {
         this.listener = listener;
     }
 
-    
+
     @Override
     protected Object[] doInBackground(Void... voids) {
         Log.d(LoadResourcesAsyncTask.class.getName(), "Loading resources...");

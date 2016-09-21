@@ -1,8 +1,7 @@
-package org.centum.techconnect.resources;
+package com.java;
 
-import org.centum.techconnect.model.ChartComment;
-import org.centum.techconnect.model.JsendResponse;
-
+import main.java.model.ChartComment;
+import main.java.model.JsendResponse;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
@@ -23,7 +22,7 @@ public interface TechConnectService {
 	})
 	
 	//Just want to get the catalog, no input needed
-	@GET("api/v1/catalog") //CHANGE FOR THE REAL THING! This was for testing
+	@GET("api/v1/catalog")
 	Call<JsendResponse> catalog();
 	
 	@GET("api/v1/chart/{id}")

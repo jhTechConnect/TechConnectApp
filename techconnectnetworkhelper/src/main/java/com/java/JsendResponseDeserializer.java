@@ -1,14 +1,13 @@
-package org.centum.techconnect.resources;
+package com.java;
+
+import java.lang.reflect.Type;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import org.centum.techconnect.model.JsendResponse;
-
-import java.lang.reflect.Type;
-
+import main.java.model.JsendResponse;
 
 public class JsendResponseDeserializer implements JsonDeserializer<JsendResponse>  {
 	
@@ -22,6 +21,7 @@ public class JsendResponseDeserializer implements JsonDeserializer<JsendResponse
 		
 		//Add these fields to a new JsendResponse object
 		final JsendResponse resp = new JsendResponse();
+		//System.out.println(status);
 		resp.setStatus(status);
 		resp.setData(data);
 		

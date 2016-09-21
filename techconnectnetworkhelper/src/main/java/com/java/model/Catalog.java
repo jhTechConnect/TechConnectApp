@@ -1,4 +1,4 @@
-package org.centum.techconnect.model;
+package com.java.model;
 
 import java.util.ArrayList;
 import java.util.List;

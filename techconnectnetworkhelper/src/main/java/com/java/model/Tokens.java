@@ -1,4 +1,4 @@
-package org.centum.techconnect.model;
+package com.java.model;
 
 
 public class Tokens {
