@@ -1,7 +1,7 @@
 package com.java;
 
-import main.java.model.ChartComment;
-import main.java.model.JsendResponse;
+import com.java.model.ChartComment;
+import com.java.model.JsendResponse;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;

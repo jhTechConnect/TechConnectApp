@@ -4,11 +4,12 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import org.centum.techconnect.model.Contact;
-import org.centum.techconnect.model.Device;
-import org.centum.techconnect.resources.NetworkHelper;
+import com.java.TechConnectNetworkHelper;
+import com.java.model.FlowChart;
+import com.java.model.Graph;
+import com.java.model.Vertex;
+
 import org.centum.techconnect.resources.ResourceHandler;
-import org.json.JSONException;
 
 import java.io.IOException;
 
@@ -27,6 +28,41 @@ public class LoadResourcesAsyncTask extends AsyncTask<Void, Void, Object[]> {
     }
 
 
+    @Override
+    protected Object[] doInBackground(Void... voids) {
+        Log.d(LoadResourcesAsyncTask.class.getName(), "Loading resources...");
+        try {
+            TechConnectNetworkHelper helper = new TechConnectNetworkHelper();
+            helper.login("dwalste1@jhu.edu","dwalsten");
+            FlowChart test_chart = helper.getChart("testchart99999999");
+            helper.logout();
+            return new Object[]{test_chart};
+        } catch (IOException e) {
+            e.getMessage();
+        } /*catch (JSONException f) {
+            f.printStackTrace();
+        }
+        */
+        return null;
+    }
+
+    @Override
+    protected void onPostExecute(Object[] objects) {
+        System.out.println("Success!");
+        if (objects != null && ResourceHandler.get() != null) {
+            FlowChart flow = (FlowChart) objects[0];
+            System.out.println(flow.getId());
+            System.out.println(flow.getOwner());
+            Graph g = flow.getGraph();
+            for (Vertex v : g.getVertices()) {
+                System.out.println(v.getId());
+            }
+        }
+        if (listener != null) {
+            listener.onFinished(objects == null);
+        }
+    }
+    /*
     @Override
     protected Object[] doInBackground(Void... voids) {
         Log.d(LoadResourcesAsyncTask.class.getName(), "Loading resources...");
@@ -53,7 +89,7 @@ public class LoadResourcesAsyncTask extends AsyncTask<Void, Void, Object[]> {
             listener.onFinished(objects == null);
         }
     }
-
+    */
     public interface ExecutionCompleteListener {
         void onFinished(boolean error);
     }

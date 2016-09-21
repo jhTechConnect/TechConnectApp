@@ -1,19 +1,19 @@
 package com.java;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.java.model.ChartComment;
+import com.java.model.FlowChart;
+import com.java.model.JsendResponse;
+import com.java.model.Tokens;
+import com.java.model.Vertex;
 
-import main.java.model.ChartComment;
-import main.java.model.FlowChart;
-import main.java.model.JsendResponse;
-import main.java.model.Tokens;
-import main.java.model.Vertex;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -25,7 +25,7 @@ public class TechConnectNetworkHelper {
 	//First, I need  a Retrofit object which is able to understand JSON
 	
 	//public static final String BASE_URL = "http://127.0.0.1:8000"; //This is the base url of the directory we will talk to
-	public static final String BASE_URL = "http://localhost:3000/";
+	public static final String BASE_URL = "http://192.168.1.111:3000/";
 	private Tokens user = new Tokens();
 	private Gson myGson = buildGson();
 	private Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL)

@@ -1,7 +1,5 @@
 package com.java;
 
-import java.lang.reflect.Type;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -9,10 +7,11 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.java.model.ChartComment;
+import com.java.model.FlowChart;
+import com.java.model.Vertex;
 
-import main.java.model.ChartComment;
-import main.java.model.FlowChart;
-import main.java.model.Vertex;
+import java.lang.reflect.Type;
 
 //This class is needed in order to write this information, so let's get this shit going
 public class FlowChartSerializer implements JsonSerializer<FlowChart> {

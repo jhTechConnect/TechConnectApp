@@ -1,16 +1,11 @@
 package com.java;
 
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gson.Gson;
+import com.java.model.FlowChart;
+import com.java.model.Graph;
+import com.java.model.Vertex;
 
-import main.java.model.Edge;
-import main.java.model.FlowChart;
-import main.java.model.Graph;
-import main.java.model.Vertex;
+import java.io.IOException;
 
 public class NetworkHelperMain {
 	//Need to use this guy to make major operations

@@ -1,8 +1,5 @@
 package com.java;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
@@ -10,13 +7,15 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
+import com.java.model.ChartComment;
+import com.java.model.Edge;
+import com.java.model.FlowChart;
+import com.java.model.FlowChart.ChartType;
+import com.java.model.Graph;
+import com.java.model.Vertex;
 
-import main.java.model.ChartComment;
-import main.java.model.Edge;
-import main.java.model.FlowChart;
-import main.java.model.FlowChart.ChartType;
-import main.java.model.Graph;
-import main.java.model.Vertex;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 public class FlowChartDeserializer implements JsonDeserializer<FlowChart> {
 	
