@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -102,24 +103,23 @@ public class TechConnectNetworkHelper {
 	//
 	//I have no clue how this should be done at all just threw something together.
 	public void login(String email, String password) throws IOException {
-		JsendResponse resp = service.login(email,password).execute().body();
+		Response<JsendResponse> resp = service.login(email,password).execute();
 		//First check to see if the request succeeded
-		if (resp == null) {
-			System.out.println("Null response");
-		}
-		if (resp.getStatus().equalsIgnoreCase("error")) {
-			throw new IOException(resp.getMessage());
+		if (!resp.isSuccessful()) {
+			JsendResponse error = myGson.fromJson(resp.errorBody().string(),JsendResponse.class);
+			throw new IOException(error.getMessage());
 		} else {
 			//Now, I'm expecting a data object with fields relevant 
-			JsonObject obj = resp.getData().getAsJsonObject();
+			JsonObject obj = resp.body().getData().getAsJsonObject();
 			user = myGson.fromJson(obj, Tokens.class);
 		}
 	}
 	
 	public void logout() throws IOException {
-		JsendResponse resp = service.logout(user.getAuthToken(),user.getUserId()).execute().body();
-		if (resp.getStatus().equalsIgnoreCase("error")) {
-			throw new IOException(resp.getMessage());
+		Response<JsendResponse> resp = service.logout(user.getAuthToken(),user.getUserId()).execute();
+		if (!resp.isSuccessful()) {
+			JsendResponse error = myGson.fromJson(resp.errorBody().string(),JsendResponse.class);
+			throw new IOException(error.getMessage());
 		} else {
 			user = null;//Resest the user object so that it doesn't bleed over into future calls
 		}

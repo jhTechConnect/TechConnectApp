@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity
         }
         setCurrentFragment(fragToOpen);
         if (ensurePermissions()) {
+            //Here is the initial load of data
             loadResources();
         }
 
