@@ -1,4 +1,4 @@
-package com.java.resources;
+package org.centum.techconnect.resources;
 
 import com.java.model.FlowChart;
 

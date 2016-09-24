@@ -13,7 +13,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.java.model.Vertex;
-import com.java.resources.ResourceHandler;
+import org.centum.techconnect.resources.ResourceHandler;
 
 import org.centum.techconnect.R;
 import org.centum.techconnect.activities.PDFActivity;

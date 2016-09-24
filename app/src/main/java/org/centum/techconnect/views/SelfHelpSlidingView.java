@@ -16,7 +16,7 @@ import com.squareup.picasso.Picasso;
 import org.centum.techconnect.R;
 import org.centum.techconnect.activities.PDFActivity;
 import org.centum.techconnect.model.Session;
-import com.java.resources.ResourceHandler;
+import org.centum.techconnect.resources.ResourceHandler;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

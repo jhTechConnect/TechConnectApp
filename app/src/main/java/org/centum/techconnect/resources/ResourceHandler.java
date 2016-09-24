@@ -1,4 +1,4 @@
-package com.java.resources;
+package org.centum.techconnect.resources;
 
 import android.content.Context;
 import android.content.SharedPreferences;

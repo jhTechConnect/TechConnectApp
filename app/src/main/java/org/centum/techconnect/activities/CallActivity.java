@@ -18,8 +18,8 @@ import com.java.model.FlowChart;
 
 import org.centum.techconnect.R;
 import org.centum.techconnect.adapters.ContactListAdapter;
-import com.java.resources.ResourceHandler;
-import com.java.resources.ResourceHandlerListener;
+import org.centum.techconnect.resources.ResourceHandler;
+import org.centum.techconnect.resources.ResourceHandlerListener;
 import org.centum.techconnect.views.ContactListItemView;
 
 import java.util.logging.Level;

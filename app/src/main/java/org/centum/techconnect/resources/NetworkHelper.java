@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.java.model.Contact;
-import com.java.resources.ResourceHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
