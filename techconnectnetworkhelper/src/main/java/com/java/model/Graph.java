@@ -9,10 +9,7 @@ public class Graph {
 	
 	private Map<String,Vertex> vertices;
 	private Map<String, Edge> edges;
-	private String root;//This is the first vertex id.
-	public Graph() {
-		
-	}
+	final private String root;//This is the first vertex id.
 	
 	//Best constructor, actually builds all connections in the graph
 	public Graph(List<Vertex> V, List<Edge> E, String r_ID) {
@@ -51,6 +48,11 @@ public class Graph {
 			options.put(key,value);
 		}
 		return options;
+	}
+
+	//Only want to get root, never set it
+	public String getRoot() {
+		return this.root;
 	}
 
 	public Vertex getVertex(String id) {
