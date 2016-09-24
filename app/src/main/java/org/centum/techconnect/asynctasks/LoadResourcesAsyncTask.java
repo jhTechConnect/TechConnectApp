@@ -6,12 +6,11 @@ import android.util.Log;
 
 import com.java.TechConnectNetworkHelper;
 import com.java.model.FlowChart;
-import com.java.model.Graph;
-import com.java.model.Vertex;
 
 import org.centum.techconnect.resources.ResourceHandler;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by Phani on 8/6/2016.
@@ -33,10 +32,13 @@ public class LoadResourcesAsyncTask extends AsyncTask<Void, Void, Object[]> {
         Log.d(LoadResourcesAsyncTask.class.getName(), "Loading resources...");
         try {
             TechConnectNetworkHelper helper = new TechConnectNetworkHelper();
-            helper.login("dwalste@jhu.edu","dwalsten");
-            FlowChart test_chart = helper.getChart("testchart99999999");
+            helper.login("dwalste1@jhu.edu","dwalsten");
+            //Try to download any devices to the App
+            ArrayList<FlowChart> devices = new ArrayList<FlowChart>();
+            helper.getCatalog(true); //Used to generate the list of devices, can change later
+            devices = (ArrayList<FlowChart>) helper.getDevices(); //Get the array of devices
             helper.logout();
-            return new Object[]{test_chart};
+            return new Object[]{devices};
         } catch (IOException e) {
             e.printStackTrace();
         } /*catch (JSONException f) {
@@ -50,13 +52,9 @@ public class LoadResourcesAsyncTask extends AsyncTask<Void, Void, Object[]> {
     protected void onPostExecute(Object[] objects) {
         System.out.println("Success!");
         if (objects != null && ResourceHandler.get() != null) {
-            FlowChart flow = (FlowChart) objects[0];
-            System.out.println(flow.getId());
-            System.out.println(flow.getOwner());
-            Graph g = flow.getGraph();
-            for (Vertex v : g.getVertices()) {
-                System.out.println(v.getId());
-            }
+            ArrayList<FlowChart> flow = (ArrayList<FlowChart>) objects[0];
+            System.out.println(flow.get(0).getName());
+            System.out.println(flow.get(0).getDescription());
         }
         if (listener != null) {
             listener.onFinished(objects == null);

@@ -32,6 +32,10 @@ public class TechConnectNetworkHelper {
 			.build();
 	private TechConnectService service = retrofit.create(TechConnectService.class);
 
+	//Store references to the possible device, problem, and misc flowcharts
+	private ArrayList<String> device_ids = new ArrayList<String>();
+	private ArrayList<String> problem_ids = new ArrayList<String>();
+	private ArrayList<String> misc_ids = new ArrayList<String>();
 
 
 	//Default constructor
@@ -39,9 +43,56 @@ public class TechConnectNetworkHelper {
 
 	}
 
+	/**
+	 * This method uses the device_ids object to download all device-related flowcharts
+	 *
+	 * @return
+	 */
+	public List<FlowChart> getDevices() {
+		ArrayList<FlowChart> devices = new ArrayList<FlowChart>();
+		String[] ids = new String[device_ids.size()];
+		ids = device_ids.toArray(ids);
+		try {
+			devices = (ArrayList<FlowChart>) getCharts(ids);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return devices;
+	}
 
+	/**
+	 * This method uses the problem_ids object to download all problem-related charts
+	 * @return
+	 */
+	public List<FlowChart> getProblems() {
+		ArrayList<FlowChart> probs = new ArrayList<FlowChart>();
+		String[] ids = new String[problem_ids.size()];
+		ids = problem_ids.toArray(ids);
+		try {
+			probs = (ArrayList<FlowChart>) getCharts(ids);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return probs;
+	}
 
-	public List<FlowChart> getCatalog() throws IOException {
+	/**
+	 * This method uses the Misc_ids object to download all misc-related charts
+	 * @return
+	 */
+	public List<FlowChart> getMisc() {
+		ArrayList<FlowChart> misc = new ArrayList<FlowChart>();
+		String[] ids = new String[misc_ids.size()];
+		ids = misc_ids.toArray(ids);
+		try {
+			misc = (ArrayList<FlowChart>) getCharts(ids);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return misc;
+	}
+
+	public List<FlowChart> getCatalog(boolean update_lists) throws IOException {
 		//Call and get a response
 		Response<JsendResponse> resp = service.catalog().execute();
 		//First, check whether there is an error. HAVE TO DO THIS TO SATISFY RETROFIT!
@@ -55,7 +106,27 @@ public class TechConnectNetworkHelper {
 			//Obj should have a JsonArray of flowcharts
 			ArrayList<FlowChart> flowcharts = new ArrayList<FlowChart>();
 			for (JsonElement j : obj.get("flowcharts").getAsJsonArray()) {
-				flowcharts.add(myGson.fromJson(j, FlowChart.class));
+				FlowChart f = myGson.fromJson(j, FlowChart.class);
+				//Read through each flowchart and identify the the devices, problems, and misc
+				//Only if requested
+				if (update_lists) {
+					this.device_ids.clear();
+					this.problem_ids.clear();
+					this.misc_ids.clear();
+					switch (f.getType()) {
+						case DEVICE:
+							this.device_ids.add(f.getId());
+							break;
+						case PROBLEM:
+							this.problem_ids.add(f.getId());
+							break;
+						default:
+							//For now, until we have a reason otherwise!!!!
+							//!!!!!
+							this.device_ids.add(f.getId());
+					}
+					flowcharts.add(f);
+				}
 			}
 			return flowcharts;
 		}
