@@ -39,6 +39,8 @@ public class TechConnectNetworkHelper {
 
 	}
 
+
+
 	public List<FlowChart> getCatalog() throws IOException {
 		//Call and get a response
 		Response<JsendResponse> resp = service.catalog().execute();
@@ -107,7 +109,7 @@ public class TechConnectNetworkHelper {
 		//First check to see if the request succeeded
 		if (!resp.isSuccessful()) {
 			//Must convert ourselves
-			JsendResponse test = myGson.fromJson(resp.errorBody().string(), JsendResponse.class);
+			JsendResponse test = myGson.fromJson(resp.errorBody().string(),JsendResponse.class);
 			throw new IOException(test.getMessage());
 		} else {
 			//Now, I'm expecting a data object with fields relevant
@@ -129,7 +131,7 @@ public class TechConnectNetworkHelper {
 	}
 
 	public void comment(ChartComment c) throws IOException {
-		Response<JsendResponse> resp = service.comment(user.getAuthToken(),user.getUserId(), c).execute();
+		Response<JsendResponse> resp = service.comment(user.getAuthToken(), user.getUserId(), c).execute();
 		if (!resp.isSuccessful()) {
 			JsendResponse error = myGson.fromJson(resp.errorBody().string(),JsendResponse.class);
 			throw new IOException(error.getMessage());
@@ -140,6 +142,7 @@ public class TechConnectNetworkHelper {
 		GsonBuilder gsonBuilder = new GsonBuilder();
 
 		gsonBuilder.registerTypeAdapter(FlowChart.class, new FlowChartDeserializer());
+		gsonBuilder.registerTypeAdapter(FlowChart.class, new FlowChartSerializer());
 		gsonBuilder.registerTypeAdapter(JsendResponse.class, new JsendResponseDeserializer());
 		gsonBuilder.registerTypeAdapter(Vertex.class, new VertexDeserializer());
 		Gson myGson = gsonBuilder.create();

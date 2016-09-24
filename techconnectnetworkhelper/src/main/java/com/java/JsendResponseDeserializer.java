@@ -16,14 +16,18 @@ public class JsendResponseDeserializer implements JsonDeserializer<JsendResponse
 		//This object has the fields status and data guaranteed, message optional
 		
 		final String status = jsonObject.get("status").getAsString();
-		final JsonObject data = jsonObject.get("data").getAsJsonObject();
+
 		
 		//Add these fields to a new JsendResponse object
 		final JsendResponse resp = new JsendResponse();
-		//System.out.println(status);
+
 		resp.setStatus(status);
-		resp.setData(data);
-		
+		if (jsonObject.has("data")) {
+			final JsonObject data = jsonObject.get("data").getAsJsonObject();
+			resp.setData(data);
+		}
+
+
 		if (jsonObject.has("message")) {
 			final String message = jsonObject.get("message").getAsString();
 			resp.setMessage(message);

@@ -33,12 +33,12 @@ public class LoadResourcesAsyncTask extends AsyncTask<Void, Void, Object[]> {
         Log.d(LoadResourcesAsyncTask.class.getName(), "Loading resources...");
         try {
             TechConnectNetworkHelper helper = new TechConnectNetworkHelper();
-            helper.login("dwalste1@jhu.edu","dwalsten");
+            helper.login("dwalste@jhu.edu","dwalsten");
             FlowChart test_chart = helper.getChart("testchart99999999");
             helper.logout();
             return new Object[]{test_chart};
         } catch (IOException e) {
-            e.getMessage();
+            e.printStackTrace();
         } /*catch (JSONException f) {
             f.printStackTrace();
         }

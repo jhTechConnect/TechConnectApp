@@ -23,6 +23,10 @@ public class ResourceHandler {
     private SharedPreferences prefs;
     private SharedPreferences resourcePrefs;
 
+
+    //private FlowChart[] devices =  new FlowChart[0];//These are flowcharts with the device type
+    //private FlowChart[] problems = new FlowChart[0];//These are flowcharts with the problem type
+    //private FlowChart[] misc = new FlowChart[0];//These are flowcharts with the misc type
     private Device[] devices = new Device[0];
     private Contact[] contacts = new Contact[0];
 
