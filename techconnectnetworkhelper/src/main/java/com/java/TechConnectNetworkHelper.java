@@ -20,36 +20,36 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 
-
 public class TechConnectNetworkHelper {
-	
+
 	//First, I need  a Retrofit object which is able to understand JSON
-	
-	//public static final String BASE_URL = "http://127.0.0.1:8000"; //This is the base url of the directory we will talk to
-	public static final String BASE_URL = "http://192.168.1.111:3000/";
+
+	public static final String BASE_URL = "http://jhtechconnect.me/";
 	private Tokens user = new Tokens();
 	private Gson myGson = buildGson();
 	private Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL)
 			.addConverterFactory(GsonConverterFactory.create(myGson))
 			.build();
 	private TechConnectService service = retrofit.create(TechConnectService.class);
-	
-	
-	
+
+
+
 	//Default constructor
 	public TechConnectNetworkHelper() {
-		
+
 	}
-	
+
 	public List<FlowChart> getCatalog() throws IOException {
-		//Call and get a response 
-		JsendResponse resp = service.catalog().execute().body();
-		//First, check whether there is an error
-		if (resp.getStatus().equalsIgnoreCase("error")) {
-			throw new IOException(resp.getMessage());
+		//Call and get a response
+		Response<JsendResponse> resp = service.catalog().execute();
+		//First, check whether there is an error. HAVE TO DO THIS TO SATISFY RETROFIT!
+		//Cheking first if the http request was successful. if not, have to manually deserialize the JSON
+		if (!resp.isSuccessful()) {
+			JsendResponse error = myGson.fromJson(resp.errorBody().string(), JsendResponse.class);
+			throw new IOException(error.getMessage());
 		} else {
 			//Now, I'm expecting a catalog
-			JsonObject obj = resp.getData();
+			JsonObject obj = resp.body().getData();
 			//Obj should have a JsonArray of flowcharts
 			ArrayList<FlowChart> flowcharts = new ArrayList<FlowChart>();
 			for (JsonElement j : obj.get("flowcharts").getAsJsonArray()) {
@@ -58,19 +58,20 @@ public class TechConnectNetworkHelper {
 			return flowcharts;
 		}
 	}
-	
+
 	public FlowChart getChart(String id) throws IOException {
-		JsendResponse resp = service.flowchart(id).execute().body();
+		Response<JsendResponse> resp = service.flowchart(id).execute();
 		//First, check whether there is an error
-		if (resp.getStatus().equalsIgnoreCase("error")) {
-			throw new IOException(resp.getMessage());
+		if (!resp.isSuccessful()) {
+			JsendResponse error = myGson.fromJson(resp.errorBody().string(),JsendResponse.class);
+			throw new IOException(error.getMessage());
 		} else {
 			//Now, I know that there is a FlowChart contained in this resp. Just get it
-			JsonObject obj = resp.getData();
+			JsonObject obj = resp.body().getData();
 			return myGson.fromJson(obj.get("flowchart"), FlowChart.class);
 		}
 	}
-	
+
 	//We having some issues here
 	/**
 	 * This function is used to get a list of specific charts. This list must be sent to
@@ -80,18 +81,16 @@ public class TechConnectNetworkHelper {
 	 * @return
 	 * @throws IOException
 	 */
-	
-	
+
+
 	public List<FlowChart> getCharts(String[] ids) throws IOException {
-		JsendResponse resp = service.flowcharts(ids).execute().body();
-		if (resp == null) {
-			System.out.println("Null");
-		}
-		if (resp.getStatus().equalsIgnoreCase("error")) {
-			throw new IOException(resp.getMessage());
+		Response<JsendResponse> resp = service.flowcharts(ids).execute();
+		if (!resp.isSuccessful()) {
+			JsendResponse error = myGson.fromJson(resp.errorBody().string(), JsendResponse.class);
+			throw new IOException(error.getMessage());
 		} else {
 			//Now I know, I should be getting two objects. bad ID strings as well as the actual flowcharts
-			JsonObject obj = resp.getData();
+			JsonObject obj = resp.body().getData();
 			//For now, let's just look at the good charts
 			ArrayList<FlowChart> flowcharts = new ArrayList<FlowChart>();
 			for (JsonElement j : obj.get("flowcharts").getAsJsonArray()) {
@@ -104,44 +103,47 @@ public class TechConnectNetworkHelper {
 	//I have no clue how this should be done at all just threw something together.
 	public void login(String email, String password) throws IOException {
 		Response<JsendResponse> resp = service.login(email,password).execute();
+		//System.out.println(service.login(email,password).execute().code());
 		//First check to see if the request succeeded
 		if (!resp.isSuccessful()) {
-			JsendResponse error = myGson.fromJson(resp.errorBody().string(),JsendResponse.class);
-			throw new IOException(error.getMessage());
+			//Must convert ourselves
+			JsendResponse test = myGson.fromJson(resp.errorBody().string(), JsendResponse.class);
+			throw new IOException(test.getMessage());
 		} else {
-			//Now, I'm expecting a data object with fields relevant 
+			//Now, I'm expecting a data object with fields relevant
 			JsonObject obj = resp.body().getData().getAsJsonObject();
 			user = myGson.fromJson(obj, Tokens.class);
 		}
 	}
-	
+
 	public void logout() throws IOException {
 		Response<JsendResponse> resp = service.logout(user.getAuthToken(),user.getUserId()).execute();
 		if (!resp.isSuccessful()) {
-			JsendResponse error = myGson.fromJson(resp.errorBody().string(),JsendResponse.class);
-			throw new IOException(error.getMessage());
+			JsendResponse test = myGson.fromJson(resp.errorBody().string(), JsendResponse.class);
+			throw new IOException(test.getMessage());
 		} else {
 			user = null;//Resest the user object so that it doesn't bleed over into future calls
 		}
 
-		
+
 	}
-	
+
 	public void comment(ChartComment c) throws IOException {
-		JsendResponse resp = service.comment(user.getAuthToken(),user.getUserId(), c).execute().body();
-		if (resp.getStatus().equalsIgnoreCase("error")) {
-			throw new IOException(resp.getMessage());
+		Response<JsendResponse> resp = service.comment(user.getAuthToken(),user.getUserId(), c).execute();
+		if (!resp.isSuccessful()) {
+			JsendResponse error = myGson.fromJson(resp.errorBody().string(),JsendResponse.class);
+			throw new IOException(error.getMessage());
 		}
 	}
-	
+
 	private static Gson buildGson() {
 		GsonBuilder gsonBuilder = new GsonBuilder();
-		
+
 		gsonBuilder.registerTypeAdapter(FlowChart.class, new FlowChartDeserializer());
 		gsonBuilder.registerTypeAdapter(JsendResponse.class, new JsendResponseDeserializer());
 		gsonBuilder.registerTypeAdapter(Vertex.class, new VertexDeserializer());
 		Gson myGson = gsonBuilder.create();
-		
+
 		return myGson;
 	}
 
