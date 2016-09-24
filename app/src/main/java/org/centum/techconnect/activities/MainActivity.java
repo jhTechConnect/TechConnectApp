@@ -20,11 +20,12 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.java.resources.ResourceHandler;
+
 import org.centum.techconnect.R;
 import org.centum.techconnect.asynctasks.LoadResourcesAsyncTask;
 import org.centum.techconnect.fragments.ReportsFragment;
 import org.centum.techconnect.fragments.SelfHelpFragment;
-import org.centum.techconnect.resources.ResourceHandler;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

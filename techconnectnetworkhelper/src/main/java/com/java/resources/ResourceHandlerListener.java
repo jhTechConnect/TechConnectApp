@@ -1,8 +1,8 @@
-package org.centum.techconnect.resources;
+package com.java.resources;
 
 import com.java.model.FlowChart;
 
-import org.centum.techconnect.model.Contact;
+import com.java.model.Contact;
 
 public interface ResourceHandlerListener {
 

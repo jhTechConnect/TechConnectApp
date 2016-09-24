@@ -1,4 +1,4 @@
-package org.centum.techconnect.model;
+package com.java.model;
 
 import org.json.JSONException;
 import org.json.JSONObject;

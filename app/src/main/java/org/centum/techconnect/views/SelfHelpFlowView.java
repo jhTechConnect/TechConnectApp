@@ -8,23 +8,17 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.java.model.Vertex;
-import com.squareup.picasso.Picasso;
+import com.java.resources.ResourceHandler;
 
 import org.centum.techconnect.R;
-import org.centum.techconnect.activities.ImageViewActivity;
 import org.centum.techconnect.activities.PDFActivity;
-import org.centum.techconnect.model.Flowchart_old;
 import org.centum.techconnect.model.Session;
 import org.centum.techconnect.model.SessionCompleteListener;
-import org.centum.techconnect.resources.ResourceHandler;
-
-import java.io.File;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -136,6 +130,7 @@ public class SelfHelpFlowView extends ScrollView implements View.OnClickListener
         }
     }
 
+    /*
     private void updateImageThumbnails(Flowchart_old flow) {
         for (int i = 0; i < imageLinearLayout.getChildCount(); i++) {
             imageLinearLayout.getChildAt(i).setOnClickListener(null);
@@ -173,6 +168,7 @@ public class SelfHelpFlowView extends ScrollView implements View.OnClickListener
             imgPreviewHintTextView.setVisibility(INVISIBLE);
         }
     }
+    */
 
     private void openAttachment(String att) {
         Intent intent = new Intent(getContext(), PDFActivity.class);

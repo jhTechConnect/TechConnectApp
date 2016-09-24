@@ -13,15 +13,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
+import com.java.model.Contact;
 import com.java.model.FlowChart;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.centum.techconnect.R;
-import org.centum.techconnect.model.Contact;
 import org.centum.techconnect.model.Session;
 import org.centum.techconnect.model.SessionCompleteListener;
-import org.centum.techconnect.resources.ResourceHandler;
-import org.centum.techconnect.resources.ResourceHandlerListener;
+import com.java.resources.ResourceHandler;
+import com.java.resources.ResourceHandlerListener;
 import org.centum.techconnect.views.SelfHelpFlowView;
 import org.centum.techconnect.views.SelfHelpIntroView;
 import org.centum.techconnect.views.SelfHelpSlidingView;

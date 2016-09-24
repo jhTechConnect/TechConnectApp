@@ -1,4 +1,4 @@
-package com.java;
+package com.java.resources;
 
 import com.java.model.ChartComment;
 import com.java.model.JsendResponse;

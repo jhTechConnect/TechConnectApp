@@ -4,10 +4,10 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.java.TechConnectNetworkHelper;
+import com.java.resources.TechConnectNetworkHelper;
 import com.java.model.FlowChart;
 
-import org.centum.techconnect.resources.ResourceHandler;
+import com.java.resources.ResourceHandler;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class LoadResourcesAsyncTask extends AsyncTask<Void, Void, Object[]> {
     protected Object[] doInBackground(Void... voids) {
         Log.d(LoadResourcesAsyncTask.class.getName(), "Loading resources...");
         try {
-            TechConnectNetworkHelper helper = new TechConnectNetworkHelper();
+            TechConnectNetworkHelper helper = new TechConnectNetworkHelper(context);
             helper.login("dwalste1@jhu.edu","dwalsten");
             //Try to download any devices to the App
             ArrayList<FlowChart> devices = new ArrayList<FlowChart>();
@@ -64,6 +64,7 @@ public class LoadResourcesAsyncTask extends AsyncTask<Void, Void, Object[]> {
             listener.onFinished(objects == null);
         }
     }
+
     /*
     @Override
     protected Object[] doInBackground(Void... voids) {

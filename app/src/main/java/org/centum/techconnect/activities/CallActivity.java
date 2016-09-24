@@ -13,13 +13,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.java.model.Contact;
 import com.java.model.FlowChart;
 
 import org.centum.techconnect.R;
 import org.centum.techconnect.adapters.ContactListAdapter;
-import org.centum.techconnect.model.Contact;
-import org.centum.techconnect.resources.ResourceHandler;
-import org.centum.techconnect.resources.ResourceHandlerListener;
+import com.java.resources.ResourceHandler;
+import com.java.resources.ResourceHandlerListener;
 import org.centum.techconnect.views.ContactListItemView;
 
 import java.util.logging.Level;

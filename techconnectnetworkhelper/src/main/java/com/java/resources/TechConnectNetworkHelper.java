@@ -1,4 +1,7 @@
-package com.java;
+package com.java.resources;
+
+import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -9,10 +12,19 @@ import com.java.model.FlowChart;
 import com.java.model.JsendResponse;
 import com.java.model.Tokens;
 import com.java.model.Vertex;
+import com.java.serializers.FlowChartSerializer;
+import com.java.serializers.JsendResponseDeserializer;
+import com.java.serializers.VertexDeserializer;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -25,6 +37,11 @@ public class TechConnectNetworkHelper {
 	//First, I need  a Retrofit object which is able to understand JSON
 
 	public static final String BASE_URL = "http://jhtechconnect.me/";
+	//Copied from old NetworkHelper for the Image and pdf resources
+	public static final String URL = "http://tech-connect-database.s3-website-us-west-2.amazonaws.com/";
+	public static final String JSON_FOLDER = "json/";
+	public static final String RESOURCE_FOLDER = "resources/";
+	private static final String INDEX_FILE = "index.json";
 	private Tokens user = new Tokens();
 	private Gson myGson = buildGson();
 	private Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL)
@@ -37,10 +54,13 @@ public class TechConnectNetworkHelper {
 	private ArrayList<String> problem_ids = new ArrayList<String>();
 	private ArrayList<String> misc_ids = new ArrayList<String>();
 
+	private Context context;//I think I may need this in order to have a app-specific location to store
+	//info
+
 
 	//Default constructor
-	public TechConnectNetworkHelper() {
-
+	public TechConnectNetworkHelper(Context context) {
+		this.context = context;
 	}
 
 	/**
@@ -57,7 +77,62 @@ public class TechConnectNetworkHelper {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		//If we successfully get the devices, I need to iterate through the FlowCharts
+		//And download all of the associated String Resources
+		//Need to test!!!
+		for (FlowChart f : devices) {
+			for (String resourcePath : f.getAllRes()) {
+				String url = URL + RESOURCE_FOLDER + resourcePath;
+				if (ResourceHandler.get().hasStringResource(resourcePath)) {
+					Log.d(TechConnectNetworkHelper.class.getName(), "ResourceHandler has \"" + resourcePath + "\"");
+				} else {
+					String file = null;
+					try {
+						file = downloadFile(RESOURCE_FOLDER + resourcePath);
+					} catch (IOException e) {
+						//Image can't be loaded, eh ignore it for now.
+						//TODO somehow inform user of failed image loading
+						e.printStackTrace();
+						Log.e(TechConnectNetworkHelper.class.getName(), "Failed to load: " + url);
+						file = null;
+					}
+					ResourceHandler.get().addStringResource(resourcePath, file);
+				}
+			}
+		}
 		return devices;
+	}
+
+	/**
+	 * Downloads an image.
+	 *
+	 * @param fileUrl
+	 * @return
+	 * @throws IOException
+	 */
+	private String downloadFile(String fileUrl) throws IOException {
+		Log.d(TechConnectNetworkHelper.class.getName(), "Attempting to download " + fileUrl);
+		String fileName = "i" + (int) Math.round(Integer.MAX_VALUE * Math.random());
+		HttpURLConnection connection = (HttpURLConnection) new URL(fileUrl.replace(" ", "%20")).openConnection();
+
+		FileOutputStream fileOutputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+		InputStream inputStream = connection.getInputStream();
+
+		int readBytes;
+		byte buffer[] = new byte[1024];
+		if (inputStream != null) {
+			while ((readBytes = inputStream.read(buffer)) > -1) {
+				fileOutputStream.write(buffer, 0, readBytes);
+			}
+			inputStream.close();
+		}
+
+		connection.disconnect();
+		fileOutputStream.flush();
+		fileOutputStream.close();
+
+		Logger.getLogger(getClass().getName()).log(Level.INFO, "Downloaded file: " + fileUrl + " --> " + fileName);
+		return fileName;
 	}
 
 	/**
@@ -212,7 +287,7 @@ public class TechConnectNetworkHelper {
 	private static Gson buildGson() {
 		GsonBuilder gsonBuilder = new GsonBuilder();
 
-		gsonBuilder.registerTypeAdapter(FlowChart.class, new FlowChartDeserializer());
+		gsonBuilder.registerTypeAdapter(FlowChart.class, new com.java.serializers.FlowChartDeserializer());
 		gsonBuilder.registerTypeAdapter(FlowChart.class, new FlowChartSerializer());
 		gsonBuilder.registerTypeAdapter(JsendResponse.class, new JsendResponseDeserializer());
 		gsonBuilder.registerTypeAdapter(Vertex.class, new VertexDeserializer());

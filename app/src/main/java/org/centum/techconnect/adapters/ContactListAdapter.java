@@ -6,8 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
+import com.java.model.Contact;
+
 import org.centum.techconnect.R;
-import org.centum.techconnect.model.Contact;
 import org.centum.techconnect.views.ContactListItemView;
 
 /**

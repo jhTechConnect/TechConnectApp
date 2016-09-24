@@ -5,9 +5,9 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import org.centum.techconnect.model.Contact;
-import org.centum.techconnect.model.Device;
-import org.centum.techconnect.model.Flowchart_old;
+import com.java.model.Contact;
+import com.java.resources.ResourceHandler;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -64,6 +63,7 @@ public class NetworkHelper {
     }
 
 
+
     public Contact[] loadCallDirectoryContacts(boolean useCached) throws IOException, JSONException {
         List<Contact> contacts = new LinkedList<>();
         String indexJSON = getJSON(INDEX_FILE);
@@ -98,6 +98,7 @@ public class NetworkHelper {
      * @throws IOException
      * @throws JSONException
      */
+    /*
     public Device[] loadDevices(boolean useCached) throws IOException, JSONException {
         //Load the devices first
         List<Device> deviceList = new LinkedList<>();
@@ -164,7 +165,7 @@ public class NetworkHelper {
 
         return deviceList.toArray(new Device[deviceList.size()]);
     }
-
+    */
     /**
      * Loads a particular flowchart by filename.
      *
@@ -174,6 +175,7 @@ public class NetworkHelper {
      * @return
      * @throws JSONException
      */
+    /*
     private Flowchart_old loadFlowchart(String filename, String entry, boolean useCached) throws JSONException {
         Map<String, JSONObject> elements = deepLoadElements(filename, useCached);
         Map<String, Flowchart_old> flowchartsByID = new HashMap<>();
@@ -198,7 +200,7 @@ public class NetworkHelper {
 
         return flowchartsByID.get(filename + "/" + entry);
     }
-
+    */
     /**
      * Loads all json objects referenced by the given file, traversing the entire tree.
      *

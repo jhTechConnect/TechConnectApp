@@ -23,7 +23,7 @@ public class Session {
     private GraphTraversal flowchart; //Step through the graph
     private String notes;
 
-    private List<Flowchart_old> history = new LinkedList<>();//Wiating until we decide what to do with this
+    private List<Vertex> history = new LinkedList<>();//Wiating until we decide what to do with this
     private List<String> optionHistory = new LinkedList<>();//Waiting until we decide what to do with this
 
     public String getReport() {
@@ -35,7 +35,7 @@ public class Session {
         //report.append("Role: " + ((role == 0) ? "Technician" : "End User"));
         report.append("History:\n------------------------").append("\n\n");
         for(int i = 0; i < history.size(); i++){
-            String question = history.get(i).getQuestion();
+            String question = history.get(i).getName();
             if(question.length() > 26){
                 question = question.substring(0, 23)+"...";
             }

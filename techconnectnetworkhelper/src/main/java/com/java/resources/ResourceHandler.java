@@ -1,11 +1,11 @@
-package org.centum.techconnect.resources;
+package com.java.resources;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.java.model.FlowChart;
 
-import org.centum.techconnect.model.Contact;
+import com.java.model.Contact;
 
 import java.util.ArrayList;
 import java.util.Arrays;

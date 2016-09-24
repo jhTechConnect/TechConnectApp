@@ -1,4 +1,4 @@
-package com.java;
+package com.java.serializers;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
