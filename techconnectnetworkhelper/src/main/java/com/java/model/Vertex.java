@@ -23,6 +23,7 @@ public class Vertex {
 		outEdges = new ArrayList<String>();
 		inEdges = new ArrayList<String>();
 	}
+
 	public String getId() {
 		return this._id;
 	}

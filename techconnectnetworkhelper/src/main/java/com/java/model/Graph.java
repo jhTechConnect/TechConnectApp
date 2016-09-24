@@ -9,13 +9,13 @@ public class Graph {
 	
 	private Map<String,Vertex> vertices;
 	private Map<String, Edge> edges;
-	
+	private String root;//This is the first vertex id.
 	public Graph() {
 		
 	}
 	
 	//Best constructor, actually builds all connections in the graph
-	public Graph(List<Vertex> V, List<Edge> E) {
+	public Graph(List<Vertex> V, List<Edge> E, String r_ID) {
 		vertices = new HashMap<String,Vertex>();
 		edges = new HashMap<String,Edge>();
 		
@@ -32,12 +32,31 @@ public class Graph {
 			vertices.get(e.getOutV()).addOutEdge(e.getId());
 			vertices.get(e.getInV()).addInEdge(e.getId());
 		}
+
+		//Set the root ID in order for it to be readily accessible
+		this.root = r_ID;
 	}
-	
+
+	/**
+	 * Use this method to get the options (labels on outgoing vertices) for a specific vertex do not
+	 * return the edge id. Return the actual vertex id that the particular option leads to next
+	 * @param v_id ID of the vertex to retrieve the options
+	 * @return
+	 */
+	public Map<String,String> getOptions(String v_id) {
+		HashMap<String,String> options = new HashMap<String,String>();
+		for (String e : vertices.get(v_id).getOutEdges()) { //For each outgoing edge
+			String key = getEdge(e).getLabel(); //Option label
+			String value = getEdge(e).getInV();//Vertex target
+			options.put(key,value);
+		}
+		return options;
+	}
+
 	public Vertex getVertex(String id) {
 		return vertices.get(id);
 	}
-	
+
 	public Edge getEdge(String id) {
 		return edges.get(id);
 	}

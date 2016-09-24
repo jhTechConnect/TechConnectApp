@@ -3,6 +3,8 @@ package org.centum.techconnect.resources;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.java.model.FlowChart;
+
 import org.centum.techconnect.model.Contact;
 import org.centum.techconnect.model.Device;
 
@@ -25,8 +27,9 @@ public class ResourceHandler {
 
 
     //private FlowChart[] devices =  new FlowChart[0];//These are flowcharts with the device type
-    //private FlowChart[] problems = new FlowChart[0];//These are flowcharts with the problem type
-    //private FlowChart[] misc = new FlowChart[0];//These are flowcharts with the misc type
+    private FlowChart[] problems = new FlowChart[0];//These are flowcharts with the problem type
+    private FlowChart[] misc = new FlowChart[0];//These are flowcharts with the misc type
+
     private Device[] devices = new Device[0];
     private Contact[] contacts = new Contact[0];
 

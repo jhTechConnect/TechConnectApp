@@ -93,14 +93,18 @@ public class FlowChartDeserializer implements JsonDeserializer<FlowChart> {
 			JsonArray edges = temp_graph.get("edges").getAsJsonArray();
 			ArrayList<Vertex> verts = new ArrayList<Vertex>();
 			ArrayList<Edge> edg = new ArrayList<Edge>();
+			//Get list of vertices
 			for (JsonElement j: vertices) {
 				verts.add(gson.fromJson(j, Vertex.class));
 			}
+			//Get list of edges
 			for (JsonElement j : edges) {
 				edg.add(gson.fromJson(j,Edge.class));
 			}
+			//Get the first vertex from the list and set that as the root
+			String root_ID = vertices.get(0).getAsJsonObject().get("_id").getAsString();
 			
-			g = new Graph(verts,edg);
+			g = new Graph(verts,edg,root_ID);
 			flowchart.setGraph(g);
 		}
 	
