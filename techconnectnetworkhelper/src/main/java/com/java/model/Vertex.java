@@ -24,6 +24,10 @@ public class Vertex {
 		inEdges = new ArrayList<String>();
 	}
 
+	//Use this method to determine if a vertex ends a flowchart
+	public boolean hasOutEdges() {
+		return !outEdges.isEmpty();
+	}
 	public String getId() {
 		return this._id;
 	}

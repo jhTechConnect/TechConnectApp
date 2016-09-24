@@ -11,8 +11,9 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.java.model.FlowChart;
+
 import org.centum.techconnect.R;
-import org.centum.techconnect.model.Device;
 import org.centum.techconnect.model.Session;
 
 import butterknife.Bind;
@@ -41,9 +42,11 @@ public class SelfHelpIntroView extends ScrollView implements View.OnClickListene
     @Bind(R.id.devices_available_text_view)
     TextView devicesAvailableLabel;
 
-    private Device[] devices;
+    //private Device[] devices;
+    private FlowChart[] devices;
     private OnClickListener clickListener;
-    private Device selectedDevice;
+    //private Device selectedDevice;
+    private FlowChart selectedDevice;
     private int selectedRole;
     private Session session;
 
@@ -64,7 +67,7 @@ public class SelfHelpIntroView extends ScrollView implements View.OnClickListene
         this.clickListener = listener;
     }
 
-    public void setDevices(Device[] devices) {
+    public void setDevices(FlowChart[] devices) {
         this.devices = devices;
         updateDeviceSpinner();
     }
@@ -140,7 +143,7 @@ public class SelfHelpIntroView extends ScrollView implements View.OnClickListene
             session.setDepartment(departmentEditText.getText().toString());
             session.setDevice(selectedDevice);
             session.setNotes(notesEditText.getText().toString());
-            session.setRole(selectedRole == ROLE_TECH ? selectedDevice.getTechRole() : selectedDevice.getEndUserRole());
+            //session.setRole(selectedRole == ROLE_TECH ? selectedDevice.getTechRole() : selectedDevice.getEndUserRole());
             clickListener.onClick(this);
         }
     }

@@ -88,14 +88,14 @@ public class SelfHelpSlidingView extends RelativeLayout implements View.OnClickL
             resourcesButton.setOnClickListener(null);
         } else {
             resourcesButton.setOnClickListener(this);
-            resourcesButton.setVisibility(session.getDevice().getResources().length > 0 ? VISIBLE : GONE);
-            if (session.getDevice().getImageURL() == null) {
+            resourcesButton.setVisibility(session.getDevice().getResources().size() > 0 ? VISIBLE : GONE);
+            if (session.getDevice().getImage() == null) {
                 Picasso.with(getContext())
                         .load(R.drawable.ic_devices_black)
                         .into(deviceImageView);
             } else {
                 Picasso.with(getContext())
-                        .load(session.getDevice().getImageURL())
+                        .load(session.getDevice().getImage())
                         .error(R.drawable.ic_devices_black)
                         .into(deviceImageView);
             }
@@ -122,10 +122,12 @@ public class SelfHelpSlidingView extends RelativeLayout implements View.OnClickL
     }
 
     private void showResources() {
-        final String[] resources = session.getDevice().getResources();
-        final String[] formattedResources = new String[resources.length];
-        for (int i = 0; i < resources.length; i++) {
-            formattedResources[i] = resources[i].substring(resources[i].lastIndexOf("/") + 1).replace('_', ' ');
+        String[] res = new String[session.getDevice().getResources().size()];
+        res = session.getDevice().getResources().toArray(res);
+        final String[] final_res = res;//In order to make final happy. A little annoying
+        final String[] formattedResources = new String[final_res.length];
+        for (int i = 0; i < final_res.length; i++) {
+            formattedResources[i] = final_res[i].substring(final_res[i].lastIndexOf("/") + 1).replace('_', ' ');
             if (formattedResources[i].contains("?")) {
                 formattedResources[i] = formattedResources[i].substring(0, formattedResources[i].indexOf('?'));
             }
@@ -135,7 +137,7 @@ public class SelfHelpSlidingView extends RelativeLayout implements View.OnClickL
                 .setItems(formattedResources, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        openAttachment(resources[i]);
+                        openAttachment(final_res[i]);
                     }
                 }).show();
     }

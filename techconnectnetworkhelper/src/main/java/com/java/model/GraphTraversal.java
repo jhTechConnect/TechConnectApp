@@ -15,12 +15,14 @@ public class GraphTraversal {
     private Graph g; //This is the graph that we are traversing
     private Map<String,String> currOptions;//Map of the current option, next vertex pairs for the current v
     private String curr;//Id of the current vertex we're working with
+    private boolean done; //Store whether the current vertex corresponds to the end of a flowchart
     private Stack<String> stack = new Stack<>();//Use this to track a current traversal of the graph
 
     public GraphTraversal(Graph g) {
         this.g = g;
         this.curr = g.getRoot();
         this.currOptions = g.getOptions(g.getRoot());
+        this.done = false;
     }
 
     /**
@@ -36,7 +38,9 @@ public class GraphTraversal {
         //Update the new options available
         this.currOptions.clear();
         this.currOptions = this.g.getOptions(this.curr);
+        //Check to
     }
+
 
     /**
      * If we need to go back to the previous vertex seen

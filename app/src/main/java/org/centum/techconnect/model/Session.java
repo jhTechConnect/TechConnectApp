@@ -7,6 +7,7 @@ import com.java.model.Vertex;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Phani on 1/26/2016.
@@ -21,7 +22,7 @@ public class Session {
     private FlowChart device;
     private GraphTraversal flowchart; //Step through the graph
     private String notes;
-    
+
     private List<Flowchart_old> history = new LinkedList<>();//Wiating until we decide what to do with this
     private List<String> optionHistory = new LinkedList<>();//Waiting until we decide what to do with this
 
@@ -68,6 +69,14 @@ public class Session {
      */
     public Vertex getCurrentVertex() {
         return this.flowchart.getCurrentVertex();//Simplify where this is referenced
+    }
+
+    /**
+     * Need to return the current options to views so they can populate buttons and the like
+     * @return The keyset of the GraphTraversal object
+     */
+    public Set<String> getCurrentOptions() {
+        return this.flowchart.getOptions();
     }
 
     public FlowChart getDevice() { return device;}

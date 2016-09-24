@@ -13,10 +13,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.java.model.FlowChart;
+
 import org.centum.techconnect.R;
 import org.centum.techconnect.adapters.ContactListAdapter;
 import org.centum.techconnect.model.Contact;
-import org.centum.techconnect.model.Device;
 import org.centum.techconnect.resources.ResourceHandler;
 import org.centum.techconnect.resources.ResourceHandlerListener;
 import org.centum.techconnect.views.ContactListItemView;
@@ -56,7 +57,7 @@ public class CallActivity extends AppCompatActivity implements AdapterView.OnIte
         if (listener == null) {
             listener = new ResourceHandlerListener() {
                 @Override
-                public void onDevicesChanged(Device[] oldDevices, Device[] newDevices) {
+                public void onDevicesChanged(FlowChart[] oldDevices, FlowChart[] newDevices) {
                 }
 
                 @Override

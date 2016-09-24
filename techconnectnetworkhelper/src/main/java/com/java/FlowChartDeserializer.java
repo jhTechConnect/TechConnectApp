@@ -102,7 +102,7 @@ public class FlowChartDeserializer implements JsonDeserializer<FlowChart> {
 				edg.add(gson.fromJson(j,Edge.class));
 			}
 			//Get the first vertex from the list and set that as the root
-			String root_ID = vertices.get(0).getAsJsonObject().get("_id").getAsString();
+			String root_ID = temp_graph.get("firstVertex").getAsString();
 			
 			g = new Graph(verts,edg,root_ID);
 			flowchart.setGraph(g);

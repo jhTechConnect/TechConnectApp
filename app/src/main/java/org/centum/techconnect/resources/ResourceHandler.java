@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import com.java.model.FlowChart;
 
 import org.centum.techconnect.model.Contact;
-import org.centum.techconnect.model.Device;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,11 +25,11 @@ public class ResourceHandler {
     private SharedPreferences resourcePrefs;
 
 
-    //private FlowChart[] devices =  new FlowChart[0];//These are flowcharts with the device type
+    private FlowChart[] devices =  new FlowChart[0];//These are flowcharts with the device type
     private FlowChart[] problems = new FlowChart[0];//These are flowcharts with the problem type
     private FlowChart[] misc = new FlowChart[0];//These are flowcharts with the misc type
 
-    private Device[] devices = new Device[0];
+    //private Device[] devices = new Device[0];
     private Contact[] contacts = new Contact[0];
 
     private List<ResourceHandlerListener> listeners = new ArrayList<>();
@@ -52,16 +51,16 @@ public class ResourceHandler {
         return instance;
     }
 
-    public Device[] getDevices() {
+    public FlowChart[] getDevices() {
         return devices;
     }
 
-    public void setDevices(Device[] devices) {
-        Device[] oldDevices = this.devices;
+    public void setDevices(FlowChart[] devices) {
+        FlowChart[] oldDevices = this.devices;
         this.devices = devices;
-        Arrays.sort(devices, new Comparator<Device>() {
+        Arrays.sort(devices, new Comparator<FlowChart>() {
             @Override
-            public int compare(Device device, Device t1) {
+            public int compare(FlowChart device, FlowChart t1) {
                 return device.getName().compareTo(t1.getName());
             }
         });
@@ -96,7 +95,7 @@ public class ResourceHandler {
 
     public void clear() {
         resourcePrefs.edit().clear().apply();
-        setDevices(new Device[0]);
+        setDevices(new FlowChart[0]);
         setContacts(new Contact[0]);
     }
 

@@ -13,11 +13,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
+import com.java.model.FlowChart;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.centum.techconnect.R;
 import org.centum.techconnect.model.Contact;
-import org.centum.techconnect.model.Device;
 import org.centum.techconnect.model.Session;
 import org.centum.techconnect.model.SessionCompleteListener;
 import org.centum.techconnect.resources.ResourceHandler;
@@ -104,7 +104,7 @@ public class SelfHelpFragment extends Fragment implements View.OnClickListener {
         if (resourceHandlerListener == null) {
             resourceHandlerListener = new ResourceHandlerListener() {
                 @Override
-                public void onDevicesChanged(Device[] oldDevices, Device[] newDevices) {
+                public void onDevicesChanged(FlowChart[] oldDevices, FlowChart[] newDevices) {
                     updateViews();
                 }
 
