@@ -17,6 +17,7 @@ public class FlowChart {
 	private String image;
 	private List<String> resources;
 	private ChartType type;
+	private int score;
 	
 	public String getId() {
 	return _id;
@@ -26,6 +27,14 @@ public class FlowChart {
 	this._id = id;
 	}
 	
+
+	public int getScore() {
+		return this.score;
+	}
+
+	public void setScore(int s) {
+		this.score = s;
+	}
 
 	public String getName() {
 	return name;

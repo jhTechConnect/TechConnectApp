@@ -30,6 +30,7 @@ public class FlowChartDeserializer implements JsonDeserializer<FlowChart> {
 		final String upD = jsonObject.get("updatedDate").getAsString();
 		final String v = jsonObject.get("version").getAsString();
 		final String owner = jsonObject.get("owner").getAsString();
+		final int score = jsonObject.get("score").getAsInt();
 		
 		//Now, getting the resources and comments fields
 		final ArrayList<String> all_res = new ArrayList<String>();
