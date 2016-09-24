@@ -53,8 +53,12 @@ public class LoadResourcesAsyncTask extends AsyncTask<Void, Void, Object[]> {
         System.out.println("Success!");
         if (objects != null && ResourceHandler.get() != null) {
             ArrayList<FlowChart> flow = (ArrayList<FlowChart>) objects[0];
+            FlowChart[] devices = new FlowChart[flow.size()];
+            devices = flow.toArray(devices);
             System.out.println(flow.get(0).getName());
             System.out.println(flow.get(0).getDescription());
+            //Now, want to add these objects to the ResourceHandler
+            ResourceHandler.get().setDevices(devices);
         }
         if (listener != null) {
             listener.onFinished(objects == null);
