@@ -61,7 +61,7 @@ public class GraphTraversal {
      * @return If the stack is not empty, there have been previous steps
      */
     public boolean hasPrevious() {
-        return stack.empty();
+        return !stack.isEmpty();
     }
 
     /**
