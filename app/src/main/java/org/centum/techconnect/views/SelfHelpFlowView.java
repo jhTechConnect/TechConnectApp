@@ -8,17 +8,23 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.java.model.Vertex;
-import org.centum.techconnect.resources.ResourceHandler;
+import com.squareup.picasso.Picasso;
 
 import org.centum.techconnect.R;
+import org.centum.techconnect.activities.ImageViewActivity;
 import org.centum.techconnect.activities.PDFActivity;
 import org.centum.techconnect.model.Session;
 import org.centum.techconnect.model.SessionCompleteListener;
+import org.centum.techconnect.resources.ResourceHandler;
+
+import java.io.File;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -70,9 +76,9 @@ public class SelfHelpFlowView extends ScrollView implements View.OnClickListener
         questionTextView.setText(curr_step.getName());
         detailsTextView.setText(curr_step.getDetails());
 
-        //updateImageThumbnails(curr_step); //Waiting until I setup downloading resources properly
+        updateImageThumbnails(curr_step); //Waiting until I setup downloading resources properly
         updateOptions();
-        //updateAttachments(curr_step); //Waiting until I setup downloading resources properly
+        updateAttachments(curr_step); //Waiting until I setup downloading resources properly
         backButton.setEnabled(session.hasPrevious());
     }
 
@@ -130,15 +136,15 @@ public class SelfHelpFlowView extends ScrollView implements View.OnClickListener
         }
     }
 
-    /*
-    private void updateImageThumbnails(Flowchart_old flow) {
+
+    private void updateImageThumbnails(Vertex curr_step) {
         for (int i = 0; i < imageLinearLayout.getChildCount(); i++) {
             imageLinearLayout.getChildAt(i).setOnClickListener(null);
         }
         imageLinearLayout.removeAllViews();
-        if (flow.hasImages()) {
+        if (curr_step.hasImages()) {
             imageLinearLayout.setVisibility(VISIBLE);
-            String[] images = flow.getImageURLs();
+            List<String> images = curr_step.getImages();
             for (String url : images) {
                 if (ResourceHandler.get().hasStringResource(url)) {
                     final File file = getContext().getFileStreamPath(ResourceHandler.get().getStringResource(url));
@@ -168,7 +174,6 @@ public class SelfHelpFlowView extends ScrollView implements View.OnClickListener
             imgPreviewHintTextView.setVisibility(INVISIBLE);
         }
     }
-    */
 
     private void openAttachment(String att) {
         Intent intent = new Intent(getContext(), PDFActivity.class);

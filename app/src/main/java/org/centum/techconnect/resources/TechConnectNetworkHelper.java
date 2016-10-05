@@ -88,7 +88,7 @@ public class TechConnectNetworkHelper {
 				} else {
 					String file = null;
 					try {
-						file = downloadFile(RESOURCE_FOLDER + resourcePath);
+						file = downloadFile(url);
 					} catch (IOException e) {
 						//Image can't be loaded, eh ignore it for now.
 						//TODO somehow inform user of failed image loading
@@ -167,6 +167,13 @@ public class TechConnectNetworkHelper {
 		return misc;
 	}
 
+	/**
+	 * This function retrieves the catalog of devices from the server.
+	 * @param update_lists - This is a boolean used to determine whether we want to update the current
+	 *                     list of devices recognized by the helper.
+	 * @return
+	 * @throws IOException
+	 */
 	public List<FlowChart> getCatalog(boolean update_lists) throws IOException {
 		//Call and get a response
 		Response<JsendResponse> resp = service.catalog().execute();

@@ -5,8 +5,6 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.java.model.Contact;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,7 +21,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -63,6 +60,7 @@ public class NetworkHelper {
 
 
 
+    /*
     public Contact[] loadCallDirectoryContacts(boolean useCached) throws IOException, JSONException {
         List<Contact> contacts = new LinkedList<>();
         String indexJSON = getJSON(INDEX_FILE);
@@ -75,6 +73,7 @@ public class NetworkHelper {
         }
         return contacts.toArray(new Contact[contacts.size()]);
     }
+    */
 
     @NonNull
     private String getJSON(String name) throws IOException {

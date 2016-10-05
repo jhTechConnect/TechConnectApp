@@ -67,6 +67,10 @@ public class Vertex {
 	public void setImages(List<String> im) {
 		this.images = im;
 	}
+
+	public boolean hasImages() {
+		return !this.images.isEmpty();
+	}
 	
 	public List<ChartComment> getComments() {
 		return this.comments;
