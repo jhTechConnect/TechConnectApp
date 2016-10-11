@@ -14,7 +14,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.java.model.Contact;
-import com.java.model.FlowChart;
 
 import org.centum.techconnect.R;
 import org.centum.techconnect.adapters.ContactListAdapter;
@@ -57,7 +56,7 @@ public class CallActivity extends AppCompatActivity implements AdapterView.OnIte
         if (listener == null) {
             listener = new ResourceHandlerListener() {
                 @Override
-                public void onDevicesChanged(FlowChart[] oldDevices, FlowChart[] newDevices) {
+                public void onDevicesChanged() {
                 }
 
                 @Override
