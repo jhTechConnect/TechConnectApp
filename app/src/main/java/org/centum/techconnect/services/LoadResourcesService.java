@@ -19,6 +19,7 @@ import com.java.serializers.FlowChartSerializer;
 import com.java.serializers.JsendResponseDeserializer;
 import com.java.serializers.VertexDeserializer;
 
+import org.centum.techconnect.activities.MainActivity;
 import org.centum.techconnect.resources.ResourceHandler;
 import org.centum.techconnect.resources.TechConnectNetworkHelper;
 import org.centum.techconnect.resources.TechConnectService;
@@ -45,6 +46,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by doranwalsten on 10/11/16.
  */
 public class LoadResourcesService extends IntentService {
+
+    //Intent String Entires
+    public static final String REQUEST_STRING = "loadResourceRequest";
+    public static final String RESPONSE_STATUS = "loadResourceStatus";
+    public static final String RESPONSE_MESSAGE = "loadResourceResponseMessage";
 
     public static final String BASE_URL = "http://jhtechconnect.me/";
     //Copied from old NetworkHelper for the Image and pdf resources
@@ -76,6 +82,7 @@ public class LoadResourcesService extends IntentService {
         Log.d(LoadResourcesService.class.getName(), "Loading resources...");
         TechConnectNetworkHelper helper = new TechConnectNetworkHelper(getApplicationContext());//Just need application context
         FlowChart[] devices;
+        String responseMessage;
         try {
             login("dwalste1@jhu.edu", "dwalsten");
             //Try to download any devices to the App
@@ -89,12 +96,21 @@ public class LoadResourcesService extends IntentService {
                 //This will not rest the views. Still need to
             }
             logout();
+            responseMessage = "success";
         } catch (IOException e) {
             e.printStackTrace();
+            responseMessage = e.getMessage();
             //TODO Report the source of the error to the user
             //In theory, this would only happen if the user is not logged in. Ask them to login!
             //Use BroadcastMessage and make a snackbar to help them login
         }
+
+        //Here, we develop a BroadcastIntent to provide to the main activity
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction(MainActivity.ResponseReceiver.PROCESS_RESPONSE);
+        //broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
+        broadcastIntent.putExtra(RESPONSE_STATUS, true);
+        broadcastIntent.putExtra(RESPONSE_MESSAGE, responseMessage);
     }
 
     /**

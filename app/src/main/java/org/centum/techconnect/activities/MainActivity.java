@@ -1,6 +1,8 @@
 package org.centum.techconnect.activities;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -188,4 +190,18 @@ public class MainActivity extends AppCompatActivity
             navigationView.getMenu().getItem(frag).setChecked(true);
         }
     }
+
+    public class ResponseReceiver extends BroadcastReceiver {
+
+        //This corresponds to the Action that we want the receiver to do
+        public static final String PROCESS_RESPONSE = "com.org.centum.techconnect.intent.action.PROCESS_RESPONSE";
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+
+        }
+    }
 }
+
+
