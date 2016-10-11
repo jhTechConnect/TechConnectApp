@@ -83,7 +83,11 @@ public class TechConnectNetworkHelper {
 		//Need to test!!!
 		for (FlowChart f : devices) {
 			for (String resourcePath : f.getAllRes()) {
-				String url = URL + RESOURCE_FOLDER + resourcePath;
+				String url = resourcePath;//For new graphs, the resources will have URL
+				//For old charts, the amazon URL will be missing
+				if (!url.startsWith("http")) {
+					url = URL + RESOURCE_FOLDER + url;
+				}
 				if (ResourceHandler.get().hasStringResource(resourcePath)) {
 					Log.d(TechConnectNetworkHelper.class.getName(), "ResourceHandler has \"" + resourcePath + "\"");
 				} else {
