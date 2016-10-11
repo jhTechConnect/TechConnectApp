@@ -65,6 +65,7 @@ public class FlowChartSerializer implements JsonSerializer<FlowChart> {
 		jsonObject.add("all_res", all_res);
         graph.add("vertices", vertices);
         graph.add("edges", myGson.toJsonTree(flowchart.getGraph().getEdges())); //Trying a more direct call
+		graph.addProperty("firstVertex",flowchart.getGraph().getRoot());//Store the reference of the first vertex in the graphs
         jsonObject.add("graph", graph);
         
         //Checking to see if there any of the optional fields are present

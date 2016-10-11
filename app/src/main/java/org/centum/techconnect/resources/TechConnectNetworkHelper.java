@@ -12,6 +12,7 @@ import com.java.model.FlowChart;
 import com.java.model.JsendResponse;
 import com.java.model.Tokens;
 import com.java.model.Vertex;
+import com.java.serializers.FlowChartDeserializer;
 import com.java.serializers.FlowChartSerializer;
 import com.java.serializers.JsendResponseDeserializer;
 import com.java.serializers.VertexDeserializer;
@@ -185,6 +186,11 @@ public class TechConnectNetworkHelper {
 		} else {
 			//Now, I'm expecting a catalog
 			JsonObject obj = resp.body().getData();
+			if (update_lists) {
+				this.device_ids.clear();
+				this.problem_ids.clear();
+				this.misc_ids.clear();
+			}
 			//Obj should have a JsonArray of flowcharts
 			ArrayList<FlowChart> flowcharts = new ArrayList<FlowChart>();
 			for (JsonElement j : obj.get("flowcharts").getAsJsonArray()) {
@@ -192,9 +198,6 @@ public class TechConnectNetworkHelper {
 				//Read through each flowchart and identify the the devices, problems, and misc
 				//Only if requested
 				if (update_lists) {
-					this.device_ids.clear();
-					this.problem_ids.clear();
-					this.misc_ids.clear();
 					switch (f.getType()) {
 						case DEVICE:
 							this.device_ids.add(f.getId());
@@ -207,8 +210,9 @@ public class TechConnectNetworkHelper {
 							//!!!!!
 							this.device_ids.add(f.getId());
 					}
-					flowcharts.add(f);
+
 				}
+				flowcharts.add(f);
 			}
 			return flowcharts;
 		}
@@ -294,7 +298,7 @@ public class TechConnectNetworkHelper {
 	private static Gson buildGson() {
 		GsonBuilder gsonBuilder = new GsonBuilder();
 
-		gsonBuilder.registerTypeAdapter(FlowChart.class, new com.java.serializers.FlowChartDeserializer());
+		gsonBuilder.registerTypeAdapter(FlowChart.class, new FlowChartDeserializer());
 		gsonBuilder.registerTypeAdapter(FlowChart.class, new FlowChartSerializer());
 		gsonBuilder.registerTypeAdapter(JsendResponse.class, new JsendResponseDeserializer());
 		gsonBuilder.registerTypeAdapter(Vertex.class, new VertexDeserializer());
