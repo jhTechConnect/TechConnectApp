@@ -18,14 +18,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
-
-import org.centum.techconnect.resources.ResourceHandler;
 
 import org.centum.techconnect.R;
-import org.centum.techconnect.asynctasks.LoadResourcesAsyncTask;
 import org.centum.techconnect.fragments.ReportsFragment;
 import org.centum.techconnect.fragments.SelfHelpFragment;
+import org.centum.techconnect.resources.ResourceHandler;
+import org.centum.techconnect.services.LoadResourcesService;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -101,6 +99,18 @@ public class MainActivity extends AppCompatActivity
 
     private void loadResources() {
         loadingLayout.setVisibility(View.VISIBLE);
+
+        //
+        //Here, want to replace AsyncTask with the IntentService. Currently, the only place necessary
+        Intent loadResIntent = new Intent(this, LoadResourcesService.class);
+        this.startService(loadResIntent);
+
+        //When this is complete, need to activate the ResourceHandlerListener to actually update the views
+        //based on the data gathered by the IntentService.
+
+        //
+
+        /*
         new LoadResourcesAsyncTask(this, new LoadResourcesAsyncTask.ExecutionCompleteListener() {
             @Override
             public void onFinished(boolean error) {
@@ -111,6 +121,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }).execute();
+        */
     }
 
     @Override

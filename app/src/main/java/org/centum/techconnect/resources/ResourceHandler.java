@@ -64,8 +64,12 @@ public class ResourceHandler {
                 return device.getName().compareTo(t1.getName());
             }
         });
+    }
+
+    //Update all of the device listeners
+    public void deviceChanged() {
         for (ResourceHandlerListener l : listeners) {
-            l.onDevicesChanged(oldDevices, devices);
+            l.onDevicesChanged();
         }
     }
 

@@ -24,7 +24,6 @@ public class Graph {
 		//Iterate over the edges and add the edges to the respective in and out
 		//lists in the vertices
 		for (Edge e : E) {
-			System.out.println(e.getId());
 			edges.put(e.getId(), e);
 			vertices.get(e.getOutV()).addOutEdge(e.getId());
 			vertices.get(e.getInV()).addInEdge(e.getId());

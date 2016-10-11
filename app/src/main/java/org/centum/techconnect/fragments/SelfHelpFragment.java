@@ -14,7 +14,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 
 import com.java.model.Contact;
-import com.java.model.FlowChart;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.centum.techconnect.R;
@@ -104,7 +103,7 @@ public class SelfHelpFragment extends Fragment implements View.OnClickListener {
         if (resourceHandlerListener == null) {
             resourceHandlerListener = new ResourceHandlerListener() {
                 @Override
-                public void onDevicesChanged(FlowChart[] oldDevices, FlowChart[] newDevices) {
+                public void onDevicesChanged() {
                     updateViews();
                 }
 

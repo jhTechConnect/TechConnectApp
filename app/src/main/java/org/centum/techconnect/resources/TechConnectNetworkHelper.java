@@ -60,6 +60,7 @@ public class TechConnectNetworkHelper {
 
 
 	//Default constructor
+
 	public TechConnectNetworkHelper(Context context) {
 		this.context = context;
 	}
@@ -82,6 +83,7 @@ public class TechConnectNetworkHelper {
 		//And download all of the associated String Resources
 		//Need to test!!!
 		for (FlowChart f : devices) {
+			System.out.println(f.getAllRes());
 			for (String resourcePath : f.getAllRes()) {
 				if (ResourceHandler.get().hasStringResource(resourcePath)) {
 					Log.d(TechConnectNetworkHelper.class.getName(), "ResourceHandler has \"" + resourcePath + "\"");
