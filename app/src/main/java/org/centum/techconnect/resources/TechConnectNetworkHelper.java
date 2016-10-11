@@ -83,22 +83,18 @@ public class TechConnectNetworkHelper {
 		//Need to test!!!
 		for (FlowChart f : devices) {
 			for (String resourcePath : f.getAllRes()) {
-				String url = resourcePath;//For new graphs, the resources will have URL
-				//For old charts, the amazon URL will be missing
-				if (!url.startsWith("http")) {
-					url = URL + RESOURCE_FOLDER + url;
-				}
 				if (ResourceHandler.get().hasStringResource(resourcePath)) {
 					Log.d(TechConnectNetworkHelper.class.getName(), "ResourceHandler has \"" + resourcePath + "\"");
 				} else {
 					String file = null;
 					try {
-						file = downloadFile(url);
+						//Now, all files will have the full URL already
+						file = downloadFile(resourcePath);
 					} catch (IOException e) {
 						//Image can't be loaded, eh ignore it for now.
 						//TODO somehow inform user of failed image loading
 						e.printStackTrace();
-						Log.e(TechConnectNetworkHelper.class.getName(), "Failed to load: " + url);
+						Log.e(TechConnectNetworkHelper.class.getName(), "Failed to load: " + resourcePath);
 						file = null;
 					}
 					ResourceHandler.get().addStringResource(resourcePath, file);
