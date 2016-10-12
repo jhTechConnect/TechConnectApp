@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -210,22 +211,30 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            //If for some reason we are going to add a couple of filters instead of just one
             if(intent.getAction().equalsIgnoreCase(PROCESS_RESPONSE)) {
                 //Check if the Download was successful
                 LoadResourcesService.ResultType res = (LoadResourcesService.ResultType)
                         intent.getSerializableExtra(LoadResourcesService.RESULT_STATUS);
+                ResourceHandler.get().deviceChanged();
+                //Turh off the LoadingLayout
+                loadingLayout.setVisibility(View.GONE);
+                //Might not be necessary. In case there are different types of errors that we want to consider,
+                //can set up this switch to do so
                 switch(res) {
                     case SUCCESS:
-                        ResourceHandler.get().deviceChanged();
+                       break;
                     case RES_ERROR:
                         //Want to make a SnackBar which alerts the user that some resources are missing
                         Log.i("MainActivity", intent.getStringExtra(LoadResourcesService.RESULT_MESSAGE));
+                        Snackbar snackbar = Snackbar.make(findViewById(R.id.main_fragment_container),"Error in Loading Resources", Snackbar.LENGTH_INDEFINITE);
+                        snackbar.show();
+                        break;
                 }
 
             }
 
-            //Turh off the LoadingLayout
-            loadingLayout.setVisibility(View.GONE);
+
 
         }
     }
