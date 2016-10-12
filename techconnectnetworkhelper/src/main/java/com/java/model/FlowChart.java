@@ -123,6 +123,7 @@ public class FlowChart {
 	public void setType(ChartType type) {
 		this.type = type;
 	}
+
 	public enum ChartType {
 		DEVICE, MISC, PROBLEM
 	}

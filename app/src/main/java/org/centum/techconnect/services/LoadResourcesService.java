@@ -3,6 +3,7 @@ package org.centum.techconnect.services;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -49,8 +50,8 @@ public class LoadResourcesService extends IntentService {
 
     //Intent String Entires
     public static final String REQUEST_STRING = "loadResourceRequest";
-    public static final String RESPONSE_STATUS = "loadResourceStatus";
-    public static final String RESPONSE_MESSAGE = "loadResourceResponseMessage";
+    public static final String RESULT_STATUS = "loadResourceStatus";
+    public static final String RESULT_MESSAGE = "loadResourceResponseMessage";
 
     public static final String BASE_URL = "http://jhtechconnect.me/";
     //Copied from old NetworkHelper for the Image and pdf resources
@@ -82,35 +83,42 @@ public class LoadResourcesService extends IntentService {
         Log.d(LoadResourcesService.class.getName(), "Loading resources...");
         TechConnectNetworkHelper helper = new TechConnectNetworkHelper(getApplicationContext());//Just need application context
         FlowChart[] devices;
-        String responseMessage;
+        String resultMessage = "success";
+        ResultType result = ResultType.SUCCESS;
         try {
-            login("dwalste1@jhu.edu", "dwalsten");
             //Try to download any devices to the App
             getCatalog(true); //Used to generate the list of devices, can change later
             List<FlowChart> dev = getDevices();
-            //Issue here is that errors in loading images are told to the user.
             devices = new FlowChart[dev.size()]; //Get the array of devices
             devices = dev.toArray(devices);
+            //If this succeeds, should in theory be able to load resources
+
+            if (!loadResources(dev)) {
+                //If this fails at some point, we know there are some resources missing
+                result = ResultType.RES_ERROR;
+                resultMessage = "Some resources could not be loaded";
+            }
+
             if (ResourceHandler.get() != null) {
                 ResourceHandler.get().setDevices(devices);
-                //This will not rest the views. Still need to
             }
-            logout();
-            responseMessage = "success";
-        } catch (IOException e) {
+
+        } catch (IOException e) { //Occurs with error in getting the charts, mainly that the http request failed
             e.printStackTrace();
-            responseMessage = e.getMessage();
-            //TODO Report the source of the error to the user
-            //In theory, this would only happen if the user is not logged in. Ask them to login!
-            //Use BroadcastMessage and make a snackbar to help them login
+            resultMessage = e.getMessage();
+            result = ResultType.RES_ERROR;
         }
 
         //Here, we develop a BroadcastIntent to provide to the main activity
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(MainActivity.ResponseReceiver.PROCESS_RESPONSE);
-        //broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
-        broadcastIntent.putExtra(RESPONSE_STATUS, true);
-        broadcastIntent.putExtra(RESPONSE_MESSAGE, responseMessage);
+        broadcastIntent.putExtra(RESULT_STATUS, result);
+        broadcastIntent.putExtra(RESULT_MESSAGE, resultMessage);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
+    }
+
+    public enum ResultType {
+        SUCCESS, RES_ERROR
     }
 
     /**
@@ -118,20 +126,19 @@ public class LoadResourcesService extends IntentService {
      *
      * @return
      */
-    public List<FlowChart> getDevices() {
+    public List<FlowChart> getDevices() throws IOException {
         ArrayList<FlowChart> devices = new ArrayList<FlowChart>();
         String[] ids = new String[device_ids.size()];
         ids = device_ids.toArray(ids);
-        try {
-            devices = (ArrayList<FlowChart>) getCharts(ids);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        //If we successfully get the devices, I need to iterate through the FlowCharts
-        //And download all of the associated String Resources
-        //Need to test!!!
+        devices = (ArrayList<FlowChart>) getCharts(ids);
+        //Want to throw exception if it happens for sure here
+
+        return devices;
+    }
+
+    public boolean loadResources(List<FlowChart> devices) {
+        boolean success = true;
         for (FlowChart f : devices) {
-            System.out.println(f.getAllRes());
             for (String resourcePath : f.getAllRes()) {
                 if (ResourceHandler.get().hasStringResource(resourcePath)) {
                     Log.d(TechConnectNetworkHelper.class.getName(), "ResourceHandler has \"" + resourcePath + "\"");
@@ -140,10 +147,8 @@ public class LoadResourcesService extends IntentService {
                     try {
                         //Now, all files will have the full URL already
                         file = downloadFile(resourcePath);
-                    } catch (IOException e) {
-                        //Image can't be loaded, eh ignore it for now.
-                        //TODO somehow inform user of failed image loading
-                        //Use a broadcast message and snackbar to alert the user that there are some issues with loading resources
+                    } catch (IOException e) { //Need to catch here in order to continue trying to download other res
+                        success = false;
                         e.printStackTrace();
                         Log.e(TechConnectNetworkHelper.class.getName(), "Failed to load: " + resourcePath);
                         file = null;
@@ -152,7 +157,7 @@ public class LoadResourcesService extends IntentService {
                 }
             }
         }
-        return devices;
+        return success;
     }
 
     /**
@@ -342,7 +347,7 @@ public class LoadResourcesService extends IntentService {
         Response<JsendResponse> resp = service.comment(user.getAuthToken(), user.getUserId(), c).execute();
         if (!resp.isSuccessful()) {
             JsendResponse error = myGson.fromJson(resp.errorBody().string(),JsendResponse.class);
-            throw new IOException(error.getMessage());
+            throw new AuthorizationException(error.getMessage());
         }
     }
 

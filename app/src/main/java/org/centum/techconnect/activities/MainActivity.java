@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,11 +13,13 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -47,10 +50,19 @@ public class MainActivity extends AppCompatActivity
 
     private String[] fragmentTitles;
     private int currentFragment = -1;
+    private ResponseReceiver myReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Setup the Broadcast Manager to receive messages from the IntentService Instance
+        myReceiver = new ResponseReceiver();
+        //Define the Intent filter for the
+        IntentFilter mStatusIntentFilter = new IntentFilter(
+               ResponseReceiver.PROCESS_RESPONSE);
+        LocalBroadcastManager.getInstance(this).registerReceiver(myReceiver,mStatusIntentFilter);
+
         setContentView(R.layout.activity_main);
 
         ResourceHandler.get(this);
@@ -198,7 +210,22 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equalsIgnoreCase(PROCESS_RESPONSE)) {
+                //Check if the Download was successful
+                LoadResourcesService.ResultType res = (LoadResourcesService.ResultType)
+                        intent.getSerializableExtra(LoadResourcesService.RESULT_STATUS);
+                switch(res) {
+                    case SUCCESS:
+                        ResourceHandler.get().deviceChanged();
+                    case RES_ERROR:
+                        //Want to make a SnackBar which alerts the user that some resources are missing
+                        Log.i("MainActivity", intent.getStringExtra(LoadResourcesService.RESULT_MESSAGE));
+                }
 
+            }
+
+            //Turh off the LoadingLayout
+            loadingLayout.setVisibility(View.GONE);
 
         }
     }
