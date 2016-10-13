@@ -13,17 +13,18 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.java.model.Vertex;
 import com.squareup.picasso.Picasso;
 
 import org.centum.techconnect.R;
 import org.centum.techconnect.activities.ImageViewActivity;
 import org.centum.techconnect.activities.PDFActivity;
-import org.centum.techconnect.model.Flowchart;
 import org.centum.techconnect.model.Session;
 import org.centum.techconnect.model.SessionCompleteListener;
 import org.centum.techconnect.resources.ResourceHandler;
 
 import java.io.File;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -32,7 +33,7 @@ import butterknife.ButterKnife;
  * Created by Phani on 1/27/2016.
  * <p/>
  * The primary flowchart view. This view shows the question, details, attachments, etc.
- * This flow view updates its content based on the Flowchart object given.
+ * This flow view updates its content based on the Flowchart_old object given.
  */
 public class SelfHelpFlowView extends ScrollView implements View.OnClickListener {
 
@@ -71,18 +72,20 @@ public class SelfHelpFlowView extends ScrollView implements View.OnClickListener
     }
 
     private void updateViews() {
-        Flowchart flow = session.getCurrentFlowchart();
-        questionTextView.setText(flow.getQuestion());
-        detailsTextView.setText(flow.getDetails());
+        Vertex curr_step = session.getCurrentVertex();
+        questionTextView.setText(curr_step.getName());
+        detailsTextView.setText(curr_step.getDetails());
 
-        updateImageThumbnails(flow);
-        updateOptions(flow);
-        updateAttachments(flow);
+        updateImageThumbnails(curr_step); //Waiting until I setup downloading resources properly
+        updateOptions();
+        updateAttachments(curr_step); //Waiting until I setup downloading resources properly
         backButton.setEnabled(session.hasPrevious());
     }
 
-    private void updateAttachments(Flowchart flow) {
-        final String[] attachments = flow.getAttachments();
+    //updating to use a vertex instead of old Flowchart object
+    private void updateAttachments(Vertex curr_step) {
+        String[] attachments = new String[curr_step.getResources().size()];
+        attachments = curr_step.getResources().toArray(attachments);
         if (attachments.length > 0) {
             TextView tv = new TextView(getContext());
             tv.setText(R.string.help_documents);
@@ -112,14 +115,14 @@ public class SelfHelpFlowView extends ScrollView implements View.OnClickListener
         }
     }
 
-    private void updateOptions(Flowchart flow) {
+    private void updateOptions() {
         for (int i = 0; i < optionsLinearLayout.getChildCount(); i++) {
             optionsLinearLayout.getChildAt(i).setOnClickListener(null);
         }
         optionsLinearLayout.removeAllViews();
-        String options[] = flow.getOptions();
-        for (int i = 0; i < flow.getNumChildren(); i++) {
-            final String option = options[i];
+        //Now, want to use
+        for (String opt : session.getCurrentOptions()) {
+            final String option = opt;
             Button button = new Button(getContext());
             button.setTransformationMethod(null);
             button.setText(option);
@@ -133,14 +136,15 @@ public class SelfHelpFlowView extends ScrollView implements View.OnClickListener
         }
     }
 
-    private void updateImageThumbnails(Flowchart flow) {
+
+    private void updateImageThumbnails(Vertex curr_step) {
         for (int i = 0; i < imageLinearLayout.getChildCount(); i++) {
             imageLinearLayout.getChildAt(i).setOnClickListener(null);
         }
         imageLinearLayout.removeAllViews();
-        if (flow.hasImages()) {
+        if (curr_step.hasImages()) {
             imageLinearLayout.setVisibility(VISIBLE);
-            String[] images = flow.getImageURLs();
+            List<String> images = curr_step.getImages();
             for (String url : images) {
                 if (ResourceHandler.get().hasStringResource(url)) {
                     final File file = getContext().getFileStreamPath(ResourceHandler.get().getStringResource(url));
@@ -188,12 +192,13 @@ public class SelfHelpFlowView extends ScrollView implements View.OnClickListener
      * @param option
      */
     private void advanceFlow(String option) {
-        if (session.getCurrentFlowchart().getChild(option) == null) {
+        session.selectOption(option); //Progress to the next vertex
+        //This is a little risky, but I think that it works with the existing structure of the graph
+        if (!session.getCurrentVertex().hasOutEdges()) {
             if (listener != null) {
                 listener.onSessionComplete();
             }
-        } else {
-            session.selectOption(option);
+        } else { //Not the end, need to update the views
             updateViews();
         }
     }

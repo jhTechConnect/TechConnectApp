@@ -1,9 +1,13 @@
 package org.centum.techconnect.model;
 
+import com.java.model.FlowChart;
+import com.java.model.GraphTraversal;
+import com.java.model.Vertex;
+
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
+import java.util.Set;
 
 /**
  * Created by Phani on 1/26/2016.
@@ -15,14 +19,12 @@ public class Session {
 
     private long createdDate;
     private String department;
-    private Device device;
-    private DeviceRole role;
+    private FlowChart device;
+    private GraphTraversal flowchart; //Step through the graph
     private String notes;
-    private Flowchart currentFlowchart;
-    //Stack of previous flowcharts shown
-    private Stack<Flowchart> stack = new Stack<>();
-    private List<Flowchart> history = new LinkedList<>();
-    private List<String> optionHistory = new LinkedList<>();
+
+    private List<Vertex> history = new LinkedList<>();//Wiating until we decide what to do with this
+    private List<String> optionHistory = new LinkedList<>();//Waiting until we decide what to do with this
 
     public String getReport() {
         StringBuilder report = new StringBuilder();
@@ -33,7 +35,7 @@ public class Session {
         //report.append("Role: " + ((role == 0) ? "Technician" : "End User"));
         report.append("History:\n------------------------").append("\n\n");
         for(int i = 0; i < history.size(); i++){
-            String question = history.get(i).getQuestion();
+            String question = history.get(i).getName();
             if(question.length() > 26){
                 question = question.substring(0, 23)+"...";
             }
@@ -42,69 +44,76 @@ public class Session {
         return report.toString();
     }
 
+    //Save
     public long getCreatedDate() {
         return createdDate;
     }
-
+    //Save
     public void setCreatedDate(long createdDate) {
         this.createdDate = createdDate;
     }
-
+    //Save
     public String getDepartment() {
         return department;
     }
-
+    //Save
     public void setDepartment(String department) {
         this.department = department;
     }
 
-    public Device getDevice() {
-        return device;
+
+    /**
+     * Return the current vertex so it's fields can be used by different view.
+     * This is the crucial method needed to interact with the underlying flowchart object
+     * @return Current vertex the traversal object is looking at
+     */
+    public Vertex getCurrentVertex() {
+        return this.flowchart.getCurrentVertex();//Simplify where this is referenced
     }
 
-    public void setDevice(Device device) {
+    /**
+     * Need to return the current options to views so they can populate buttons and the like
+     * @return The keyset of the GraphTraversal object
+     */
+    public Set<String> getCurrentOptions() {
+        return this.flowchart.getOptions();
+    }
+
+    public FlowChart getDevice() { return device;}
+
+    public void setDevice(FlowChart device) {
         this.device = device;
+        this.flowchart = new GraphTraversal(device.getGraph());
+
     }
 
+    //save
     public String getNotes() {
         return notes;
     }
-
+    //Save
     public void setNotes(String notes) {
         this.notes = notes;
     }
 
-    public Flowchart getCurrentFlowchart() {
-        return currentFlowchart;
-    }
-
+    //Modify
     public void selectOption(String option){
-        advanceTo(getCurrentFlowchart().getChild(option));
-        optionHistory.add(option);
+        flowchart.selectOption(option);//Select, update the traversal object
     }
 
-    private void advanceTo(Flowchart newFlowchart) {
-        stack.push(this.currentFlowchart);
-        this.currentFlowchart = newFlowchart;
-        history.add(newFlowchart);
-    }
-
+    //modify
     public void goBack() {
-        if (hasPrevious()) {
-            this.currentFlowchart = stack.pop();
-            history.add(this.currentFlowchart);
-            optionHistory.add("*Back*");
+        //Safety check. In theory, should only be able to be called when the back button is enabled,
+        //which is when the session has a previous step? May be able to remove
+        if (flowchart.hasPrevious()) {
+            flowchart.stepBack();
         }
     }
 
     public boolean hasPrevious() {
-        return stack.size() > 0;
+        return flowchart.hasPrevious();
     }
 
-    public void setRole(DeviceRole role) {
-        this.role = role;
-        this.currentFlowchart = role.getFlowchart();
-    }
 
     public enum Urgency {
         Low, Medium, High, Critical

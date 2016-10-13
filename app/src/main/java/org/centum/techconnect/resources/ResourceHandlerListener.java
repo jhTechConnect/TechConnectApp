@@ -1,11 +1,10 @@
 package org.centum.techconnect.resources;
 
-import org.centum.techconnect.model.Contact;
-import org.centum.techconnect.model.Device;
+import com.java.model.Contact;
 
 public interface ResourceHandlerListener {
 
-    void onDevicesChanged(Device[] oldDevices, Device[] newDevices);
+    void onDevicesChanged();
 
     void onContactsChanged(Contact[] oldContacts, Contact[] newContacts);
 }
