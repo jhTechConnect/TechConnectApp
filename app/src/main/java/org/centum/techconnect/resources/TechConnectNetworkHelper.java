@@ -36,7 +36,7 @@ public class TechConnectNetworkHelper {
 	private Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL)
 			.addConverterFactory(GsonConverterFactory.create(myGson))
 			.build();
-	private TechConnectService service = retrofit.create(TechConnectService.class);
+	private TechConnectRetrofit service = retrofit.create(TechConnectRetrofit.class);
 
 	//Store references to the possible device, problem, and misc flowcharts
 	private ArrayList<String> device_ids = new ArrayList<String>();
@@ -166,7 +166,6 @@ public class TechConnectNetworkHelper {
 		}
 	}
 
-	//We having some issues here
 	/**
 	 * This function is used to get a list of specific charts. This list must be sent to
 	 * Retrofit as a comma separated list of ids as a String. This converts from a list of integers
@@ -175,8 +174,6 @@ public class TechConnectNetworkHelper {
 	 * @return
 	 * @throws IOException
 	 */
-
-
 	public List<FlowChart> getCharts(String[] ids) throws IOException {
 		Response<JsendResponse> resp = service.flowcharts(ids).execute();
 		if (!resp.isSuccessful()) {
@@ -221,6 +218,7 @@ public class TechConnectNetworkHelper {
 
 
 	}
+
 
 	public void comment(ChartComment c) throws IOException {
 		Response<JsendResponse> resp = service.comment(user.getAuthToken(), user.getUserId(), c).execute();

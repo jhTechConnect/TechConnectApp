@@ -114,29 +114,10 @@ public class MainActivity extends AppCompatActivity
 
     private void loadResources() {
         loadingLayout.setVisibility(View.VISIBLE);
-
-        //
         //Here, want to replace AsyncTask with the IntentService. Currently, the only place necessary
         Intent loadResIntent = new Intent(this, LoadResourcesService.class);
         this.startService(loadResIntent);
 
-        //When this is complete, need to activate the ResourceHandlerListener to actually update the views
-        //based on the data gathered by the IntentService.
-
-        //
-
-        /*
-        new LoadResourcesAsyncTask(this, new LoadResourcesAsyncTask.ExecutionCompleteListener() {
-            @Override
-            public void onFinished(boolean error) {
-                loadingLayout.setVisibility(View.GONE);
-                if (error) {
-                    //TODO replace with snackbar
-                    Toast.makeText(MainActivity.this, R.string.error_loading_resources, Toast.LENGTH_LONG).show();
-                }
-            }
-        }).execute();
-        */
     }
 
     @Override

@@ -12,7 +12,7 @@ import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 
-public interface TechConnectService {
+public interface TechConnectRetrofit {
 	
 	//Define all of the headers which are needed for the communication here
 	//Initially defined as null
