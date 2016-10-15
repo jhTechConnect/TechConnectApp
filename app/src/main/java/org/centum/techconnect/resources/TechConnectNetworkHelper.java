@@ -198,7 +198,7 @@ public class TechConnectNetworkHelper {
 	//
 	//I have no clue how this should be done at all just threw something together.
 	public void login(String email, String password) throws IOException {
-		Response<JsendResponse> resp = service.login(email,password).execute();
+		Response<JsendResponse> resp = service.login(email, password).execute();
 		//System.out.println(service.login(email,password).execute().code());
 		//First check to see if the request succeeded
 		if (!resp.isSuccessful()) {
@@ -213,7 +213,7 @@ public class TechConnectNetworkHelper {
 	}
 
 	public void logout() throws IOException {
-		Response<JsendResponse> resp = service.logout(user.getAuthToken(),user.getUserId()).execute();
+		Response<JsendResponse> resp = service.logout(user.getAuthToken(), user.getUserId()).execute();
 		if (!resp.isSuccessful()) {
 			JsendResponse test = myGson.fromJson(resp.errorBody().string(), JsendResponse.class);
 			throw new IOException(test.getMessage());
@@ -232,7 +232,7 @@ public class TechConnectNetworkHelper {
 	 * @throws IOException
 	 */
 	public void comment(String chart_id, ChartComment c) throws IOException {
-		Response<JsendResponse> resp = service.comment(user.getAuthToken(), user.getUserId(),chart_id, c).execute();
+		Response<JsendResponse> resp = service.comment(user.getAuthToken(), user.getUserId(), chart_id, c).execute();
 		if (!resp.isSuccessful()) {
 			JsendResponse error = myGson.fromJson(resp.errorBody().string(),JsendResponse.class);
 			throw new IOException(error.getMessage());
@@ -248,7 +248,32 @@ public class TechConnectNetworkHelper {
 		//First, I need to build the RequestBody object to handle the single string
 		JsonObject body = new JsonObject();
 		body.addProperty("commentId",comment_id);
-		RequestBody requestBody = RequestBody.create(JSON, body.getAsString());
+		RequestBody requestBody = RequestBody.create(JSON, body.toString());
+
+		Response<JsendResponse> resp = service.deleteComment(user.getAuthToken(), user.getUserId(), chart_id, requestBody).execute();
+		if (!resp.isSuccessful()) {
+			JsendResponse error = myGson.fromJson(resp.errorBody().string(),JsendResponse.class);
+			throw new IOException(error.getMessage());
+		}
+
+	}
+
+	/**
+	 * Use this method to provide feedback on the chart (up-vote, down-vote currently)
+	 *
+	 * @param upVote - Boolean which determines whether up-vote (true)
+	 */
+	public void postFeedback(String chart_id, boolean upVote) throws IOException {
+		String vote = upVote ? "true" : "false";
+		JsonObject body = new JsonObject();
+		body.addProperty("feedback", vote);
+		RequestBody requestBody = RequestBody.create(JSON,body.toString());
+
+		Response<JsendResponse> resp = service.feedback(user.getAuthToken(),user.getUserId(),chart_id,requestBody).execute();
+		if (!resp.isSuccessful()) {
+			JsendResponse error = myGson.fromJson(resp.errorBody().string(),JsendResponse.class);
+			throw new IOException(error.getMessage());
+		}
 	}
 
 	private static Gson buildGson() {

@@ -62,6 +62,6 @@ public interface TechConnectRetrofit {
 	//Post feedback on a chart, which is upvoting and downvoting
 	//Use same approach as above: Json object has field "feedback"
 	@POST("api/v1/chart/{id}/feedback")
-	Call<JsendResponse> feedback(@Header("X-Auth-Token") String auth_token, @Header("X-User-Id") String userId,@Body RequestBody body);
+	Call<JsendResponse> feedback(@Header("X-Auth-Token") String auth_token, @Header("X-User-Id") String userId,@Path("id") String chart_id, @Body RequestBody body);
 
 }
