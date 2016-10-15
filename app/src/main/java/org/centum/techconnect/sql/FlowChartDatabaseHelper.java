@@ -3,8 +3,10 @@ package org.centum.techconnect.sql;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import org.centum.techconnect.sql.ChartTableData.ChartTableInfo;
 
+import org.centum.techconnect.sql.ChartTableData.ChartTableInfo;
+import org.centum.techconnect.sql.GraphTableData.GraphTableInfo;
+import org.centum.techconnect.sql.VerticesTableData.VerticesTableInfo;
 
 /**
  * Created by doranwalsten on 10/13/16.
@@ -35,6 +37,22 @@ public class FlowChartDatabaseHelper extends SQLiteOpenHelper {
             ChartTableInfo.CHART_SCORE +      " INTEGER," +
             "FOREIGN KEY (graphId) REFERENCES graphs (_id)) WITHOUT ROWID;";
 
+    //Create the Graph Table Object
+    public static final String CREATE_GRAPH_TABLE = "CREATE TABLE IF NOT EXISTS graphs (" +
+            GraphTableInfo.GRAPH_ID + "TEXT PRIMARY KEY NOT NULL UNIQUE," +
+            GraphTableInfo.FIRSTVERTEX + "TEXT," +
+            "FOREIGN KEY (firstVertex) REFERENCES vertices (_id));";
+
+    public static final String CREATE_VERTEX_TABLE = "CREATE TABLE IF NOT EXISTS vertices (" +
+            VerticesTableInfo.VERTEX_ID + "TEXT PRIMARY KEY NOT NULL UNIQUE," +
+            VerticesTableInfo.GRAPH_ID +   "TEXT," +
+            VerticesTableInfo.NAME +      "TEXT," +
+            VerticesTableInfo.DETAILS +   "TEXT," +
+            VerticesTableInfo.RESOURCES  +   "TEXT," +
+            VerticesTableInfo.IMAGES +    "TEXT," +
+            "FOREIGN KEY (graphId) REFERENCES graphs (_id));";
+
+
 
     public FlowChartDatabaseHelper(Context context) {
         super(context,DATABASE_NAME,null, DATABASE_VERSION);
@@ -43,6 +61,8 @@ public class FlowChartDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sql) {
         sql.execSQL(CREATE_CHART_TABLE);//Creates the table for Charts
+        sql.execSQL(CREATE_GRAPH_TABLE);//Creates the table for Graph
+        sql.execSQL(CREATE_VERTEX_TABLE);//Creates the table for Vertices
 
     }
 
