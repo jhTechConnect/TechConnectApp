@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import org.centum.techconnect.sql.ChartTableData.ChartTableInfo;
 import org.centum.techconnect.sql.GraphTableData.GraphTableInfo;
 import org.centum.techconnect.sql.VerticesTableData.VerticesTableInfo;
+import org.centum.techconnect.sql.EdgeTableData.EdgeTableInfo;
+import org.centum.techconnect.sql.CommentTableData.CommentTableInfo;
 
 /**
  * Created by doranwalsten on 10/13/16.
@@ -43,16 +45,34 @@ public class FlowChartDatabaseHelper extends SQLiteOpenHelper {
             GraphTableInfo.FIRSTVERTEX + "TEXT," +
             "FOREIGN KEY (firstVertex) REFERENCES vertices (_id));";
 
+    //Creates the Vertices Table Object
     public static final String CREATE_VERTEX_TABLE = "CREATE TABLE IF NOT EXISTS vertices (" +
-            VerticesTableInfo.VERTEX_ID + "TEXT PRIMARY KEY NOT NULL UNIQUE," +
-            VerticesTableInfo.GRAPH_ID +   "TEXT," +
-            VerticesTableInfo.NAME +      "TEXT," +
-            VerticesTableInfo.DETAILS +   "TEXT," +
-            VerticesTableInfo.RESOURCES  +   "TEXT," +
-            VerticesTableInfo.IMAGES +    "TEXT," +
+            VerticesTableInfo.VERTEX_ID + " TEXT PRIMARY KEY NOT NULL UNIQUE," +
+            VerticesTableInfo.GRAPH_ID +   " TEXT," +
+            VerticesTableInfo.NAME +      " TEXT," +
+            VerticesTableInfo.DETAILS +   " TEXT," +
+            VerticesTableInfo.RESOURCES  +   " TEXT," +
+            VerticesTableInfo.IMAGES +    " TEXT," +
             "FOREIGN KEY (graphId) REFERENCES graphs (_id));";
 
 
+    public static final String CREATE_EDGE_TABLE = "CREATE TABLE IF NOT EXISTS edges (" +
+            EdgeTableInfo.EDGE_ID +     " TEXT PRIMARY KEY NOT NULL UNIQUE," +
+            EdgeTableInfo.GRAPH_ID +  " TEXT," +
+            EdgeTableInfo.LABEL  + " TEXT," +
+            EdgeTableInfo.OUTV +   " TEXT," +
+            EdgeTableInfo.INV +    " TEXT," +
+            EdgeTableInfo.DETAILS + " TEXT, FOREIGN KEY (graphId) REFERENCES graphs (_id)," +
+            "FOREIGN KEY (_outV) REFERENCES vertices (_id), FOREIGN KEY (_inV) REFERENCES vertices (_id));";
+
+    public static final String CREATE_COMMENT_TABLE = "CREATE TABLE IF NOT EXISTS comments (" +
+            CommentTableInfo.COMMENT_ID +        " TEXT PRIMARY KEY NOT NULL UNIQUE," +
+            CommentTableInfo.PARENT_ID +   " TEXT," +
+            CommentTableInfo.PARENT_TYPE +  " TEXT," +
+            CommentTableInfo.OWNER +       " TEXT," +
+            CommentTableInfo.TEXT +       " TEXT," +
+            CommentTableInfo.CREATED_DATE + " DATE," +
+            CommentTableInfo.ATTACHMENT +  " TEXT);";
 
     public FlowChartDatabaseHelper(Context context) {
         super(context,DATABASE_NAME,null, DATABASE_VERSION);
@@ -63,6 +83,8 @@ public class FlowChartDatabaseHelper extends SQLiteOpenHelper {
         sql.execSQL(CREATE_CHART_TABLE);//Creates the table for Charts
         sql.execSQL(CREATE_GRAPH_TABLE);//Creates the table for Graph
         sql.execSQL(CREATE_VERTEX_TABLE);//Creates the table for Vertices
+        sql.execSQL(CREATE_EDGE_TABLE);//Creates the table for Edges
+        sql.execSQL(CREATE_COMMENT_TABLE);//Creates the table for Comments
 
     }
 
