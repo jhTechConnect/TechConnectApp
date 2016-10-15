@@ -35,6 +35,7 @@ public class FlowChartDatabaseHelper extends SQLiteOpenHelper {
             ChartTableInfo.CHART_SCORE +      " INTEGER," +
             "FOREIGN KEY (graphId) REFERENCES graphs (_id)) WITHOUT ROWID;";
 
+
     public FlowChartDatabaseHelper(Context context) {
         super(context,DATABASE_NAME,null, DATABASE_VERSION);
     }
