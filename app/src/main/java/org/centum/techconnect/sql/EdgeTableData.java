@@ -12,12 +12,25 @@ public class EdgeTableData {
     }
 
     public static abstract class EdgeTableInfo implements BaseColumns {
+        //Column and Table name
+        public static final String TABLE_NAME = "edges";
         public static final String EDGE_ID = "_id";
         public static final String GRAPH_ID = "graph_id";
         public static final String LABEL = "_label";
         public static final String OUTV = "_outV";
         public static final String INV = "_inV";
         public static final String DETAILS = "details";
+
+        //Create the edges table
+        public static final String CREATE_EDGE_TABLE = "CREATE TABLE IF NOT EXISTS " + EdgeTableInfo.TABLE_NAME + " (" +
+            EdgeTableInfo.EDGE_ID + " TEXT PRIMARY KEY NOT NULL UNIQUE," +
+            EdgeTableInfo.GRAPH_ID + " TEXT," +
+            EdgeTableInfo.LABEL + " TEXT," +
+            EdgeTableInfo.OUTV + " TEXT," +
+            EdgeTableInfo.INV + " TEXT," +
+            EdgeTableInfo.DETAILS + " TEXT, FOREIGN KEY (graphId) REFERENCES graphs (_id)," +
+            "FOREIGN KEY (_outV) REFERENCES " + VerticesTableData.VerticesTableInfo.TABLE_NAME + " (_id), FOREIGN KEY (_inV) REFERENCES " +
+            VerticesTableData.VerticesTableInfo.TABLE_NAME + " (_id));";
 
     }
 }
