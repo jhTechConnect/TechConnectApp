@@ -87,7 +87,7 @@ public class FlowChartDatabaseHelper extends SQLiteOpenHelper {
         cv_chart.put(ChartTableInfo.UPDATE_DATE,flowChart.getUpdatedDate());
         cv_chart.put(ChartTableInfo.CHART_VERSION,flowChart.getVersion());
         cv_chart.put(ChartTableInfo.CHART_OWNER,flowChart.getOwner());
-        cv_chart.put(ChartTableInfo.GRAPH_ID,graph_ID);
+        cv_chart.put(ChartTableInfo.GRAPH_ID, graph_ID);
 
         //Join all resources together as a comma-separated list
         String all_res_list = TextUtils.join(",", flowChart.getAllRes());
@@ -97,16 +97,20 @@ public class FlowChartDatabaseHelper extends SQLiteOpenHelper {
 
         //Join all general resources in a list
         String res_list = TextUtils.join(",",flowChart.getResources());
-        cv_chart.put(ChartTableInfo.CHART_RESOURCES,res_list);
+        cv_chart.put(ChartTableInfo.CHART_RESOURCES, res_list);
 
-        cv_chart.put(ChartTableInfo.CHART_TYPE,flowChart.getType().toString());
+        cv_chart.put(ChartTableInfo.CHART_TYPE, flowChart.getType().toString());
         cv_chart.put(ChartTableInfo.CHART_SCORE, flowChart.getScore());
 
         SQLiteDatabase sql = getWritableDatabase();
         //Insert chart
-        sql.insert(ChartTableInfo.TABLE_NAME, null, cv_chart);
+        try {
+            sql.insert(ChartTableInfo.TABLE_NAME, null, cv_chart);
+        } catch (Exception e) {
+            Log.e("Database Op",e.getMessage());
+        }
 
-        Log.d ("Database Op", "Chart Info Inserted Successfully");
+        Log.d("Database Op", "Chart Info Inserted Successfully");
     }
 
     /** This method takes a Graph object and pushes all information into the SQL database
@@ -115,7 +119,7 @@ public class FlowChartDatabaseHelper extends SQLiteOpenHelper {
      */
     public void putGraph(Graph g, String graphID) {
         SQLiteDatabase sql = getWritableDatabase();
-        sql.beginTransaction();
+        sql.beginTransaction();//Insert Graph into graph table, vertices into vertex table
 
         //Create ContentValues object with all columns and values for just Graph
         ContentValues cv_graph = new ContentValues();
@@ -123,18 +127,28 @@ public class FlowChartDatabaseHelper extends SQLiteOpenHelper {
         cv_graph.put(GraphTableInfo.FIRSTVERTEX, g.getFirstVertex());
 
         //Insert Graph w/o firstVertex
-        sql.insert(GraphTableInfo.TABLE_NAME, null, cv_graph);
-        Log.d("Database Op", "Graph Info Inserted Successfully");
-
-        //Insert all vertices
-        putVertices(sql, g.getVertices(), graphID);
+        try {
+            sql.insert(GraphTableInfo.TABLE_NAME, null, cv_graph);
+            Log.d("Database Op", "Graph Info Inserted Successfully");
+            //Insert all vertices
+            putVertices(sql, g.getVertices(), graphID);
+            sql.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.e("Database Op",e.getMessage());
+            sql.endTransaction();
+        }
+        sql.endTransaction(); //End the transaction of inserting into graph and vertices
 
         //Insert all edges
-        putEdges(sql, g.getEdges(), graphID);
-
-        //Finish Transaction
-        sql.setTransactionSuccessful();
-        sql.endTransaction();
+        sql.beginTransaction(); //Insert edges
+        try {
+            putEdges(sql, g.getEdges(), graphID);
+            sql.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.e("Database Op",e.getMessage());
+            sql.endTransaction();
+        }
+        sql.endTransaction(); //End the transaction of inserting edges
     }
 
     /**
