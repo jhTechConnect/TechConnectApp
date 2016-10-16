@@ -39,10 +39,13 @@ public class FlowChartDatabaseHelper extends SQLiteOpenHelper {
     }
 
     //Singleton get method to return the single instance of the class
-    public FlowChartDatabaseHelper get(Context context) {
+    public static FlowChartDatabaseHelper get(Context context) {
         if (instance == null) { instance = new FlowChartDatabaseHelper(context); }
         return instance;
     }
+
+    //Do I want to check whether the instance has been set?
+    public static FlowChartDatabaseHelper get() {return instance;}
 
     @Override
     public void onCreate(SQLiteDatabase sql) {

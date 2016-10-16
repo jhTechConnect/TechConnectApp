@@ -29,8 +29,7 @@ public class VerticesTableData {
             NAME + " TEXT," +
             DETAILS + " TEXT," +
             RESOURCES + " TEXT," +
-            IMAGES + " TEXT," +
-            "FOREIGN KEY (graphId) REFERENCES " + GraphTableInfo.TABLE_NAME + " (_id));";
+            IMAGES + " TEXT, FOREIGN KEY (graphId) REFERENCES " + GraphTableInfo.TABLE_NAME + " (_id));";
 
     }
 }

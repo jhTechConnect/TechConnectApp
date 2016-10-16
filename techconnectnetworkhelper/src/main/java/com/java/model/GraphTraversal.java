@@ -20,8 +20,8 @@ public class GraphTraversal {
 
     public GraphTraversal(Graph g) {
         this.g = g;
-        this.curr = g.getRoot();
-        this.currOptions = g.getOptions(g.getRoot());
+        this.curr = g.getFirstVertex();
+        this.currOptions = g.getOptions(g.getFirstVertex());
         this.done = false;
     }
 

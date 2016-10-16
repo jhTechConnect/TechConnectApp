@@ -16,7 +16,7 @@ public class EdgeTableData {
         //Column and Table name
         public static final String TABLE_NAME = "edges";
         public static final String EDGE_ID = "_id";
-        public static final String GRAPH_ID = "graph_id";
+        public static final String GRAPH_ID = "graphId";
         public static final String LABEL = "_label";
         public static final String OUTV = "_outV";
         public static final String INV = "_inV";
@@ -30,7 +30,7 @@ public class EdgeTableData {
             OUTV + " TEXT," +
             INV + " TEXT," +
             DETAILS + " TEXT, FOREIGN KEY (graphId) REFERENCES graphs (_id)," +
-            "FOREIGN KEY (_outV) REFERENCES " + VerticesTableInfo.TABLE_NAME + " (_id), FOREIGN KEY (_inV) REFERENCES " +
+            " FOREIGN KEY (_outV) REFERENCES " + VerticesTableInfo.TABLE_NAME + " (_id), FOREIGN KEY (_inV) REFERENCES " +
             VerticesTableInfo.TABLE_NAME + " (_id));";
 
     }

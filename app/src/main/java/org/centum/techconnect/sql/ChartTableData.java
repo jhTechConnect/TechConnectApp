@@ -49,7 +49,7 @@ public class ChartTableData {
             CHART_RESOURCES + " TEXT," +
             CHART_TYPE + " TEXT," +
             CHART_SCORE + " INTEGER," +
-            "FOREIGN KEY (graphId) REFERENCES " + GraphTableInfo.TABLE_NAME + " (_id)) WITHOUT ROWID;";
+            " FOREIGN KEY (graphId) REFERENCES " + GraphTableInfo.TABLE_NAME + " (_id)) WITHOUT ROWID;";
 
     }
 }

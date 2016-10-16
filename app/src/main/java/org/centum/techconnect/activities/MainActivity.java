@@ -30,6 +30,7 @@ import org.centum.techconnect.fragments.ReportsFragment;
 import org.centum.techconnect.fragments.SelfHelpFragment;
 import org.centum.techconnect.resources.ResourceHandler;
 import org.centum.techconnect.services.LoadResourcesService;
+import org.centum.techconnect.sql.FlowChartDatabaseHelper;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity
 
         //Setup the Broadcast Manager to receive messages from the IntentService Instance
         myReceiver = new ResponseReceiver();
+
         //Define the Intent filter for the
         IntentFilter mStatusIntentFilter = new IntentFilter(
                ResponseReceiver.PROCESS_RESPONSE);
@@ -67,6 +69,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         ResourceHandler.get(this);
+        FlowChartDatabaseHelper.get(this); //Initiate the singleton FlowChartDatabaseHelper object
         ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

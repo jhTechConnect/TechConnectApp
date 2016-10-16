@@ -11,6 +11,7 @@ import com.java.model.FlowChart;
 import org.centum.techconnect.activities.MainActivity;
 import org.centum.techconnect.resources.ResourceHandler;
 import org.centum.techconnect.resources.TechConnectNetworkHelper;
+import org.centum.techconnect.sql.FlowChartDatabaseHelper;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -36,6 +37,7 @@ public class LoadResourcesService extends IntentService {
     public static final String RESULT_MESSAGE = "loadResourceResponseMessage";
 
 
+
     //Just using the default constructor from super class for now
     public LoadResourcesService() {
         super("Load Resources");
@@ -53,7 +55,9 @@ public class LoadResourcesService extends IntentService {
             //Try to download any devices to the App
             helper.getCatalog(true); //Used to generate the list of devices, can change later
             List<FlowChart> dev = helper.getDevices();
+
             //Insert dev into database using putCharts(dev)
+            FlowChartDatabaseHelper.get().putChart(dev.get(0));
 
             devices = new FlowChart[dev.size()]; //Get the array of devices
             devices = dev.toArray(devices);
