@@ -1,6 +1,7 @@
 package org.centum.techconnect.sql;
 
 import android.provider.BaseColumns;
+import org.centum.techconnect.sql.GraphTableData.GraphTableInfo;
 
 /**
  * This is a file used to define the structure of the "Chart" table within the SQL database on the
@@ -35,20 +36,20 @@ public class ChartTableData {
         public static final String CHART_SCORE = "score";
 
         //Create the Chart Table object
-        public static final String CREATE_CHART_TABLE = "CREATE TABLE IF NOT EXISTS " + ChartTableInfo.TABLE_NAME + " (" +
-            ChartTableInfo.CHART_ID + " TEXT PRIMARY KEY NOT NULL UNIQUE," +
-            ChartTableInfo.CHART_NAME + " TEXT," +
-            ChartTableInfo.CHART_DESC + " TEXT," +
-            ChartTableInfo.UPDATE_DATE + " DATE," +
-            ChartTableInfo.CHART_VERSION + " TEXT," +
-            ChartTableInfo.CHART_OWNER + " TEXT," +
-            ChartTableInfo.GRAPH_ID + " TEXT," +
-            ChartTableInfo.CHART_ALL_RES + " TEXT," +
-            ChartTableInfo.CHART_IMAGE + " TEXT," +
-            ChartTableInfo.CHART_RESOURCES + " TEXT," +
-            ChartTableInfo.CHART_TYPE + " TEXT," +
-            ChartTableInfo.CHART_SCORE + " INTEGER," +
-            "FOREIGN KEY (graphId) REFERENCES " + GraphTableData.GraphTableInfo.TABLE_NAME + " (_id)) WITHOUT ROWID;";
+        public static final String CREATE_CHART_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
+            CHART_ID + " TEXT PRIMARY KEY NOT NULL UNIQUE," +
+            CHART_NAME + " TEXT," +
+            CHART_DESC + " TEXT," +
+            UPDATE_DATE + " DATE," +
+            CHART_VERSION + " TEXT," +
+            CHART_OWNER + " TEXT," +
+            GRAPH_ID + " TEXT," +
+            CHART_ALL_RES + " TEXT," +
+            CHART_IMAGE + " TEXT," +
+            CHART_RESOURCES + " TEXT," +
+            CHART_TYPE + " TEXT," +
+            CHART_SCORE + " INTEGER," +
+            "FOREIGN KEY (graphId) REFERENCES " + GraphTableInfo.TABLE_NAME + " (_id)) WITHOUT ROWID;";
 
     }
 }

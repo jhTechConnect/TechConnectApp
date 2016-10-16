@@ -1,6 +1,7 @@
 package org.centum.techconnect.sql;
 
 import android.provider.BaseColumns;
+import org.centum.techconnect.sql.VerticesTableData.VerticesTableInfo;
 
 /**
  * Created by doranwalsten on 10/15/16.
@@ -22,15 +23,15 @@ public class EdgeTableData {
         public static final String DETAILS = "details";
 
         //Create the edges table
-        public static final String CREATE_EDGE_TABLE = "CREATE TABLE IF NOT EXISTS " + EdgeTableInfo.TABLE_NAME + " (" +
-            EdgeTableInfo.EDGE_ID + " TEXT PRIMARY KEY NOT NULL UNIQUE," +
-            EdgeTableInfo.GRAPH_ID + " TEXT," +
-            EdgeTableInfo.LABEL + " TEXT," +
-            EdgeTableInfo.OUTV + " TEXT," +
-            EdgeTableInfo.INV + " TEXT," +
-            EdgeTableInfo.DETAILS + " TEXT, FOREIGN KEY (graphId) REFERENCES graphs (_id)," +
-            "FOREIGN KEY (_outV) REFERENCES " + VerticesTableData.VerticesTableInfo.TABLE_NAME + " (_id), FOREIGN KEY (_inV) REFERENCES " +
-            VerticesTableData.VerticesTableInfo.TABLE_NAME + " (_id));";
+        public static final String CREATE_EDGE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
+            EDGE_ID + " TEXT PRIMARY KEY NOT NULL UNIQUE," +
+            GRAPH_ID + " TEXT," +
+            LABEL + " TEXT," +
+            OUTV + " TEXT," +
+            INV + " TEXT," +
+            DETAILS + " TEXT, FOREIGN KEY (graphId) REFERENCES graphs (_id)," +
+            "FOREIGN KEY (_outV) REFERENCES " + VerticesTableInfo.TABLE_NAME + " (_id), FOREIGN KEY (_inV) REFERENCES " +
+            VerticesTableInfo.TABLE_NAME + " (_id));";
 
     }
 }

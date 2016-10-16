@@ -1,6 +1,7 @@
 package org.centum.techconnect.sql;
 
 import android.provider.BaseColumns;
+import org.centum.techconnect.sql.GraphTableData.GraphTableInfo;
 
 /**
  * Created by doranwalsten on 10/15/16.
@@ -21,14 +22,14 @@ public class VerticesTableData {
         public static final String IMAGES= "images";
 
         //Creates the Vertices Table Object
-        public static final String CREATE_VERTEX_TABLE = "CREATE TABLE IF NOT EXISTS " + VerticesTableInfo.TABLE_NAME + " (" +
-            VerticesTableInfo.VERTEX_ID + " TEXT PRIMARY KEY NOT NULL UNIQUE," +
-            VerticesTableInfo.GRAPH_ID + " TEXT," +
-            VerticesTableInfo.NAME + " TEXT," +
-            VerticesTableInfo.DETAILS + " TEXT," +
-            VerticesTableInfo.RESOURCES + " TEXT," +
-            VerticesTableInfo.IMAGES + " TEXT," +
-            "FOREIGN KEY (graphId) REFERENCES " + GraphTableData.GraphTableInfo.TABLE_NAME + " (_id));";
+        public static final String CREATE_VERTEX_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
+            VERTEX_ID + " TEXT PRIMARY KEY NOT NULL UNIQUE," +
+            GRAPH_ID + " TEXT," +
+            NAME + " TEXT," +
+            DETAILS + " TEXT," +
+            RESOURCES + " TEXT," +
+            IMAGES + " TEXT," +
+            "FOREIGN KEY (graphId) REFERENCES " + GraphTableInfo.TABLE_NAME + " (_id));";
 
     }
 }

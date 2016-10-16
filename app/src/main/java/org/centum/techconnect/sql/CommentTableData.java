@@ -25,14 +25,14 @@ public class CommentTableData {
         public static final String ATTACHMENT = "attachment";
 
         //Create the Comment Table
-        public static final String CREATE_COMMENT_TABLE = "CREATE TABLE IF NOT EXISTS " + CommentTableInfo.TABLE_NAME + " (" +
-            CommentTableInfo.COMMENT_ID +        " TEXT PRIMARY KEY NOT NULL UNIQUE," +
-            CommentTableInfo.PARENT_ID +   " TEXT," +
-            CommentTableInfo.PARENT_TYPE +  " TEXT," +
-            CommentTableInfo.OWNER +       " TEXT," +
-            CommentTableInfo.TEXT +       " TEXT," +
-            CommentTableInfo.CREATED_DATE + " DATE," +
-            CommentTableInfo.ATTACHMENT +  " TEXT);";
+        public static final String CREATE_COMMENT_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
+            COMMENT_ID +        " TEXT PRIMARY KEY NOT NULL UNIQUE," +
+            PARENT_ID +   " TEXT," +
+            PARENT_TYPE +  " TEXT," +
+            OWNER +       " TEXT," +
+            TEXT +       " TEXT," +
+            CREATED_DATE + " DATE," +
+            ATTACHMENT +  " TEXT);";
 
     }
 }
