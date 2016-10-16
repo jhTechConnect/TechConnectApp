@@ -53,6 +53,8 @@ public class LoadResourcesService extends IntentService {
             //Try to download any devices to the App
             helper.getCatalog(true); //Used to generate the list of devices, can change later
             List<FlowChart> dev = helper.getDevices();
+            //Insert dev into database using putCharts(dev)
+
             devices = new FlowChart[dev.size()]; //Get the array of devices
             devices = dev.toArray(devices);
             //If this succeeds, should in theory be able to load resources

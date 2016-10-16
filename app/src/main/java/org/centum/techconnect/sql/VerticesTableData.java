@@ -14,6 +14,7 @@ public class VerticesTableData {
     public static abstract class VerticesTableInfo implements BaseColumns {
         //Columns and Table Name
         public static final String TABLE_NAME = "vertices";
+
         public static final String VERTEX_ID= "_id";
         public static final String GRAPH_ID= "graphId";
         public static final String NAME= "name";

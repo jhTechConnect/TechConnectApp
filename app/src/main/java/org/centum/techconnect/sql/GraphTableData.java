@@ -22,7 +22,7 @@ public class GraphTableData {
         public static final String CREATE_GRAPH_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
             GRAPH_ID + "TEXT PRIMARY KEY NOT NULL UNIQUE," +
             FIRSTVERTEX + "TEXT," +
-            "FOREIGN KEY (firstVertex) REFERENCES " + VerticesTableInfo.TABLE_NAME +  " (_id));";
+            "FOREIGN KEY (firstVertex) REFERENCES " + VerticesTableInfo.TABLE_NAME +  " (_id) DEFERRABLE INITIALLY DEFERRED);";
 
     }
 }
