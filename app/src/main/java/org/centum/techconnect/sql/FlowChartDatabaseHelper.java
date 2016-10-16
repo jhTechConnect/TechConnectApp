@@ -11,20 +11,27 @@ import org.centum.techconnect.sql.EdgeTableData.EdgeTableInfo;
 import org.centum.techconnect.sql.CommentTableData.CommentTableInfo;
 
 /**
+ * Using a singleton class in order to make the same database visible/accessible to any activity
+ * during the operation of the app
  * Created by doranwalsten on 10/13/16.
  */
 public class FlowChartDatabaseHelper extends SQLiteOpenHelper {
 
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "FlowChart.db";
+    private static FlowChartDatabaseHelper instance = null;
+    private final Context context;
 
-    /*
-      Here, we define the queries that we're interested in. Pulled from the
-      SQL specs defined by Phani online
-     */
-
-    public FlowChartDatabaseHelper(Context context) {
+    //Singleton private constructor
+    private FlowChartDatabaseHelper(Context context) {
         super(context,DATABASE_NAME,null, DATABASE_VERSION);
+        this.context = context;
+    }
+
+    //Singleton get method to return the single instance of the class
+    public FlowChartDatabaseHelper get(Context context) {
+        if (instance == null) { instance = new FlowChartDatabaseHelper(context); }
+        return instance;
     }
 
     @Override
