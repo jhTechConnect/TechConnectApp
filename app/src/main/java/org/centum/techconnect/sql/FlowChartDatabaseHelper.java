@@ -60,6 +60,7 @@ public class FlowChartDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
+        //Used to add columns/tables, etc. Not relevant at this point
     }
 
     public void putCharts(List<FlowChart> charts) {
