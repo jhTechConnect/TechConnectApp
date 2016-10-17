@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 public class Graph {
-	
+
 	private Map<String,Vertex> vertices;
 	private Map<String, Edge> edges;
-	final private String root;//This is the first vertex id.
+	final private String firstVertex;//This is the first vertex id.
 	
 	//Best constructor, actually builds all connections in the graph
 	public Graph(List<Vertex> V, List<Edge> E, String r_ID) {
@@ -29,8 +29,8 @@ public class Graph {
 			vertices.get(e.getInV()).addInEdge(e.getId());
 		}
 
-		//Set the root ID in order for it to be readily accessible
-		this.root = r_ID;
+		//Set the root ID in order for it to be readily accessible, as well as ID and Owner
+		this.firstVertex = r_ID;
 	}
 
 	/**
@@ -50,8 +50,8 @@ public class Graph {
 	}
 
 	//Only want to get root, never set it
-	public String getRoot() {
-		return this.root;
+	public String getFirstVertex() {
+		return this.firstVertex;
 	}
 
 	public Vertex getVertex(String id) {
