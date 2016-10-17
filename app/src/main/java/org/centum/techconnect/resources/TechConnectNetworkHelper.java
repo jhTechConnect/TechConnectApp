@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -31,10 +33,13 @@ public class TechConnectNetworkHelper {
 	//First, I need  a Retrofit object which is able to understand JSON
 
 	public static final String BASE_URL = "http://jhtechconnect.me/";
+	//Needed to Read JsonObject to Body parameter for Retrofit/OkHttp
+	public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 	private Tokens user = new Tokens();
 	private Gson myGson = buildGson();
 	private Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL)
 			.addConverterFactory(GsonConverterFactory.create(myGson))
+
 			.build();
 	private TechConnectRetrofit service = retrofit.create(TechConnectRetrofit.class);
 
@@ -193,7 +198,7 @@ public class TechConnectNetworkHelper {
 	//
 	//I have no clue how this should be done at all just threw something together.
 	public void login(String email, String password) throws IOException {
-		Response<JsendResponse> resp = service.login(email,password).execute();
+		Response<JsendResponse> resp = service.login(email, password).execute();
 		//System.out.println(service.login(email,password).execute().code());
 		//First check to see if the request succeeded
 		if (!resp.isSuccessful()) {
@@ -208,7 +213,7 @@ public class TechConnectNetworkHelper {
 	}
 
 	public void logout() throws IOException {
-		Response<JsendResponse> resp = service.logout(user.getAuthToken(),user.getUserId()).execute();
+		Response<JsendResponse> resp = service.logout(user.getAuthToken(), user.getUserId()).execute();
 		if (!resp.isSuccessful()) {
 			JsendResponse test = myGson.fromJson(resp.errorBody().string(), JsendResponse.class);
 			throw new IOException(test.getMessage());
@@ -220,8 +225,51 @@ public class TechConnectNetworkHelper {
 	}
 
 
-	public void comment(ChartComment c) throws IOException {
-		Response<JsendResponse> resp = service.comment(user.getAuthToken(), user.getUserId(), c).execute();
+	/**
+	 * Use this method to comment on a flowchart
+	 * @param chart_id - ID of the flowchart to post to
+	 * @param c - The actual comment object
+	 * @throws IOException
+	 */
+	public void comment(String chart_id, ChartComment c) throws IOException {
+		Response<JsendResponse> resp = service.comment(user.getAuthToken(), user.getUserId(), chart_id, c).execute();
+		if (!resp.isSuccessful()) {
+			JsendResponse error = myGson.fromJson(resp.errorBody().string(),JsendResponse.class);
+			throw new IOException(error.getMessage());
+		}
+	}
+
+	/**
+	 * Use this method to delete a comment on a flowchart on the server
+	 * @param chart_id - ID of the chart
+	 * @param comment_id - ID of the
+	 */
+	public void deleteComment(String chart_id, String comment_id) throws IOException {
+		//First, I need to build the RequestBody object to handle the single string
+		JsonObject body = new JsonObject();
+		body.addProperty("commentId",comment_id);
+		RequestBody requestBody = RequestBody.create(JSON, body.toString());
+
+		Response<JsendResponse> resp = service.deleteComment(user.getAuthToken(), user.getUserId(), chart_id, requestBody).execute();
+		if (!resp.isSuccessful()) {
+			JsendResponse error = myGson.fromJson(resp.errorBody().string(),JsendResponse.class);
+			throw new IOException(error.getMessage());
+		}
+
+	}
+
+	/**
+	 * Use this method to provide feedback on the chart (up-vote, down-vote currently)
+	 *
+	 * @param upVote - Boolean which determines whether up-vote (true)
+	 */
+	public void postFeedback(String chart_id, boolean upVote) throws IOException {
+		String vote = upVote ? "true" : "false";
+		JsonObject body = new JsonObject();
+		body.addProperty("feedback", vote);
+		RequestBody requestBody = RequestBody.create(JSON,body.toString());
+
+		Response<JsendResponse> resp = service.feedback(user.getAuthToken(),user.getUserId(),chart_id,requestBody).execute();
 		if (!resp.isSuccessful()) {
 			JsendResponse error = myGson.fromJson(resp.errorBody().string(),JsendResponse.class);
 			throw new IOException(error.getMessage());

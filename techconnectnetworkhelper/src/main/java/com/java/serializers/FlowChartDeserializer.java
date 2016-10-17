@@ -89,6 +89,7 @@ public class FlowChartDeserializer implements JsonDeserializer<FlowChart> {
 		final Graph g;
 		if (jsonObject.has("graph")) {
 			JsonObject temp_graph = jsonObject.get("graph").getAsJsonObject();
+
 			//This object should have 2 properties, vertices and edges
 			JsonArray vertices = temp_graph.get("vertices").getAsJsonArray();
 			JsonArray edges = temp_graph.get("edges").getAsJsonArray();
