@@ -30,7 +30,7 @@ import org.centum.techconnect.fragments.ReportsFragment;
 import org.centum.techconnect.fragments.SelfHelpFragment;
 import org.centum.techconnect.resources.ResourceHandler;
 import org.centum.techconnect.services.LoadResourcesService;
-import org.centum.techconnect.sql.FlowChartDatabaseHelper;
+import org.centum.techconnect.sql.TCDatabaseHelper;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         ResourceHandler.get(this);
-        FlowChartDatabaseHelper.get(this); //Initiate the singleton FlowChartDatabaseHelper object
+        TCDatabaseHelper.get(this);
         ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

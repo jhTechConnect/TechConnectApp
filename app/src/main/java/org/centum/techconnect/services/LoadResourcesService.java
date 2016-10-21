@@ -11,7 +11,7 @@ import com.java.model.FlowChart;
 import org.centum.techconnect.activities.MainActivity;
 import org.centum.techconnect.resources.ResourceHandler;
 import org.centum.techconnect.resources.TechConnectNetworkHelper;
-import org.centum.techconnect.sql.FlowChartDatabaseHelper;
+import org.centum.techconnect.sql.TCDatabaseHelper;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -56,8 +56,8 @@ public class LoadResourcesService extends IntentService {
             helper.getCatalog(true); //Used to generate the list of devices, can change later
             List<FlowChart> dev = helper.getDevices();
 
-            //Insert dev into database using putCharts(dev)
-            FlowChartDatabaseHelper.get().putChart(dev.get(0));
+            //Insert dev into database using insertCharts(dev)
+            TCDatabaseHelper.get().insertChart(dev.get(0));
 
             devices = new FlowChart[dev.size()]; //Get the array of devices
             devices = dev.toArray(devices);
@@ -85,10 +85,6 @@ public class LoadResourcesService extends IntentService {
         broadcastIntent.putExtra(RESULT_STATUS, result);
         broadcastIntent.putExtra(RESULT_MESSAGE, resultMessage);
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
-    }
-
-    public enum ResultType {
-        SUCCESS, RES_ERROR
     }
 
     public boolean loadResources(List<FlowChart> devices) {
@@ -145,5 +141,9 @@ public class LoadResourcesService extends IntentService {
 
         Logger.getLogger(getClass().getName()).log(Level.INFO, "Downloaded file: " + fileUrl + " --> " + fileName);
         return fileName;
+    }
+
+    public enum ResultType {
+        SUCCESS, RES_ERROR
     }
 }
