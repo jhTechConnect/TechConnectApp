@@ -13,7 +13,7 @@ public class FlowChart {
 	private String owner;
 	private Graph graph; 
 	private List<String> all_res;
-	private List<ChartComment> comments;
+	private List<Comment> comments;
 	private String image;
 	private List<String> resources;
 	private ChartType type;
@@ -91,12 +91,12 @@ public class FlowChart {
 	public void setAllRes(List<String> ar) {
 		this.all_res = ar;
 	}
-	
-	public List<ChartComment> getComments() {
+
+	public List<Comment> getComments() {
 		return this.comments;
 	}
-	
-	public void setComments(List<ChartComment> c) {
+
+	public void setComments(List<Comment> c) {
 		this.comments = c;
 	}
 	

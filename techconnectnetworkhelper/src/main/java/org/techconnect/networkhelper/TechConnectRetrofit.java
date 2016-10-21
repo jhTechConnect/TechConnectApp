@@ -1,6 +1,6 @@
 package org.techconnect.networkhelper;
 
-import org.techconnect.networkhelper.model.ChartComment;
+import org.techconnect.networkhelper.model.Comment;
 import org.techconnect.networkhelper.model.JsendResponse;
 
 import okhttp3.RequestBody;
@@ -51,7 +51,7 @@ public interface TechConnectRetrofit {
 	
 	//Attempts to post a comment onto a chart or node with id id.
 	@POST("api/v1/chart/{id}/comment")
-	Call<JsendResponse> postComment(@Header("X-Auth-Token") String auth_token, @Header("X-User-Id") String userId, @Path("id") String chartId, @Body ChartComment comment);
+	Call<JsendResponse> postComment(@Header("X-Auth-Token") String auth_token, @Header("X-User-Id") String userId, @Path("id") String chartId, @Body Comment comment);
 
 	//Attempt to delete a comment from a chart
 	//Learn how to use the OkHttp structure to just send a JSON object: http://stackoverflow.com/questions/34179922/okhttp-post-body-as-json

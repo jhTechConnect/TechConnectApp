@@ -6,7 +6,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import org.techconnect.networkhelper.model.ChartComment;
+import org.techconnect.networkhelper.model.Comment;
 import org.techconnect.networkhelper.model.Vertex;
 
 import java.lang.reflect.Type;
@@ -31,9 +31,9 @@ public class VertexDeserializer implements JsonDeserializer<Vertex>  {
 		for (JsonElement j : jsonObject.get("images").getAsJsonArray()) {
 			images.add(j.getAsString());
 		}
-		final ArrayList<ChartComment> comments = new ArrayList<ChartComment>();
+		final ArrayList<Comment> comments = new ArrayList<Comment>();
 		for (JsonElement j : jsonObject.get("comments").getAsJsonArray()) {
-			comments.add(myGson.fromJson(j, ChartComment.class));
+			comments.add(myGson.fromJson(j, Comment.class));
 		}
 		
 		final Vertex vertex = new Vertex();

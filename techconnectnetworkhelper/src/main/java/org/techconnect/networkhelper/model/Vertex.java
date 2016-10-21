@@ -10,7 +10,7 @@ public class Vertex {
 	private String details;
 	private List<String> resources;
 	private List<String> images;
-	private List<ChartComment> comments;
+	private List<Comment> comments;
 	
 	//These are fields which will be generated once the file is read
 	//Don't want to rip these to Json
@@ -71,12 +71,12 @@ public class Vertex {
 	public boolean hasImages() {
 		return !this.images.isEmpty();
 	}
-	
-	public List<ChartComment> getComments() {
+
+	public List<Comment> getComments() {
 		return this.comments;
 	}
-	
-	public void setComments(List<ChartComment> comments) {
+
+	public void setComments(List<Comment> comments) {
 		this.comments = comments;
 	}
 	

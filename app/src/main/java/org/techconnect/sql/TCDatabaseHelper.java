@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
 import android.util.Log;
 
+import org.techconnect.networkhelper.model.Comment;
 import org.techconnect.networkhelper.model.Edge;
 import org.techconnect.networkhelper.model.FlowChart;
 import org.techconnect.networkhelper.model.Graph;
@@ -48,7 +49,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
      *
      * @return A random ID
      */
-    private static String randomId() {
+    private static String getRandomId() {
         String validChars = "23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz";
         char chars[] = new char[17];
         for (int i = 0; i < chars.length; i++) {
@@ -79,45 +80,70 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * This method takes a FlowChart object and pushes all information into the SQL database
+     * <p/>
      *
      * @param flowChart - The Flowchart object
      */
     public void insertChart(FlowChart flowChart) {
-        //Insert Graph, Vertices, and Edges
         String graphId = insertGraph(flowChart.getGraph());
 
         //Create ContentValues object with all columns and values for just Chart
         ContentValues chartContentValues = new ContentValues();
-        chartContentValues.put(ChartEntry.CHART_ID, flowChart.getId());
-        chartContentValues.put(ChartEntry.CHART_NAME, flowChart.getName());
-        chartContentValues.put(ChartEntry.CHART_DESC, flowChart.getDescription());
-        chartContentValues.put(ChartEntry.UPDATE_DATE, flowChart.getUpdatedDate());
-        chartContentValues.put(ChartEntry.CHART_VERSION, flowChart.getVersion());
-        chartContentValues.put(ChartEntry.CHART_OWNER, flowChart.getOwner());
+        chartContentValues.put(ChartEntry.ID, flowChart.getId());
+        chartContentValues.put(ChartEntry.NAME, flowChart.getName());
+        chartContentValues.put(ChartEntry.DESCRIPTION, flowChart.getDescription());
+        chartContentValues.put(ChartEntry.UPDATED_DATE, flowChart.getUpdatedDate());
+        chartContentValues.put(ChartEntry.VERSION, flowChart.getVersion());
+        chartContentValues.put(ChartEntry.OWNER, flowChart.getOwner());
         chartContentValues.put(ChartEntry.GRAPH_ID, graphId);
 
         //Join all resources together as a comma-separated list
         String allResList = TextUtils.join(",", flowChart.getAllRes());
 
-        chartContentValues.put(ChartEntry.CHART_ALL_RES, allResList);
-        chartContentValues.put(ChartEntry.CHART_IMAGE, flowChart.getImage());
+        chartContentValues.put(ChartEntry.ALL_RESOURCES, allResList);
+        chartContentValues.put(ChartEntry.IMAGE, flowChart.getImage());
 
         //Join all general resources in a list
         String resList = TextUtils.join(",", flowChart.getResources());
-        chartContentValues.put(ChartEntry.CHART_RESOURCES, resList);
+        chartContentValues.put(ChartEntry.RESOURCES, resList);
 
-        chartContentValues.put(ChartEntry.CHART_TYPE, flowChart.getType().toString());
-        chartContentValues.put(ChartEntry.CHART_SCORE, flowChart.getScore());
+        chartContentValues.put(ChartEntry.TYPE, flowChart.getType().toString());
+        chartContentValues.put(ChartEntry.SCORE, flowChart.getScore());
 
-        SQLiteDatabase sql = getWritableDatabase();
-        //Insert chart
+        //Insert chart & comments
         try {
-            sql.insert(ChartEntry.TABLE_NAME, null, chartContentValues);
+            insertComments(flowChart.getComments(), flowChart.getId(), TCDatabaseContract.CommentEntry.PARENT_TYPE_CHART);
+            getWritableDatabase().insert(ChartEntry.TABLE_NAME, null, chartContentValues);
         } catch (Exception e) {
             Log.e(this.getClass().getName(), e.getMessage());
         }
 
         Log.d(this.getClass().getName(), "Chart Info Inserted Successfully");
+    }
+
+    private void insertComments(List<Comment> comments, String parentId, String parentType) {
+        for (Comment comment : comments) {
+            insertComment(comment, parentId, parentType);
+        }
+    }
+
+    private void insertComment(Comment comment, String parentId, String parentType) {
+        ContentValues commentContentValues = new ContentValues();
+        commentContentValues.put(TCDatabaseContract.CommentEntry.ID, getRandomId());
+        commentContentValues.put(TCDatabaseContract.CommentEntry.PARENT_ID, parentId);
+        commentContentValues.put(TCDatabaseContract.CommentEntry.PARENT_TYPE, parentType);
+        commentContentValues.put(TCDatabaseContract.CommentEntry.OWNER, comment.getOwner());
+        commentContentValues.put(TCDatabaseContract.CommentEntry.TEXT, comment.getText());
+        commentContentValues.put(TCDatabaseContract.CommentEntry.CREATED_DATE, comment.getCreatedDate());
+        commentContentValues.put(TCDatabaseContract.CommentEntry.ATTACHMENT, comment.getAttachment());
+
+        try {
+            getWritableDatabase().insert(TCDatabaseContract.CommentEntry.TABLE_NAME, null, commentContentValues);
+        } catch (Exception e) {
+            Log.e(this.getClass().getName(), e.getMessage());
+        }
+
+        Log.d(this.getClass().getName(), "Comment Info Inserted Successfully");
     }
 
     /**
@@ -126,13 +152,13 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
      * @param g
      */
     private String insertGraph(Graph g) {
-        String graphId = randomId();
+        String graphId = getRandomId();
         SQLiteDatabase sql = getWritableDatabase();
         sql.beginTransaction();//Insert Graph into graph table, vertices into vertex table
 
         //Create ContentValues object with all columns and values for just Graph
         ContentValues graphContentValues = new ContentValues();
-        graphContentValues.put(TCDatabaseContract.GraphEntry.GRAPH_ID, graphId);
+        graphContentValues.put(TCDatabaseContract.GraphEntry.ID, graphId);
         graphContentValues.put(TCDatabaseContract.GraphEntry.FIRST_VERTEX, g.getFirstVertex());
 
         //Insert Graph w/o firstVertex
@@ -169,22 +195,27 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
      */
     private void insertVertices(SQLiteDatabase sql, List<Vertex> vertices, String graphID) {
         for (Vertex v : vertices) {
-            ContentValues vertexContentValues = new ContentValues();
-            vertexContentValues.put(TCDatabaseContract.VertexEntry.VERTEX_ID, v.getId());
-            vertexContentValues.put(TCDatabaseContract.VertexEntry.GRAPH_ID, graphID);
-            vertexContentValues.put(TCDatabaseContract.VertexEntry.NAME, v.getName());
-            vertexContentValues.put(TCDatabaseContract.VertexEntry.DETAILS, v.getDetails());
-
-            //Join all resources together as a comma-separated list
-            String allRes = TextUtils.join(",", v.getResources());
-            String allImgs = TextUtils.join(",", v.getImages());
-
-            vertexContentValues.put(TCDatabaseContract.VertexEntry.RESOURCES, allRes);
-            vertexContentValues.put(TCDatabaseContract.VertexEntry.IMAGES, allImgs);
-
-            sql.insert(TCDatabaseContract.VertexEntry.TABLE_NAME, null, vertexContentValues);
+            insertVertex(sql, graphID, v);
         }
         Log.d(this.getClass().getName(), "Vertices Info Inserted Successfully");
+    }
+
+    private void insertVertex(SQLiteDatabase sql, String graphID, Vertex v) {
+        ContentValues vertexContentValues = new ContentValues();
+        vertexContentValues.put(TCDatabaseContract.VertexEntry.ID, v.getId());
+        vertexContentValues.put(TCDatabaseContract.VertexEntry.GRAPH_ID, graphID);
+        vertexContentValues.put(TCDatabaseContract.VertexEntry.NAME, v.getName());
+        vertexContentValues.put(TCDatabaseContract.VertexEntry.DETAILS, v.getDetails());
+
+        //Join all resources together as a comma-separated list
+        String allRes = TextUtils.join(",", v.getResources());
+        String allImgs = TextUtils.join(",", v.getImages());
+
+        vertexContentValues.put(TCDatabaseContract.VertexEntry.RESOURCES, allRes);
+        vertexContentValues.put(TCDatabaseContract.VertexEntry.IMAGES, allImgs);
+
+        insertComments(v.getComments(), v.getId(), TCDatabaseContract.CommentEntry.PARENT_TYPE_VERTEX);
+        sql.insert(TCDatabaseContract.VertexEntry.TABLE_NAME, null, vertexContentValues);
     }
 
     /**
@@ -196,7 +227,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
     private void insertEdges(SQLiteDatabase sql, List<Edge> edges, String graphID) {
         for (Edge e : edges) {
             ContentValues edgeContentValues = new ContentValues();
-            edgeContentValues.put(TCDatabaseContract.EdgeEntry.EDGE_ID, e.getId());
+            edgeContentValues.put(TCDatabaseContract.EdgeEntry.ID, e.getId());
             edgeContentValues.put(TCDatabaseContract.EdgeEntry.GRAPH_ID, graphID);
             edgeContentValues.put(TCDatabaseContract.EdgeEntry.LABEL, e.getLabel());
             edgeContentValues.put(TCDatabaseContract.EdgeEntry.OUT_VERTEX, e.getOutV());

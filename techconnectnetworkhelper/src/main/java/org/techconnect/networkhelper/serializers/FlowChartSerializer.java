@@ -8,7 +8,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-import org.techconnect.networkhelper.model.ChartComment;
+import org.techconnect.networkhelper.model.Comment;
 import org.techconnect.networkhelper.model.FlowChart;
 import org.techconnect.networkhelper.model.Vertex;
 
@@ -46,7 +46,7 @@ public class FlowChartSerializer implements JsonSerializer<FlowChart> {
 		//Comments
 		final JsonArray comments = new JsonArray();
 		if (flowchart.getComments() != null) {
-			for (ChartComment c : flowchart.getComments()) {
+			for (Comment c : flowchart.getComments()) {
 				comments.add(myGson.toJson(c));
 			}
 			jsonObject.add("comments", comments);

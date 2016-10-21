@@ -8,7 +8,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 
-import org.techconnect.networkhelper.model.ChartComment;
+import org.techconnect.networkhelper.model.Comment;
 import org.techconnect.networkhelper.model.Edge;
 import org.techconnect.networkhelper.model.FlowChart;
 import org.techconnect.networkhelper.model.FlowChart.ChartType;
@@ -35,12 +35,12 @@ public class FlowChartDeserializer implements JsonDeserializer<FlowChart> {
 		
 		//Now, getting the resources and comments fields
 		final ArrayList<String> all_res = new ArrayList<String>();
-		final ArrayList<ChartComment> comments = new ArrayList<ChartComment>();
+		final ArrayList<Comment> comments = new ArrayList<Comment>();
 		for (JsonElement j : jsonObject.get("all_res").getAsJsonArray()) {
 			all_res.add(j.getAsString());
 		}
 		for (JsonElement j : jsonObject.get("comments").getAsJsonArray()) {
-			comments.add(gson.fromJson(j,ChartComment.class));
+			comments.add(gson.fromJson(j, Comment.class));
 		}
 		
 		//Adding the new fields which are relevant for devices/problems/other

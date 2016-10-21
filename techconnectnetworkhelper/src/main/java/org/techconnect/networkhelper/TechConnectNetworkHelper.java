@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import org.techconnect.networkhelper.model.ChartComment;
+import org.techconnect.networkhelper.model.Comment;
 import org.techconnect.networkhelper.model.FlowChart;
 import org.techconnect.networkhelper.model.JsendResponse;
 import org.techconnect.networkhelper.model.Tokens;
@@ -232,7 +232,7 @@ public class TechConnectNetworkHelper {
      * @param c        - The actual comment object
      * @throws IOException
      */
-    public void comment(String chart_id, ChartComment c) throws IOException {
+    public void comment(String chart_id, Comment c) throws IOException {
         Response<JsendResponse> resp = service.postComment(user.getAuthToken(), user.getUserId(), chart_id, c).execute();
         if (!resp.isSuccessful()) {
             JsendResponse error = myGson.fromJson(resp.errorBody().string(), JsendResponse.class);
