@@ -15,25 +15,25 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <service
-            android:name=".services.LoadResourcesService"
+            android:name="org.techconnect.services.LoadResourcesService"
             android:exported="false" />
 
         <activity
-            android:name=".activities.CallActivity"
+            android:name="org.techconnect.activities.CallActivity"
             android:label="Call Directory" />
         <activity
-            android:name=".activities.ImageViewActivity"
+            android:name="org.techconnect.activities.ImageViewActivity"
             android:label="Image"
             android:theme="@style/Theme.Transparent" />
         <activity
-            android:name=".activities.IntroTutorial"
+            android:name="org.techconnect.activities.IntroTutorial"
             android:label="@string/title_activity_intro_tutorial"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activities.PDFActivity"
+            android:name="org.techconnect.activities.PDFActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activities.MainActivity"
+            android:name="org.techconnect.activities.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="locked"
             android:theme="@style/AppTheme.NoActionBar">

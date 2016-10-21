@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#a4000000"
-    tools:context="org.centum.techconnect.activities.ImageViewActivity">
+    tools:context="org.techconnect.activities.ImageViewActivity">
 
     <FrameLayout
         android:id="@+id/container"
