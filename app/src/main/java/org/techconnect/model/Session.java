@@ -19,8 +19,8 @@ public class Session {
 
     private long createdDate;
     private String department;
-    private FlowChart device;
-    private GraphTraversal flowchart; //Step through the graph
+    private FlowChart flowchart;
+    private GraphTraversal traversal; //Step through the graph
     private String notes;
 
     private List<Vertex> history = new LinkedList<>();//Wiating until we decide what to do with this
@@ -31,7 +31,7 @@ public class Session {
         report.append("Date: ").append(new Date(createdDate).toString()).append('\n');
         report.append("Department: ").append(department).append('\n');
         report.append("Notes: ").append(notes).append('\n');
-        report.append("Device: ").append(device.getName()).append('\n');
+        report.append("Flowchart: ").append(flowchart.getName()).append('\n');
         //report.append("Role: " + ((role == 0) ? "Technician" : "End User"));
         report.append("History:\n------------------------").append("\n\n");
         for(int i = 0; i < history.size(); i++){
@@ -68,7 +68,7 @@ public class Session {
      * @return Current vertex the traversal object is looking at
      */
     public Vertex getCurrentVertex() {
-        return this.flowchart.getCurrentVertex();//Simplify where this is referenced
+        return this.traversal.getCurrentVertex();//Simplify where this is referenced
     }
 
     /**
@@ -76,15 +76,16 @@ public class Session {
      * @return The keyset of the GraphTraversal object
      */
     public Set<String> getCurrentOptions() {
-        return this.flowchart.getOptions();
+        return this.traversal.getOptions();
     }
 
-    public FlowChart getDevice() { return device;}
+    public FlowChart getFlowchart() {
+        return flowchart;
+    }
 
-    public void setDevice(FlowChart device) {
-        this.device = device;
-        this.flowchart = new GraphTraversal(device.getGraph());
-
+    public void setFlowchart(FlowChart flowchart) {
+        this.flowchart = flowchart;
+        this.traversal = new GraphTraversal(flowchart.getGraph());
     }
 
     //save
@@ -98,20 +99,20 @@ public class Session {
 
     //Modify
     public void selectOption(String option){
-        flowchart.selectOption(option);//Select, update the traversal object
+        traversal.selectOption(option);//Select, update the traversal object
     }
 
     //modify
     public void goBack() {
         //Safety check. In theory, should only be able to be called when the back button is enabled,
         //which is when the session has a previous step? May be able to remove
-        if (flowchart.hasPrevious()) {
-            flowchart.stepBack();
+        if (traversal.hasPrevious()) {
+            traversal.stepBack();
         }
     }
 
     public boolean hasPrevious() {
-        return flowchart.hasPrevious();
+        return traversal.hasPrevious();
     }
 
 

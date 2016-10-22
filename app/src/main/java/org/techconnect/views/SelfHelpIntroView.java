@@ -9,11 +9,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import org.centum.techconnect.R;
 import org.techconnect.model.Session;
 import org.techconnect.networkhelper.model.FlowChart;
+import org.techconnect.sql.TCDatabaseHelper;
+
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -25,28 +27,17 @@ import butterknife.ButterKnife;
  */
 public class SelfHelpIntroView extends ScrollView implements View.OnClickListener {
 
-    private static final int ROLE_TECH = 0;
-    private static final int ROLE_END = 1;
-
     @Bind(R.id.department_editText)
     EditText departmentEditText;
     @Bind(R.id.device_spinner)
     Spinner deviceSpinner;
-    @Bind(R.id.role_spinner)
-    Spinner roleSpinner;
     @Bind(R.id.notes_editText)
     EditText notesEditText;
     @Bind(R.id.start_session_button)
     Button startButton;
-    @Bind(R.id.devices_available_text_view)
-    TextView devicesAvailableLabel;
 
-    //private Device[] devices;
-    private FlowChart[] devices;
     private OnClickListener clickListener;
-    //private Device selectedDevice;
-    private FlowChart selectedDevice;
-    private int selectedRole;
+    private FlowChart selectedFlowchart;
     private Session session;
 
 
@@ -66,20 +57,13 @@ public class SelfHelpIntroView extends ScrollView implements View.OnClickListene
         this.clickListener = listener;
     }
 
-    public void setDevices(FlowChart[] devices) {
-        this.devices = devices;
-        updateDeviceSpinner();
-    }
-
     public Session getSession() {
         return session;
     }
 
-    private void updateDeviceSpinner() {
-        String deviceNames[] = new String[devices.length];
-        for (int i = 0; i < devices.length; i++) {
-            deviceNames[i] = devices[i].getName();
-        }
+    private void updateFlowchartSpinner() {
+        final Map<String, String> names = TCDatabaseHelper.get().getChartNames();
+        final String deviceNames[] = names.keySet().toArray(new String[names.size()]);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, deviceNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         deviceSpinner.setAdapter(adapter);
@@ -87,38 +71,15 @@ public class SelfHelpIntroView extends ScrollView implements View.OnClickListene
         deviceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedDevice = devices[i];
-                updateProblemSpinner();
+                selectedFlowchart = TCDatabaseHelper.get().getChart(names.get(deviceNames[i]));
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                selectedDevice = null;
-                selectedRole = -1;
-                roleSpinner.setAdapter(null);
-            }
-        });
-        devicesAvailableLabel.setText(devices.length + " " + getResources().getString(R.string.devices_available));
-    }
-
-    private void updateProblemSpinner() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, new String[]{"Biomedical Technician", "Clinician/End User"});
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        roleSpinner.setAdapter(adapter);
-        roleSpinner.setSelection(0);
-        roleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedRole = i;
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                selectedRole = -1;
+                selectedFlowchart = null;
             }
         });
     }
-
 
     @Override
     protected void onFinishInflate() {
@@ -140,15 +101,17 @@ public class SelfHelpIntroView extends ScrollView implements View.OnClickListene
             session = new Session();
             session.setCreatedDate(System.currentTimeMillis());
             session.setDepartment(departmentEditText.getText().toString());
-            session.setDevice(selectedDevice);
+            session.setFlowchart(selectedFlowchart);
             session.setNotes(notesEditText.getText().toString());
-            //session.setRole(selectedRole == ROLE_TECH ? selectedDevice.getTechRole() : selectedDevice.getEndUserRole());
             clickListener.onClick(this);
         }
     }
 
     private boolean validate() {
         boolean valid = true;
+        if (deviceSpinner.getSelectedItem() == null) {
+            valid = false;
+        }
         if (departmentEditText.getText() == null
                 || departmentEditText.getText().toString().trim().equals("")) {
             departmentEditText.setError("Department cannot be empty");
@@ -157,5 +120,9 @@ public class SelfHelpIntroView extends ScrollView implements View.OnClickListene
             departmentEditText.setError(null);
         }
         return valid;
+    }
+
+    public void update() {
+        updateFlowchartSpinner();
     }
 }

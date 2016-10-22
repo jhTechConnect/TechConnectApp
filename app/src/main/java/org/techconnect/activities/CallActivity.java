@@ -16,8 +16,6 @@ import android.widget.ListView;
 import org.centum.techconnect.R;
 import org.techconnect.adapters.ContactListAdapter;
 import org.techconnect.networkhelper.model.Contact;
-import org.techconnect.resources.ResourceHandler;
-import org.techconnect.resources.ResourceHandlerListener;
 import org.techconnect.views.ContactListItemView;
 
 import java.util.logging.Level;
@@ -34,7 +32,6 @@ public class CallActivity extends AppCompatActivity implements AdapterView.OnIte
     ListView listView;
 
     private Contact currentlyCalling;
-    private ResourceHandlerListener listener = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,29 +43,17 @@ public class CallActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onPause() {
         super.onPause();
-        ResourceHandler.get().removeListener(listener);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (listener == null) {
-            listener = new ResourceHandlerListener() {
-                @Override
-                public void onDevicesChanged() {
-                }
-
-                @Override
-                public void onContactsChanged(Contact[] oldContacts, Contact[] newContacts) {
-                    updateContactList();
-                }
-            };
-        }
         updateContactList();
     }
 
     private void updateContactList() {
-        listView.setAdapter(new ContactListAdapter(this, ResourceHandler.get().getContacts()));
+        // TODO Read contacts
+        listView.setAdapter(new ContactListAdapter(this, new Contact[0]));
         listView.setOnItemClickListener(this);
     }
 

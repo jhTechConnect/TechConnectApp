@@ -18,9 +18,6 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import org.centum.techconnect.R;
 import org.techconnect.model.Session;
 import org.techconnect.model.SessionCompleteListener;
-import org.techconnect.networkhelper.model.Contact;
-import org.techconnect.resources.ResourceHandler;
-import org.techconnect.resources.ResourceHandlerListener;
 import org.techconnect.views.SelfHelpFlowView;
 import org.techconnect.views.SelfHelpIntroView;
 import org.techconnect.views.SelfHelpSlidingView;
@@ -48,7 +45,6 @@ public class SelfHelpFragment extends Fragment implements View.OnClickListener {
     private SelfHelpIntroView introView;
     private SelfHelpFlowView flowView;
     private Session currentSession = null;
-    private ResourceHandlerListener resourceHandlerListener = null;
 
     @Nullable
     @Override
@@ -94,35 +90,20 @@ public class SelfHelpFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onPause() {
         super.onPause();
-        ResourceHandler.get().removeListener(resourceHandlerListener);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (resourceHandlerListener == null) {
-            resourceHandlerListener = new ResourceHandlerListener() {
-                @Override
-                public void onDevicesChanged() {
-                    updateViews();
-                }
-
-                @Override
-                public void onContactsChanged(Contact[] oldContacts, Contact[] newContacts) {
-
-                }
-            };
-        }
-        ResourceHandler.get().addListener(resourceHandlerListener);
         updateViews();
     }
 
-    private void updateViews() {
+    public void updateViews() {
         if (currentSession == null) {
             slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
             introView = (SelfHelpIntroView) getLayoutInflater(null).inflate(R.layout.self_help_intro_view, mainContainer, false);
-            introView.setDevices(ResourceHandler.get().getDevices());
             introView.setSessionCreatedListener(this);
+            introView.update();
             mainContainer.removeAllViews();
             mainContainer.addView(introView);
         } else {

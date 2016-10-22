@@ -88,18 +88,18 @@ public class SelfHelpSlidingView extends RelativeLayout implements View.OnClickL
             resourcesButton.setOnClickListener(null);
         } else {
             resourcesButton.setOnClickListener(this);
-            resourcesButton.setVisibility(session.getDevice().getResources().size() > 0 ? VISIBLE : GONE);
-            if (session.getDevice().getImage() == null) {
+            resourcesButton.setVisibility(session.getFlowchart().getResources().size() > 0 ? VISIBLE : GONE);
+            if (session.getFlowchart().getImage() == null) {
                 Picasso.with(getContext())
                         .load(R.drawable.ic_devices_black)
                         .into(deviceImageView);
             } else {
                 Picasso.with(getContext())
-                        .load(session.getDevice().getImage())
+                        .load(session.getFlowchart().getImage())
                         .error(R.drawable.ic_devices_black)
                         .into(deviceImageView);
             }
-            deviceTextView.setText(session.getDevice().getName());
+            deviceTextView.setText(session.getFlowchart().getName());
             dateTextView.setText(DATE_FORMAT.format(new Date(session.getCreatedDate())));
             departmentTextView.setText(session.getDepartment());
             notesTextView.setText(session.getNotes());
@@ -122,8 +122,8 @@ public class SelfHelpSlidingView extends RelativeLayout implements View.OnClickL
     }
 
     private void showResources() {
-        String[] res = new String[session.getDevice().getResources().size()];
-        res = session.getDevice().getResources().toArray(res);
+        String[] res = new String[session.getFlowchart().getResources().size()];
+        res = session.getFlowchart().getResources().toArray(res);
         final String[] final_res = res;//In order to make final happy. A little annoying
         final String[] formattedResources = new String[final_res.length];
         for (int i = 0; i < final_res.length; i++) {

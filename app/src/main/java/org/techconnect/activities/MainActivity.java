@@ -1,26 +1,23 @@
 package org.techconnect.activities;
 
 import android.Manifest;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.ResultReceiver;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -29,7 +26,7 @@ import org.centum.techconnect.R;
 import org.techconnect.fragments.ReportsFragment;
 import org.techconnect.fragments.SelfHelpFragment;
 import org.techconnect.resources.ResourceHandler;
-import org.techconnect.services.LoadResourcesService;
+import org.techconnect.services.TechConnectService;
 import org.techconnect.sql.TCDatabaseHelper;
 
 import butterknife.Bind;
@@ -52,22 +49,11 @@ public class MainActivity extends AppCompatActivity
 
     private String[] fragmentTitles;
     private int currentFragment = -1;
-    private ResponseReceiver myReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //Setup the Broadcast Manager to receive messages from the IntentService Instance
-        myReceiver = new ResponseReceiver();
-
-        //Define the Intent filter for the
-        IntentFilter mStatusIntentFilter = new IntentFilter(
-               ResponseReceiver.PROCESS_RESPONSE);
-        LocalBroadcastManager.getInstance(this).registerReceiver(myReceiver,mStatusIntentFilter);
-
         setContentView(R.layout.activity_main);
-
         ResourceHandler.get(this);
         TCDatabaseHelper.get(this);
         ButterKnife.bind(this);
@@ -111,16 +97,19 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         loadResources();
     }
 
     private void loadResources() {
         loadingLayout.setVisibility(View.VISIBLE);
-        //Here, want to replace AsyncTask with the IntentService. Currently, the only place necessary
-        Intent loadResIntent = new Intent(this, LoadResourcesService.class);
-        this.startService(loadResIntent);
-
+        TechConnectService.startLoadAllCharts(this, new ResultReceiver(new Handler()) {
+            @Override
+            protected void onReceiveResult(int resultCode, Bundle resultData) {
+                loadingLayout.setVisibility(View.GONE);
+                ((SelfHelpFragment) FRAGMENTS[FRAGMENT_SELF_HELP]).updateViews();
+            }
+        });
     }
 
     @Override
@@ -161,7 +150,6 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
             return true;
         } else if (id == R.id.nav_refresh) {
-            ResourceHandler.get().clear();
             loadResources();
             drawer.closeDrawer(GravityCompat.START);
             return true;
@@ -188,40 +176,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public class ResponseReceiver extends BroadcastReceiver {
-
-        //This corresponds to the Action that we want the receiver to do
-        public static final String PROCESS_RESPONSE = "com.org.centum.techconnect.intent.action.PROCESS_RESPONSE";
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //If for some reason we are going to add a couple of filters instead of just one
-            if(intent.getAction().equalsIgnoreCase(PROCESS_RESPONSE)) {
-                //Check if the Download was successful
-                LoadResourcesService.ResultType res = (LoadResourcesService.ResultType)
-                        intent.getSerializableExtra(LoadResourcesService.RESULT_STATUS);
-                ResourceHandler.get().deviceChanged();
-                //Turh off the LoadingLayout
-                loadingLayout.setVisibility(View.GONE);
-                //Might not be necessary. In case there are different types of errors that we want to consider,
-                //can set up this switch to do so
-                switch(res) {
-                    case SUCCESS:
-                       break;
-                    case RES_ERROR:
-                        //Want to make a SnackBar which alerts the user that some resources are missing
-                        Log.i("MainActivity", intent.getStringExtra(LoadResourcesService.RESULT_MESSAGE));
-                        Snackbar snackbar = Snackbar.make(findViewById(R.id.main_fragment_container),"Error in Loading Resources", Snackbar.LENGTH_INDEFINITE);
-                        snackbar.show();
-                        break;
-                }
-
-            }
-
-
-
-        }
-    }
 }
 
 
