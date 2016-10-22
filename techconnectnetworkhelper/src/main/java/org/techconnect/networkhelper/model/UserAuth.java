@@ -1,7 +1,7 @@
 package org.techconnect.networkhelper.model;
 
 
-public class Tokens {
+public class UserAuth {
 
 	private String authToken;
 	private String userId;
