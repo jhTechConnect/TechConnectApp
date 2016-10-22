@@ -2,6 +2,7 @@ package org.techconnect.sql;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
@@ -14,6 +15,8 @@ import org.techconnect.networkhelper.model.Graph;
 import org.techconnect.networkhelper.model.Vertex;
 import org.techconnect.sql.TCDatabaseContract.ChartEntry;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -78,6 +81,34 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public FlowChart getChart(String id) {
+        //TODO get comments
+        String selection = ChartEntry.ID + " = ?";
+        String selectArgs[] = {id};
+        Cursor c = getReadableDatabase().query(ChartEntry.TABLE_NAME, null, selection,
+                selectArgs, null, null, null);
+        c.moveToFirst();
+
+        FlowChart chart = new FlowChart();
+        chart.setId(c.getString(c.getColumnIndexOrThrow(ChartEntry.ID)));
+        chart.setName(c.getString(c.getColumnIndexOrThrow(ChartEntry.NAME)));
+        chart.setDescription(c.getString(c.getColumnIndexOrThrow(ChartEntry.DESCRIPTION)));
+        chart.setUpdatedDate(c.getString(c.getColumnIndexOrThrow(ChartEntry.UPDATED_DATE)));
+        chart.setVersion(c.getString(c.getColumnIndexOrThrow(ChartEntry.VERSION)));
+        chart.setOwner(c.getString(c.getColumnIndexOrThrow(ChartEntry.OWNER)));
+        chart.setAllRes(Arrays.asList(c.getString(c.getColumnIndexOrThrow(ChartEntry.ALL_RESOURCES)).split(",")));
+        chart.setResources(Arrays.asList(c.getString(c.getColumnIndexOrThrow(ChartEntry.RESOURCES)).split(",")));
+        chart.setImage(c.getString(c.getColumnIndexOrThrow(ChartEntry.IMAGE)));
+        chart.setType(FlowChart.ChartType.valueOf(c.getString(c.getColumnIndexOrThrow(ChartEntry.TYPE))));
+        chart.setScore(c.getInt(c.getColumnIndexOrThrow(ChartEntry.SCORE)));
+
+        String graphId = c.getString(c.getColumnIndexOrThrow(ChartEntry.GRAPH_ID));
+        chart.setGraph(getGraph(graphId));
+        chart.setComments(getComments(id, TCDatabaseContract.CommentEntry.PARENT_TYPE_CHART));
+
+        return chart;
+    }
+
     /**
      * This method takes a FlowChart object and pushes all information into the SQL database
      * <p/>
@@ -121,6 +152,26 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         Log.d(this.getClass().getName(), "Chart Info Inserted Successfully");
     }
 
+    private List<Comment> getComments(String parentId, String parentType) {
+        String selection = TCDatabaseContract.CommentEntry.PARENT_ID + " = " + parentId + " AND " +
+                TCDatabaseContract.CommentEntry.PARENT_TYPE + " = " + parentType;
+        Cursor c = getReadableDatabase().query(TCDatabaseContract.CommentEntry.TABLE_NAME,
+                null, selection, null, null, null, null);
+        c.moveToFirst();
+        List<Comment> comments = new ArrayList<>(c.getCount());
+
+        while (!c.isAfterLast()) {
+            Comment comment = new Comment();
+            comment.setOwner(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.CommentEntry.OWNER)));
+            comment.setAttachment(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.CommentEntry.ATTACHMENT)));
+            comment.setCreatedDate(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.CommentEntry.CREATED_DATE)));
+            comment.setText(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.CommentEntry.TEXT)));
+            comments.add(comment);
+            c.moveToNext();
+        }
+        return comments;
+    }
+
     private void insertComments(List<Comment> comments, String parentId, String parentType) {
         for (Comment comment : comments) {
             insertComment(comment, parentId, parentType);
@@ -144,6 +195,60 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         }
 
         Log.d(this.getClass().getName(), "Comment Info Inserted Successfully");
+    }
+
+    private Graph getGraph(String id) {
+        String selection = TCDatabaseContract.GraphEntry.ID + " = ?";
+        String selectionArgs[] = {id};
+        Cursor c = getReadableDatabase().query(TCDatabaseContract.GraphEntry.TABLE_NAME,
+                null, selection, selectionArgs, null, null, null);
+        c.moveToFirst();
+
+        String firstVertex = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.GraphEntry.FIRST_VERTEX));
+        return new Graph(getVertices(id), getEdges(id), firstVertex);
+    }
+
+    private List<Vertex> getVertices(String graphId) {
+        String selection = TCDatabaseContract.VertexEntry.GRAPH_ID + " = ?";
+        String selectionArgs[] = {graphId};
+        Cursor c = getReadableDatabase().query(TCDatabaseContract.VertexEntry.TABLE_NAME,
+                null, selection, selectionArgs, null, null, null);
+        c.moveToFirst();
+        List<Vertex> verticies = new ArrayList<>(c.getCount());
+
+        while (!c.isAfterLast()) {
+            Vertex vertex = new Vertex();
+            vertex.setId(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.VertexEntry.ID)));
+            vertex.setName(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.VertexEntry.NAME)));
+            vertex.setDetails(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.VertexEntry.DETAILS)));
+            vertex.setImages(Arrays.asList(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.VertexEntry.IMAGES)).split(",")));
+            vertex.setResources(Arrays.asList(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.VertexEntry.RESOURCES)).split(",")));
+            vertex.setComments(getComments(vertex.getId(), TCDatabaseContract.CommentEntry.PARENT_TYPE_VERTEX));
+            verticies.add(vertex);
+            c.moveToNext();
+        }
+        return verticies;
+    }
+
+    private List<Edge> getEdges(String graphId) {
+        String selection = TCDatabaseContract.EdgeEntry.GRAPH_ID + " = ?";
+        String selectionArgs[] = {graphId};
+        Cursor c = getReadableDatabase().query(TCDatabaseContract.EdgeEntry.TABLE_NAME,
+                null, selection, selectionArgs, null, null, null);
+        c.moveToFirst();
+        List<Edge> edges = new ArrayList<>(c.getCount());
+
+        while (!c.isAfterLast()) {
+            Edge edge = new Edge();
+            edge.setId(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.EdgeEntry.ID)));
+            edge.setLabel(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.EdgeEntry.LABEL)));
+            edge.setInV(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.EdgeEntry.IN_VERTEX)));
+            edge.setOutV(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.EdgeEntry.OUT_VERTEX)));
+            edge.setDetails(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.EdgeEntry.DETAILS)));
+            edges.add(edge);
+            c.moveToNext();
+        }
+        return edges;
     }
 
     /**

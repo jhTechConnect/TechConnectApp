@@ -6,7 +6,6 @@ public class Comment {
 
     private String text;
     private String attachment;
-    private String _id;
     private String owner;
     private String createdDate;
 
@@ -36,20 +35,6 @@ public class Comment {
      */
     public void setAttachment(String attachment) {
         this.attachment = attachment;
-    }
-
-    /**
-     * @return The nodeId
-     */
-    public String getId() {
-        return _id;
-    }
-
-    /**
-     * @param id The node_id
-     */
-    public void setId(String id) {
-        this._id = id;
     }
 
     public String getOwner() {
