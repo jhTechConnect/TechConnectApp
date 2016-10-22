@@ -14,39 +14,36 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <service
-            android:name=".services.LoadResourcesService"
-            android:exported="false"/>
+
         <activity
-            android:name=".activities.SplashActivity"
+            android:name="org.techconnect.activities.CallActivity"
+            android:label="Call Directory" />
+        <activity
+            android:name="org.techconnect.activities.ImageViewActivity"
+            android:label="Image"
+            android:theme="@style/Theme.Transparent" />
+        <activity
+            android:name="org.techconnect.activities.IntroTutorial"
+            android:label="@string/title_activity_intro_tutorial"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="org.techconnect.activities.PDFActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="org.techconnect.activities.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="locked"
-            android:theme="@style/AppTheme.SplashTheme">
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activities.CallActivity"
-            android:label="Call Directory" />
-        <activity
-            android:name=".activities.ImageViewActivity"
-            android:label="Image"
-            android:theme="@style/Theme.Transparent" />
-        <activity
-            android:name=".activities.IntroTutorial"
-            android:label="@string/title_activity_intro_tutorial"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".activities.PDFActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".activities.MainActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="locked"
-            android:theme="@style/AppTheme.NoActionBar" />
+
+        <service
+            android:name="org.techconnect.services.TechConnectService"
+            android:exported="false"></service>
     </application>
 
 </manifest>

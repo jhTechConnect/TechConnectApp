@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<org.centum.techconnect.views.ContactListItemView xmlns:android="http://schemas.android.com/apk/res/android"
+<org.techconnect.views.ContactListItemView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="8dp">
@@ -63,4 +63,4 @@
         </LinearLayout>
 
     </LinearLayout>
-</org.centum.techconnect.views.ContactListItemView>
+</org.techconnect.views.ContactListItemView>

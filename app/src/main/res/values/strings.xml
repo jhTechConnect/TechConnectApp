@@ -57,4 +57,5 @@
     <string name="loading_resources">Loading Resources</string>
     <string name="error_loading_resources">Error loading resources</string>
     <string name="view_tutorial">View Tutorial</string>
+    <string name="downloading_resources">Downloading Resources</string>
 </resources>
