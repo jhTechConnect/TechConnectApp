@@ -3,6 +3,7 @@ package org.techconnect.fragments;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -20,8 +21,10 @@ import org.techconnect.sql.TCDatabaseHelper;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class GuidesFragment extends Fragment {
+public class GuidesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
+    @Bind(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout refreshLayout;
     @Bind(R.id.guides_listView)
     ListView guidesListView;
     @Bind(R.id.search_editText)
@@ -76,7 +79,13 @@ public class GuidesFragment extends Fragment {
                 searchEditText.setText(null);
             }
         });
+        refreshLayout.setOnRefreshListener(this);
         return view;
     }
 
+    @Override
+    public void onRefresh() {
+        adapter.changeCursor(TCDatabaseHelper.get().getAllFlowchartsCursor(searchEditText.getText().toString()));
+        refreshLayout.setRefreshing(false);
+    }
 }
