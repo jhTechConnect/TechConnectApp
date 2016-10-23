@@ -74,4 +74,5 @@
     <string name="skip_sign_in">Skip Sign In</string>
     <string name="skip_sign_in_msg">Skipping signin will make some features unavailable, such as commenting.</string>
     <string name="are_you_sure">Are you sure?</string>
+    <string name="search_guides">Search</string>
 </resources>

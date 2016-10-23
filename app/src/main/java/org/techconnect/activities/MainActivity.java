@@ -23,6 +23,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import org.centum.techconnect.R;
+import org.techconnect.fragments.GuidesFragment;
 import org.techconnect.fragments.ReportsFragment;
 import org.techconnect.fragments.SelfHelpFragment;
 import org.techconnect.resources.ResourceHandler;
@@ -38,12 +39,14 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final int PERMISSIONS_REQUEST_READ_STORAGE = 1;
     private static final String SHOWN_TUTORIAL = "org.techconnect.prefs.shownturotial";
 
-    private static final int FRAGMENT_SELF_HELP = 0;
-    private static final int FRAGMENT_LOGS = 1;
-    private static final int PERMISSIONS_REQUEST_READ_STORAGE = 1;
-    private final Fragment[] FRAGMENTS = new Fragment[]{new SelfHelpFragment(), new ReportsFragment()};
+    private static final int FRAGMENT_GUIDES = 0;
+    private static final int FRAGMENT_SELF_HELP = 1;
+    private static final int FRAGMENT_LOGS = 2;
+    private final Fragment[] FRAGMENTS = new Fragment[]{new GuidesFragment(), new SelfHelpFragment(), new ReportsFragment()};
+
     @Bind(R.id.nav_view)
     NavigationView navigationView;
     @Bind(R.id.loading_banner)
@@ -72,20 +75,17 @@ public class MainActivity extends AppCompatActivity
 
         fragmentTitles = getResources().getStringArray(R.array.fragment_titles);
         navigationView.setNavigationItemSelectedListener(this);
-        int fragToOpen = FRAGMENT_SELF_HELP;
+        int fragToOpen = FRAGMENT_GUIDES;
         if (savedInstanceState != null) {
-            fragToOpen = savedInstanceState.getInt("frag", FRAGMENT_SELF_HELP);
+            fragToOpen = savedInstanceState.getInt("org.techconnect.mainactivity.frag", FRAGMENT_GUIDES);
         }
         setCurrentFragment(fragToOpen);
-        if (ensurePermissions()) {
-            //Here is the initial load of data
-            loadResources();
-        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        ensurePermissions();
         boolean showedIntro = getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE)
                 .getBoolean(SHOWN_TUTORIAL, false);
         if (!showedIntro) {
