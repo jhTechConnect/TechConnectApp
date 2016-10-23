@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Tech Connect</string>
+    <string name="app_name">TechConnect</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -7,7 +7,7 @@
     <string name="action_settings">Settings</string>
     <string name="menu_self_help">Self Help</string>
     <string name="menu_resources">Resources</string>
-    <string name="title_activity_intro_tutorial">Tech Connect Tutorial</string>
+    <string name="title_activity_intro_tutorial">TechConnect Tutorial</string>
     <string name="call_directory">Call Directory</string>
     <string name="reports">Reports</string>
     <string name="sync_online_resources">Sync Online Resources</string>
@@ -30,7 +30,7 @@
     <string name="devices_available">devices available</string>
 
     <!-- Into Tutorial Strings -->
-    <string name="tutorial_title_welcome">Welcome to Tech Connect!</string>
+    <string name="tutorial_title_welcome">Welcome to TechConnect!</string>
     <string name="tutorial_msg_welcome">Swipe for some quick tips</string>
 
     <string name="tutorial_title_self_help_home">Self Help Homescreen</string>
