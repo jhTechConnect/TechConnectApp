@@ -58,4 +58,20 @@
     <string name="error_loading_resources">Error loading resources</string>
     <string name="view_tutorial">View Tutorial</string>
     <string name="downloading_resources">Downloading Resources</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_signin">Incorrect email or password</string>
+    <string name="error_signin_field_required">Email and password fields are required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="skip_sign_in">Skip Sign In</string>
+    <string name="skip_sign_in_msg">Skipping signin will make some features unavailable, such as commenting.</string>
+    <string name="are_you_sure">Are you sure?</string>
 </resources>

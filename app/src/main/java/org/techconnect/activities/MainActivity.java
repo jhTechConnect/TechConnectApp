@@ -38,6 +38,8 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final String SHOWN_TUTORIAL = "org.techconnect.prefs.shownturotial";
+
     private static final int FRAGMENT_SELF_HELP = 0;
     private static final int FRAGMENT_LOGS = 1;
     private static final int PERMISSIONS_REQUEST_READ_STORAGE = 1;
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity
 
     private String[] fragmentTitles;
     private int currentFragment = -1;
+    private boolean showedLogin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,9 +81,24 @@ public class MainActivity extends AppCompatActivity
             //Here is the initial load of data
             loadResources();
         }
+    }
 
-        // Show tutorial
-        startActivity(new Intent(MainActivity.this, IntroTutorial.class));
+    @Override
+    protected void onResume() {
+        super.onResume();
+        boolean showedIntro = getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE)
+                .getBoolean(SHOWN_TUTORIAL, false);
+        if (!showedIntro) {
+            // Show tutorial
+            getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE)
+                    .edit()
+                    .putBoolean(SHOWN_TUTORIAL, true)
+                    .apply();
+            startActivity(new Intent(MainActivity.this, IntroTutorial.class));
+        } else if (!showedLogin) {
+            showedLogin = true;
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+        }
     }
 
     private boolean ensurePermissions() {
