@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
-import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -114,14 +113,10 @@ public class MainActivity extends AppCompatActivity
         return false;
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
-        loadResources();
-    }
-
-    private void loadResources() {
+    private void updateResources() {
         loadingLayout.setVisibility(View.VISIBLE);
-        TechConnectService.startLoadAllCharts(this, new ResultReceiver(new Handler()) {
+        String ids[] = TCDatabaseHelper.get().getAllChartIds();
+        TechConnectService.startLoadCharts(this, ids, new ResultReceiver(new Handler()) {
             @Override
             protected void onReceiveResult(int resultCode, Bundle resultData) {
                 loadingLayout.setVisibility(View.GONE);
@@ -168,7 +163,7 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
             return true;
         } else if (id == R.id.nav_refresh) {
-            loadResources();
+            updateResources();
             drawer.closeDrawer(GravityCompat.START);
             return true;
         } else if (id == R.id.nav_view_tut) {

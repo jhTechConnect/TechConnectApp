@@ -51,7 +51,10 @@
 
         <activity
             android:name="org.techconnect.activities.LoginActivity"
-            android:label="@string/title_activity_login"></activity>
+            android:label="@string/title_activity_login" />
+        <activity
+            android:name="org.techconnect.activities.GetGuidesActivity"
+            android:label="@string/guide_catalog"></activity>
     </application>
 
 </manifest>

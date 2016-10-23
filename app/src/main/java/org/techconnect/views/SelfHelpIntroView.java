@@ -62,7 +62,7 @@ public class SelfHelpIntroView extends ScrollView implements View.OnClickListene
     }
 
     private void updateFlowchartSpinner() {
-        final Map<String, String> names = TCDatabaseHelper.get().getChartNames();
+        final Map<String, String> names = TCDatabaseHelper.get(getContext()).getChartNamesAndIDs();
         final String deviceNames[] = names.keySet().toArray(new String[names.size()]);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, deviceNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -71,7 +71,7 @@ public class SelfHelpIntroView extends ScrollView implements View.OnClickListene
         deviceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedFlowchart = TCDatabaseHelper.get().getChart(names.get(deviceNames[i]));
+                selectedFlowchart = TCDatabaseHelper.get(getContext()).getChart(names.get(deviceNames[i]));
             }
 
             @Override

@@ -122,7 +122,7 @@ public class TechConnectService extends IntentService {
         int resultCode;
         try {
             FlowChart[] flowCharts = techConnectNetworkHelper.getCharts(chartIds);
-            TCDatabaseHelper.get().upsertCharts(flowCharts);
+            TCDatabaseHelper.get(getApplicationContext()).upsertCharts(flowCharts);
             Set<String> res = new HashSet<>();
             for (FlowChart chart : flowCharts) {
                 res.addAll(chart.getAllRes());

@@ -20,7 +20,7 @@ import org.techconnect.views.GuideListItemView;
 public class FlowchartCursorAdapter extends CursorAdapter {
 
     public FlowchartCursorAdapter(Context context) {
-        super(context, TCDatabaseHelper.get().getAllFlowchartsCursor(), false);
+        super(context, TCDatabaseHelper.get(context).getAllFlowchartsCursor(), false);
     }
 
     @Override

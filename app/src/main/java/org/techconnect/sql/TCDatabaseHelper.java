@@ -19,6 +19,7 @@ import org.techconnect.sql.TCDatabaseContract.ChartEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -93,7 +94,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
     /**
      * Get a map of chart names, mapping to their id.
      */
-    public Map<String, String> getChartNames() {
+    public Map<String, String> getChartNamesAndIDs() {
         Map<String, String> set = new HashMap<>();
         Cursor c = getReadableDatabase().query(ChartEntry.TABLE_NAME, new String[]{ChartEntry.ID, ChartEntry.NAME}, null,
                 null, null, null, null);
@@ -103,6 +104,18 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             c.moveToNext();
         }
         return set;
+    }
+
+    public String[] getAllChartIds() {
+        List<String> ids = new LinkedList<>();
+        Cursor c = getReadableDatabase().query(ChartEntry.TABLE_NAME, new String[]{ChartEntry.ID}, null,
+                null, null, null, null);
+        c.moveToFirst();
+        while (!c.isAfterLast()) {
+            ids.add(c.getString(c.getColumnIndexOrThrow(ChartEntry.ID)));
+            c.moveToNext();
+        }
+        return ids.toArray(new String[ids.size()]);
     }
 
     public Cursor getAllFlowchartsCursor() {

@@ -18,6 +18,7 @@ import org.techconnect.misc.CircleTransform;
 import org.techconnect.networkhelper.model.FlowChart;
 import org.techconnect.resources.ResourceHandler;
 import org.techconnect.services.TechConnectService;
+import org.techconnect.sql.TCDatabaseHelper;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -83,7 +84,11 @@ public class GuideListItemView extends LinearLayout implements View.OnClickListe
             descriptionTextView.setText(flowChart.getDescription());
             if (showDownload) {
                 downloadImageView.setVisibility(VISIBLE);
-                downloadImageView.setImageResource(R.drawable.ic_file_download_black_48dp);
+                if (TCDatabaseHelper.get(getContext()).getChart(flowChart.getId()) == null) {
+                    downloadImageView.setImageResource(R.drawable.ic_file_download_black_48dp);
+                } else {
+                    downloadImageView.setImageResource(R.drawable.ic_done_black_48dp);
+                }
                 downloadImageView.setOnClickListener(this);
             }
             if (flowChart.getImage() != null && !TextUtils.isEmpty(flowChart.getImage())) {
@@ -115,6 +120,7 @@ public class GuideListItemView extends LinearLayout implements View.OnClickListe
     }
 
     private void onDownload() {
+        downloadImageView.setOnClickListener(null);
         downloadImageView.setImageResource(R.drawable.ic_sync_black_48dp);
         TechConnectService.startLoadCharts(getContext(), new String[]{flowChart.getId()}, new ResultReceiver(new Handler()) {
             @Override
