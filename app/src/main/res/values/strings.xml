@@ -94,4 +94,8 @@
     <string name="model_number">Model Number</string>
     <string name="start_guide">Start Guide</string>
     <string name="last_updated">Updated</string>
+    <string name="no_sessions">You have no sessions</string>
+    <string name="resources_general_msg">General Resources</string>
+    <string name="resources_none_msg">No Resources</string>
+    <string name="no_comments">No Comments</string>
 </resources>
