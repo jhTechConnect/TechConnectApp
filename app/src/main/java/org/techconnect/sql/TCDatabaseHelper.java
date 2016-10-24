@@ -156,12 +156,12 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         chart.setScore(c.getInt(c.getColumnIndexOrThrow(ChartEntry.SCORE)));
         String allRes = c.getString(c.getColumnIndexOrThrow(ChartEntry.ALL_RESOURCES));
         String res = c.getString(c.getColumnIndexOrThrow(ChartEntry.RESOURCES));
-        if (allRes != null && !allRes.trim().equals("")) {
+        if (allRes != null && !TextUtils.isEmpty(allRes.trim())) {
             chart.setAllRes(Arrays.asList(allRes.split(",")));
         } else {
             chart.setAllRes(new ArrayList<String>());
         }
-        if (res != null && !res.trim().equals("")) {
+        if (res != null && !TextUtils.isEmpty(res.trim())) {
             chart.setResources(Arrays.asList(res.split(",")));
         } else {
             chart.setResources(new ArrayList<String>());
@@ -316,12 +316,12 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
 
             String images = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.VertexEntry.IMAGES));
             String res = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.VertexEntry.RESOURCES));
-            if (images != null && !images.trim().equals("")) {
+            if (images != null && !TextUtils.isEmpty(images.trim())) {
                 vertex.setImages(Arrays.asList(images.split(",")));
             } else {
                 vertex.setImages(new ArrayList<String>());
             }
-            if (res != null && !res.trim().equals("")) {
+            if (res != null && !TextUtils.isEmpty(res.trim())) {
                 vertex.setResources(Arrays.asList(res.split(",")));
             } else {
                 vertex.setResources(new ArrayList<String>());
