@@ -25,8 +25,9 @@ import org.techconnect.sql.TCDatabaseHelper;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
-public class GuideActivity extends AppCompatActivity implements View.OnClickListener {
+public class GuideActivity extends AppCompatActivity {
 
     public static String EXTRA_CHART_ID = "org.techconnect.guideactivity.flowchart";
     public static String EXTRA_CHART_NAME = "org.techconnect.guideactivity.name";
@@ -63,13 +64,11 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        fab.setOnClickListener(this);
-        headerImageView.setOnClickListener(this);
         reloadFlowchart();
     }
 
-    private void onFabAction() {
+    @OnClick(R.id.download_fab)
+    protected void onFabAction() {
         if (!downloadingChart) {
             if (inDB) {
                 onPlay();
@@ -149,7 +148,11 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void onPlay() {
-
+        if (flowChart != null) {
+            Intent intent = new Intent(this, PlayGuideActivity.class);
+            intent.putExtra(PlayGuideActivity.EXTRA_CHART_ID, flowChart.getId());
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -162,16 +165,8 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onClick(View view) {
-        if (view.getId() == headerImageView.getId()) {
-            onHeaderImageAction();
-        } else if (view.getId() == fab.getId()) {
-            onFabAction();
-        }
-    }
-
-    private void onHeaderImageAction() {
+    @OnClick(R.id.header_imageView)
+    protected void onHeaderImageAction() {
         Intent intent = new Intent(this, ImageViewActivity.class);
         if (ResourceHandler.get().hasStringResource(flowChart.getImage())) {
             intent.putExtra(ImageViewActivity.EXTRA_PATH,

@@ -11,20 +11,28 @@ import java.util.Set;
 
 /**
  * Created by Phani on 1/26/2016.
- *
+ * <p>
  * A particular "session" is a flowchart traversal. This logs the flow
  * of the session and generates the report.
  */
 public class Session {
 
-    private long createdDate;
-    private String department;
     private FlowChart flowchart;
     private GraphTraversal traversal; //Step through the graph
+
+    private long createdDate;
+    private String department;
+    private String modelNumber;
+    private String serialNumber;
     private String notes;
 
     private List<Vertex> history = new LinkedList<>();//Wiating until we decide what to do with this
     private List<String> optionHistory = new LinkedList<>();//Waiting until we decide what to do with this
+
+    public Session(FlowChart flowchart) {
+        this.flowchart = flowchart;
+        this.traversal = new GraphTraversal(flowchart.getGraph());
+    }
 
     public String getReport() {
         StringBuilder report = new StringBuilder();
@@ -34,10 +42,10 @@ public class Session {
         report.append("Flowchart: ").append(flowchart.getName()).append('\n');
         //report.append("Role: " + ((role == 0) ? "Technician" : "End User"));
         report.append("History:\n------------------------").append("\n\n");
-        for(int i = 0; i < history.size(); i++){
+        for (int i = 0; i < history.size(); i++) {
             String question = history.get(i).getName();
-            if(question.length() > 26){
-                question = question.substring(0, 23)+"...";
+            if (question.length() > 26) {
+                question = question.substring(0, 23) + "...";
             }
             report.append(question).append(": ").append(optionHistory.get(i)).append("\n\n");
         }
@@ -48,14 +56,17 @@ public class Session {
     public long getCreatedDate() {
         return createdDate;
     }
+
     //Save
     public void setCreatedDate(long createdDate) {
         this.createdDate = createdDate;
     }
+
     //Save
     public String getDepartment() {
         return department;
     }
+
     //Save
     public void setDepartment(String department) {
         this.department = department;
@@ -65,6 +76,7 @@ public class Session {
     /**
      * Return the current vertex so it's fields can be used by different view.
      * This is the crucial method needed to interact with the underlying flowchart object
+     *
      * @return Current vertex the traversal object is looking at
      */
     public Vertex getCurrentVertex() {
@@ -73,6 +85,7 @@ public class Session {
 
     /**
      * Need to return the current options to views so they can populate buttons and the like
+     *
      * @return The keyset of the GraphTraversal object
      */
     public Set<String> getCurrentOptions() {
@@ -83,26 +96,18 @@ public class Session {
         return flowchart;
     }
 
-    public void setFlowchart(FlowChart flowchart) {
-        this.flowchart = flowchart;
-        this.traversal = new GraphTraversal(flowchart.getGraph());
-    }
-
-    //save
     public String getNotes() {
         return notes;
     }
-    //Save
+
     public void setNotes(String notes) {
         this.notes = notes;
     }
 
-    //Modify
-    public void selectOption(String option){
+    public void selectOption(String option) {
         traversal.selectOption(option);//Select, update the traversal object
     }
 
-    //modify
     public void goBack() {
         //Safety check. In theory, should only be able to be called when the back button is enabled,
         //which is when the session has a previous step? May be able to remove
@@ -113,6 +118,14 @@ public class Session {
 
     public boolean hasPrevious() {
         return traversal.hasPrevious();
+    }
+
+    public void setModelNumber(String modelNumber) {
+        this.modelNumber = modelNumber;
+    }
+
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
     }
 
 

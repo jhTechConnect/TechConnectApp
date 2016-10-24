@@ -28,7 +28,7 @@ public class GetGuidesActivity extends AppCompatActivity implements TextWatcher,
 
     @Bind(R.id.swipe_refresh_layout)
     SwipeRefreshLayout refreshLayout;
-    @Bind(R.id.contentLayout)
+    @Bind(R.id.session_info_layout)
     ViewGroup contentLayout;
     @Bind(R.id.progressBar)
     ProgressBar progressBar;

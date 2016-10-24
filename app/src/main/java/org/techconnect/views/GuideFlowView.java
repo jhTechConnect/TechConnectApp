@@ -35,7 +35,7 @@ import butterknife.ButterKnife;
  * The primary flowchart view. This view shows the question, details, attachments, etc.
  * This flow view updates its content based on the Flowchart_old object given.
  */
-public class SelfHelpFlowView extends ScrollView implements View.OnClickListener {
+public class GuideFlowView extends ScrollView implements View.OnClickListener {
 
     @Bind(R.id.question_textView)
     TextView questionTextView;
@@ -53,15 +53,15 @@ public class SelfHelpFlowView extends ScrollView implements View.OnClickListener
     private Session session;
     private SessionCompleteListener listener;
 
-    public SelfHelpFlowView(Context context) {
+    public GuideFlowView(Context context) {
         super(context);
     }
 
-    public SelfHelpFlowView(Context context, AttributeSet attrs) {
+    public GuideFlowView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public SelfHelpFlowView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public GuideFlowView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
@@ -96,8 +96,7 @@ public class SelfHelpFlowView extends ScrollView implements View.OnClickListener
             tv.setPadding(px, px, px, px);
             optionsLinearLayout.addView(tv);
         }
-        for (int i = 0; i < attachments.length; i++) {
-            final String att = attachments[i];
+        for (final String att : attachments) {
             String name = att.substring(att.lastIndexOf("/") + 1);
             if (name.contains("?")) {
                 name = name.substring(0, name.indexOf('?'));
