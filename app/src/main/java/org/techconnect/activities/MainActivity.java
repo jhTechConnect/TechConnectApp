@@ -24,7 +24,6 @@ import android.widget.RelativeLayout;
 import org.centum.techconnect.R;
 import org.techconnect.fragments.GuidesFragment;
 import org.techconnect.fragments.ReportsFragment;
-import org.techconnect.fragments.SelfHelpFragment;
 import org.techconnect.resources.ResourceHandler;
 import org.techconnect.services.TechConnectService;
 import org.techconnect.sql.TCDatabaseHelper;
@@ -42,9 +41,8 @@ public class MainActivity extends AppCompatActivity
     private static final String SHOWN_TUTORIAL = "org.techconnect.prefs.shownturotial";
 
     private static final int FRAGMENT_GUIDES = 0;
-    private static final int FRAGMENT_SELF_HELP = 1;
-    private static final int FRAGMENT_LOGS = 2;
-    private final Fragment[] FRAGMENTS = new Fragment[]{new GuidesFragment(), new SelfHelpFragment(), new ReportsFragment()};
+    private static final int FRAGMENT_REPORTS = 1;
+    private final Fragment[] FRAGMENTS = new Fragment[]{new GuidesFragment(), new ReportsFragment()};
 
     @Bind(R.id.nav_view)
     NavigationView navigationView;
@@ -120,7 +118,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             protected void onReceiveResult(int resultCode, Bundle resultData) {
                 loadingLayout.setVisibility(View.GONE);
-                ((SelfHelpFragment) FRAGMENTS[FRAGMENT_SELF_HELP]).updateViews();
+                ((GuidesFragment) FRAGMENTS[FRAGMENT_GUIDES]).onRefresh();
             }
         });
     }
@@ -138,11 +136,6 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if (currentFragment == FRAGMENT_SELF_HELP) {
-            if (!((SelfHelpFragment) FRAGMENTS[FRAGMENT_SELF_HELP]).onBack()) {
-                // Fragment didn't consume back event
-                super.onBackPressed();
-            }
         } else {
             super.onBackPressed();
         }
@@ -154,10 +147,10 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         int newFrag = -1;
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (id == R.id.nav_self_help) {
-            newFrag = FRAGMENT_SELF_HELP;
+        if (id == R.id.nav_guides) {
+            newFrag = FRAGMENT_GUIDES;
         } else if (id == R.id.nav_reports) {
-            newFrag = FRAGMENT_LOGS;
+            newFrag = FRAGMENT_REPORTS;
         } else if (id == R.id.call_dir) {
             startActivity(new Intent(this, CallActivity.class));
             drawer.closeDrawer(GravityCompat.START);

@@ -92,6 +92,7 @@ public class GuidesFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
     @Override
     public void onRefresh() {
+        refreshLayout.setRefreshing(true);
         noGuidesLayout.setVisibility(View.GONE);
         guidesListView.setVisibility(View.VISIBLE);
         searchLinearLayout.setVisibility(View.VISIBLE);
