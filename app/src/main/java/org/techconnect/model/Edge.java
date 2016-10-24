@@ -1,13 +1,35 @@
 package org.techconnect.model;
 
-public class Edge {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Edge implements Parcelable {
+	public static final Creator<Edge> CREATOR = new Creator<Edge>() {
+		@Override
+		public Edge createFromParcel(Parcel in) {
+			return new Edge(in);
+		}
+
+		@Override
+		public Edge[] newArray(int size) {
+			return new Edge[size];
+		}
+	};
 	//Fields defined as Edge by our GraphSON
 	private String _id;
 	private String _label;
 	private String _outV; //source vertex
 	private String _inV; //target vertex
 	private String details;
-	
+
+	protected Edge(Parcel in) {
+		_id = in.readString();
+		_label = in.readString();
+		_outV = in.readString();
+		_inV = in.readString();
+		details = in.readString();
+	}
+
 	public String getId() {
 		return this._id;
 	}
@@ -47,7 +69,19 @@ public class Edge {
 	public void setDetails(String details) {
 		this.details = details;
 	}
-	
-	
 
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel parcel, int i) {
+		parcel.writeString(_id);
+		parcel.writeString(_label);
+		parcel.writeString(_outV);
+		parcel.writeString(_inV);
+		parcel.writeString(details);
+	}
 }
