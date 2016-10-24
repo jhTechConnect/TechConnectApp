@@ -1,13 +1,38 @@
 package org.techconnect.model;
 
 
-public class Comment {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Comment implements Parcelable {
 
 
+    public static final Creator<Comment> CREATOR = new Creator<Comment>() {
+        @Override
+        public Comment createFromParcel(Parcel in) {
+            return new Comment(in);
+        }
+
+        @Override
+        public Comment[] newArray(int size) {
+            return new Comment[size];
+        }
+    };
     private String text;
     private String attachment;
     private String owner;
     private String createdDate;
+
+
+    public Comment() {
+    }
+
+    protected Comment(Parcel in) {
+        text = in.readString();
+        attachment = in.readString();
+        owner = in.readString();
+        createdDate = in.readString();
+    }
 
     /**
      * @return The text
@@ -51,5 +76,18 @@ public class Comment {
 
     public void setCreatedDate(String createdDate) {
         this.createdDate = createdDate;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(text);
+        parcel.writeString(attachment);
+        parcel.writeString(owner);
+        parcel.writeString(createdDate);
     }
 }
