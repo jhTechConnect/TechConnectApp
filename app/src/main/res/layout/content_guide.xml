@@ -107,6 +107,18 @@
                 android:gravity="center_vertical"
                 android:text="VERSION 1.0"
                 android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/update_TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:background="?selectableItemBackground"
+                android:gravity="center_horizontal"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:text="@string/update"
+                android:textColor="?android:attr/textColorLink" />
         </LinearLayout>
 
         <android.support.design.widget.TabLayout

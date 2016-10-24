@@ -98,4 +98,7 @@
     <string name="resources_general_msg">General Resources</string>
     <string name="resources_none_msg">No Resources</string>
     <string name="no_comments">No Comments</string>
+    <string name="update">Update</string>
+    <string name="guide_updated">Guide Updated</string>
+    <string name="fail_update_guide">Failed to update</string>
 </resources>

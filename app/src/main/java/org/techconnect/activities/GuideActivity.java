@@ -4,13 +4,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -33,6 +36,8 @@ public class GuideActivity extends AppCompatActivity {
 
     public static String EXTRA_CHART = "org.techconnect.guideactivity.flowchart";
 
+    @Bind(R.id.coordinatorLayout)
+    CoordinatorLayout coordinatorLayout;
     @Bind(R.id.download_fab)
     FloatingActionButton fab;
     @Bind(R.id.header_imageView)
@@ -47,6 +52,8 @@ public class GuideActivity extends AppCompatActivity {
     TextView versionTextView;
     @Bind(R.id.description_textView)
     TextView descriptionTextView;
+    @Bind(R.id.update_TextView)
+    TextView updateTextView;
 
     @Bind(R.id.tab_layout)
     TabLayout tabLayout;
@@ -118,8 +125,15 @@ public class GuideActivity extends AppCompatActivity {
             if (inDB) {
                 onPlay();
             } else {
-                onDownload();
+                reloadChart();
             }
+        }
+    }
+
+    @OnClick(R.id.update_TextView)
+    protected void onUpdate() {
+        if (!downloadingChart && inDB) {
+            reloadChart();
         }
     }
 
@@ -129,8 +143,10 @@ public class GuideActivity extends AppCompatActivity {
         }
         if (inDB) {
             fab.setImageResource(R.drawable.ic_play_arrow_white_48dp);
+            updateTextView.setVisibility(View.VISIBLE);
         } else {
             fab.setImageResource(R.drawable.ic_file_download_white_48dp);
+            updateTextView.setVisibility(View.GONE);
         }
         typeTextView.setText(flowChart.getType().toString().toLowerCase());
         scoreTextView.setText(flowChart.getScore() + "");
@@ -158,18 +174,25 @@ public class GuideActivity extends AppCompatActivity {
         }
     }
 
-    private void onDownload() {
+    private void reloadChart() {
         if (flowChart != null) {
             downloadingChart = true;
             fab.setImageResource(R.drawable.ic_sync_white_48dp);
             fab.setEnabled(false);
+            updateTextView.setEnabled(false);
             TCService.startLoadCharts(this, new String[]{flowChart.getId()}, new ResultReceiver(new Handler()) {
                 @Override
                 protected void onReceiveResult(int resultCode, Bundle resultData) {
                     super.onReceiveResult(resultCode, resultData);
                     downloadingChart = false;
                     fab.setEnabled(true);
+                    updateTextView.setEnabled(true);
                     checkDBForFlowchart();
+                    if (resultCode == TCService.LOAD_CHARTS_RESULT_SUCCESS) {
+                        Snackbar.make(coordinatorLayout, getString(R.string.guide_updated), Snackbar.LENGTH_SHORT).show();
+                    } else {
+                        Snackbar.make(coordinatorLayout, getString(R.string.fail_update_guide), Snackbar.LENGTH_SHORT).show();
+                    }
                 }
             });
         }

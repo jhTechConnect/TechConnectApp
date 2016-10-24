@@ -29,14 +29,12 @@ import java.util.logging.Logger;
 
 public class TCService extends IntentService {
 
+    public static final int LOAD_CHARTS_RESULT_SUCCESS = 0;
+    public static final int LOAD_CHARTS_RESULT_ERROR = -1;
     private static final String PARAM_RESULT_RECIEVER = "org.techconnect.services.extra.resultreciever";
-
     private static final String LOAD_ALL_CHARTS = "org.techconnect.services.action.loadallcharts";
-
     private static final String LOAD_CHARTS = "org.techconnect.services.action.loadcharts";
     private static final String PARAM_IDS = "org.techconnect.services.extra.chartid";
-    private static final int LOAD_CHARTS_RESULT_SUCCESS = 0;
-    private static final int LOAD_CHARTS_RESULT_ERROR = -1;
     private static final String LOAD_CHART_RESULT_MESSAGE = "org.techconnect.services.result.message";
     private static final int LOAD_CHARTS_NOTIFICATION = 1;
 
