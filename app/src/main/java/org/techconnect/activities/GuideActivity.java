@@ -10,9 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -29,10 +27,7 @@ import butterknife.OnClick;
 
 public class GuideActivity extends AppCompatActivity {
 
-    public static String EXTRA_CHART_ID = "org.techconnect.guideactivity.flowchart";
-    public static String EXTRA_CHART_NAME = "org.techconnect.guideactivity.name";
-    public static String EXTRA_CHART_DESCRIPTION = "org.techconnect.guideactivity.description";
-    public static String EXTRA_CHART_IMAGE = "org.techconnect.guideactivity.image";
+    public static String EXTRA_CHART = "org.techconnect.guideactivity.flowchart";
 
     @Bind(R.id.download_fab)
     FloatingActionButton fab;
@@ -40,8 +35,6 @@ public class GuideActivity extends AppCompatActivity {
     ImageView headerImageView;
     @Bind(R.id.nestedScrollView)
     NestedScrollView nestedScrollView;
-    @Bind(R.id.downloaded_layout)
-    LinearLayout downloadedLayout;
     @Bind(R.id.type_textView)
     TextView typeTextView;
     @Bind(R.id.score_textView)
@@ -64,7 +57,21 @@ public class GuideActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        reloadFlowchart();
+
+        if (getIntent() != null && getIntent().hasExtra(EXTRA_CHART)) {
+            flowChart = getIntent().getParcelableExtra(EXTRA_CHART);
+            checkDBForFlowchart();
+        }
+    }
+
+    private void checkDBForFlowchart() {
+        inDB = false;
+        if (flowChart != null) {
+            if (TCDatabaseHelper.get(this).hasChart(flowChart.getId())) {
+                inDB = true;
+            }
+        }
+        updateViews();
     }
 
     @OnClick(R.id.download_fab)
@@ -78,41 +85,18 @@ public class GuideActivity extends AppCompatActivity {
         }
     }
 
-
-    private void reloadFlowchart() {
-        if (getIntent() != null) {
-            String chartId = getIntent().getStringExtra(EXTRA_CHART_ID);
-            flowChart = TCDatabaseHelper.get(this).getChart(chartId);
-            if (flowChart == null) {
-                // Not downloaded yet
-                inDB = false;
-                flowChart = new FlowChart();
-                flowChart.setId(chartId);
-                flowChart.setName(getIntent().getStringExtra(EXTRA_CHART_NAME));
-                flowChart.setDescription(getIntent().getStringExtra(EXTRA_CHART_DESCRIPTION));
-                flowChart.setImage(getIntent().getStringExtra(EXTRA_CHART_NAME));
-            } else {
-                inDB = true;
-            }
-            updateViews();
-        }
-    }
-
     private void updateViews() {
         if (flowChart != null) {
             setTitle(flowChart.getName());
         }
         if (inDB) {
-            // This stuff is only available if it has been downloaded
             fab.setImageResource(R.drawable.ic_play_arrow_white_48dp);
-            downloadedLayout.setVisibility(View.VISIBLE);
-            typeTextView.setText(flowChart.getType().toString().toLowerCase());
-            scoreTextView.setText(flowChart.getScore() + "");
-            versionTextView.setText(flowChart.getVersion());
         } else {
             fab.setImageResource(R.drawable.ic_file_download_white_48dp);
-            downloadedLayout.setVisibility(View.GONE);
         }
+        typeTextView.setText(flowChart.getType().toString().toLowerCase());
+        scoreTextView.setText(flowChart.getScore() + "");
+        versionTextView.setText(flowChart.getVersion());
         descriptionTextView.setText(flowChart.getDescription());
         if (flowChart.getImage() != null && !TextUtils.isEmpty(flowChart.getImage())) {
             if (ResourceHandler.get(this).hasStringResource(flowChart.getImage())) {
@@ -141,7 +125,7 @@ public class GuideActivity extends AppCompatActivity {
                     super.onReceiveResult(resultCode, resultData);
                     downloadingChart = false;
                     fab.setEnabled(true);
-                    reloadFlowchart();
+                    checkDBForFlowchart();
                 }
             });
         }

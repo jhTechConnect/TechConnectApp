@@ -77,7 +77,7 @@ public class GuidesFragment extends Fragment implements SwipeRefreshLayout.OnRef
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 GuideListItemView guideView = ((GuideListItemView) view);
                 Intent intent = new Intent(getContext(), GuideActivity.class);
-                intent.putExtra(GuideActivity.EXTRA_CHART_ID, guideView.getFlowChart().getId());
+                intent.putExtra(GuideActivity.EXTRA_CHART, guideView.getFlowChart());
                 startActivity(intent);
             }
         });
