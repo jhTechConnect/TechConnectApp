@@ -22,6 +22,7 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class ImageViewActivity extends AppCompatActivity {
 
+    public static final String EXTRA_URL = "url";
     public static final String EXTRA_PATH = "path";
     @Bind(R.id.container)
     FrameLayout container;
@@ -48,7 +49,31 @@ public class ImageViewActivity extends AppCompatActivity {
         if (getIntent() != null && getIntent().getStringExtra(EXTRA_PATH) != null) {
             String path = getIntent().getStringExtra(EXTRA_PATH);
             updateImage(path);
+        } else if (getIntent() != null && getIntent().getStringExtra(EXTRA_URL) != null) {
+            String path = getIntent().getStringExtra(EXTRA_URL);
+            updateImageURL(path);
         }
+    }
+
+    private void updateImageURL(String url) {
+        // Load it as a regular image via picasso
+        imageView = new ImageView(this);
+        container.addView(imageView);
+        attacher = new PhotoViewAttacher(imageView);
+        Picasso.with(this)
+                .load(url)
+                .into(imageView, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        attacher.update();
+                    }
+
+                    @Override
+                    public void onError() {
+                        imageView.setImageResource(android.R.drawable.stat_notify_error);
+                        attacher.update();
+                    }
+                });
     }
 
     private void updateImage(String path) {

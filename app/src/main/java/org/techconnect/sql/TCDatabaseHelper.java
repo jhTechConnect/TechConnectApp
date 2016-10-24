@@ -9,16 +9,17 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
-import org.techconnect.networkhelper.model.Comment;
-import org.techconnect.networkhelper.model.Edge;
-import org.techconnect.networkhelper.model.FlowChart;
-import org.techconnect.networkhelper.model.Graph;
-import org.techconnect.networkhelper.model.Vertex;
+import org.techconnect.model.Comment;
+import org.techconnect.model.Edge;
+import org.techconnect.model.FlowChart;
+import org.techconnect.model.Graph;
+import org.techconnect.model.Vertex;
 import org.techconnect.sql.TCDatabaseContract.ChartEntry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,8 +30,8 @@ import java.util.Map;
  */
 public class TCDatabaseHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 1;
-    public static final String DATABASE_NAME = "FlowChart.db";
+    private static final int DATABASE_VERSION = 1;
+    private static final String DATABASE_NAME = "FlowChart.db";
     private static TCDatabaseHelper instance = null;
     private final Context context;
 
@@ -93,7 +94,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
     /**
      * Get a map of chart names, mapping to their id.
      */
-    public Map<String, String> getChartNames() {
+    public Map<String, String> getChartNamesAndIDs() {
         Map<String, String> set = new HashMap<>();
         Cursor c = getReadableDatabase().query(ChartEntry.TABLE_NAME, new String[]{ChartEntry.ID, ChartEntry.NAME}, null,
                 null, null, null, null);
@@ -104,6 +105,35 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         }
         return set;
     }
+
+    public String[] getAllChartIds() {
+        List<String> ids = new LinkedList<>();
+        Cursor c = getReadableDatabase().query(ChartEntry.TABLE_NAME, new String[]{ChartEntry.ID}, null,
+                null, null, null, null);
+        c.moveToFirst();
+        while (!c.isAfterLast()) {
+            ids.add(c.getString(c.getColumnIndexOrThrow(ChartEntry.ID)));
+            c.moveToNext();
+        }
+        return ids.toArray(new String[ids.size()]);
+    }
+
+    public Cursor getAllFlowchartsCursor() {
+        return getAllFlowchartsCursor(null);
+    }
+
+    public Cursor getAllFlowchartsCursor(String filter) {
+        if (filter == null || TextUtils.isEmpty(filter.trim())) {
+            return getReadableDatabase().query(ChartEntry.TABLE_NAME, null, null,
+                    null, null, null, null);
+        } else {
+            String selection = ChartEntry.NAME + " LIKE ?";
+            String selectArgs[] = new String[]{"%" + filter.trim() + "%"};
+            return getReadableDatabase().query(ChartEntry.TABLE_NAME, null, selection,
+                    selectArgs, null, null, null);
+        }
+    }
+
 
     public FlowChart getChart(String id) {
         String selection = ChartEntry.ID + " = ?";
@@ -126,12 +156,12 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         chart.setScore(c.getInt(c.getColumnIndexOrThrow(ChartEntry.SCORE)));
         String allRes = c.getString(c.getColumnIndexOrThrow(ChartEntry.ALL_RESOURCES));
         String res = c.getString(c.getColumnIndexOrThrow(ChartEntry.RESOURCES));
-        if (allRes != null && !allRes.trim().equals("")) {
+        if (allRes != null && !TextUtils.isEmpty(allRes.trim())) {
             chart.setAllRes(Arrays.asList(allRes.split(",")));
         } else {
             chart.setAllRes(new ArrayList<String>());
         }
-        if (res != null && !res.trim().equals("")) {
+        if (res != null && !TextUtils.isEmpty(res.trim())) {
             chart.setResources(Arrays.asList(res.split(",")));
         } else {
             chart.setResources(new ArrayList<String>());
@@ -286,12 +316,12 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
 
             String images = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.VertexEntry.IMAGES));
             String res = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.VertexEntry.RESOURCES));
-            if (images != null && !images.trim().equals("")) {
+            if (images != null && !TextUtils.isEmpty(images.trim())) {
                 vertex.setImages(Arrays.asList(images.split(",")));
             } else {
                 vertex.setImages(new ArrayList<String>());
             }
-            if (res != null && !res.trim().equals("")) {
+            if (res != null && !TextUtils.isEmpty(res.trim())) {
                 vertex.setResources(Arrays.asList(res.split(",")));
             } else {
                 vertex.setResources(new ArrayList<String>());

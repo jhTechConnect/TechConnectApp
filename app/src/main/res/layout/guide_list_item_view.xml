@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.techconnect.views.GuideListItemView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="75dp">
+
+    <ImageView
+        android:id="@+id/guide_imageView"
+        android:layout_width="75dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:padding="8dp"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/flowchart" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingBottom="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="8dp">
+
+        <TextView
+            android:id="@+id/name_textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/guide_imageView"
+            android:layout_toRightOf="@+id/guide_imageView"
+            android:text="Ultrasound"
+            android:textSize="18sp"
+            android:textStyle="normal|bold" />
+
+        <TextView
+            android:id="@+id/description_textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:singleLine="true"
+            android:text="TextView"
+            android:textSize="16sp"
+            tools:text="Some guide descripti" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/downloadImageView"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0"
+        android:alpha=".5"
+        android:background="?attr/selectableItemBackground"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/ic_file_download_black_48dp" />
+
+</org.techconnect.views.GuideListItemView>
