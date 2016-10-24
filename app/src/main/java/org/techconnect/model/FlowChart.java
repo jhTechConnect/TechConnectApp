@@ -33,6 +33,10 @@ public class FlowChart implements Parcelable {
     private ChartType type;
     private int score;
 
+    public FlowChart() {
+
+    }
+
     protected FlowChart(Parcel in) {
         _id = in.readString();
         name = in.readString();

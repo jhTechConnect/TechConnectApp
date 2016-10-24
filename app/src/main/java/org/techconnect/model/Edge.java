@@ -22,6 +22,10 @@ public class Edge implements Parcelable {
 	private String _inV; //target vertex
 	private String details;
 
+	public Edge() {
+
+	}
+
 	protected Edge(Parcel in) {
 		_id = in.readString();
 		_label = in.readString();
