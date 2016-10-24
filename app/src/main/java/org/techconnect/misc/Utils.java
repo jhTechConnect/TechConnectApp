@@ -1,4 +1,4 @@
-package org.techconnect;
+package org.techconnect.misc;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
