@@ -1,19 +1,19 @@
-package org.techconnect.networkhelper;
+package org.techconnect.network;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import org.techconnect.networkhelper.model.Comment;
-import org.techconnect.networkhelper.model.FlowChart;
-import org.techconnect.networkhelper.model.JsendResponse;
-import org.techconnect.networkhelper.model.UserAuth;
-import org.techconnect.networkhelper.model.Vertex;
-import org.techconnect.networkhelper.serializers.FlowChartDeserializer;
-import org.techconnect.networkhelper.serializers.FlowChartSerializer;
-import org.techconnect.networkhelper.serializers.JsendResponseDeserializer;
-import org.techconnect.networkhelper.serializers.VertexDeserializer;
+import org.techconnect.model.Comment;
+import org.techconnect.model.FlowChart;
+import org.techconnect.model.JsendResponse;
+import org.techconnect.model.UserAuth;
+import org.techconnect.model.Vertex;
+import org.techconnect.network.serializers.FlowChartDeserializer;
+import org.techconnect.network.serializers.FlowChartSerializer;
+import org.techconnect.network.serializers.JsendResponseDeserializer;
+import org.techconnect.network.serializers.VertexDeserializer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,19 +24,19 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class TechConnectNetworkHelper {
+public class TCNetworkHelper {
 
     public static final String BASE_URL = "http://jhtechconnect.me/";
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private Gson gson;
-    private TechConnectRetrofit service;
+    private TCRetrofit service;
     private JsendResponse lastError = null;
 
-    public TechConnectNetworkHelper() {
+    public TCNetworkHelper() {
         gson = buildGson();
         service = new Retrofit.Builder().baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create(gson))
-                .build().create(TechConnectRetrofit.class);
+                .build().create(TCRetrofit.class);
     }
 
     private Gson buildGson() {

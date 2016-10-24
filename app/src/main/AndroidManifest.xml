@@ -46,7 +46,7 @@
         </activity>
 
         <service
-            android:name="org.techconnect.services.TechConnectService"
+            android:name="org.techconnect.services.TCService"
             android:exported="false" />
 
         <activity

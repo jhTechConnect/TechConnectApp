@@ -15,9 +15,9 @@ import com.squareup.picasso.Picasso;
 
 import org.centum.techconnect.R;
 import org.techconnect.misc.CircleTransform;
-import org.techconnect.networkhelper.model.FlowChart;
+import org.techconnect.model.FlowChart;
 import org.techconnect.resources.ResourceHandler;
-import org.techconnect.services.TechConnectService;
+import org.techconnect.services.TCService;
 import org.techconnect.sql.TCDatabaseHelper;
 
 import butterknife.Bind;
@@ -126,7 +126,7 @@ public class GuideListItemView extends LinearLayout implements View.OnClickListe
     private void onDownload() {
         downloadImageView.setOnClickListener(null);
         downloadImageView.setImageResource(R.drawable.ic_sync_black_48dp);
-        TechConnectService.startLoadCharts(getContext(), new String[]{flowChart.getId()}, new ResultReceiver(new Handler()) {
+        TCService.startLoadCharts(getContext(), new String[]{flowChart.getId()}, new ResultReceiver(new Handler()) {
             @Override
             protected void onReceiveResult(int resultCode, Bundle resultData) {
                 super.onReceiveResult(resultCode, resultData);

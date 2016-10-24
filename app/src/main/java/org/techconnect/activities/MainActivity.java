@@ -25,7 +25,7 @@ import org.centum.techconnect.R;
 import org.techconnect.fragments.GuidesFragment;
 import org.techconnect.fragments.ReportsFragment;
 import org.techconnect.resources.ResourceHandler;
-import org.techconnect.services.TechConnectService;
+import org.techconnect.services.TCService;
 import org.techconnect.sql.TCDatabaseHelper;
 
 import butterknife.Bind;
@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity
     private void updateResources() {
         loadingLayout.setVisibility(View.VISIBLE);
         String ids[] = TCDatabaseHelper.get().getAllChartIds();
-        TechConnectService.startLoadCharts(this, ids, new ResultReceiver(new Handler()) {
+        TCService.startLoadCharts(this, ids, new ResultReceiver(new Handler()) {
             @Override
             protected void onReceiveResult(int resultCode, Bundle resultData) {
                 loadingLayout.setVisibility(View.GONE);

@@ -1,4 +1,4 @@
-package org.techconnect.networkhelper.serializers;
+package org.techconnect.network.serializers;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -8,12 +8,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 
-import org.techconnect.networkhelper.model.Comment;
-import org.techconnect.networkhelper.model.Edge;
-import org.techconnect.networkhelper.model.FlowChart;
-import org.techconnect.networkhelper.model.FlowChart.ChartType;
-import org.techconnect.networkhelper.model.Graph;
-import org.techconnect.networkhelper.model.Vertex;
+import org.techconnect.model.Comment;
+import org.techconnect.model.Edge;
+import org.techconnect.model.FlowChart;
+import org.techconnect.model.FlowChart.ChartType;
+import org.techconnect.model.Graph;
+import org.techconnect.model.Vertex;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

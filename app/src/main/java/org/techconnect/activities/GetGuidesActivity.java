@@ -18,7 +18,7 @@ import org.centum.techconnect.R;
 import org.techconnect.adapters.FlowchartAdapter;
 import org.techconnect.adapters.FlowchartCursorAdapter;
 import org.techconnect.asynctasks.GetCatalogAsyncTask;
-import org.techconnect.networkhelper.model.FlowChart;
+import org.techconnect.model.FlowChart;
 import org.techconnect.views.GuideListItemView;
 
 import butterknife.Bind;

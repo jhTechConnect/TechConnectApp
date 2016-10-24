@@ -1,7 +1,7 @@
-package org.techconnect.networkhelper;
+package org.techconnect.network;
 
-import org.techconnect.networkhelper.model.Comment;
-import org.techconnect.networkhelper.model.JsendResponse;
+import org.techconnect.model.Comment;
+import org.techconnect.model.JsendResponse;
 
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -15,7 +15,7 @@ import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 
-public interface TechConnectRetrofit {
+public interface TCRetrofit {
 	
 	//Define all of the headers which are needed for the communication here
 	//Initially defined as null

@@ -10,8 +10,8 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import org.centum.techconnect.R;
-import org.techconnect.networkhelper.TechConnectNetworkHelper;
-import org.techconnect.networkhelper.model.FlowChart;
+import org.techconnect.model.FlowChart;
+import org.techconnect.network.TCNetworkHelper;
 import org.techconnect.resources.ResourceHandler;
 import org.techconnect.sql.TCDatabaseHelper;
 
@@ -27,7 +27,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class TechConnectService extends IntentService {
+public class TCService extends IntentService {
 
     private static final String PARAM_RESULT_RECIEVER = "org.techconnect.services.extra.resultreciever";
 
@@ -41,12 +41,12 @@ public class TechConnectService extends IntentService {
     private static final int LOAD_CHARTS_NOTIFICATION = 1;
 
     private NotificationManager notificationManager;
-    private TechConnectNetworkHelper techConnectNetworkHelper;
+    private TCNetworkHelper TCNetworkHelper;
     private ResourceHandler resourceHandler;
 
-    public TechConnectService() {
+    public TCService() {
         super("TechConnectService");
-        techConnectNetworkHelper = new TechConnectNetworkHelper();
+        TCNetworkHelper = new TCNetworkHelper();
         resourceHandler = ResourceHandler.get();
     }
 
@@ -54,7 +54,7 @@ public class TechConnectService extends IntentService {
      * Starts this service to to download a chart.
      */
     public static void startLoadCharts(Context context, String chartIds[], ResultReceiver resultReceiver) {
-        Intent intent = new Intent(context, TechConnectService.class);
+        Intent intent = new Intent(context, TCService.class);
         intent.setAction(LOAD_CHARTS);
         intent.putExtra(PARAM_IDS, chartIds);
         intent.putExtra(PARAM_RESULT_RECIEVER, resultReceiver);
@@ -62,7 +62,7 @@ public class TechConnectService extends IntentService {
     }
 
     public static void startLoadAllCharts(Context context, ResultReceiver resultReceiver) {
-        Intent intent = new Intent(context, TechConnectService.class);
+        Intent intent = new Intent(context, TCService.class);
         intent.setAction(LOAD_ALL_CHARTS);
         intent.putExtra(PARAM_RESULT_RECIEVER, resultReceiver);
         context.startService(intent);
@@ -85,7 +85,7 @@ public class TechConnectService extends IntentService {
 
     private void handleLoadAllCharts(ResultReceiver resultReceiver) {
         try {
-            FlowChart[] flowCharts = techConnectNetworkHelper.getCatalog();
+            FlowChart[] flowCharts = TCNetworkHelper.getCatalog();
             List<String> ids = new LinkedList<>();
             for (FlowChart flowChart : flowCharts) {
                 ids.add(flowChart.getId());
@@ -121,7 +121,7 @@ public class TechConnectService extends IntentService {
         Bundle bundle = new Bundle();
         int resultCode;
         try {
-            FlowChart[] flowCharts = techConnectNetworkHelper.getCharts(chartIds);
+            FlowChart[] flowCharts = TCNetworkHelper.getCharts(chartIds);
             TCDatabaseHelper.get(getApplicationContext()).upsertCharts(flowCharts);
             Set<String> res = new HashSet<>();
             for (FlowChart chart : flowCharts) {
@@ -154,7 +154,7 @@ public class TechConnectService extends IntentService {
                     resourceHandler.addStringResource(resUrl, fileName);
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Log.e(TechConnectNetworkHelper.class.getName(), "Failed to load: " + resUrl);
+                    Log.e(TCNetworkHelper.class.getName(), "Failed to load: " + resUrl);
                 }
             }
         }

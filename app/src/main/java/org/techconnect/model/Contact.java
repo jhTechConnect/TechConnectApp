@@ -1,4 +1,4 @@
-package org.techconnect.networkhelper.model;
+package org.techconnect.model;
 
 /**
  * Created by Phani on 4/28/2016.

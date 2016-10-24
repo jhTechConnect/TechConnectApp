@@ -1,4 +1,4 @@
-package org.techconnect.networkhelper.model;
+package org.techconnect.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,10 +9,10 @@ public class Graph {
 
     final private String firstVertex;//This is the first vertex id.
     private Map<String, Vertex> vertices;
-    private Map<String, org.techconnect.networkhelper.model.Edge> edges;
+    private Map<String, Edge> edges;
 
     //Best constructor, actually builds all connections in the graph
-    public Graph(List<Vertex> V, List<org.techconnect.networkhelper.model.Edge> E, String firstVertex) {
+    public Graph(List<Vertex> V, List<Edge> E, String firstVertex) {
         vertices = new HashMap<>();
         edges = new HashMap<>();
 
@@ -23,7 +23,7 @@ public class Graph {
 
         //Iterate over the edges and add the edges to the respective in and out
         //lists in the vertices
-        for (org.techconnect.networkhelper.model.Edge e : E) {
+        for (Edge e : E) {
             edges.put(e.getId(), e);
             vertices.get(e.getOutV()).addOutEdge(e.getId());
             vertices.get(e.getInV()).addInEdge(e.getId());
@@ -59,7 +59,7 @@ public class Graph {
         return vertices.get(id);
     }
 
-    public org.techconnect.networkhelper.model.Edge getEdge(String id) {
+    public Edge getEdge(String id) {
         return edges.get(id);
     }
 
@@ -71,8 +71,8 @@ public class Graph {
         return verts;
     }
 
-    public List<org.techconnect.networkhelper.model.Edge> getEdges() {
-        ArrayList<org.techconnect.networkhelper.model.Edge> edg = new ArrayList<org.techconnect.networkhelper.model.Edge>();
+    public List<Edge> getEdges() {
+        ArrayList<Edge> edg = new ArrayList<Edge>();
         for (String key : this.edges.keySet()) {
             edg.add(this.edges.get(key));
         }
@@ -89,7 +89,7 @@ public class Graph {
     }
 
     //Remove given edge, but not the nodes on either side
-    public org.techconnect.networkhelper.model.Edge removeEdge(String id) {
+    public Edge removeEdge(String id) {
         return edges.remove(id);
     }
 

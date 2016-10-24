@@ -1,4 +1,4 @@
-package org.techconnect.networkhelper.model;
+package org.techconnect.model;
 
 public class Edge {
 	//Fields defined as Edge by our GraphSON

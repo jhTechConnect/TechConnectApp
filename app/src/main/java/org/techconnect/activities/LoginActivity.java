@@ -22,8 +22,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import org.centum.techconnect.R;
-import org.techconnect.networkhelper.TechConnectNetworkHelper;
-import org.techconnect.networkhelper.model.UserAuth;
+import org.techconnect.model.UserAuth;
+import org.techconnect.network.TCNetworkHelper;
 
 import java.io.IOException;
 
@@ -200,7 +200,7 @@ public class LoginActivity extends AppCompatActivity {
         protected Boolean doInBackground(Void... params) {
 
             try {
-                UserAuth auth = new TechConnectNetworkHelper().login(mEmail, mPassword);
+                UserAuth auth = new TCNetworkHelper().login(mEmail, mPassword);
                 if (auth == null) {
                     return false;
                 }

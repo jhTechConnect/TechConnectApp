@@ -1,8 +1,8 @@
-package org.techconnect.model;
+package org.techconnect.model.session;
 
-import org.techconnect.networkhelper.model.FlowChart;
-import org.techconnect.networkhelper.model.GraphTraversal;
-import org.techconnect.networkhelper.model.Vertex;
+import org.techconnect.model.FlowChart;
+import org.techconnect.model.GraphTraversal;
+import org.techconnect.model.Vertex;
 
 import java.util.Date;
 import java.util.LinkedList;

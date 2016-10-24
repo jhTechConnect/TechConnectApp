@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 
 import org.centum.techconnect.R;
-import org.techconnect.networkhelper.model.FlowChart;
+import org.techconnect.model.FlowChart;
 import org.techconnect.sql.TCDatabaseContract;
 import org.techconnect.sql.TCDatabaseHelper;
 import org.techconnect.views.GuideListItemView;

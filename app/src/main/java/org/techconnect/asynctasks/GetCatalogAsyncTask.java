@@ -2,8 +2,8 @@ package org.techconnect.asynctasks;
 
 import android.os.AsyncTask;
 
-import org.techconnect.networkhelper.TechConnectNetworkHelper;
-import org.techconnect.networkhelper.model.FlowChart;
+import org.techconnect.model.FlowChart;
+import org.techconnect.network.TCNetworkHelper;
 
 import java.io.IOException;
 
@@ -15,7 +15,7 @@ public class GetCatalogAsyncTask extends AsyncTask<Void, Void, FlowChart[]> {
     @Override
     protected FlowChart[] doInBackground(Void... voids) {
         try {
-            return new TechConnectNetworkHelper().getCatalog();
+            return new TCNetworkHelper().getCatalog();
         } catch (IOException e) {
             e.printStackTrace();
         }

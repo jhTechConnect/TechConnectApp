@@ -1,11 +1,11 @@
-package org.techconnect.networkhelper.serializers;
+package org.techconnect.network.serializers;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import org.techconnect.networkhelper.model.JsendResponse;
+import org.techconnect.model.JsendResponse;
 
 import java.lang.reflect.Type;
 

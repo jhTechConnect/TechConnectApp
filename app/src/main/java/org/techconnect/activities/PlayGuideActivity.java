@@ -15,10 +15,10 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import org.centum.techconnect.R;
-import org.techconnect.model.Session;
-import org.techconnect.model.SessionCompleteListener;
-import org.techconnect.networkhelper.model.FlowChart;
-import org.techconnect.services.TechConnectService;
+import org.techconnect.model.FlowChart;
+import org.techconnect.model.session.Session;
+import org.techconnect.model.session.SessionCompleteListener;
+import org.techconnect.services.TCService;
 import org.techconnect.sql.TCDatabaseHelper;
 import org.techconnect.views.GuideFlowView;
 
@@ -139,7 +139,7 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionCompl
         // Ideally this should never happen
         syncButton.setEnabled(false);
         if (getIntent() != null && getIntent().hasExtra(EXTRA_CHART_ID)) {
-            TechConnectService.startLoadCharts(this,
+            TCService.startLoadCharts(this,
                     new String[]{getIntent().getStringExtra(EXTRA_CHART_ID)},
                     new ResultReceiver(new Handler()) {
                         @Override

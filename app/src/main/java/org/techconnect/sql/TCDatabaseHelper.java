@@ -9,11 +9,11 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
-import org.techconnect.networkhelper.model.Comment;
-import org.techconnect.networkhelper.model.Edge;
-import org.techconnect.networkhelper.model.FlowChart;
-import org.techconnect.networkhelper.model.Graph;
-import org.techconnect.networkhelper.model.Vertex;
+import org.techconnect.model.Comment;
+import org.techconnect.model.Edge;
+import org.techconnect.model.FlowChart;
+import org.techconnect.model.Graph;
+import org.techconnect.model.Vertex;
 import org.techconnect.sql.TCDatabaseContract.ChartEntry;
 
 import java.util.ArrayList;

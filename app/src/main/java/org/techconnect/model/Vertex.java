@@ -1,4 +1,4 @@
-package org.techconnect.networkhelper.model;
+package org.techconnect.model;
 
 import java.util.ArrayList;
 import java.util.List;
