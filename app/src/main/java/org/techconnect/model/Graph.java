@@ -1,12 +1,28 @@
 package org.techconnect.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import org.techconnect.misc.Utils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Graph {
+public class Graph implements Parcelable {
 
+    public static final Creator<Graph> CREATOR = new Creator<Graph>() {
+        @Override
+        public Graph createFromParcel(Parcel in) {
+            return new Graph(in);
+        }
+
+        @Override
+        public Graph[] newArray(int size) {
+            return new Graph[size];
+        }
+    };
     final private String firstVertex;//This is the first vertex id.
     private Map<String, Vertex> vertices;
     private Map<String, Edge> edges;
@@ -31,6 +47,12 @@ public class Graph {
 
         //Set the root ID in order for it to be readily accessible, as well as ID and Owner
         this.firstVertex = firstVertex;
+    }
+
+    protected Graph(Parcel in) {
+        firstVertex = in.readString();
+        vertices = Utils.readParcelableMap(in, Vertex.class);
+        edges = Utils.readParcelableMap(in, Edge.class);
     }
 
     /**
@@ -93,4 +115,15 @@ public class Graph {
         return edges.remove(id);
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(firstVertex);
+        Utils.writeParcelableMap(parcel, 0, vertices);
+        Utils.writeParcelableMap(parcel, 0, edges);
+    }
 }
