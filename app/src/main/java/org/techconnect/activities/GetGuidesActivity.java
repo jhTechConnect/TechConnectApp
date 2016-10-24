@@ -87,6 +87,7 @@ public class GetGuidesActivity extends AppCompatActivity implements TextWatcher,
         new GetCatalogAsyncTask() {
             @Override
             protected void onPostExecute(FlowChart[] flowCharts) {
+                progressBar.setVisibility(View.GONE);
                 if (flowCharts == null) {
                     failedContentLayout.setVisibility(View.VISIBLE);
                 } else {
