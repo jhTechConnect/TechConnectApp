@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Tech Connect</string>
+    <string name="app_name">TechConnect</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -7,10 +7,10 @@
     <string name="action_settings">Settings</string>
     <string name="menu_self_help">Self Help</string>
     <string name="menu_resources">Resources</string>
-    <string name="title_activity_intro_tutorial">Tech Connect Tutorial</string>
+    <string name="title_activity_intro_tutorial">TechConnect Tutorial</string>
     <string name="call_directory">Call Directory</string>
     <string name="reports">Reports</string>
-    <string name="sync_online_resources">Sync Online Resources</string>
+    <string name="sync_online_resources">Sync Downloaded Resources</string>
     <string name="loading">Loading</string>
     <string name="no_reports">No Reports</string>
     <string name="department">Department</string>
@@ -30,7 +30,7 @@
     <string name="devices_available">devices available</string>
 
     <!-- Into Tutorial Strings -->
-    <string name="tutorial_title_welcome">Welcome to Tech Connect!</string>
+    <string name="tutorial_title_welcome">Welcome to TechConnect!</string>
     <string name="tutorial_msg_welcome">Swipe for some quick tips</string>
 
     <string name="tutorial_title_self_help_home">Self Help Homescreen</string>
@@ -58,4 +58,39 @@
     <string name="error_loading_resources">Error loading resources</string>
     <string name="view_tutorial">View Tutorial</string>
     <string name="downloading_resources">Downloading Resources</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_signin">Incorrect email or password</string>
+    <string name="error_signin_field_required">Email and password fields are required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="skip_sign_in">Skip Sign In</string>
+    <string name="skip_sign_in_msg">Skipping signin will make some features unavailable, such as commenting.</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="search_guides">Search</string>
+    <string name="load_catalog_failed">Failed to load the catalog</string>
+    <string name="try_again">Try Again</string>
+    <string name="guide_catalog">Guide Catalog</string>
+    <string name="available_guides">Available Guides</string>
+    <string name="no_guides">No guide have been downloaded yet</string>
+    <string name="download_guides">Download Guides</string>
+    <string name="title_activity_guide">Guide</string>
+    <string name="description">Description</string>
+    <string name="type">Type</string>
+    <string name="score">Score</string>
+    <string name="version">Version</string>
+    <string name="guides">Guides</string>
+    <string name="error_play_guide">There was an error displaying this guide. Try re-downloading the guide</string>
+    <string name="update_guide">Update Guide</string>
+    <string name="serial_number">Serial Number</string>
+    <string name="device_info">Device Information</string>
+    <string name="model_number">Model Number</string>
+    <string name="start_guide">Start Guide</string>
 </resources>

@@ -15,7 +15,7 @@ import android.widget.ListView;
 
 import org.centum.techconnect.R;
 import org.techconnect.adapters.ContactListAdapter;
-import org.techconnect.networkhelper.model.Contact;
+import org.techconnect.model.Contact;
 import org.techconnect.views.ContactListItemView;
 
 import java.util.logging.Level;

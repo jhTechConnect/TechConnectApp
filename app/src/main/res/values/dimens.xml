@@ -8,4 +8,6 @@
     <dimen name="fab_margin">16dp</dimen>
     <!-- Width of image preview in the flowchart view -->
     <dimen name="flow_view_img_preview_width_dp">150dp</dimen>
+    <dimen name="app_bar_height">180dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
 </resources>

@@ -6,7 +6,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import org.centum.techconnect.R;
-import org.techconnect.networkhelper.model.Contact;
+import org.techconnect.model.Contact;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

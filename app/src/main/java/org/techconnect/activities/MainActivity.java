@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
-import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -23,10 +22,10 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import org.centum.techconnect.R;
+import org.techconnect.fragments.GuidesFragment;
 import org.techconnect.fragments.ReportsFragment;
-import org.techconnect.fragments.SelfHelpFragment;
 import org.techconnect.resources.ResourceHandler;
-import org.techconnect.services.TechConnectService;
+import org.techconnect.services.TCService;
 import org.techconnect.sql.TCDatabaseHelper;
 
 import butterknife.Bind;
@@ -38,10 +37,13 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final int FRAGMENT_SELF_HELP = 0;
-    private static final int FRAGMENT_LOGS = 1;
     private static final int PERMISSIONS_REQUEST_READ_STORAGE = 1;
-    private final Fragment[] FRAGMENTS = new Fragment[]{new SelfHelpFragment(), new ReportsFragment()};
+    private static final String SHOWN_TUTORIAL = "org.techconnect.prefs.shownturotial";
+
+    private static final int FRAGMENT_GUIDES = 0;
+    private static final int FRAGMENT_REPORTS = 1;
+    private final Fragment[] FRAGMENTS = new Fragment[]{new GuidesFragment(), new ReportsFragment()};
+
     @Bind(R.id.nav_view)
     NavigationView navigationView;
     @Bind(R.id.loading_banner)
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity
 
     private String[] fragmentTitles;
     private int currentFragment = -1;
+    private boolean showedLogin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,18 +72,30 @@ public class MainActivity extends AppCompatActivity
 
         fragmentTitles = getResources().getStringArray(R.array.fragment_titles);
         navigationView.setNavigationItemSelectedListener(this);
-        int fragToOpen = FRAGMENT_SELF_HELP;
+        int fragToOpen = FRAGMENT_GUIDES;
         if (savedInstanceState != null) {
-            fragToOpen = savedInstanceState.getInt("frag", FRAGMENT_SELF_HELP);
+            fragToOpen = savedInstanceState.getInt("org.techconnect.mainactivity.frag", FRAGMENT_GUIDES);
         }
         setCurrentFragment(fragToOpen);
-        if (ensurePermissions()) {
-            //Here is the initial load of data
-            loadResources();
-        }
+    }
 
-        // Show tutorial
-        startActivity(new Intent(MainActivity.this, IntroTutorial.class));
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ensurePermissions();
+        boolean showedIntro = getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE)
+                .getBoolean(SHOWN_TUTORIAL, false);
+        if (!showedIntro) {
+            // Show tutorial
+            getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE)
+                    .edit()
+                    .putBoolean(SHOWN_TUTORIAL, true)
+                    .apply();
+            startActivity(new Intent(MainActivity.this, IntroTutorial.class));
+        } else if (!showedLogin) {
+            showedLogin = true;
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+        }
     }
 
     private boolean ensurePermissions() {
@@ -96,18 +111,14 @@ public class MainActivity extends AppCompatActivity
         return false;
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
-        loadResources();
-    }
-
-    private void loadResources() {
+    private void updateResources() {
         loadingLayout.setVisibility(View.VISIBLE);
-        TechConnectService.startLoadAllCharts(this, new ResultReceiver(new Handler()) {
+        String ids[] = TCDatabaseHelper.get().getAllChartIds();
+        TCService.startLoadCharts(this, ids, new ResultReceiver(new Handler()) {
             @Override
             protected void onReceiveResult(int resultCode, Bundle resultData) {
                 loadingLayout.setVisibility(View.GONE);
-                ((SelfHelpFragment) FRAGMENTS[FRAGMENT_SELF_HELP]).updateViews();
+                ((GuidesFragment) FRAGMENTS[FRAGMENT_GUIDES]).onRefresh();
             }
         });
     }
@@ -125,11 +136,6 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if (currentFragment == FRAGMENT_SELF_HELP) {
-            if (!((SelfHelpFragment) FRAGMENTS[FRAGMENT_SELF_HELP]).onBack()) {
-                // Fragment didn't consume back event
-                super.onBackPressed();
-            }
         } else {
             super.onBackPressed();
         }
@@ -141,16 +147,16 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         int newFrag = -1;
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (id == R.id.nav_self_help) {
-            newFrag = FRAGMENT_SELF_HELP;
+        if (id == R.id.nav_guides) {
+            newFrag = FRAGMENT_GUIDES;
         } else if (id == R.id.nav_reports) {
-            newFrag = FRAGMENT_LOGS;
+            newFrag = FRAGMENT_REPORTS;
         } else if (id == R.id.call_dir) {
             startActivity(new Intent(this, CallActivity.class));
             drawer.closeDrawer(GravityCompat.START);
             return true;
         } else if (id == R.id.nav_refresh) {
-            loadResources();
+            updateResources();
             drawer.closeDrawer(GravityCompat.START);
             return true;
         } else if (id == R.id.nav_view_tut) {
