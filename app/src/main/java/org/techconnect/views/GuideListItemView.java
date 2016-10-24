@@ -64,11 +64,6 @@ public class GuideListItemView extends LinearLayout implements View.OnClickListe
         this.showDownload = showDownload;
     }
 
-    public void setFlowChart(FlowChart flowChart) {
-        this.flowChart = flowChart;
-        updateViews();
-    }
-
     private void updateViews() {
         downloadImageView.setOnClickListener(null);
         downloadImageView.setVisibility(GONE);
@@ -112,6 +107,15 @@ public class GuideListItemView extends LinearLayout implements View.OnClickListe
         }
     }
 
+    public FlowChart getFlowChart() {
+        return flowChart;
+    }
+
+    public void setFlowChart(FlowChart flowChart) {
+        this.flowChart = flowChart;
+        updateViews();
+    }
+
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.downloadImageView) {
@@ -124,7 +128,8 @@ public class GuideListItemView extends LinearLayout implements View.OnClickListe
         downloadImageView.setImageResource(R.drawable.ic_sync_black_48dp);
         TechConnectService.startLoadCharts(getContext(), new String[]{flowChart.getId()}, new ResultReceiver(new Handler()) {
             @Override
-            public void send(int resultCode, Bundle resultData) {
+            protected void onReceiveResult(int resultCode, Bundle resultData) {
+                super.onReceiveResult(resultCode, resultData);
                 updateViews();
             }
         });

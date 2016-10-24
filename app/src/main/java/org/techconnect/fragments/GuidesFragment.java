@@ -11,6 +11,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FilterQueryProvider;
@@ -20,8 +21,10 @@ import android.widget.ListView;
 
 import org.centum.techconnect.R;
 import org.techconnect.activities.GetGuidesActivity;
+import org.techconnect.activities.GuideActivity;
 import org.techconnect.adapters.FlowchartCursorAdapter;
 import org.techconnect.sql.TCDatabaseHelper;
+import org.techconnect.views.GuideListItemView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -69,6 +72,15 @@ public class GuidesFragment extends Fragment implements SwipeRefreshLayout.OnRef
         refreshLayout.setOnRefreshListener(this);
         downloadFab.setOnClickListener(this);
         downloadGuidesButton.setOnClickListener(this);
+        guidesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                GuideListItemView guideView = ((GuideListItemView) view);
+                Intent intent = new Intent(getContext(), GuideActivity.class);
+                intent.putExtra(GuideActivity.EXTRA_CHART_ID, guideView.getFlowChart().getId());
+                startActivity(intent);
+            }
+        });
         return view;
     }
 

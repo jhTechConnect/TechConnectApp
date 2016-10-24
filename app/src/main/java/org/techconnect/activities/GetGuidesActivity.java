@@ -1,5 +1,6 @@
 package org.techconnect.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +8,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -17,6 +19,7 @@ import org.techconnect.adapters.FlowchartAdapter;
 import org.techconnect.adapters.FlowchartCursorAdapter;
 import org.techconnect.asynctasks.GetCatalogAsyncTask;
 import org.techconnect.networkhelper.model.FlowChart;
+import org.techconnect.views.GuideListItemView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -37,6 +40,7 @@ public class GetGuidesActivity extends AppCompatActivity implements TextWatcher,
     ListView guidesListView;
 
     private ListAdapter adapter;
+    private boolean loaded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,12 +57,26 @@ public class GetGuidesActivity extends AppCompatActivity implements TextWatcher,
         contentLayout.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
         tryAgainButton.setOnClickListener(this);
+        guidesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                GuideListItemView guideView = ((GuideListItemView) view);
+                Intent intent = new Intent(GetGuidesActivity.this, GuideActivity.class);
+                intent.putExtra(GuideActivity.EXTRA_CHART_ID, guideView.getFlowChart().getId());
+                intent.putExtra(GuideActivity.EXTRA_CHART_NAME, guideView.getFlowChart().getName());
+                intent.putExtra(GuideActivity.EXTRA_CHART_DESCRIPTION, guideView.getFlowChart().getDescription());
+                intent.putExtra(GuideActivity.EXTRA_CHART_IMAGE, guideView.getFlowChart().getImage());
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        loadCatalog();
+        if (!loaded) {
+            loadCatalog();
+        }
     }
 
     private void loadCatalog() {
@@ -79,6 +97,7 @@ public class GetGuidesActivity extends AppCompatActivity implements TextWatcher,
     }
 
     private void setCatalog(FlowChart[] flowCharts) {
+        loaded = true;
         adapter = new FlowchartAdapter(this, flowCharts);
         guidesListView.setAdapter(adapter);
         failedContentLayout.setVisibility(View.GONE);

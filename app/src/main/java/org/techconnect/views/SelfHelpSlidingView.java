@@ -35,7 +35,7 @@ public class SelfHelpSlidingView extends RelativeLayout implements View.OnClickL
 
     @Bind(R.id.device_imageView)
     ImageView deviceImageView;
-    @Bind(R.id.device_textView)
+    @Bind(R.id.type_textView)
     TextView deviceTextView;
     @Bind(R.id.date_textView)
     TextView dateTextView;

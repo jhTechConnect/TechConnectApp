@@ -17,7 +17,7 @@
         android:src="@drawable/ic_devices_black" />
 
     <TextView
-        android:id="@+id/device_textView"
+        android:id="@+id/type_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -35,11 +35,11 @@
         android:id="@+id/problem_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/device_textView"
-        android:layout_alignLeft="@+id/device_textView"
-        android:layout_alignRight="@+id/device_textView"
-        android:layout_alignStart="@+id/device_textView"
-        android:layout_below="@+id/device_textView"
+        android:layout_alignEnd="@+id/type_textView"
+        android:layout_alignLeft="@+id/type_textView"
+        android:layout_alignRight="@+id/type_textView"
+        android:layout_alignStart="@+id/type_textView"
+        android:layout_below="@+id/type_textView"
         android:textSize="14sp" />
 
     <android.support.design.widget.TextInputLayout
