@@ -135,6 +135,15 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
     }
 
 
+    public boolean hasChart(String id) {
+        String selection = ChartEntry.ID + " = ?";
+        String selectArgs[] = {id};
+        Cursor c = getReadableDatabase().query(ChartEntry.TABLE_NAME, null, selection,
+                selectArgs, null, null, null);
+        c.moveToFirst();
+        return c.getCount() > 0;
+    }
+
     public FlowChart getChart(String id) {
         String selection = ChartEntry.ID + " = ?";
         String selectArgs[] = {id};
@@ -144,6 +153,13 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         if (c.getCount() == 0) {
             return null;
         }
+        FlowChart chart = getChartFromCursor(c);
+
+        return chart;
+    }
+
+    @NonNull
+    public FlowChart getChartFromCursor(Cursor c) {
         FlowChart chart = new FlowChart();
         chart.setId(c.getString(c.getColumnIndexOrThrow(ChartEntry.ID)));
         chart.setName(c.getString(c.getColumnIndexOrThrow(ChartEntry.NAME)));
@@ -169,8 +185,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
 
         String graphId = c.getString(c.getColumnIndexOrThrow(ChartEntry.GRAPH_ID));
         chart.setGraph(getGraph(graphId));
-        chart.setComments(getComments(id, TCDatabaseContract.CommentEntry.PARENT_TYPE_CHART));
-
+        chart.setComments(getComments(chart.getId(), TCDatabaseContract.CommentEntry.PARENT_TYPE_CHART));
         return chart;
     }
 
@@ -258,6 +273,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             comments.add(comment);
             c.moveToNext();
         }
+        c.close();
         return comments;
     }
 
@@ -312,7 +328,6 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             vertex.setId(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.VertexEntry.ID)));
             vertex.setName(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.VertexEntry.NAME)));
             vertex.setDetails(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.VertexEntry.DETAILS)));
-            vertex.setComments(getComments(vertex.getId(), TCDatabaseContract.CommentEntry.PARENT_TYPE_VERTEX));
 
             String images = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.VertexEntry.IMAGES));
             String res = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.VertexEntry.RESOURCES));
@@ -329,6 +344,10 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
 
             verticies.add(vertex);
             c.moveToNext();
+        }
+        c.close();
+        for (Vertex v : verticies) {
+            v.setComments(getComments(v.getId(), TCDatabaseContract.CommentEntry.PARENT_TYPE_VERTEX));
         }
         return verticies;
     }

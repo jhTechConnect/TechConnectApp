@@ -71,7 +71,7 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="skip_sign_in">Skip Sign In</string>
+    <string name="skip_sign_in">Skip</string>
     <string name="skip_sign_in_msg">Skipping signin will make some features unavailable, such as commenting.</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="search_guides">Search</string>
@@ -93,4 +93,12 @@
     <string name="device_info">Device Information</string>
     <string name="model_number">Model Number</string>
     <string name="start_guide">Start Guide</string>
+    <string name="last_updated">Updated</string>
+    <string name="no_sessions">You have no sessions</string>
+    <string name="resources_general_msg">General Resources</string>
+    <string name="resources_none_msg">No Resources</string>
+    <string name="no_comments">No Comments</string>
+    <string name="update">Update</string>
+    <string name="guide_updated">Guide Updated</string>
+    <string name="fail_update_guide">Failed to update</string>
 </resources>
