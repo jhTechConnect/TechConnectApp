@@ -20,7 +20,7 @@ import org.techconnect.activities.ImageViewActivity;
 import org.techconnect.activities.PDFActivity;
 import org.techconnect.model.Vertex;
 import org.techconnect.model.session.Session;
-import org.techconnect.model.session.SessionCompleteListener;
+import org.techconnect.model.session.SessionListener;
 import org.techconnect.resources.ResourceHandler;
 
 import java.io.File;
@@ -51,7 +51,7 @@ public class GuideFlowView extends ScrollView implements View.OnClickListener {
     TextView imgPreviewHintTextView;
 
     private Session session;
-    private SessionCompleteListener listener;
+    private SessionListener listener;
 
     public GuideFlowView(Context context) {
         super(context);
@@ -65,7 +65,7 @@ public class GuideFlowView extends ScrollView implements View.OnClickListener {
         super(context, attrs, defStyleAttr);
     }
 
-    public void setSession(Session session, SessionCompleteListener listener) {
+    public void setSession(Session session, SessionListener listener) {
         this.listener = listener;
         this.session = session;
         updateViews();
