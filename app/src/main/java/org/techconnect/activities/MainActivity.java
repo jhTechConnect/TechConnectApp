@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity
                     .edit()
                     .putBoolean(SHOWN_TUTORIAL, true)
                     .apply();
-            startActivity(new Intent(MainActivity.this, IntroTutorial.class));
+            //startActivity(new Intent(MainActivity.this, IntroTutorial.class));
         } else if (!showedLogin) {
             showedLogin = true;
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
