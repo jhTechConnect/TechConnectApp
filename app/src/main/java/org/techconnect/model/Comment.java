@@ -20,8 +20,9 @@ public class Comment implements Parcelable {
     };
     private String text;
     private String attachment;
-    private String owner;
+    private String ownerId;
     private String createdDate;
+    private String ownerName;
 
 
     public Comment() {
@@ -30,8 +31,9 @@ public class Comment implements Parcelable {
     protected Comment(Parcel in) {
         text = in.readString();
         attachment = in.readString();
-        owner = in.readString();
+        ownerId = in.readString();
         createdDate = in.readString();
+        ownerName = in.readString();
     }
 
     /**
@@ -62,12 +64,12 @@ public class Comment implements Parcelable {
         this.attachment = attachment;
     }
 
-    public String getOwner() {
-        return owner;
+    public String getOwnerId() {
+        return ownerId;
     }
 
-    public void setOwner(String owner) {
-        this.owner = owner;
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
     }
 
     public String getCreatedDate() {
@@ -76,6 +78,14 @@ public class Comment implements Parcelable {
 
     public void setCreatedDate(String createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
     }
 
     @Override
@@ -87,7 +97,8 @@ public class Comment implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(text);
         parcel.writeString(attachment);
-        parcel.writeString(owner);
+        parcel.writeString(ownerId);
         parcel.writeString(createdDate);
+        parcel.writeString(ownerName);
     }
 }

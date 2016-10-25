@@ -25,7 +25,7 @@ import org.techconnect.model.FlowChart;
 import org.techconnect.resources.ResourceHandler;
 import org.techconnect.services.TCService;
 import org.techconnect.sql.TCDatabaseHelper;
-import org.techconnect.views.CommentsView;
+import org.techconnect.views.CommentThreadView;
 import org.techconnect.views.ResourcesView;
 
 import butterknife.Bind;
@@ -60,7 +60,7 @@ public class GuideActivity extends AppCompatActivity {
     @Bind(R.id.tabContentContainer)
     FrameLayout tabContentContainer;
 
-    private CommentsView commentsView;
+    private CommentThreadView commentThreadView;
     private ResourcesView resourcesView;
 
     private FlowChart flowChart;
@@ -76,17 +76,17 @@ public class GuideActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        commentsView = (CommentsView) getLayoutInflater().inflate(R.layout.comments_view, tabContentContainer, false);
+        commentThreadView = (CommentThreadView) getLayoutInflater().inflate(R.layout.comment_thread_view, tabContentContainer, false);
         resourcesView = (ResourcesView) getLayoutInflater().inflate(R.layout.resources_view, tabContentContainer, false);
 
-        tabContentContainer.addView(commentsView);
+        tabContentContainer.addView(commentThreadView);
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 tabContentContainer.removeAllViews();
                 if (tab.getPosition() == 0) {
-                    tabContentContainer.addView(commentsView);
+                    tabContentContainer.addView(commentThreadView);
                 } else {
                     tabContentContainer.addView(resourcesView);
                 }
@@ -153,7 +153,7 @@ public class GuideActivity extends AppCompatActivity {
         versionTextView.setText(flowChart.getVersion());
         descriptionTextView.setText(flowChart.getDescription());
         resourcesView.setResources(flowChart.getResources());
-        commentsView.setComments(flowChart.getComments());
+        commentThreadView.setComments(flowChart.getComments());
         updateHeaderImage();
     }
 

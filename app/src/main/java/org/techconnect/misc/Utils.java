@@ -6,6 +6,10 @@ import android.net.NetworkInfo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +18,8 @@ import java.util.Map;
  */
 
 public class Utils {
+
+    private static DateFormat m_ISO8601Local = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     public static boolean isNetworkAvailable(Context c) {
         ConnectivityManager connectivityManager
@@ -42,6 +48,10 @@ public class Utils {
                     vClass.cast(parcel.readParcelable(vClass.getClassLoader())));
         }
         return map;
+    }
+
+    public static Date parseISO8601Date(String date) throws ParseException {
+        return m_ISO8601Local.parse(date);
     }
 
 }

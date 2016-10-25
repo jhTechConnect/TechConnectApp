@@ -56,6 +56,7 @@ public class TCDatabaseContract {
         public static final String PARENT_ID = "parentId";
         public static final String PARENT_TYPE = "parentType";
         public static final String OWNER = "owner";
+        public static final String OWNER_NAME = "ownerName";
         public static final String TEXT = "text";
         public static final String CREATED_DATE = "createdDate";
         public static final String ATTACHMENT = "attachment";
@@ -67,6 +68,7 @@ public class TCDatabaseContract {
                 PARENT_ID + " TEXT," +
                 PARENT_TYPE + " TEXT," +
                 OWNER + " TEXT," +
+                OWNER_NAME + " TEXT," +
                 TEXT + " TEXT," +
                 CREATED_DATE + " DATE," +
                 ATTACHMENT + " TEXT);";

@@ -266,7 +266,8 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
 
         while (!c.isAfterLast()) {
             Comment comment = new Comment();
-            comment.setOwner(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.CommentEntry.OWNER)));
+            comment.setOwnerId(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.CommentEntry.OWNER)));
+            comment.setOwnerName(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.CommentEntry.OWNER_NAME)));
             comment.setAttachment(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.CommentEntry.ATTACHMENT)));
             comment.setCreatedDate(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.CommentEntry.CREATED_DATE)));
             comment.setText(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.CommentEntry.TEXT)));
@@ -288,7 +289,8 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         commentContentValues.put(TCDatabaseContract.CommentEntry.ID, getRandomId());
         commentContentValues.put(TCDatabaseContract.CommentEntry.PARENT_ID, parentId);
         commentContentValues.put(TCDatabaseContract.CommentEntry.PARENT_TYPE, parentType);
-        commentContentValues.put(TCDatabaseContract.CommentEntry.OWNER, comment.getOwner());
+        commentContentValues.put(TCDatabaseContract.CommentEntry.OWNER, comment.getOwnerId());
+        commentContentValues.put(TCDatabaseContract.CommentEntry.OWNER_NAME, comment.getOwnerName());
         commentContentValues.put(TCDatabaseContract.CommentEntry.TEXT, comment.getText());
         commentContentValues.put(TCDatabaseContract.CommentEntry.CREATED_DATE, comment.getCreatedDate());
         commentContentValues.put(TCDatabaseContract.CommentEntry.ATTACHMENT, comment.getAttachment());

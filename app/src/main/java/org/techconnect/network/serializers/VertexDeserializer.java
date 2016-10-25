@@ -25,14 +25,17 @@ public class VertexDeserializer implements JsonDeserializer<Vertex>  {
 		final String details = jsonObject.get("details").getAsString();
 		final ArrayList<String> resources = new ArrayList<String>();
 		for (JsonElement j : jsonObject.get("resources").getAsJsonArray())  {
+			if (!j.isJsonNull())
 			resources.add(j.getAsString());
 		}
 		final ArrayList<String> images = new ArrayList<String>();
 		for (JsonElement j : jsonObject.get("images").getAsJsonArray()) {
+			if (!j.isJsonNull())
 			images.add(j.getAsString());
 		}
 		final ArrayList<Comment> comments = new ArrayList<Comment>();
 		for (JsonElement j : jsonObject.get("comments").getAsJsonArray()) {
+			if (!j.isJsonNull())
 			comments.add(myGson.fromJson(j, Comment.class));
 		}
 		
