@@ -54,4 +54,11 @@ public class Utils {
         return m_ISO8601Local.parse(date);
     }
 
+    public static String formatAttachmentName(String att) {
+        String name = att.substring(att.lastIndexOf("/") + 1);
+        if (name.contains("?")) {
+            name = name.substring(0, name.indexOf('?'));
+        }
+        return name;
+    }
 }
