@@ -193,9 +193,13 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         if (getChart(flowChart.getId()) == null) {
             insertChart(flowChart);
         } else {
+            // Delete old graph
+            deleteChartsGraph(flowChart);
+            // Add new graph
             String graphId = insertGraph(flowChart.getGraph());
             ContentValues chartContentValues = getChartContentValues(flowChart, graphId);
             try {
+                deleteComments(flowChart.getId(), TCDatabaseContract.CommentEntry.PARENT_TYPE_CHART);
                 insertComments(flowChart.getComments(), flowChart.getId(), TCDatabaseContract.CommentEntry.PARENT_TYPE_CHART);
                 getWritableDatabase().update(ChartEntry.TABLE_NAME, chartContentValues,
                         ChartEntry.ID + " = ?", new String[]{flowChart.getId()});
@@ -204,6 +208,18 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             }
 
             Log.d(this.getClass().getName(), "Chart Info Updated Successfully");
+        }
+    }
+
+    private void deleteChartsGraph(FlowChart flowChart) {
+        String selection = TCDatabaseContract.GraphEntry.ID + " = ?";
+        String selectionArgs[] = {flowChart.getId()};
+        Cursor c = getReadableDatabase().query(TCDatabaseContract.GraphEntry.TABLE_NAME,
+                null, selection, selectionArgs, null, null, null);
+        c.moveToFirst();
+        if (c.getCount() > 0) {
+            String oldGraphId = c.getString(c.getColumnIndexOrThrow(ChartEntry.GRAPH_ID));
+            deleteGraph(oldGraphId);
         }
     }
 
@@ -221,6 +237,8 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
 
         //Insert chart & comments
         try {
+            //Delete old comments and insert new ones
+            deleteComments(flowChart.getId(), TCDatabaseContract.CommentEntry.PARENT_TYPE_CHART);
             insertComments(flowChart.getComments(), flowChart.getId(), TCDatabaseContract.CommentEntry.PARENT_TYPE_CHART);
             getWritableDatabase().insert(ChartEntry.TABLE_NAME, null, chartContentValues);
         } catch (Exception e) {
@@ -278,6 +296,12 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         return comments;
     }
 
+    private void deleteComments(String parentId, String parentType) {
+        String selection = TCDatabaseContract.CommentEntry.PARENT_ID + " = '" + parentId + "' AND " +
+                TCDatabaseContract.CommentEntry.PARENT_TYPE + " = '" + parentType + "'";
+        getWritableDatabase().delete(TCDatabaseContract.CommentEntry.TABLE_NAME, selection, null);
+    }
+
     private void insertComments(List<Comment> comments, String parentId, String parentType) {
         for (Comment comment : comments) {
             insertComment(comment, parentId, parentType);
@@ -302,6 +326,12 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         }
 
         Log.d(this.getClass().getName(), "Comment Info Inserted Successfully");
+    }
+
+    private void deleteGraph(String id) {
+        String selection = TCDatabaseContract.GraphEntry.ID + " = ?";
+        String selectionArgs[] = {id};
+        getWritableDatabase().delete(TCDatabaseContract.GraphEntry.TABLE_NAME, selection, selectionArgs);
     }
 
     private Graph getGraph(String id) {
@@ -443,6 +473,8 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         vertexContentValues.put(TCDatabaseContract.VertexEntry.RESOURCES, allRes);
         vertexContentValues.put(TCDatabaseContract.VertexEntry.IMAGES, allImgs);
 
+        // Delete old vertices and insert new ones
+        deleteComments(v.getId(), TCDatabaseContract.CommentEntry.PARENT_TYPE_VERTEX);
         insertComments(v.getComments(), v.getId(), TCDatabaseContract.CommentEntry.PARENT_TYPE_VERTEX);
 
         sql.insertWithOnConflict(TCDatabaseContract.VertexEntry.TABLE_NAME, null, vertexContentValues, SQLiteDatabase.CONFLICT_REPLACE);

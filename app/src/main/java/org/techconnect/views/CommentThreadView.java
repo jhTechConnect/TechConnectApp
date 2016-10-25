@@ -47,8 +47,8 @@ public class CommentThreadView extends LinearLayout {
     }
 
     private void updateViews() {
+        removeAllViews();
         if (comments.size() > 0) {
-            removeView(headerTextView);
             LayoutInflater inflater = LayoutInflater.from(getContext());
             for (Comment comment : comments) {
                 CommentView view = (CommentView) inflater.inflate(R.layout.comment_view, this, false);
@@ -56,7 +56,6 @@ public class CommentThreadView extends LinearLayout {
                 addView(view);
             }
         } else {
-            removeAllViews();
             addView(headerTextView);
         }
     }
