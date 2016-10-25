@@ -82,7 +82,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        ensurePermissions();
         boolean showedIntro = getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE)
                 .getBoolean(SHOWN_TUTORIAL, false);
         if (!showedIntro) {
@@ -95,6 +94,8 @@ public class MainActivity extends AppCompatActivity
         } else if (!showedLogin) {
             showedLogin = true;
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
+        } else {
+            ensurePermissions();
         }
     }
 
