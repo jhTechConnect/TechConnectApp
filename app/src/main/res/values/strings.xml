@@ -101,4 +101,6 @@
     <string name="update">Update</string>
     <string name="guide_updated">Guide Updated</string>
     <string name="fail_update_guide">Failed to update</string>
+    <string name="ask_permissions">TechConnect requires some permissions to run. Please grant the requested permissions.</string>
+    <string name="grant_permission">Grant Permissions</string>
 </resources>

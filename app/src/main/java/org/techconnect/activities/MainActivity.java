@@ -19,6 +19,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import org.centum.techconnect.R;
@@ -30,6 +32,7 @@ import org.techconnect.sql.TCDatabaseHelper;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Entry activity.
@@ -44,10 +47,16 @@ public class MainActivity extends AppCompatActivity
     private static final int FRAGMENT_REPORTS = 1;
     private final Fragment[] FRAGMENTS = new Fragment[]{new GuidesFragment(), new ReportsFragment()};
 
+    @Bind(R.id.drawer_layout)
+    DrawerLayout drawerLayout;
     @Bind(R.id.nav_view)
     NavigationView navigationView;
     @Bind(R.id.loading_banner)
     RelativeLayout loadingLayout;
+    @Bind(R.id.permission_layout)
+    LinearLayout permissionLayout;
+    @Bind(R.id.main_fragment_container)
+    FrameLayout fragmentContainer;
 
     private String[] fragmentTitles;
     private int currentFragment = -1;
@@ -63,11 +72,11 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         loadingLayout.setVisibility(View.GONE);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        // Lock until we have permission (in check permissions)
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
         fragmentTitles = getResources().getStringArray(R.array.fragment_titles);
@@ -77,6 +86,7 @@ public class MainActivity extends AppCompatActivity
             fragToOpen = savedInstanceState.getInt("org.techconnect.mainactivity.frag", FRAGMENT_GUIDES);
         }
         setCurrentFragment(fragToOpen);
+        checkPermissions();
     }
 
     @Override
@@ -94,22 +104,30 @@ public class MainActivity extends AppCompatActivity
         } else if (!showedLogin) {
             showedLogin = true;
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
-        } else {
-            ensurePermissions();
+        }
+        checkPermissions();
+    }
+
+    @OnClick(R.id.grant_permission_btn)
+    public void ensurePermissions() {
+        if (!checkPermissions()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        PERMISSIONS_REQUEST_READ_STORAGE);
+            }
         }
     }
 
-    private boolean ensurePermissions() {
-        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
-            return true;
+    private boolean checkPermissions() {
+        boolean havePermission = PackageManager.PERMISSION_GRANTED ==
+                ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (havePermission) {
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED);
+            permissionLayout.setVisibility(View.GONE);
+            fragmentContainer.setVisibility(View.VISIBLE);
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    PERMISSIONS_REQUEST_READ_STORAGE);
-        }
-        return false;
+        return havePermission;
     }
 
     private void updateResources() {
