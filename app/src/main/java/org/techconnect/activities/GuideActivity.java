@@ -220,8 +220,8 @@ public class GuideActivity extends AppCompatActivity {
     protected void onHeaderImageAction() {
         Intent intent = new Intent(this, ImageViewActivity.class);
         if (ResourceHandler.get().hasStringResource(flowChart.getImage())) {
-            intent.putExtra(ImageViewActivity.EXTRA_PATH,
-                    ResourceHandler.get(this).getStringResource(flowChart.getImage()));
+            intent.putExtra(ImageViewActivity.EXTRA_PATH, getFileStreamPath(
+                    ResourceHandler.get().getStringResource(flowChart.getImage())).getAbsolutePath());
         } else {
             intent.putExtra(ImageViewActivity.EXTRA_URL, flowChart.getImage());
         }
