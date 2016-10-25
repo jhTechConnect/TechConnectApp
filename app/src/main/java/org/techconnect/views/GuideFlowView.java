@@ -82,10 +82,13 @@ public class GuideFlowView extends ScrollView implements View.OnClickListener {
         updateOptions();
         backButton.setEnabled(session.hasPrevious());
 
-        commentsResourcesTabbedView = (CommentsResourcesTabbedView) LayoutInflater.from(getContext())
-                .inflate(R.layout.comments_resources_tabbed_view, tabContainer, false);
-        commentsResourcesTabbedView.setItems(curr_step.getComments(), curr_step.getResources());
-        tabContainer.addView(commentsResourcesTabbedView);
+        tabContainer.removeAllViews();
+        if (curr_step.getResources().size() > 0 || curr_step.getComments().size() > 0) {
+            commentsResourcesTabbedView = (CommentsResourcesTabbedView) LayoutInflater.from(getContext())
+                    .inflate(R.layout.comments_resources_tabbed_view, tabContainer, false);
+            commentsResourcesTabbedView.setItems(curr_step.getComments(), curr_step.getResources());
+            tabContainer.addView(commentsResourcesTabbedView);
+        }
     }
 
 
