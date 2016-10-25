@@ -163,7 +163,7 @@ public class GuideActivity extends AppCompatActivity {
                 // Load offline image
                 Picasso.with(this)
                         .load(getFileStreamPath(
-                                ResourceHandler.get().getStringResource(flowChart.getImage())).getAbsolutePath())
+                                ResourceHandler.get().getStringResource(flowChart.getImage())))
                         .into(headerImageView);
             } else {
                 // Load online image
