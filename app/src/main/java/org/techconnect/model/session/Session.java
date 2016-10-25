@@ -4,8 +4,7 @@ import org.techconnect.model.FlowChart;
 import org.techconnect.model.GraphTraversal;
 import org.techconnect.model.Vertex;
 
-import java.util.Date;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -26,14 +25,16 @@ public class Session {
     private String serialNumber;
     private String notes;
 
-    private List<Vertex> history = new LinkedList<>();//Wiating until we decide what to do with this
-    private List<String> optionHistory = new LinkedList<>();//Waiting until we decide what to do with this
+    private List<String> history = new ArrayList<>(); //list of seen vertex IDs
+    private List<String> optionHistory = new ArrayList<>();//list of user responses
 
     public Session(FlowChart flowchart) {
         this.flowchart = flowchart;
         this.traversal = new GraphTraversal(flowchart.getGraph());
+        history.add(this.traversal.getCurrentVertex().getId());
     }
 
+    /*
     public String getReport() {
         StringBuilder report = new StringBuilder();
         report.append("Date: ").append(new Date(createdDate).toString()).append('\n');
@@ -51,6 +52,7 @@ public class Session {
         }
         return report.toString();
     }
+    */
 
     //Save
     public long getCreatedDate() {
@@ -105,14 +107,18 @@ public class Session {
     }
 
     public void selectOption(String option) {
+        optionHistory.add(option);
         traversal.selectOption(option);//Select, update the traversal object
+        history.add(traversal.getCurrentVertex().getId());
     }
 
     public void goBack() {
         //Safety check. In theory, should only be able to be called when the back button is enabled,
         //which is when the session has a previous step? May be able to remove
         if (traversal.hasPrevious()) {
+            optionHistory.add("Back");
             traversal.stepBack();
+            history.add(traversal.getCurrentVertex().getId());
         }
     }
 
