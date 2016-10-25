@@ -8,8 +8,6 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 
 import org.centum.techconnect.R;
-import org.techconnect.model.FlowChart;
-import org.techconnect.sql.TCDatabaseContract;
 import org.techconnect.sql.TCDatabaseHelper;
 import org.techconnect.views.GuideListItemView;
 
@@ -31,12 +29,7 @@ public class FlowchartCursorAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         GuideListItemView listItemView = ((GuideListItemView) view);
-        FlowChart flowChart = new FlowChart();
-        flowChart.setId(cursor.getString(cursor.getColumnIndexOrThrow(TCDatabaseContract.ChartEntry.ID)));
-        flowChart.setName(cursor.getString(cursor.getColumnIndexOrThrow(TCDatabaseContract.ChartEntry.NAME)));
-        flowChart.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(TCDatabaseContract.ChartEntry.DESCRIPTION)));
-        flowChart.setImage(cursor.getString(cursor.getColumnIndexOrThrow(TCDatabaseContract.ChartEntry.IMAGE)));
-        listItemView.setFlowChart(flowChart);
+        listItemView.setFlowChart(TCDatabaseHelper.get(context).getChartFromCursor(cursor));
     }
 
 

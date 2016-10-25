@@ -62,10 +62,7 @@ public class GetGuidesActivity extends AppCompatActivity implements TextWatcher,
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 GuideListItemView guideView = ((GuideListItemView) view);
                 Intent intent = new Intent(GetGuidesActivity.this, GuideActivity.class);
-                intent.putExtra(GuideActivity.EXTRA_CHART_ID, guideView.getFlowChart().getId());
-                intent.putExtra(GuideActivity.EXTRA_CHART_NAME, guideView.getFlowChart().getName());
-                intent.putExtra(GuideActivity.EXTRA_CHART_DESCRIPTION, guideView.getFlowChart().getDescription());
-                intent.putExtra(GuideActivity.EXTRA_CHART_IMAGE, guideView.getFlowChart().getImage());
+                intent.putExtra(GuideActivity.EXTRA_CHART, guideView.getFlowChart());
                 startActivity(intent);
             }
         });

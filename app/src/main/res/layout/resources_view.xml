@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.techconnect.views.ResourcesView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="16dp">
+
+    <TextView
+        android:id="@+id/resources_headerTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="@string/resources_general_msg"
+        android:textSize="18sp"
+        android:textStyle="normal|bold" />
+</org.techconnect.views.ResourcesView>
