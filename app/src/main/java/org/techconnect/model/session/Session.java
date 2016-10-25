@@ -25,6 +25,7 @@ public class Session {
     private String modelNumber;
     private String serialNumber;
     private String notes;
+    private boolean finished = false;
 
     private List<Vertex> history = new LinkedList<>();//Wiating until we decide what to do with this
     private List<String> optionHistory = new LinkedList<>();//Waiting until we decide what to do with this
@@ -128,8 +129,11 @@ public class Session {
         this.serialNumber = serialNumber;
     }
 
+    public boolean isFinished() {
+        return finished;
+    }
 
-    public enum Urgency {
-        Low, Medium, High, Critical
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 }

@@ -7,6 +7,8 @@ import android.os.Handler;
 import android.os.ResultReceiver;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -66,6 +68,22 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionCompl
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_play_guide, menu);
+        ;
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.end_session) {
+            showEndSessionDialog();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onBackPressed() {
         if (session != null && flowView.goBack()) {
             return;
@@ -85,7 +103,7 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionCompl
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         dialogInterface.dismiss();
-                        onSessionComplete();
+                        endSession();
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -158,8 +176,12 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionCompl
 
     @Override
     public void onSessionComplete() {
+        session.setFinished(true);
+        endSession();
+    }
+
+    private void endSession() {
         saveSession();
-        // TODO show some message
         finish();
     }
 }
