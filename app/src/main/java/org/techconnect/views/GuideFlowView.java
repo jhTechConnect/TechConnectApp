@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -46,7 +47,10 @@ public class GuideFlowView extends ScrollView implements View.OnClickListener {
     LinearLayout imageLinearLayout;
     @Bind(R.id.img_preview_hint)
     TextView imgPreviewHintTextView;
+    @Bind(R.id.tabContainer)
+    FrameLayout tabContainer;
 
+    CommentsResourcesTabbedView commentsResourcesTabbedView;
     private Session session;
     private SessionCompleteListener listener;
 
@@ -76,19 +80,14 @@ public class GuideFlowView extends ScrollView implements View.OnClickListener {
         optionsLinearLayout.removeAllViews();
         updateImageThumbnails(curr_step);
         updateOptions();
-        updateAttachments(curr_step);
         backButton.setEnabled(session.hasPrevious());
+
+        commentsResourcesTabbedView = (CommentsResourcesTabbedView) LayoutInflater.from(getContext())
+                .inflate(R.layout.comments_resources_tabbed_view, tabContainer, false);
+        commentsResourcesTabbedView.setItems(curr_step.getComments(), curr_step.getResources());
+        tabContainer.addView(commentsResourcesTabbedView);
     }
 
-    //updating to use a vertex instead of old Flowchart object
-    private void updateAttachments(Vertex curr_step) {
-        if (curr_step.getResources().size() > 0) {
-            ResourcesView resourcesView = (ResourcesView) LayoutInflater.from(getContext())
-                    .inflate(R.layout.resources_view, optionsLinearLayout, false);
-            resourcesView.setResources(curr_step.getResources());
-            optionsLinearLayout.addView(resourcesView);
-        }
-    }
 
     private void updateOptions() {
         for (int i = 0; i < optionsLinearLayout.getChildCount(); i++) {
