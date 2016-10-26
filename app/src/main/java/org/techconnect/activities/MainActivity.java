@@ -1,6 +1,7 @@
 package org.techconnect.activities;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -24,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import org.centum.techconnect.R;
+import org.techconnect.asynctasks.LogoutAsyncTask;
 import org.techconnect.fragments.GuidesFragment;
 import org.techconnect.fragments.ReportsFragment;
 import org.techconnect.misc.ResourceHandler;
@@ -59,6 +61,9 @@ public class MainActivity extends AppCompatActivity
     @Bind(R.id.main_fragment_container)
     FrameLayout fragmentContainer;
 
+    MenuItem logoutMenuItem;
+    MenuItem loginMenuItem;
+
     private String[] fragmentTitles;
     private int currentFragment = -1;
     private boolean showedLogin = false;
@@ -78,6 +83,8 @@ public class MainActivity extends AppCompatActivity
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
+        logoutMenuItem = navigationView.getMenu().findItem(R.id.logout);
+        loginMenuItem = navigationView.getMenu().findItem(R.id.login);
         toggle.syncState();
 
         fragmentTitles = getResources().getStringArray(R.array.fragment_titles);
@@ -103,8 +110,13 @@ public class MainActivity extends AppCompatActivity
                     .apply();
             //startActivity(new Intent(MainActivity.this, IntroTutorial.class));
         } else if (!showedLogin && !AuthManager.get(this).hasAuth()) {
-            showedLogin = true;
-            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            onShowLogin();
+        } else if (AuthManager.get(this).hasAuth()) {
+            loginMenuItem.setVisible(false);
+            logoutMenuItem.setVisible(true);
+        } else {
+            loginMenuItem.setVisible(true);
+            logoutMenuItem.setVisible(false);
         }
         checkPermissions();
     }
@@ -183,11 +195,44 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(this, IntroTutorial.class));
             drawer.closeDrawer(GravityCompat.START);
             return true;
+        } else if (id == R.id.login) {
+            onShowLogin();
+            return true;
+        } else if (id == R.id.logout) {
+            onLogout();
+            return true;
         }
 
         drawer.closeDrawer(GravityCompat.START);
         setCurrentFragment(newFrag);
         return true;
+    }
+
+    private void onShowLogin() {
+        showedLogin = true;
+        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+    }
+
+    private void onLogout() {
+        if (AuthManager.get(this).hasAuth()) {
+            new LogoutAsyncTask() {
+                ProgressDialog pd;
+
+                @Override
+                protected void onPreExecute() {
+                    super.onPreExecute();
+                    pd = ProgressDialog.show(MainActivity.this, getString(R.string.logging_out), null, true, false);
+                }
+
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    AuthManager.get(null).setAuth(null);
+                    pd.dismiss();
+                    pd = null;
+                    onShowLogin();
+                }
+            }.execute(AuthManager.get(this).getAuth());
+        }
     }
 
     private void setCurrentFragment(int frag) {
