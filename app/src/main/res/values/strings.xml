@@ -116,4 +116,5 @@
     <string name="user_registered">Registration successful!</string>
     <string name="action_sign_out">Sign out</string>
     <string name="logging_out">Signing out</string>
+    <string name="dont_show_again">Don\'t show again</string>
 </resources>

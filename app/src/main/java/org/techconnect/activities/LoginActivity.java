@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -39,6 +41,7 @@ import butterknife.OnClick;
  */
 public class LoginActivity extends AppCompatActivity {
     private static final int REGISTER_REQUEST = 1;
+    private static final String SHOW_SKIP_ALERT = "org.techconnect.login.skipalert";
     // UI references.
     @Bind(R.id.email)
     TextView mEmailView;
@@ -102,22 +105,33 @@ public class LoginActivity extends AppCompatActivity {
 
     @OnClick(R.id.skip_signin_button)
     public void onSkipSignin() {
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.are_you_sure)
-                .setMessage(R.string.skip_sign_in_msg)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                        LoginActivity.this.finish();
-                    }
-                })
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                }).show();
+        final SharedPreferences prefs = getSharedPreferences(LoginActivity.class.getName(), MODE_PRIVATE);
+        if (prefs.getBoolean(SHOW_SKIP_ALERT, true)) {
+            final CheckBox checkBox = new CheckBox(this);
+            checkBox.setText(R.string.dont_show_again);
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.are_you_sure)
+                    .setMessage(R.string.skip_sign_in_msg)
+                    .setView(checkBox)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                            if (checkBox.isChecked()) {
+                                prefs.edit().putBoolean(SHOW_SKIP_ALERT, false).apply();
+                            }
+                            LoginActivity.this.finish();
+                        }
+                    })
+                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    }).show();
+        } else {
+            LoginActivity.this.finish();
+        }
     }
 
     @OnClick(R.id.email_sign_in_button)
