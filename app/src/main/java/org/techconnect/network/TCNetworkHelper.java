@@ -30,7 +30,9 @@ public class TCNetworkHelper {
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private Gson gson;
     private TCRetrofit service;
+
     private JsendResponse lastError = null;
+    private int lastCode = -1;
 
     public TCNetworkHelper() {
         gson = buildGson();
@@ -56,6 +58,7 @@ public class TCNetworkHelper {
      */
     public FlowChart[] getCatalog() throws IOException {
         Response<JsendResponse> resp = service.getCatalog().execute();
+        lastCode = resp.code();
         //First, check whether there is an error. HAVE TO DO THIS TO SATISFY RETROFIT!
         //Cheking first if the http request was successful. if not, have to manually deserialize the JSON
         if (!resp.isSuccessful()) {
@@ -76,6 +79,7 @@ public class TCNetworkHelper {
 
     public FlowChart getChart(String id) throws IOException {
         Response<JsendResponse> resp = service.getFlowchart(id).execute();
+        lastCode = resp.code();
         //First, check whether there is an error
         if (!resp.isSuccessful()) {
             JsendResponse error = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
@@ -98,6 +102,7 @@ public class TCNetworkHelper {
      */
     public FlowChart[] getCharts(String[] ids) throws IOException {
         Response<JsendResponse> resp = service.getFlowcharts(ids).execute();
+        lastCode = resp.code();
         if (!resp.isSuccessful()) {
             JsendResponse error = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
             throw new IOException(error.getMessage());
@@ -115,6 +120,7 @@ public class TCNetworkHelper {
 
     public UserAuth login(String email, String password) throws IOException {
         Response<JsendResponse> resp = service.login(email, password).execute();
+        lastCode = resp.code();
         //First check to see if the request succeeded
         if (!resp.isSuccessful()) {
             JsendResponse test = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
@@ -128,6 +134,7 @@ public class TCNetworkHelper {
 
     public boolean logout(UserAuth auth) throws IOException {
         Response<JsendResponse> resp = service.logout(auth.getAuthToken(), auth.getUserId()).execute();
+        lastCode = resp.code();
         if (!resp.isSuccessful()) {
             JsendResponse test = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
             return false;
@@ -144,6 +151,7 @@ public class TCNetworkHelper {
      */
     public FlowChart comment(String chart_id, Comment c, UserAuth auth) throws IOException {
         Response<JsendResponse> resp = service.postComment(auth.getAuthToken(), auth.getUserId(), chart_id, c).execute();
+        lastCode = resp.code();
         if (!resp.isSuccessful()) {
             lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
             return null;
@@ -164,6 +172,7 @@ public class TCNetworkHelper {
         RequestBody requestBody = RequestBody.create(JSON, body.toString());
         Response<JsendResponse> resp = service.deleteComment(auth.getAuthToken(), auth.getUserId(),
                 chart_id, requestBody).execute();
+        lastCode = resp.code();
         if (!resp.isSuccessful()) {
             lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
             return null;
@@ -185,6 +194,7 @@ public class TCNetworkHelper {
 
         Response<JsendResponse> resp = service.postFeedback(auth.getAuthToken(),
                 auth.getUserId(), chart_id, requestBody).execute();
+        lastCode = resp.code();
         if (!resp.isSuccessful()) {
             lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
             return null;
@@ -194,5 +204,9 @@ public class TCNetworkHelper {
 
     public JsendResponse getLastError() {
         return lastError;
+    }
+
+    public int getLastCode() {
+        return lastCode;
     }
 }
