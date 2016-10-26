@@ -59,6 +59,10 @@ public class CommentsResourcesTabbedView extends LinearLayout implements TabLayo
         resourcesView.setResources(resources);
         tabContentContainer.addView(commentThreadView);
         tabLayout.addOnTabSelectedListener(this);
+        if (comments.size() == 0) {
+            // Show resources
+            tabLayout.getTabAt(1).select();
+        }
     }
 
     @Override
