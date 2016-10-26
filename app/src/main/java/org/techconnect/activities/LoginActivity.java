@@ -3,20 +3,22 @@ package org.techconnect.activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -30,14 +32,16 @@ import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity {
+    private static final int REGISTER_REQUEST = 1;
     // UI references.
     @Bind(R.id.email)
-    AutoCompleteTextView mEmailView;
+    TextView mEmailView;
     @Bind(R.id.password)
     EditText mPasswordView;
     @Bind(R.id.login_progress)
@@ -46,8 +50,12 @@ public class LoginActivity extends AppCompatActivity {
     View mLoginFormView;
     @Bind(R.id.email_sign_in_button)
     Button mEmailSignInButton;
+    @Bind(R.id.register_button)
+    Button registerButton;
     @Bind(R.id.skip_signin_button)
     Button mSkipSigninButton;
+    @Bind(R.id.coordinatorLayout)
+    CoordinatorLayout coordinatorLayout;
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -69,22 +77,31 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
-
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptLogin();
-            }
-        });
-        mSkipSigninButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onSkipSignin();
-            }
-        });
     }
 
-    private void onSkipSignin() {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REGISTER_REQUEST && resultCode == Activity.RESULT_OK) {
+            mEmailView.setText(data.getStringExtra(RegisterActivity.RESULT_REGISTERED_EMAIL));
+            Snackbar.make(coordinatorLayout, R.string.user_registered, Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
+    @OnClick(R.id.register_button)
+    public void onRegister() {
+        Intent intent = new Intent(this, RegisterActivity.class);
+        if (!TextUtils.isEmpty(mEmailView.getText())) {
+            intent.putExtra(RegisterActivity.EXTRA_EMAIL, mEmailView.getText());
+        }
+        if (!TextUtils.isEmpty(mPasswordView.getText())) {
+            intent.putExtra(RegisterActivity.EXTRA_PASSWORD, mPasswordView.getText());
+        }
+        startActivityForResult(intent, REGISTER_REQUEST);
+    }
+
+    @OnClick(R.id.skip_signin_button)
+    public void onSkipSignin() {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.are_you_sure)
                 .setMessage(R.string.skip_sign_in_msg)
@@ -103,12 +120,8 @@ public class LoginActivity extends AppCompatActivity {
                 }).show();
     }
 
-    /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
-     */
-    private void attemptLogin() {
+    @OnClick(R.id.email_sign_in_button)
+    public void attemptLogin() {
         if (mAuthTask != null) {
             return;
         }

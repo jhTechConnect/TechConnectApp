@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import org.techconnect.model.Comment;
 import org.techconnect.model.FlowChart;
 import org.techconnect.model.JsendResponse;
+import org.techconnect.model.User;
 import org.techconnect.model.UserAuth;
 import org.techconnect.model.Vertex;
 import org.techconnect.network.serializers.FlowChartDeserializer;
@@ -50,6 +51,44 @@ public class TCNetworkHelper {
         return gsonBuilder.create();
     }
 
+    public UserAuth login(String email, String password) throws IOException {
+        Response<JsendResponse> resp = service.login(email, password).execute();
+        lastCode = resp.code();
+        //First check to see if the request succeeded
+        if (!resp.isSuccessful()) {
+            JsendResponse test = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            return null;
+        } else {
+            //Now, I'm expecting a data object with fields relevant
+            JsonObject obj = resp.body().getData().getAsJsonObject();
+            return gson.fromJson(obj, UserAuth.class);
+        }
+    }
+
+    public boolean logout(UserAuth auth) throws IOException {
+        Response<JsendResponse> resp = service.logout(auth.getAuthToken(), auth.getUserId()).execute();
+        lastCode = resp.code();
+        if (!resp.isSuccessful()) {
+            lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            return false;
+        }
+        return true;
+    }
+
+    public User register(String email, String password,
+                         String countryCode, String name, String organization,
+                         String[] expertises) throws IOException {
+        Response<JsendResponse> resp = service.register(email, password, countryCode, name, organization, expertises).execute();
+        lastCode = resp.code();
+        if (!resp.isSuccessful()) {
+            lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            return null;
+        } else {
+            JsonObject obj = resp.body().getData();
+            return gson.fromJson(obj.get("user"), User.class);
+        }
+    }
+
     /**
      * This function retrieves the getCatalog of devices from the server.
      *
@@ -62,8 +101,8 @@ public class TCNetworkHelper {
         //First, check whether there is an error. HAVE TO DO THIS TO SATISFY RETROFIT!
         //Cheking first if the http request was successful. if not, have to manually deserialize the JSON
         if (!resp.isSuccessful()) {
-            JsendResponse error = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
-            throw new IOException(error.getMessage());
+            lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            return null;
         } else {
             //Now, I'm expecting a getCatalog
             JsonObject obj = resp.body().getData();
@@ -82,8 +121,8 @@ public class TCNetworkHelper {
         lastCode = resp.code();
         //First, check whether there is an error
         if (!resp.isSuccessful()) {
-            JsendResponse error = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
-            throw new IOException(error.getMessage());
+            lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            return null;
         } else {
             //Now, I know that there is a FlowChart contained in this resp. Just get it
             JsonObject obj = resp.body().getData();
@@ -104,8 +143,8 @@ public class TCNetworkHelper {
         Response<JsendResponse> resp = service.getFlowcharts(ids).execute();
         lastCode = resp.code();
         if (!resp.isSuccessful()) {
-            JsendResponse error = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
-            throw new IOException(error.getMessage());
+            lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            return null;
         } else {
             //Now I know, I should be getting two objects. bad ID strings as well as the actual flowcharts
             JsonObject obj = resp.body().getData();
@@ -116,30 +155,6 @@ public class TCNetworkHelper {
             }
             return flowcharts.toArray(new FlowChart[flowcharts.size()]);
         }
-    }
-
-    public UserAuth login(String email, String password) throws IOException {
-        Response<JsendResponse> resp = service.login(email, password).execute();
-        lastCode = resp.code();
-        //First check to see if the request succeeded
-        if (!resp.isSuccessful()) {
-            JsendResponse test = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
-            return null;
-        } else {
-            //Now, I'm expecting a data object with fields relevant
-            JsonObject obj = resp.body().getData().getAsJsonObject();
-            return gson.fromJson(obj, UserAuth.class);
-        }
-    }
-
-    public boolean logout(UserAuth auth) throws IOException {
-        Response<JsendResponse> resp = service.logout(auth.getAuthToken(), auth.getUserId()).execute();
-        lastCode = resp.code();
-        if (!resp.isSuccessful()) {
-            JsendResponse test = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
-            return false;
-        }
-        return true;
     }
 
     /**

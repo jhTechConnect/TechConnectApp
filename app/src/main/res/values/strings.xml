@@ -103,4 +103,15 @@
     <string name="fail_update_guide">Failed to update</string>
     <string name="ask_permissions">TechConnect requires some permissions to run. Please grant the requested permissions.</string>
     <string name="grant_permission">Grant Permissions</string>
+    <string name="register">Register</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="name">Name</string>
+    <string name="organization">Organization</string>
+    <string name="expertises_hint">Skills (comma separated)</string>
+    <string name="country">Country</string>
+    <string name="field_required">This field is required</string>
+    <string name="passwords_must_match">Passwords must match</string>
+    <string name="password_length">Password must be atleast 5 characters long</string>
+    <string name="failed_register">Failed to register! Check your information and try again</string>
+    <string name="user_registered">Registration successful!</string>
 </resources>
