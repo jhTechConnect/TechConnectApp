@@ -27,6 +27,7 @@ import org.centum.techconnect.R;
 import org.techconnect.fragments.GuidesFragment;
 import org.techconnect.fragments.ReportsFragment;
 import org.techconnect.misc.ResourceHandler;
+import org.techconnect.misc.auth.AuthManager;
 import org.techconnect.services.TCService;
 import org.techconnect.sql.TCDatabaseHelper;
 
@@ -101,7 +102,7 @@ public class MainActivity extends AppCompatActivity
                     .putBoolean(SHOWN_TUTORIAL, true)
                     .apply();
             //startActivity(new Intent(MainActivity.this, IntroTutorial.class));
-        } else if (!showedLogin) {
+        } else if (!showedLogin && !AuthManager.get(this).hasAuth()) {
             showedLogin = true;
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
         }

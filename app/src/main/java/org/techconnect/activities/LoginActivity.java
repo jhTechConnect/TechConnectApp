@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import org.centum.techconnect.R;
+import org.techconnect.misc.auth.AuthManager;
 import org.techconnect.model.UserAuth;
 import org.techconnect.network.TCNetworkHelper;
 
@@ -186,7 +187,7 @@ public class LoginActivity extends AppCompatActivity {
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    class UserLoginTask extends AsyncTask<Void, Void, UserAuth> {
 
         private final String mEmail;
         private final String mPassword;
@@ -197,32 +198,25 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
-
+        protected UserAuth doInBackground(Void... params) {
             try {
-                UserAuth auth = new TCNetworkHelper().login(mEmail, mPassword);
-                if (auth == null) {
-                    return false;
-                }
-                // TODO store auth somewhere
+                return new TCNetworkHelper().login(mEmail, mPassword);
             } catch (IOException e) {
                 e.printStackTrace();
-                return false;
             }
-
-            return true;
+            return null;
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
+        protected void onPostExecute(final UserAuth auth) {
             mAuthTask = null;
             showProgress(false);
-
-            if (success) {
-                finish();
-            } else {
+            if (auth == null) {
                 mEmailView.setError(getString(R.string.error_incorrect_signin));
                 mPasswordView.requestFocus();
+            } else {
+                AuthManager.get(LoginActivity.this).setAuth(auth);
+                finish();
             }
         }
 
