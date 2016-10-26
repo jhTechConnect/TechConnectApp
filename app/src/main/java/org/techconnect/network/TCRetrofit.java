@@ -24,22 +24,6 @@ public interface TCRetrofit {
             "X-User-Id: "
     })
 
-    //Just want to get the getCatalog, no input needed
-    @GET("api/v1/catalog")
-    Call<JsendResponse> getCatalog();
-
-    @GET("api/v1/chart/{id}")
-    Call<JsendResponse> getFlowchart(@Path("id") String id);
-
-    @FormUrlEncoded
-    @POST("api/v1/charts")
-    Call<JsendResponse> getFlowcharts(@Field("ids[]") String[] ids);
-    //This String ids is a comma separated list of the ids desired
-
-    //Delete a specific chart from the Server
-    @DELETE("api/v1/chart/{id}")
-    Call<JsendResponse> deleteChart(@Header("X-Auth-Token") String auth_token, @Header("X-User-Id") String userId, @Path("id") String id);
-
     //Login the user
     @FormUrlEncoded
     @POST("api/v1/login")
@@ -58,6 +42,25 @@ public interface TCRetrofit {
     //Logout the user. I don't think that I need to pass in anything? Maybe the user?
     @POST("api/v1/logout")
     Call<JsendResponse> logout(@Header("X-Auth-Token") String auth_token, @Header("X-User-Id") String userId);
+
+    @GET("api/v1/user/{id}")
+    Call<JsendResponse> getUser(@Path("id") String id);
+
+    //Just want to get the getCatalog, no input needed
+    @GET("api/v1/catalog")
+    Call<JsendResponse> getCatalog();
+
+    @GET("api/v1/chart/{id}")
+    Call<JsendResponse> getFlowchart(@Path("id") String id);
+
+    @FormUrlEncoded
+    @POST("api/v1/charts")
+    Call<JsendResponse> getFlowcharts(@Field("ids[]") String[] ids);
+    //This String ids is a comma separated list of the ids desired
+
+    //Delete a specific chart from the Server
+    @DELETE("api/v1/chart/{id}")
+    Call<JsendResponse> deleteChart(@Header("X-Auth-Token") String auth_token, @Header("X-User-Id") String userId, @Path("id") String id);
 
     //Attempts to post a comment onto a chart or node with id id.
     @POST("api/v1/chart/{id}/comment")

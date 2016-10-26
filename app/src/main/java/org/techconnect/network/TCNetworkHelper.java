@@ -89,6 +89,18 @@ public class TCNetworkHelper {
         }
     }
 
+    public User getUser(String id) throws IOException {
+        Response<JsendResponse> resp = service.getUser(id).execute();
+        lastCode = resp.code();
+        if (!resp.isSuccessful()) {
+            lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            return null;
+        } else {
+            JsonObject obj = resp.body().getData();
+            return gson.fromJson(obj.get("user"), User.class);
+        }
+    }
+
     /**
      * This function retrieves the getCatalog of devices from the server.
      *
