@@ -27,7 +27,7 @@ public class User implements Parcelable {
     private String name;
     private String countryCode;
     private String country;
-    private String organizatio;
+    private String organization;
     private List<String> expertises;
 
     public User() {
@@ -39,7 +39,7 @@ public class User implements Parcelable {
         name = in.readString();
         countryCode = in.readString();
         country = in.readString();
-        organizatio = in.readString();
+        organization = in.readString();
         expertises = in.createStringArrayList();
     }
 
@@ -83,12 +83,12 @@ public class User implements Parcelable {
         this.country = country;
     }
 
-    public String getOrganizatio() {
-        return organizatio;
+    public String getOrganization() {
+        return organization;
     }
 
-    public void setOrganizatio(String organizatio) {
-        this.organizatio = organizatio;
+    public void setOrganization(String organization) {
+        this.organization = organization;
     }
 
     public List<String> getExpertises() {
@@ -111,7 +111,7 @@ public class User implements Parcelable {
         parcel.writeString(name);
         parcel.writeString(countryCode);
         parcel.writeString(country);
-        parcel.writeString(organizatio);
+        parcel.writeString(organization);
         parcel.writeStringList(expertises);
     }
 }
