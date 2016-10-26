@@ -16,10 +16,10 @@ import com.squareup.picasso.Picasso;
 
 import org.centum.techconnect.R;
 import org.techconnect.activities.ImageViewActivity;
+import org.techconnect.misc.ResourceHandler;
 import org.techconnect.model.Vertex;
 import org.techconnect.model.session.Session;
 import org.techconnect.model.session.SessionCompleteListener;
-import org.techconnect.resources.ResourceHandler;
 
 import java.io.File;
 import java.util.List;

@@ -10,9 +10,9 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import org.centum.techconnect.R;
+import org.techconnect.misc.ResourceHandler;
 import org.techconnect.model.FlowChart;
 import org.techconnect.network.TCNetworkHelper;
-import org.techconnect.resources.ResourceHandler;
 import org.techconnect.sql.TCDatabaseHelper;
 
 import java.io.FileOutputStream;

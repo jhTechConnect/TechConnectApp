@@ -15,8 +15,8 @@ import com.squareup.picasso.Picasso;
 
 import org.centum.techconnect.R;
 import org.techconnect.misc.CircleTransform;
+import org.techconnect.misc.ResourceHandler;
 import org.techconnect.model.FlowChart;
-import org.techconnect.resources.ResourceHandler;
 import org.techconnect.services.TCService;
 import org.techconnect.sql.TCDatabaseHelper;
 

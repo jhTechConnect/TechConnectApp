@@ -10,8 +10,8 @@ import android.widget.TextView;
 
 import org.centum.techconnect.R;
 import org.techconnect.activities.PDFActivity;
+import org.techconnect.misc.ResourceHandler;
 import org.techconnect.misc.Utils;
-import org.techconnect.resources.ResourceHandler;
 
 import java.util.List;
 

@@ -26,7 +26,7 @@ import android.widget.RelativeLayout;
 import org.centum.techconnect.R;
 import org.techconnect.fragments.GuidesFragment;
 import org.techconnect.fragments.ReportsFragment;
-import org.techconnect.resources.ResourceHandler;
+import org.techconnect.misc.ResourceHandler;
 import org.techconnect.services.TCService;
 import org.techconnect.sql.TCDatabaseHelper;
 
