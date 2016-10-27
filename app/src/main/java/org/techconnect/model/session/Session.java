@@ -115,6 +115,37 @@ public class Session implements Parcelable {
         this.department = department;
     }
 
+    public String getModelNumber() {
+        return modelNumber;
+    }
+
+    public void setModelNumber(String modelNumber) {
+        this.modelNumber = modelNumber;
+    }
+
+    public String getSerialNumber() {
+        return serialNumber;
+
+    }
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public List<String> getHistory() {
+        return history;
+    }
+
+    public List<String> getOptionHistory() {
+        return optionHistory;
+    }
 
     /**
      * Return the current vertex so it's fields can be used by different view.
@@ -139,13 +170,6 @@ public class Session implements Parcelable {
         return flowchart;
     }
 
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
 
     public void selectOption(String option) {
         optionHistory.add(option);
@@ -167,13 +191,6 @@ public class Session implements Parcelable {
         return traversal.hasPrevious();
     }
 
-    public void setModelNumber(String modelNumber) {
-        this.modelNumber = modelNumber;
-    }
-
-    public void setSerialNumber(String serialNumber) {
-        this.serialNumber = serialNumber;
-    }
 
     @Override
     public int describeContents() {
@@ -203,4 +220,5 @@ public class Session implements Parcelable {
     public void setFinished(boolean finished) {
         this.finished = finished;
     }
+
 }

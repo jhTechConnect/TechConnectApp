@@ -185,7 +185,7 @@ public class TCDatabaseContract {
         public static final String FLOWCHART_ID = "flowchart_id";
 
 
-        public static final String CREATE_SESSION_TABLE = "CREATE TABLE IF NOT EXISTS sessions (\n" +
+        public static final String CREATE_SESSION_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (\n" +
                 ID +          " TEXT PRIMARY KEY NOT NULL UNIQUE,\n" +
                 CREATED_DATE  + " DATE,\n" +
                 FINISHED +       " BOOLEAN,\n" +
