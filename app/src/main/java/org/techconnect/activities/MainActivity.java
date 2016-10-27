@@ -18,6 +18,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final int PERMISSIONS_REQUEST_READ_STORAGE = 1;
     private static final String SHOWN_TUTORIAL = "org.techconnect.prefs.shownturotial";
+    private static final String USER_LEARNED_DRAWER = "org.techconnect.prefs.shownturotial.learneddrawer";
 
     private static final int FRAGMENT_GUIDES = 0;
     private static final int FRAGMENT_REPORTS = 1;
@@ -72,6 +74,7 @@ public class MainActivity extends AppCompatActivity
     private String[] fragmentTitles;
     private int currentFragment = -1;
     private boolean showedLogin = false;
+    private boolean userLearnedDrawer = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,11 +85,24 @@ public class MainActivity extends AppCompatActivity
         ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        userLearnedDrawer = getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE).getBoolean(USER_LEARNED_DRAWER, false);
         loadingLayout.setVisibility(View.GONE);
         // Lock until we have permission (in check permissions)
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                if (!userLearnedDrawer) {
+                    // The user manually opened the drawer; store this flag to prevent auto-showing
+                    // the navigation drawer automatically in the future.
+                    userLearnedDrawer = true;
+                    getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE).edit()
+                            .putBoolean(USER_LEARNED_DRAWER, true).apply();
+                }
+            }
+        };
         drawerLayout.addDrawerListener(toggle);
         logoutMenuItem = navigationView.getMenu().findItem(R.id.logout);
         loginMenuItem = navigationView.getMenu().findItem(R.id.login);
@@ -148,6 +164,9 @@ public class MainActivity extends AppCompatActivity
         }
         updateNavHeader();
         checkPermissions();
+        if (!userLearnedDrawer && checkPermissions()) {
+            drawerLayout.openDrawer(Gravity.LEFT);
+        }
     }
 
     @OnClick(R.id.grant_permission_btn)
