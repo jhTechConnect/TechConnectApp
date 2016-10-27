@@ -48,7 +48,6 @@ public class GuidesFragment extends Fragment implements SwipeRefreshLayout.OnRef
     @Bind(R.id.search_linearLayout)
     LinearLayout searchLinearLayout;
 
-    private boolean refreshed = false;
     private FlowchartCursorAdapter adapter;
 
     public GuidesFragment() {
@@ -88,14 +87,11 @@ public class GuidesFragment extends Fragment implements SwipeRefreshLayout.OnRef
     @Override
     public void onResume() {
         super.onResume();
-        if (!refreshed) {
-            onRefresh();
-        }
+        onRefresh();
     }
 
     @Override
     public void onRefresh() {
-        refreshed = true;
         refreshLayout.setRefreshing(true);
         noGuidesLayout.setVisibility(View.GONE);
         guidesListView.setVisibility(View.VISIBLE);
