@@ -1,5 +1,8 @@
 package org.techconnect.model.session;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.techconnect.model.FlowChart;
 import org.techconnect.model.GraphTraversal;
 import org.techconnect.model.Vertex;
@@ -14,8 +17,19 @@ import java.util.Set;
  * A particular "session" is a flowchart traversal. This logs the flow
  * of the session and generates the report.
  */
-public class Session {
+public class Session implements Parcelable {
 
+    public static final Creator<Session> CREATOR = new Creator<Session>() {
+        @Override
+        public Session createFromParcel(Parcel in) {
+            return new Session(in);
+        }
+
+        @Override
+        public Session[] newArray(int size) {
+            return new Session[size];
+        }
+    };
     private FlowChart flowchart;
     private GraphTraversal traversal; //Step through the graph
 
@@ -28,10 +42,35 @@ public class Session {
     private List<String> history = new ArrayList<>(); //list of seen vertex IDs
     private List<String> optionHistory = new ArrayList<>();//list of user responses
 
+
+
     public Session(FlowChart flowchart) {
         this.flowchart = flowchart;
         this.traversal = new GraphTraversal(flowchart.getGraph());
         history.add(this.traversal.getCurrentVertex().getId());
+    }
+
+    /**
+     * Build a Session from a Parcel object
+     * @param in
+     */
+    public Session(Parcel in) {
+        this.createdDate = in.readLong();
+        this.department = in.readString();
+        this.modelNumber = in.readString();
+        this.serialNumber = in.readString();
+        this.notes = in.readString();
+        in.readList(this.history,String.class.getClassLoader());
+        in.readList(this.optionHistory,String.class.getClassLoader());
+        flowchart = in.readParcelable(FlowChart.class.getClassLoader());
+
+        //Now, just need to setup the traversal
+        traversal = new GraphTraversal(flowchart.getGraph());
+        if (history.size() > 1) {
+            //Get last vertex, that's where we're at
+            traversal.setCurrentVertex(history.get(history.size() -1));
+        }
+
     }
 
     /*
@@ -132,6 +171,25 @@ public class Session {
 
     public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        //Decided to not write GraphTraversal object since this can be initialized from the
+        //FlowChart graph object and the end of history if need be
+        parcel.writeLong(createdDate);
+        parcel.writeString(department);
+        parcel.writeString(modelNumber);
+        parcel.writeString(serialNumber);
+        parcel.writeString(notes);
+        parcel.writeList(history);
+        parcel.writeList(optionHistory);
+        parcel.writeParcelable(flowchart,0);//Just need the flowchart, not traversal
     }
 
 
