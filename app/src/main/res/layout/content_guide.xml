@@ -10,6 +10,7 @@
     tools:showIn="@layout/activity_guide">
 
     <LinearLayout
+        android:id="@+id/content_linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -63,7 +64,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="8dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="60dp"
@@ -121,31 +123,13 @@
                 android:textColor="?android:attr/textColorLink" />
         </LinearLayout>
 
-        <android.support.design.widget.TabLayout
-            android:id="@+id/tab_layout"
+        <ImageView
+            android:id="@+id/header_imageView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp">
-
-            <android.support.design.widget.TabItem
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:icon="@drawable/ic_question_answer_black_48dp">
-
-            </android.support.design.widget.TabItem>
-
-            <android.support.design.widget.TabItem
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:icon="@drawable/ic_picture_as_pdf_black_48dp" />
-
-        </android.support.design.widget.TabLayout>
-
-        <FrameLayout
-            android:id="@+id/tabContentContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"></FrameLayout>
-
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
+            android:scaleType="fitCenter" />
 
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

@@ -15,8 +15,8 @@ import com.squareup.picasso.Picasso;
 
 import org.centum.techconnect.R;
 import org.techconnect.misc.CircleTransform;
+import org.techconnect.misc.ResourceHandler;
 import org.techconnect.model.FlowChart;
-import org.techconnect.resources.ResourceHandler;
 import org.techconnect.services.TCService;
 import org.techconnect.sql.TCDatabaseHelper;
 
@@ -91,7 +91,7 @@ public class GuideListItemView extends LinearLayout implements View.OnClickListe
                     // Load offline image
                     Picasso.with(getContext())
                             .load(getContext().getFileStreamPath(
-                                    ResourceHandler.get().getStringResource(flowChart.getImage())).getAbsolutePath())
+                                    ResourceHandler.get().getStringResource(flowChart.getImage())))
                             .error(R.drawable.flowchart_icon)
                             .transform(new CircleTransform())
                             .into(guideImageView);
@@ -103,6 +103,11 @@ public class GuideListItemView extends LinearLayout implements View.OnClickListe
                             .transform(new CircleTransform())
                             .into(guideImageView);
                 }
+            } else {
+                Picasso.with(getContext())
+                        .load(R.drawable.flowchart_icon)
+                        .transform(new CircleTransform())
+                        .into(guideImageView);
             }
         }
     }

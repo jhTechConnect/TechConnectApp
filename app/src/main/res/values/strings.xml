@@ -10,7 +10,7 @@
     <string name="title_activity_intro_tutorial">TechConnect Tutorial</string>
     <string name="call_directory">Call Directory</string>
     <string name="reports">Reports</string>
-    <string name="sync_online_resources">Sync Downloaded Resources</string>
+    <string name="sync_online_resources">Update All Guides</string>
     <string name="loading">Loading</string>
     <string name="no_reports">No Reports</string>
     <string name="department">Department</string>
@@ -79,7 +79,7 @@
     <string name="try_again">Try Again</string>
     <string name="guide_catalog">Guide Catalog</string>
     <string name="available_guides">Available Guides</string>
-    <string name="no_guides">No guide have been downloaded yet</string>
+    <string name="no_guides">No guides have been downloaded yet</string>
     <string name="download_guides">Download Guides</string>
     <string name="title_activity_guide">Guide</string>
     <string name="description">Description</string>
@@ -101,4 +101,21 @@
     <string name="update">Update</string>
     <string name="guide_updated">Guide Updated</string>
     <string name="fail_update_guide">Failed to update</string>
+    <string name="ask_permissions">TechConnect requires some permissions to run. Please grant the requested permissions.</string>
+    <string name="grant_permission">Grant Permissions</string>
+    <string name="register">Register</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="name">Name</string>
+    <string name="organization">Organization</string>
+    <string name="expertises_hint">Skills (comma separated)</string>
+    <string name="country">Country</string>
+    <string name="field_required">This field is required</string>
+    <string name="passwords_must_match">Passwords must match</string>
+    <string name="password_length">Password must be atleast 5 characters long</string>
+    <string name="failed_register">Failed to register! Check your information and try again</string>
+    <string name="user_registered">Registration successful!</string>
+    <string name="action_sign_out">Sign out</string>
+    <string name="logging_out">Signing out</string>
+    <string name="dont_show_again">Don\'t show again</string>
+    <string name="comments">Comments</string>
 </resources>

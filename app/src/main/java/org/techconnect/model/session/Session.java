@@ -38,6 +38,7 @@ public class Session implements Parcelable {
     private String modelNumber;
     private String serialNumber;
     private String notes;
+    private boolean finished = false;
 
     private List<String> history = new ArrayList<>(); //list of seen vertex IDs
     private List<String> optionHistory = new ArrayList<>();//list of user responses
@@ -192,8 +193,11 @@ public class Session implements Parcelable {
         parcel.writeParcelable(flowchart,0);//Just need the flowchart, not traversal
     }
 
+    public boolean isFinished() {
+        return finished;
+    }
 
-    public enum Urgency {
-        Low, Medium, High, Critical
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 }

@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<org.techconnect.views.CommentsView xmlns:android="http://schemas.android.com/apk/res/android"
+<org.techconnect.views.CommentThreadView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/thread_linearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:divider="@drawable/divider"
     android:orientation="vertical"
-    android:paddingTop="16dp">
+    android:paddingTop="16dp"
+    android:showDividers="middle">
 
     <TextView
         android:id="@+id/comments_headerTextView"
@@ -13,4 +16,4 @@
         android:text="@string/no_comments"
         android:textSize="18sp"
         android:textStyle="normal|bold" />
-</org.techconnect.views.CommentsView>
+</org.techconnect.views.CommentThreadView>

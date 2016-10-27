@@ -1,6 +1,7 @@
 package org.techconnect.activities;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -19,17 +20,26 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import org.centum.techconnect.R;
+import org.techconnect.asynctasks.LogoutAsyncTask;
 import org.techconnect.fragments.GuidesFragment;
 import org.techconnect.fragments.ReportsFragment;
-import org.techconnect.resources.ResourceHandler;
+import org.techconnect.misc.ResourceHandler;
+import org.techconnect.misc.auth.AuthListener;
+import org.techconnect.misc.auth.AuthManager;
+import org.techconnect.model.User;
+import org.techconnect.model.UserAuth;
 import org.techconnect.services.TCService;
 import org.techconnect.sql.TCDatabaseHelper;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Entry activity.
@@ -44,10 +54,20 @@ public class MainActivity extends AppCompatActivity
     private static final int FRAGMENT_REPORTS = 1;
     private final Fragment[] FRAGMENTS = new Fragment[]{new GuidesFragment(), new ReportsFragment()};
 
+    @Bind(R.id.drawer_layout)
+    DrawerLayout drawerLayout;
     @Bind(R.id.nav_view)
     NavigationView navigationView;
     @Bind(R.id.loading_banner)
     RelativeLayout loadingLayout;
+    @Bind(R.id.permission_layout)
+    LinearLayout permissionLayout;
+    @Bind(R.id.main_fragment_container)
+    FrameLayout fragmentContainer;
+
+    TextView headerTextView;
+    MenuItem logoutMenuItem;
+    MenuItem loginMenuItem;
 
     private String[] fragmentTitles;
     private int currentFragment = -1;
@@ -63,12 +83,28 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         loadingLayout.setVisibility(View.GONE);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        // Lock until we have permission (in check permissions)
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        logoutMenuItem = navigationView.getMenu().findItem(R.id.logout);
+        loginMenuItem = navigationView.getMenu().findItem(R.id.login);
+        headerTextView = (TextView) navigationView.getHeaderView(0).findViewById(R.id.headerTextView);
         toggle.syncState();
+
+        AuthManager.get(this).addAuthListener(new AuthListener() {
+
+            @Override
+            public void onLoginSucces(UserAuth auth) {
+                updateNavHeader();
+            }
+
+            @Override
+            public void onLogout() {
+                updateNavHeader();
+            }
+        });
 
         fragmentTitles = getResources().getStringArray(R.array.fragment_titles);
         navigationView.setNavigationItemSelectedListener(this);
@@ -79,10 +115,19 @@ public class MainActivity extends AppCompatActivity
         setCurrentFragment(fragToOpen);
     }
 
+    private void updateNavHeader() {
+        boolean loggedIn = AuthManager.get(this).hasAuth();
+        User user;
+        if (loggedIn && (user = TCDatabaseHelper.get(this).getUser(AuthManager.get(this).getAuth().getUserId())) != null) {
+            headerTextView.setText(user.getName());
+        } else {
+            headerTextView.setText(R.string.app_name);
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
-        ensurePermissions();
         boolean showedIntro = getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE)
                 .getBoolean(SHOWN_TUTORIAL, false);
         if (!showedIntro) {
@@ -91,24 +136,40 @@ public class MainActivity extends AppCompatActivity
                     .edit()
                     .putBoolean(SHOWN_TUTORIAL, true)
                     .apply();
-            startActivity(new Intent(MainActivity.this, IntroTutorial.class));
-        } else if (!showedLogin) {
-            showedLogin = true;
-            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            //startActivity(new Intent(MainActivity.this, IntroTutorial.class));
+        } else if (!showedLogin && !AuthManager.get(this).hasAuth()) {
+            onShowLogin();
+        } else if (AuthManager.get(this).hasAuth()) {
+            loginMenuItem.setVisible(false);
+            logoutMenuItem.setVisible(true);
+        } else {
+            loginMenuItem.setVisible(true);
+            logoutMenuItem.setVisible(false);
+        }
+        updateNavHeader();
+        checkPermissions();
+    }
+
+    @OnClick(R.id.grant_permission_btn)
+    public void ensurePermissions() {
+        if (!checkPermissions()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        PERMISSIONS_REQUEST_READ_STORAGE);
+            }
         }
     }
 
-    private boolean ensurePermissions() {
-        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
-            return true;
+    private boolean checkPermissions() {
+        boolean havePermission = PackageManager.PERMISSION_GRANTED ==
+                ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (havePermission) {
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED);
+            permissionLayout.setVisibility(View.GONE);
+            fragmentContainer.setVisibility(View.VISIBLE);
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    PERMISSIONS_REQUEST_READ_STORAGE);
-        }
-        return false;
+        return havePermission;
     }
 
     private void updateResources() {
@@ -163,11 +224,44 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(this, IntroTutorial.class));
             drawer.closeDrawer(GravityCompat.START);
             return true;
+        } else if (id == R.id.login) {
+            onShowLogin();
+            return true;
+        } else if (id == R.id.logout) {
+            onLogout();
+            return true;
         }
 
         drawer.closeDrawer(GravityCompat.START);
         setCurrentFragment(newFrag);
         return true;
+    }
+
+    private void onShowLogin() {
+        showedLogin = true;
+        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+    }
+
+    private void onLogout() {
+        if (AuthManager.get(this).hasAuth()) {
+            new LogoutAsyncTask() {
+                ProgressDialog pd;
+
+                @Override
+                protected void onPreExecute() {
+                    super.onPreExecute();
+                    pd = ProgressDialog.show(MainActivity.this, getString(R.string.logging_out), null, true, false);
+                }
+
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    AuthManager.get(null).setAuth(null);
+                    pd.dismiss();
+                    pd = null;
+                    onShowLogin();
+                }
+            }.execute(AuthManager.get(this).getAuth());
+        }
     }
 
     private void setCurrentFragment(int frag) {

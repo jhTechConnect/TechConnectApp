@@ -37,9 +37,11 @@ public class FlowChartDeserializer implements JsonDeserializer<FlowChart> {
 		final ArrayList<String> all_res = new ArrayList<String>();
 		final ArrayList<Comment> comments = new ArrayList<Comment>();
 		for (JsonElement j : jsonObject.get("all_res").getAsJsonArray()) {
+			if (!j.isJsonNull())
 			all_res.add(j.getAsString());
 		}
 		for (JsonElement j : jsonObject.get("comments").getAsJsonArray()) {
+			if (!j.isJsonNull())
 			comments.add(gson.fromJson(j, Comment.class));
 		}
 		

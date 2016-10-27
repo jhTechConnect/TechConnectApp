@@ -1,4 +1,4 @@
-package org.techconnect.resources;
+package org.techconnect.misc;
 
 import android.content.Context;
 import android.content.SharedPreferences;

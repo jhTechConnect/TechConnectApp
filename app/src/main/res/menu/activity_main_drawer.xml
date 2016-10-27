@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/nav_group"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_guides"
             android:icon="@android:drawable/ic_menu_help"
@@ -16,7 +18,9 @@
             android:title="@string/call_directory" />
     </group>
 
-    <group android:checkableBehavior="none">
+    <group
+        android:id="@+id/opts_group"
+        android:checkableBehavior="none">
         <item
             android:id="@+id/nav_refresh"
             android:icon="@android:drawable/stat_notify_sync_noanim"
@@ -25,6 +29,20 @@
             android:id="@+id/nav_view_tut"
             android:icon="@android:drawable/ic_menu_info_details"
             android:title="@string/view_tutorial" />
+    </group>
+
+    <group android:id="@+id/acct_group">
+        <item
+            android:id="@+id/logout"
+            android:icon="@drawable/ic_exit_to_app_black_48dp"
+            android:title="@string/action_sign_out"
+            android:visible="false" />
+
+        <item
+            android:id="@+id/login"
+            android:icon="@drawable/ic_account_circle_black_48dp"
+            android:title="@string/action_sign_in"
+            android:visible="false" />
     </group>
 
 </menu>
