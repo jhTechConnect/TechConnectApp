@@ -111,10 +111,7 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
         }
         descriptionTextView.setText(flowChart.getDescription());
         if (flowChart.getComments().size() > 0 || flowChart.getResources().size() > 0) {
-            commentsResourcesTabbedView.setVisibility(View.VISIBLE);
             commentsResourcesTabbedView.setItems(flowChart.getComments(), flowChart.getResources());
-        } else {
-            commentsResourcesTabbedView.setVisibility(View.GONE);
         }
         updateHeaderImage();
     }
@@ -125,7 +122,7 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
                 // Load offline image
                 Picasso.with(this)
                         .load(getFileStreamPath(
-                                ResourceHandler.get().getStringResource(flowChart.getImage())))
+                                ResourceHandler.get(this).getStringResource(flowChart.getImage())))
                         .placeholder(R.drawable.ic_sync_black_48dp)
                         .into(headerImageView);
             } else {
@@ -161,9 +158,9 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
     @OnClick(R.id.header_imageView)
     protected void onHeaderImageAction() {
         Intent intent = new Intent(this, ImageViewActivity.class);
-        if (ResourceHandler.get().hasStringResource(flowChart.getImage())) {
+        if (ResourceHandler.get(this).hasStringResource(flowChart.getImage())) {
             intent.putExtra(ImageViewActivity.EXTRA_PATH, getFileStreamPath(
-                    ResourceHandler.get().getStringResource(flowChart.getImage())).getAbsolutePath());
+                    ResourceHandler.get(this).getStringResource(flowChart.getImage())).getAbsolutePath());
         } else {
             intent.putExtra(ImageViewActivity.EXTRA_URL, flowChart.getImage());
         }

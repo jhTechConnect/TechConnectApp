@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity
 
     private void updateResources() {
         loadingLayout.setVisibility(View.VISIBLE);
-        String ids[] = TCDatabaseHelper.get().getAllChartIds();
+        String ids[] = TCDatabaseHelper.get(this).getAllChartIds();
         TCService.startLoadCharts(this, ids, new ResultReceiver(new Handler()) {
             @Override
             protected void onReceiveResult(int resultCode, Bundle resultData) {

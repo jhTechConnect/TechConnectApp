@@ -85,12 +85,10 @@ public class GuideFlowView extends ScrollView implements View.OnClickListener {
         backButton.setEnabled(session.hasPrevious());
 
         tabContainer.removeAllViews();
-        if (curr_step.getResources().size() > 0 || curr_step.getComments().size() > 0) {
-            commentsResourcesTabbedView = (CommentsResourcesTabbedView) LayoutInflater.from(getContext())
-                    .inflate(R.layout.comments_resources_tabbed_view, tabContainer, false);
-            commentsResourcesTabbedView.setItems(curr_step.getComments(), curr_step.getResources());
-            tabContainer.addView(commentsResourcesTabbedView);
-        }
+        commentsResourcesTabbedView = (CommentsResourcesTabbedView) LayoutInflater.from(getContext())
+                .inflate(R.layout.comments_resources_tabbed_view, tabContainer, false);
+        commentsResourcesTabbedView.setItems(curr_step.getComments(), curr_step.getResources());
+        tabContainer.addView(commentsResourcesTabbedView);
     }
 
 
@@ -129,8 +127,8 @@ public class GuideFlowView extends ScrollView implements View.OnClickListener {
             imageLinearLayout.setVisibility(VISIBLE);
             List<String> images = curr_step.getImages();
             for (String url : images) {
-                if (ResourceHandler.get().hasStringResource(url)) {
-                    final File file = getContext().getFileStreamPath(ResourceHandler.get().getStringResource(url));
+                if (ResourceHandler.get(getContext()).hasStringResource(url)) {
+                    final File file = getContext().getFileStreamPath(ResourceHandler.get(getContext()).getStringResource(url));
                     ImageView imageView = new ImageView(getContext());
                     imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
                     int pixels = (int) (getResources().getDimension(R.dimen.flow_view_img_preview_width_dp));

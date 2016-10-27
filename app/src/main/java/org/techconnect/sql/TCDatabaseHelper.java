@@ -34,21 +34,15 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "FlowChart.db";
     private static TCDatabaseHelper instance = null;
-    private final Context context;
 
     private TCDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        this.context = context;
     }
 
     public static TCDatabaseHelper get(Context context) {
         if (instance == null) {
             instance = new TCDatabaseHelper(context);
         }
-        return instance;
-    }
-
-    public static TCDatabaseHelper get() {
         return instance;
     }
 
