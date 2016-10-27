@@ -57,6 +57,7 @@ public class Session implements Parcelable {
      */
     public Session(Parcel in) {
         this.createdDate = in.readLong();
+        finished = in.readByte() != 0;
         this.department = in.readString();
         this.modelNumber = in.readString();
         this.serialNumber = in.readString();
@@ -184,6 +185,7 @@ public class Session implements Parcelable {
         //Decided to not write GraphTraversal object since this can be initialized from the
         //FlowChart graph object and the end of history if need be
         parcel.writeLong(createdDate);
+        parcel.writeByte((byte) (finished ? 1 : 0));
         parcel.writeString(department);
         parcel.writeString(modelNumber);
         parcel.writeString(serialNumber);
@@ -191,6 +193,7 @@ public class Session implements Parcelable {
         parcel.writeList(history);
         parcel.writeList(optionHistory);
         parcel.writeParcelable(flowchart,0);//Just need the flowchart, not traversal
+
     }
 
     public boolean isFinished() {
