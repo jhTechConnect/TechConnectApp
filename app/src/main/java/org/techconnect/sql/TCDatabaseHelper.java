@@ -73,6 +73,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         sql.execSQL(TCDatabaseContract.VertexEntry.CREATE_VERTEX_TABLE);
         sql.execSQL(TCDatabaseContract.EdgeEntry.CREATE_EDGE_TABLE);
         sql.execSQL(TCDatabaseContract.CommentEntry.CREATE_COMMENT_TABLE);
+        sql.execSQL(TCDatabaseContract.SessionEntry.CREATE_SESSION_TABLE);
     }
 
     @Override

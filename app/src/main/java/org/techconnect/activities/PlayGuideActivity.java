@@ -17,7 +17,7 @@ import android.widget.ScrollView;
 import org.centum.techconnect.R;
 import org.techconnect.model.FlowChart;
 import org.techconnect.model.session.Session;
-import org.techconnect.model.session.SessionCompleteListener;
+import org.techconnect.model.session.SessionListener;
 import org.techconnect.services.TCService;
 import org.techconnect.sql.TCDatabaseHelper;
 import org.techconnect.views.GuideFlowView;
@@ -26,7 +26,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class PlayGuideActivity extends AppCompatActivity implements SessionCompleteListener {
+public class PlayGuideActivity extends AppCompatActivity implements SessionListener {
 
     public static final String EXTRA_CHART_ID = "org.techconnect.playguide.chartid";
     private static final int LAYOUT_INFO = 0;
@@ -161,6 +161,11 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionCompl
         saveSession();
         // TODO show some message
         finish();
+    }
+
+    @Override
+    public void onSessionPaused() {
+        // TODO store the progress made somewhere
     }
 }
 

@@ -87,4 +87,9 @@ public class GraphTraversal {
         return this.g.getVertex(this.curr);
     }
 
+    public void setCurrentVertex(String v_id) {
+        this.curr = v_id;
+        this.currOptions = g.getOptions(v_id);
+    }
+
 }
