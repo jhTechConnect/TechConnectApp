@@ -64,7 +64,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.techconnect.activities.MainActivity" />
         </activity>
-        <activity android:name="org.techconnect.activities.PlayGuideActivity"></activity>
+        <activity android:name="org.techconnect.activities.PlayGuideActivity" />
+        <activity
+            android:name="org.techconnect.activities.RegisterActivity"
+            android:label="@string/register"></activity>
     </application>
 
 </manifest>

@@ -10,9 +10,9 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import org.centum.techconnect.R;
+import org.techconnect.misc.ResourceHandler;
 import org.techconnect.model.FlowChart;
 import org.techconnect.network.TCNetworkHelper;
-import org.techconnect.resources.ResourceHandler;
 import org.techconnect.sql.TCDatabaseHelper;
 
 import java.io.FileOutputStream;
@@ -21,8 +21,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,7 +30,6 @@ public class TCService extends IntentService {
     public static final int LOAD_CHARTS_RESULT_SUCCESS = 0;
     public static final int LOAD_CHARTS_RESULT_ERROR = -1;
     private static final String PARAM_RESULT_RECIEVER = "org.techconnect.services.extra.resultreciever";
-    private static final String LOAD_ALL_CHARTS = "org.techconnect.services.action.loadallcharts";
     private static final String LOAD_CHARTS = "org.techconnect.services.action.loadcharts";
     private static final String PARAM_IDS = "org.techconnect.services.extra.chartid";
     private static final String LOAD_CHART_RESULT_MESSAGE = "org.techconnect.services.result.message";
@@ -59,13 +56,6 @@ public class TCService extends IntentService {
         context.startService(intent);
     }
 
-    public static void startLoadAllCharts(Context context, ResultReceiver resultReceiver) {
-        Intent intent = new Intent(context, TCService.class);
-        intent.setAction(LOAD_ALL_CHARTS);
-        intent.putExtra(PARAM_RESULT_RECIEVER, resultReceiver);
-        context.startService(intent);
-    }
-
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
@@ -74,30 +64,8 @@ public class TCService extends IntentService {
                 final String chartIds[] = intent.getStringArrayExtra(PARAM_IDS);
                 final ResultReceiver resultReceiver = intent.getParcelableExtra(PARAM_RESULT_RECIEVER);
                 handleLoadCharts(chartIds, resultReceiver);
-            } else if (LOAD_ALL_CHARTS.equals(action)) {
-                final ResultReceiver resultReceiver = intent.getParcelableExtra(PARAM_RESULT_RECIEVER);
-                handleLoadAllCharts(resultReceiver);
             }
         }
-    }
-
-    private void handleLoadAllCharts(ResultReceiver resultReceiver) {
-        try {
-            FlowChart[] flowCharts = TCNetworkHelper.getCatalog();
-            List<String> ids = new LinkedList<>();
-            for (FlowChart flowChart : flowCharts) {
-                ids.add(flowChart.getId());
-            }
-            handleLoadCharts(ids.toArray(new String[ids.size()]), resultReceiver);
-        } catch (IOException e) {
-            int resultCode;
-            Bundle bundle = new Bundle();
-            resultCode = LOAD_CHARTS_RESULT_ERROR;
-            bundle.putString(LOAD_CHART_RESULT_MESSAGE, e.getMessage());
-            resultReceiver.send(resultCode, bundle);
-            e.printStackTrace();
-        }
-
     }
 
     /**

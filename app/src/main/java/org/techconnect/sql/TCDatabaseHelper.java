@@ -13,6 +13,7 @@ import org.techconnect.model.Comment;
 import org.techconnect.model.Edge;
 import org.techconnect.model.FlowChart;
 import org.techconnect.model.Graph;
+import org.techconnect.model.User;
 import org.techconnect.model.Vertex;
 import org.techconnect.sql.TCDatabaseContract.ChartEntry;
 
@@ -68,6 +69,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sql) {
+        sql.execSQL(TCDatabaseContract.UserEntry.CREATE_USER_TABLE);
         sql.execSQL(TCDatabaseContract.ChartEntry.CREATE_CHART_TABLE);
         sql.execSQL(TCDatabaseContract.GraphEntry.CREATE_GRAPH_TABLE);
         sql.execSQL(TCDatabaseContract.VertexEntry.CREATE_VERTEX_TABLE);
@@ -92,6 +94,44 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public void upsertUser(User user) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(TCDatabaseContract.UserEntry.ID, user.get_id());
+        contentValues.put(TCDatabaseContract.UserEntry.COUNTRY, user.getCountry());
+        contentValues.put(TCDatabaseContract.UserEntry.COUNTRY_CODE, user.getCountryCode());
+        contentValues.put(TCDatabaseContract.UserEntry.EMAIL, user.getEmail());
+        contentValues.put(TCDatabaseContract.UserEntry.NAME, user.getName());
+        contentValues.put(TCDatabaseContract.UserEntry.ORGANIZATION, user.getOrganization());
+        contentValues.put(TCDatabaseContract.UserEntry.EXPERTISES, TextUtils.join(",", user.getExpertises()));
+        getWritableDatabase().insertWithOnConflict(TCDatabaseContract.UserEntry.TABLE_NAME, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+    }
+
+    public User getUser(String id) {
+        String selection = TCDatabaseContract.UserEntry.ID + " = ?";
+        String[] selectionArgs = {id};
+        Cursor c = getReadableDatabase().query(TCDatabaseContract.UserEntry.TABLE_NAME,
+                null, selection, selectionArgs, null, null, null);
+        c.moveToFirst();
+        if (c.getCount() < 1) {
+            return null;
+        }
+        User user = new User();
+        user.set_id(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.ID)));
+        user.setCountry(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.COUNTRY)));
+        user.setCountryCode(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.COUNTRY_CODE)));
+        user.setEmail(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.EMAIL)));
+        user.setName(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.NAME)));
+        user.setOrganization(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.ORGANIZATION)));
+        String expertises = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.EXPERTISES));
+        if (TextUtils.isEmpty(expertises.trim())) {
+            user.setExpertises(new ArrayList<String>(0));
+        } else {
+            user.setExpertises(Arrays.asList(expertises.split(",")));
+        }
+        c.close();
+        return user;
+    }
+
     /**
      * Get a map of chart names, mapping to their id.
      */
@@ -104,6 +144,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             set.put(c.getString(c.getColumnIndexOrThrow(ChartEntry.NAME)), c.getString(c.getColumnIndexOrThrow(ChartEntry.ID)));
             c.moveToNext();
         }
+        c.close();
         return set;
     }
 
@@ -116,6 +157,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             ids.add(c.getString(c.getColumnIndexOrThrow(ChartEntry.ID)));
             c.moveToNext();
         }
+        c.close();
         return ids.toArray(new String[ids.size()]);
     }
 
@@ -155,7 +197,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             return null;
         }
         FlowChart chart = getChartFromCursor(c);
-
+        c.close();
         return chart;
     }
 
@@ -194,9 +236,13 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         if (getChart(flowChart.getId()) == null) {
             insertChart(flowChart);
         } else {
+            // Delete old graph
+            deleteChartsGraph(flowChart);
+            // Add new graph
             String graphId = insertGraph(flowChart.getGraph());
             ContentValues chartContentValues = getChartContentValues(flowChart, graphId);
             try {
+                deleteComments(flowChart.getId(), TCDatabaseContract.CommentEntry.PARENT_TYPE_CHART);
                 insertComments(flowChart.getComments(), flowChart.getId(), TCDatabaseContract.CommentEntry.PARENT_TYPE_CHART);
                 getWritableDatabase().update(ChartEntry.TABLE_NAME, chartContentValues,
                         ChartEntry.ID + " = ?", new String[]{flowChart.getId()});
@@ -205,6 +251,18 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             }
 
             Log.d(this.getClass().getName(), "Chart Info Updated Successfully");
+        }
+    }
+
+    private void deleteChartsGraph(FlowChart flowChart) {
+        String selection = TCDatabaseContract.GraphEntry.ID + " = ?";
+        String selectionArgs[] = {flowChart.getId()};
+        Cursor c = getReadableDatabase().query(TCDatabaseContract.GraphEntry.TABLE_NAME,
+                null, selection, selectionArgs, null, null, null);
+        c.moveToFirst();
+        if (c.getCount() > 0) {
+            String oldGraphId = c.getString(c.getColumnIndexOrThrow(ChartEntry.GRAPH_ID));
+            deleteGraph(oldGraphId);
         }
     }
 
@@ -222,6 +280,8 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
 
         //Insert chart & comments
         try {
+            //Delete old comments and insert new ones
+            deleteComments(flowChart.getId(), TCDatabaseContract.CommentEntry.PARENT_TYPE_CHART);
             insertComments(flowChart.getComments(), flowChart.getId(), TCDatabaseContract.CommentEntry.PARENT_TYPE_CHART);
             getWritableDatabase().insert(ChartEntry.TABLE_NAME, null, chartContentValues);
         } catch (Exception e) {
@@ -267,7 +327,8 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
 
         while (!c.isAfterLast()) {
             Comment comment = new Comment();
-            comment.setOwner(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.CommentEntry.OWNER)));
+            comment.setOwnerId(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.CommentEntry.OWNER)));
+            comment.setOwnerName(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.CommentEntry.OWNER_NAME)));
             comment.setAttachment(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.CommentEntry.ATTACHMENT)));
             comment.setCreatedDate(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.CommentEntry.CREATED_DATE)));
             comment.setText(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.CommentEntry.TEXT)));
@@ -276,6 +337,12 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         }
         c.close();
         return comments;
+    }
+
+    private void deleteComments(String parentId, String parentType) {
+        String selection = TCDatabaseContract.CommentEntry.PARENT_ID + " = '" + parentId + "' AND " +
+                TCDatabaseContract.CommentEntry.PARENT_TYPE + " = '" + parentType + "'";
+        getWritableDatabase().delete(TCDatabaseContract.CommentEntry.TABLE_NAME, selection, null);
     }
 
     private void insertComments(List<Comment> comments, String parentId, String parentType) {
@@ -289,7 +356,8 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         commentContentValues.put(TCDatabaseContract.CommentEntry.ID, getRandomId());
         commentContentValues.put(TCDatabaseContract.CommentEntry.PARENT_ID, parentId);
         commentContentValues.put(TCDatabaseContract.CommentEntry.PARENT_TYPE, parentType);
-        commentContentValues.put(TCDatabaseContract.CommentEntry.OWNER, comment.getOwner());
+        commentContentValues.put(TCDatabaseContract.CommentEntry.OWNER, comment.getOwnerId());
+        commentContentValues.put(TCDatabaseContract.CommentEntry.OWNER_NAME, comment.getOwnerName());
         commentContentValues.put(TCDatabaseContract.CommentEntry.TEXT, comment.getText());
         commentContentValues.put(TCDatabaseContract.CommentEntry.CREATED_DATE, comment.getCreatedDate());
         commentContentValues.put(TCDatabaseContract.CommentEntry.ATTACHMENT, comment.getAttachment());
@@ -301,6 +369,12 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         }
 
         Log.d(this.getClass().getName(), "Comment Info Inserted Successfully");
+    }
+
+    private void deleteGraph(String id) {
+        String selection = TCDatabaseContract.GraphEntry.ID + " = ?";
+        String selectionArgs[] = {id};
+        getWritableDatabase().delete(TCDatabaseContract.GraphEntry.TABLE_NAME, selection, selectionArgs);
     }
 
     private Graph getGraph(String id) {
@@ -442,6 +516,8 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         vertexContentValues.put(TCDatabaseContract.VertexEntry.RESOURCES, allRes);
         vertexContentValues.put(TCDatabaseContract.VertexEntry.IMAGES, allImgs);
 
+        // Delete old vertices and insert new ones
+        deleteComments(v.getId(), TCDatabaseContract.CommentEntry.PARENT_TYPE_VERTEX);
         insertComments(v.getComments(), v.getId(), TCDatabaseContract.CommentEntry.PARENT_TYPE_VERTEX);
 
         sql.insertWithOnConflict(TCDatabaseContract.VertexEntry.TABLE_NAME, null, vertexContentValues, SQLiteDatabase.CONFLICT_REPLACE);

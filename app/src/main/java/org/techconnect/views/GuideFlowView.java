@@ -2,12 +2,11 @@ package org.techconnect.views;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.util.TypedValue;
-import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -17,11 +16,10 @@ import com.squareup.picasso.Picasso;
 
 import org.centum.techconnect.R;
 import org.techconnect.activities.ImageViewActivity;
-import org.techconnect.activities.PDFActivity;
+import org.techconnect.misc.ResourceHandler;
 import org.techconnect.model.Vertex;
 import org.techconnect.model.session.Session;
 import org.techconnect.model.session.SessionListener;
-import org.techconnect.resources.ResourceHandler;
 
 import java.io.File;
 import java.util.List;
@@ -49,7 +47,10 @@ public class GuideFlowView extends ScrollView implements View.OnClickListener {
     LinearLayout imageLinearLayout;
     @Bind(R.id.img_preview_hint)
     TextView imgPreviewHintTextView;
+    @Bind(R.id.tabContainer)
+    FrameLayout tabContainer;
 
+    CommentsResourcesTabbedView commentsResourcesTabbedView;
     private Session session;
     private SessionListener listener;
 
@@ -76,43 +77,20 @@ public class GuideFlowView extends ScrollView implements View.OnClickListener {
         questionTextView.setText(curr_step.getName());
         detailsTextView.setText(curr_step.getDetails());
 
-        updateImageThumbnails(curr_step); //Waiting until I setup downloading resources properly
+        optionsLinearLayout.removeAllViews();
+        updateImageThumbnails(curr_step);
         updateOptions();
-        updateAttachments(curr_step); //Waiting until I setup downloading resources properly
         backButton.setEnabled(session.hasPrevious());
+
+        tabContainer.removeAllViews();
+        if (curr_step.getResources().size() > 0 || curr_step.getComments().size() > 0) {
+            commentsResourcesTabbedView = (CommentsResourcesTabbedView) LayoutInflater.from(getContext())
+                    .inflate(R.layout.comments_resources_tabbed_view, tabContainer, false);
+            commentsResourcesTabbedView.setItems(curr_step.getComments(), curr_step.getResources());
+            tabContainer.addView(commentsResourcesTabbedView);
+        }
     }
 
-    //updating to use a vertex instead of old Flowchart object
-    private void updateAttachments(Vertex curr_step) {
-        String[] attachments = new String[curr_step.getResources().size()];
-        attachments = curr_step.getResources().toArray(attachments);
-        if (attachments.length > 0) {
-            TextView tv = new TextView(getContext());
-            tv.setText(R.string.help_documents);
-            tv.setTypeface(Typeface.DEFAULT_BOLD);
-            tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-            tv.setGravity(Gravity.CENTER);
-            int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
-            tv.setPadding(px, px, px, px);
-            optionsLinearLayout.addView(tv);
-        }
-        for (final String att : attachments) {
-            String name = att.substring(att.lastIndexOf("/") + 1);
-            if (name.contains("?")) {
-                name = name.substring(0, name.indexOf('?'));
-            }
-            Button button = new Button(getContext());
-            button.setTransformationMethod(null);
-            button.setText(name);
-            button.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    openAttachment(att);
-                }
-            });
-            optionsLinearLayout.addView(button);
-        }
-    }
 
     private void updateOptions() {
         for (int i = 0; i < optionsLinearLayout.getChildCount(); i++) {
@@ -172,17 +150,6 @@ public class GuideFlowView extends ScrollView implements View.OnClickListener {
             imageLinearLayout.setVisibility(GONE);
             imgPreviewHintTextView.setVisibility(INVISIBLE);
         }
-    }
-
-    private void openAttachment(String att) {
-        Intent intent = new Intent(getContext(), PDFActivity.class);
-        intent.putExtra(PDFActivity.EXTRA_IS_FILE, true);
-        if (ResourceHandler.get().hasStringResource(att)) {
-            intent.putExtra(PDFActivity.EXTRA_FILE, getContext().getFileStreamPath(ResourceHandler.get().getStringResource(att)).getAbsolutePath());
-        } else {
-            intent.putExtra(PDFActivity.EXTRA_FILE, "");
-        }
-        getContext().startActivity(intent);
     }
 
     /**

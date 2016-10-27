@@ -9,6 +9,29 @@ public class TCDatabaseContract {
     }
 
     /**
+     * User table definitions.
+     */
+    public static class UserEntry implements BaseColumns {
+        public static final String TABLE_NAME = "users";
+        public static final String ID = "_id";
+        public static final String EMAIL = "email";
+        public static final String NAME = "name";
+        public static final String COUNTRY_CODE = "country_code";
+        public static final String COUNTRY = "country";
+        public static final String ORGANIZATION = "organization";
+        public static final String EXPERTISES = "expertises";
+        // Create the users table
+        public static final String CREATE_USER_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
+                ID + " TEXT PRIMARY KEY NOT NULL UNIQUE," +
+                EMAIL + " TEXT," +
+                NAME + " TEXT," +
+                COUNTRY_CODE + " DATE," +
+                COUNTRY + " TEXT," +
+                ORGANIZATION + " TEXT," +
+                EXPERTISES + " TEXT);";
+    }
+
+    /**
      * Chart table definitions.
      */
     public static class ChartEntry implements BaseColumns {
@@ -56,6 +79,7 @@ public class TCDatabaseContract {
         public static final String PARENT_ID = "parentId";
         public static final String PARENT_TYPE = "parentType";
         public static final String OWNER = "owner";
+        public static final String OWNER_NAME = "ownerName";
         public static final String TEXT = "text";
         public static final String CREATED_DATE = "createdDate";
         public static final String ATTACHMENT = "attachment";
@@ -67,6 +91,7 @@ public class TCDatabaseContract {
                 PARENT_ID + " TEXT," +
                 PARENT_TYPE + " TEXT," +
                 OWNER + " TEXT," +
+                OWNER_NAME + " TEXT," +
                 TEXT + " TEXT," +
                 CREATED_DATE + " DATE," +
                 ATTACHMENT + " TEXT);";
