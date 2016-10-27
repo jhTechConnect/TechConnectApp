@@ -2,9 +2,11 @@ package org.techconnect.views;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -109,6 +111,10 @@ public class GuideFlowView extends ScrollView implements View.OnClickListener {
                     advanceFlow(option);
                 }
             });
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            int dp4 = (int) (4 * Resources.getSystem().getDisplayMetrics().density);
+            params.setMargins(0, dp4, 0, dp4);
+            button.setLayoutParams(params);
             optionsLinearLayout.addView(button);
         }
     }
@@ -134,6 +140,7 @@ public class GuideFlowView extends ScrollView implements View.OnClickListener {
                     imageView.setVisibility(VISIBLE);
                     Picasso.with(getContext())
                             .load(file)
+                            .placeholder(R.drawable.ic_sync_black_48dp)
                             .into(imageView);
                     imageView.setOnClickListener(new OnClickListener() {
                         @Override
