@@ -9,6 +9,29 @@ public class TCDatabaseContract {
     }
 
     /**
+     * User table definitions.
+     */
+    public static class UserEntry implements BaseColumns {
+        public static final String TABLE_NAME = "users";
+        public static final String ID = "_id";
+        public static final String EMAIL = "email";
+        public static final String NAME = "name";
+        public static final String COUNTRY_CODE = "country_code";
+        public static final String COUNTRY = "country";
+        public static final String ORGANIZATION = "organization";
+        public static final String EXPERTISES = "expertises";
+        // Create the users table
+        public static final String CREATE_USER_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
+                ID + " TEXT PRIMARY KEY NOT NULL UNIQUE," +
+                EMAIL + " TEXT," +
+                NAME + " TEXT," +
+                COUNTRY_CODE + " DATE," +
+                COUNTRY + " TEXT," +
+                ORGANIZATION + " TEXT," +
+                EXPERTISES + " TEXT);";
+    }
+
+    /**
      * Chart table definitions.
      */
     public static class ChartEntry implements BaseColumns {

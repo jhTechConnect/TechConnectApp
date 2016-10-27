@@ -43,7 +43,10 @@ public class AuthManager {
         if (auth == null && hasAuth()) {
             auth = new UserAuth();
             auth.setAuthToken(prefs.getString(AUTH_TOKEN, null));
-            auth.setAuthToken(prefs.getString(USER_ID, null));
+            auth.setUserId(prefs.getString(USER_ID, null));
+        }
+        if (hasAuth()) {
+            return auth;
         }
         return null;
     }

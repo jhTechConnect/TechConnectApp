@@ -27,8 +27,10 @@ import android.widget.TextView;
 
 import org.centum.techconnect.R;
 import org.techconnect.misc.auth.AuthManager;
+import org.techconnect.model.User;
 import org.techconnect.model.UserAuth;
 import org.techconnect.network.TCNetworkHelper;
+import org.techconnect.sql.TCDatabaseHelper;
 
 import java.io.IOException;
 
@@ -214,7 +216,7 @@ public class LoginActivity extends AppCompatActivity {
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    class UserLoginTask extends AsyncTask<Void, Void, UserAuth> {
+    class UserLoginTask extends AsyncTask<Void, Void, Object[]> {
 
         private final String mEmail;
         private final String mPassword;
@@ -225,9 +227,13 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         @Override
-        protected UserAuth doInBackground(Void... params) {
+        protected Object[] doInBackground(Void... params) {
             try {
-                return new TCNetworkHelper().login(mEmail, mPassword);
+                // Login and get user
+                TCNetworkHelper helper = new TCNetworkHelper();
+                UserAuth auth = helper.login(mEmail, mPassword);
+                User user = helper.getUser(auth.getUserId());
+                return new Object[]{user, auth};
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -235,13 +241,17 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(final UserAuth auth) {
+        protected void onPostExecute(final Object[] objs) {
+            User user = (User) objs[0];
+            UserAuth auth = (UserAuth) objs[1];
             mAuthTask = null;
             showProgress(false);
-            if (auth == null) {
+            if (user == null) {
                 mEmailView.setError(getString(R.string.error_incorrect_signin));
                 mPasswordView.requestFocus();
             } else {
+                // Store user
+                TCDatabaseHelper.get(LoginActivity.this).upsertUser(user);
                 AuthManager.get(LoginActivity.this).setAuth(auth);
                 finish();
             }

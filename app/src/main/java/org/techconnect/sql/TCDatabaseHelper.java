@@ -13,6 +13,7 @@ import org.techconnect.model.Comment;
 import org.techconnect.model.Edge;
 import org.techconnect.model.FlowChart;
 import org.techconnect.model.Graph;
+import org.techconnect.model.User;
 import org.techconnect.model.Vertex;
 import org.techconnect.sql.TCDatabaseContract.ChartEntry;
 
@@ -68,6 +69,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sql) {
+        sql.execSQL(TCDatabaseContract.UserEntry.CREATE_USER_TABLE);
         sql.execSQL(TCDatabaseContract.ChartEntry.CREATE_CHART_TABLE);
         sql.execSQL(TCDatabaseContract.GraphEntry.CREATE_GRAPH_TABLE);
         sql.execSQL(TCDatabaseContract.VertexEntry.CREATE_VERTEX_TABLE);
@@ -91,6 +93,44 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public void upsertUser(User user) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(TCDatabaseContract.UserEntry.ID, user.get_id());
+        contentValues.put(TCDatabaseContract.UserEntry.COUNTRY, user.getCountry());
+        contentValues.put(TCDatabaseContract.UserEntry.COUNTRY_CODE, user.getCountryCode());
+        contentValues.put(TCDatabaseContract.UserEntry.EMAIL, user.getEmail());
+        contentValues.put(TCDatabaseContract.UserEntry.NAME, user.getName());
+        contentValues.put(TCDatabaseContract.UserEntry.ORGANIZATION, user.getOrganization());
+        contentValues.put(TCDatabaseContract.UserEntry.EXPERTISES, TextUtils.join(",", user.getExpertises()));
+        getWritableDatabase().insertWithOnConflict(TCDatabaseContract.UserEntry.TABLE_NAME, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+    }
+
+    public User getUser(String id) {
+        String selection = TCDatabaseContract.UserEntry.ID + " = ?";
+        String[] selectionArgs = {id};
+        Cursor c = getReadableDatabase().query(TCDatabaseContract.UserEntry.TABLE_NAME,
+                null, selection, selectionArgs, null, null, null);
+        c.moveToFirst();
+        if (c.getCount() < 1) {
+            return null;
+        }
+        User user = new User();
+        user.set_id(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.ID)));
+        user.setCountry(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.COUNTRY)));
+        user.setCountryCode(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.COUNTRY_CODE)));
+        user.setEmail(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.EMAIL)));
+        user.setName(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.NAME)));
+        user.setOrganization(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.ORGANIZATION)));
+        String expertises = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.EXPERTISES));
+        if (TextUtils.isEmpty(expertises.trim())) {
+            user.setExpertises(new ArrayList<String>(0));
+        } else {
+            user.setExpertises(Arrays.asList(expertises.split(",")));
+        }
+        c.close();
+        return user;
+    }
+
     /**
      * Get a map of chart names, mapping to their id.
      */
@@ -103,6 +143,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             set.put(c.getString(c.getColumnIndexOrThrow(ChartEntry.NAME)), c.getString(c.getColumnIndexOrThrow(ChartEntry.ID)));
             c.moveToNext();
         }
+        c.close();
         return set;
     }
 
@@ -115,6 +156,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             ids.add(c.getString(c.getColumnIndexOrThrow(ChartEntry.ID)));
             c.moveToNext();
         }
+        c.close();
         return ids.toArray(new String[ids.size()]);
     }
 
@@ -154,7 +196,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             return null;
         }
         FlowChart chart = getChartFromCursor(c);
-
+        c.close();
         return chart;
     }
 

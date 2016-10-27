@@ -20,6 +20,7 @@ import android.widget.ScrollView;
 import org.centum.techconnect.R;
 import org.techconnect.model.User;
 import org.techconnect.network.TCNetworkHelper;
+import org.techconnect.sql.TCDatabaseHelper;
 
 import java.io.IOException;
 
@@ -105,6 +106,8 @@ public class RegisterActivity extends AppCompatActivity {
                     if (user == null) {
                         Snackbar.make(coordinatorLayout, R.string.failed_register, Snackbar.LENGTH_LONG).show();
                     } else {
+                        // Store the user, probably need it later
+                        TCDatabaseHelper.get(RegisterActivity.this).upsertUser(user);
                         Intent intent = new Intent();
                         intent.putExtra(RESULT_REGISTERED_EMAIL, user.getEmail());
                         setResult(Activity.RESULT_OK, intent);

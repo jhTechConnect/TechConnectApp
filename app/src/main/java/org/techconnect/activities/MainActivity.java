@@ -23,13 +23,17 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import org.centum.techconnect.R;
 import org.techconnect.asynctasks.LogoutAsyncTask;
 import org.techconnect.fragments.GuidesFragment;
 import org.techconnect.fragments.ReportsFragment;
 import org.techconnect.misc.ResourceHandler;
+import org.techconnect.misc.auth.AuthListener;
 import org.techconnect.misc.auth.AuthManager;
+import org.techconnect.model.User;
+import org.techconnect.model.UserAuth;
 import org.techconnect.services.TCService;
 import org.techconnect.sql.TCDatabaseHelper;
 
@@ -61,6 +65,7 @@ public class MainActivity extends AppCompatActivity
     @Bind(R.id.main_fragment_container)
     FrameLayout fragmentContainer;
 
+    TextView headerTextView;
     MenuItem logoutMenuItem;
     MenuItem loginMenuItem;
 
@@ -85,7 +90,21 @@ public class MainActivity extends AppCompatActivity
         drawerLayout.addDrawerListener(toggle);
         logoutMenuItem = navigationView.getMenu().findItem(R.id.logout);
         loginMenuItem = navigationView.getMenu().findItem(R.id.login);
+        headerTextView = (TextView) navigationView.getHeaderView(0).findViewById(R.id.headerTextView);
         toggle.syncState();
+
+        AuthManager.get(this).addAuthListener(new AuthListener() {
+
+            @Override
+            public void onLoginSucces(UserAuth auth) {
+                updateNavHeader();
+            }
+
+            @Override
+            public void onLogout() {
+                updateNavHeader();
+            }
+        });
 
         fragmentTitles = getResources().getStringArray(R.array.fragment_titles);
         navigationView.setNavigationItemSelectedListener(this);
@@ -94,7 +113,16 @@ public class MainActivity extends AppCompatActivity
             fragToOpen = savedInstanceState.getInt("org.techconnect.mainactivity.frag", FRAGMENT_GUIDES);
         }
         setCurrentFragment(fragToOpen);
-        checkPermissions();
+    }
+
+    private void updateNavHeader() {
+        boolean loggedIn = AuthManager.get(this).hasAuth();
+        User user;
+        if (loggedIn && (user = TCDatabaseHelper.get(this).getUser(AuthManager.get(this).getAuth().getUserId())) != null) {
+            headerTextView.setText(user.getName());
+        } else {
+            headerTextView.setText(R.string.app_name);
+        }
     }
 
     @Override
@@ -118,6 +146,7 @@ public class MainActivity extends AppCompatActivity
             loginMenuItem.setVisible(true);
             logoutMenuItem.setVisible(false);
         }
+        updateNavHeader();
         checkPermissions();
     }
 
