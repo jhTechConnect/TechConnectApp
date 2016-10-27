@@ -103,6 +103,11 @@ public class GuideListItemView extends LinearLayout implements View.OnClickListe
                             .transform(new CircleTransform())
                             .into(guideImageView);
                 }
+            } else {
+                Picasso.with(getContext())
+                        .load(R.drawable.flowchart_icon)
+                        .transform(new CircleTransform())
+                        .into(guideImageView);
             }
         }
     }
