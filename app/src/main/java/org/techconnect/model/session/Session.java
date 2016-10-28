@@ -9,6 +9,7 @@ import org.techconnect.model.Vertex;
 import org.techconnect.sql.TCDatabaseHelper;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -38,7 +39,7 @@ public class Session implements Parcelable {
     private String department = "";
     private String modelNumber = "";
     private String serialNumber = "";
-    private String notes;
+    private String notes = "";
     private boolean finished = false;
 
     private List<String> history = new ArrayList<>(); //list of seen vertex IDs
@@ -47,6 +48,7 @@ public class Session implements Parcelable {
 
 
     public Session(FlowChart flowchart) {
+        this.createdDate = new Date().getTime();
         this.flowchart_id = flowchart.getId();
         this.traversal = new GraphTraversal(flowchart.getGraph());
         history.add(this.traversal.getCurrentVertex().getId());
