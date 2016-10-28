@@ -110,9 +110,7 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
             button.setText(R.string.download);
         }
         descriptionTextView.setText(flowChart.getDescription());
-        if (flowChart.getComments().size() > 0 || flowChart.getResources().size() > 0) {
-            commentsResourcesTabbedView.setItems(flowChart, flowChart.getResources(), flowChart.getId());
-        }
+        commentsResourcesTabbedView.setItems(flowChart, flowChart.getResources(), flowChart.getId());
         updateHeaderImage();
     }
 
