@@ -557,6 +557,41 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         Log.d(this.getClass().getName(), "Session Info Inserted Successfully");
     }
 
+    public Session getSession(String id) {
+        String selection = TCDatabaseContract.SessionEntry.ID + " = ?";
+        String selectionArgs[] = {id};
+        Cursor c = getReadableDatabase().query(TCDatabaseContract.SessionEntry.TABLE_NAME,
+                null, selection, selectionArgs, null, null, null);
+        c.moveToFirst();
+        if (c.getCount() > 0) {
+            String flowchart_id = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FLOWCHART_ID));
+            FlowChart flow = getChart(flowchart_id);
+            Session s = new Session(flow);
+            s.setCreatedDate(c.getLong(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.CREATED_DATE)));
+            s.setDepartment(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.DEPARTMENT)));
+            s.setModelNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.MODEL)));
+            s.setSerialNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.SERIAL)));
+            s.setNotes(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.NOTES)));
+            s.setFinished(c.getInt(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FINISHED)) != 0);
+            return s;
+        }
+        return null;
+    }
+
+    /**
+     * Return list of all Session IDs currently stored in the database
+     * @return
+     */
+    public List<String> getSessions() {
+        List<String> ids = new ArrayList<String>();
+        Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + TCDatabaseContract.SessionEntry.TABLE_NAME +" " ,null);
+        cursor.moveToFirst();
+        while(cursor.moveToNext()) {
+            ids.add(cursor.getString(cursor.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.ID)));
+        }
+        return ids;
+    }
+
     private ContentValues getSessionContentValues(Session s) {
         ContentValues sessionContentValues = new ContentValues();
         sessionContentValues.put(TCDatabaseContract.SessionEntry.ID,getRandomId());
@@ -573,7 +608,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
 
         sessionContentValues.put(TCDatabaseContract.SessionEntry.HISTORY,history);
         sessionContentValues.put(TCDatabaseContract.SessionEntry.OPTION_HISTORY,opt_history);
-        sessionContentValues.put(TCDatabaseContract.SessionEntry.FLOWCHART_ID,s.getFlowchart().getId());
+        sessionContentValues.put(TCDatabaseContract.SessionEntry.FLOWCHART_ID,s.getFlowchart());
 
         return sessionContentValues;
     }
