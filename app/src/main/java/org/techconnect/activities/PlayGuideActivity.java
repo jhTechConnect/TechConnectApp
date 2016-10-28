@@ -115,7 +115,7 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
     }
 
     private void saveSession() {
-        TCDatabaseHelper.get().insertSession(session);//Write to the SQL Database
+        TCDatabaseHelper.get(this).insertSession(session);//Write to the SQL Database
     }
 
     private void loadFlowchart() {
@@ -141,7 +141,7 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
     @OnClick(R.id.start_button)
     protected void onStartSession() {
         if (flowChart != null) {
-            session = new Session(flowChart);
+            session = new Session(flowChart,this);
             session.setDepartment(departmentEditText.getText().toString());
             session.setModelNumber(modelEditText.getText().toString());
             session.setSerialNumber(serialEditText.getText().toString());

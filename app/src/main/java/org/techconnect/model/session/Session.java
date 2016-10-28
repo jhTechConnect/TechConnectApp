@@ -1,5 +1,6 @@
 package org.techconnect.model.session;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -45,9 +46,10 @@ public class Session implements Parcelable {
     private List<String> history = new ArrayList<>(); //list of seen vertex IDs
     private List<String> optionHistory = new ArrayList<>();//list of user responses
 
+    private Context context;
 
-
-    public Session(FlowChart flowchart) {
+    public Session(FlowChart flowchart, Context context) {
+        this.context = context;
         this.createdDate = new Date().getTime();
         this.flowchart_id = flowchart.getId();
         this.traversal = new GraphTraversal(flowchart.getGraph());
@@ -69,7 +71,7 @@ public class Session implements Parcelable {
         in.readList(this.optionHistory,String.class.getClassLoader());
         flowchart_id = in.readString();
 
-        FlowChart f = TCDatabaseHelper.get().getChart(flowchart_id);
+        FlowChart f = TCDatabaseHelper.get(context).getChart(flowchart_id);
 
         //Now, just need to setup the traversal
         traversal = new GraphTraversal(f.getGraph());

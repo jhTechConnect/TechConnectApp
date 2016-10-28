@@ -37,12 +37,10 @@ public class TCService extends IntentService {
 
     private NotificationManager notificationManager;
     private TCNetworkHelper TCNetworkHelper;
-    private ResourceHandler resourceHandler;
 
     public TCService() {
         super("TechConnectService");
         TCNetworkHelper = new TCNetworkHelper();
-        resourceHandler = ResourceHandler.get();
     }
 
     /**
@@ -111,13 +109,13 @@ public class TCService extends IntentService {
      */
     private void loadResources(String resources[]) {
         for (String resUrl : resources) {
-            if (resourceHandler.hasStringResource(resUrl)) {
+            if (ResourceHandler.get(getApplicationContext()).hasStringResource(resUrl)) {
                 Log.d(this.getClass().getName(), "ResourceHandler has \"" + resUrl + "\"");
             } else {
                 String fileName;
                 try {
                     fileName = downloadFile(resUrl);
-                    resourceHandler.addStringResource(resUrl, fileName);
+                    ResourceHandler.get(getApplicationContext()).addStringResource(resUrl, fileName);
                 } catch (IOException e) {
                     e.printStackTrace();
                     Log.e(TCNetworkHelper.class.getName(), "Failed to load: " + resUrl);

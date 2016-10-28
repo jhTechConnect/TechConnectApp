@@ -13,8 +13,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:padding="8dp"
-        android:scaleType="fitCenter"
-        app:srcCompat="@drawable/flowchart" />
+        android:scaleType="fitCenter" />
 
     <LinearLayout
         android:layout_width="0dp"

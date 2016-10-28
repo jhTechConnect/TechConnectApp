@@ -37,7 +37,7 @@ public interface TCRetrofit {
                                  @Field("countryCode") String countryCode,
                                  @Field("name") String name,
                                  @Field("organization") String org,
-                                 @Field("expertises") String expertises[]);
+                                 @Field("expertises[]") String[] expertises);
 
     //Logout the user. I don't think that I need to pass in anything? Maybe the user?
     @POST("api/v1/logout")

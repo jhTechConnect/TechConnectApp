@@ -87,11 +87,11 @@ public class GuideListItemView extends LinearLayout implements View.OnClickListe
                 downloadImageView.setOnClickListener(this);
             }
             if (flowChart.getImage() != null && !TextUtils.isEmpty(flowChart.getImage())) {
-                if (ResourceHandler.get().hasStringResource(flowChart.getImage())) {
+                if (ResourceHandler.get(getContext()).hasStringResource(flowChart.getImage())) {
                     // Load offline image
                     Picasso.with(getContext())
                             .load(getContext().getFileStreamPath(
-                                    ResourceHandler.get().getStringResource(flowChart.getImage())))
+                                    ResourceHandler.get(getContext()).getStringResource(flowChart.getImage())))
                             .error(R.drawable.flowchart_icon)
                             .transform(new CircleTransform())
                             .into(guideImageView);
