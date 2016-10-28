@@ -64,8 +64,6 @@ public class FlowChart implements Parcelable, Commentable {
     @Override
     public String getParentType() {
         return Comment.PARENT_TYPE_CHART;
-    }    public void setId(String id) {
-        this._id = id;
     }
 
     public int getScore() {

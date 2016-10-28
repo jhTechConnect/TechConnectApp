@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity
     private static final int PERMISSIONS_REQUEST_READ_STORAGE = 1;
     private static final String SHOWN_TUTORIAL = "org.techconnect.prefs.shownturotial";
     private static final String USER_LEARNED_DRAWER = "org.techconnect.prefs.shownturotial.learneddrawer";
+    private static final String ASKED_PERMISSION = "org.techconnect.prefs.shownturotial.askedpermission";
 
     private static final int FRAGMENT_GUIDES = 0;
     private static final int FRAGMENT_REPORTS = 1;
@@ -144,6 +145,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+        boolean hasPermissions = checkPermissions();
         boolean showedIntro = getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE)
                 .getBoolean(SHOWN_TUTORIAL, false);
         if (!showedIntro) {
@@ -153,7 +155,7 @@ public class MainActivity extends AppCompatActivity
                     .putBoolean(SHOWN_TUTORIAL, true)
                     .apply();
             //startActivity(new Intent(MainActivity.this, IntroTutorial.class));
-        } else if (!showedLogin && !AuthManager.get(this).hasAuth()) {
+        } else if (!showedLogin && !AuthManager.get(this).hasAuth() && hasPermissions) {
             onShowLogin();
         } else if (AuthManager.get(this).hasAuth()) {
             loginMenuItem.setVisible(false);
@@ -163,14 +165,13 @@ public class MainActivity extends AppCompatActivity
             logoutMenuItem.setVisible(false);
         }
         updateNavHeader();
-        checkPermissions();
-        if (!userLearnedDrawer && checkPermissions()) {
+        if (hasPermissions && !userLearnedDrawer) {
             drawerLayout.openDrawer(Gravity.LEFT);
         }
     }
 
     @OnClick(R.id.grant_permission_btn)
-    public void ensurePermissions() {
+    public void askForPermission() {
         if (!checkPermissions()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 ActivityCompat.requestPermissions(this,
@@ -187,6 +188,14 @@ public class MainActivity extends AppCompatActivity
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED);
             permissionLayout.setVisibility(View.GONE);
             fragmentContainer.setVisibility(View.VISIBLE);
+        } else {
+            if (!getSharedPreferences(getClass().getName(), MODE_PRIVATE).getBoolean(ASKED_PERMISSION, false)) {
+                getSharedPreferences(getClass().getName(), MODE_PRIVATE)
+                        .edit()
+                        .putBoolean(ASKED_PERMISSION, true)
+                        .apply();
+                askForPermission();
+            }
         }
         return havePermission;
     }
