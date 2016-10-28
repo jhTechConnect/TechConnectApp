@@ -58,21 +58,18 @@ public class CommentThreadView extends LinearLayout {
 
     private void updateViews() {
         removeAllViews();
-        if (commentable.getComments().size() > 0) {
-            LayoutInflater inflater = LayoutInflater.from(getContext());
-            for (Comment comment : commentable.getComments()) {
-                CommentView view = (CommentView) inflater.inflate(R.layout.comment_view, this, false);
-                view.setComment(comment);
-                addView(view);
-            }
-            if (AuthManager.get(getContext()).hasAuth()) {
-                addView(postcommentLinearLayout);
-            }
-        } else {
+        if (commentable.getComments().size() == 0) {
             addView(headerTextView);
-            if (AuthManager.get(getContext()).hasAuth()) {
-                addView(postcommentLinearLayout);
-            }
+        }
+        if (AuthManager.get(getContext()).hasAuth()) {
+            addView(postcommentLinearLayout);
+        }
+
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        for (Comment comment : commentable.getComments()) {
+            CommentView view = (CommentView) inflater.inflate(R.layout.comment_view, this, false);
+            view.setComment(comment);
+            addView(view);
         }
     }
 
