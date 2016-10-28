@@ -232,7 +232,10 @@ public class LoginActivity extends AppCompatActivity {
                 // Login and get user
                 TCNetworkHelper helper = new TCNetworkHelper();
                 UserAuth auth = helper.login(mEmail, mPassword);
-                User user = helper.getUser(auth.getUserId());
+                User user = null;
+                if (auth != null) {
+                    user = helper.getUser(auth.getUserId());
+                }
                 return new Object[]{user, auth};
             } catch (IOException e) {
                 e.printStackTrace();
@@ -242,15 +245,15 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(final Object[] objs) {
-            User user = (User) objs[0];
-            UserAuth auth = (UserAuth) objs[1];
             mAuthTask = null;
             showProgress(false);
-            if (user == null) {
-                mEmailView.setError(getString(R.string.error_incorrect_signin));
+            if (objs[0] == null) {
+                Snackbar.make(coordinatorLayout, R.string.couldnt_login, Snackbar.LENGTH_LONG).show();
                 mPasswordView.requestFocus();
             } else {
                 // Store user
+                User user = (User) objs[0];
+                UserAuth auth = (UserAuth) objs[1];
                 TCDatabaseHelper.get(LoginActivity.this).upsertUser(user);
                 AuthManager.get(LoginActivity.this).setAuth(auth);
                 finish();
