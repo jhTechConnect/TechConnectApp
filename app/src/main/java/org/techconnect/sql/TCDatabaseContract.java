@@ -83,8 +83,6 @@ public class TCDatabaseContract {
         public static final String TEXT = "text";
         public static final String CREATED_DATE = "createdDate";
         public static final String ATTACHMENT = "attachment";
-        public static final String PARENT_TYPE_VERTEX = "node";
-        public static final String PARENT_TYPE_CHART = "chart";
         //Create the Comment Table
         public static final String CREATE_COMMENT_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
                 ID + " TEXT PRIMARY KEY NOT NULL UNIQUE," +

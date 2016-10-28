@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import java.util.List;
 
 
-public class FlowChart implements Parcelable {
+public class FlowChart implements Parcelable, Commentable {
 
     public static final Creator<FlowChart> CREATOR = new Creator<FlowChart>() {
         @Override
@@ -61,6 +61,12 @@ public class FlowChart implements Parcelable {
         this._id = id;
     }
 
+    @Override
+    public String getParentType() {
+        return Comment.PARENT_TYPE_CHART;
+    }    public void setId(String id) {
+        this._id = id;
+    }
 
     public int getScore() {
         return this.score;

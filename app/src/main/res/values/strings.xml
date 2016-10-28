@@ -120,4 +120,10 @@
     <string name="comments">Comments</string>
     <string name="download">Download</string>
     <string name="updating">Updating...</string>
+    <string name="write_comment">Write Comment...</string>
+    <string name="login_required">Login Required</string>
+    <string name="login_req_post_comment">You must be logged in to post a comment</string>
+    <string name="posting">Posting...</string>
+    <string name="error">Error</string>
+    <string name="failed_post_comment">Failed to post the comment</string>
 </resources>
