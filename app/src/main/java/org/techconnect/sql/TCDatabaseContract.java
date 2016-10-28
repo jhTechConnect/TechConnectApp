@@ -175,25 +175,27 @@ public class TCDatabaseContract {
         public static final String TABLE_NAME = "sessions";
         public static final String ID = "_id";
         public static final String CREATED_DATE = "createdDate";
-        public static final String ACTIVE = "active";
+        public static final String FINISHED = "finished";
         public static final String DEPARTMENT = "department";
         public static final String MODEL = "modelNumber";
         public static final String SERIAL = "serialNumber";
         public static final String NOTES = "notes";
         public static final String HISTORY = "history";
         public static final String OPTION_HISTORY = "optionHistory";
+        public static final String FLOWCHART_ID = "flowchart_id";
 
 
-        public static final String CREATE_SESSION_TABLE = "CREATE TABLE IF NOT EXISTS sessions (\n" +
+        public static final String CREATE_SESSION_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (\n" +
                 ID +          " TEXT PRIMARY KEY NOT NULL UNIQUE,\n" +
                 CREATED_DATE  + " DATE,\n" +
-                ACTIVE +       " BOOLEAN,\n" +
+                FINISHED +       " BOOLEAN,\n" +
                 DEPARTMENT +   " TEXT,\n" +
                 MODEL +   " TEXT,\n" +
                 SERIAL +  " TEXT,\n" +
                 NOTES +        " TEXT,\n" +
                 HISTORY +       " TEXT,\n" +
                 OPTION_HISTORY+ " TEXT,\n" +
+                FLOWCHART_ID + " TEXT" +
                 ");";
         private SessionEntry(){
         }

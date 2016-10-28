@@ -15,6 +15,7 @@ import org.techconnect.model.FlowChart;
 import org.techconnect.model.Graph;
 import org.techconnect.model.User;
 import org.techconnect.model.Vertex;
+import org.techconnect.model.session.Session;
 import org.techconnect.sql.TCDatabaseContract.ChartEntry;
 
 import java.util.ArrayList;
@@ -542,5 +543,73 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             sql.insertWithOnConflict(TCDatabaseContract.EdgeEntry.TABLE_NAME, null, edgeContentValues, SQLiteDatabase.CONFLICT_REPLACE);
         }
         Log.d(this.getClass().getName(), "Edges Info Inserted Successfully");
+    }
+
+    public void insertSession(Session s) {
+        ContentValues sessionContentValues = getSessionContentValues(s);
+        //Insert session into database
+        try {
+            getWritableDatabase().insert(TCDatabaseContract.SessionEntry.TABLE_NAME, null, sessionContentValues);
+        } catch (Exception e) {
+            Log.e(this.getClass().getName(), e.getMessage());
+        }
+
+        Log.d(this.getClass().getName(), "Session Info Inserted Successfully");
+    }
+
+    public Session getSession(String id) {
+        String selection = TCDatabaseContract.SessionEntry.ID + " = ?";
+        String selectionArgs[] = {id};
+        Cursor c = getReadableDatabase().query(TCDatabaseContract.SessionEntry.TABLE_NAME,
+                null, selection, selectionArgs, null, null, null);
+        c.moveToFirst();
+        if (c.getCount() > 0) {
+            String flowchart_id = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FLOWCHART_ID));
+            FlowChart flow = getChart(flowchart_id);
+            Session s = new Session(flow);
+            s.setCreatedDate(c.getLong(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.CREATED_DATE)));
+            s.setDepartment(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.DEPARTMENT)));
+            s.setModelNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.MODEL)));
+            s.setSerialNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.SERIAL)));
+            s.setNotes(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.NOTES)));
+            s.setFinished(c.getInt(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FINISHED)) != 0);
+            return s;
+        }
+        return null;
+    }
+
+    /**
+     * Return list of all Session IDs currently stored in the database
+     * @return
+     */
+    public List<String> getSessions() {
+        List<String> ids = new ArrayList<String>();
+        Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + TCDatabaseContract.SessionEntry.TABLE_NAME +" " ,null);
+        cursor.moveToFirst();
+        while(cursor.moveToNext()) {
+            ids.add(cursor.getString(cursor.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.ID)));
+        }
+        return ids;
+    }
+
+    private ContentValues getSessionContentValues(Session s) {
+        ContentValues sessionContentValues = new ContentValues();
+        sessionContentValues.put(TCDatabaseContract.SessionEntry.ID,getRandomId());
+        sessionContentValues.put(TCDatabaseContract.SessionEntry.CREATED_DATE,s.getCreatedDate());
+        sessionContentValues.put(TCDatabaseContract.SessionEntry.FINISHED, s.isFinished());
+        sessionContentValues.put(TCDatabaseContract.SessionEntry.DEPARTMENT, s.getDepartment());
+        sessionContentValues.put(TCDatabaseContract.SessionEntry.MODEL,s.getModelNumber());
+        sessionContentValues.put(TCDatabaseContract.SessionEntry.SERIAL, s.getSerialNumber());
+        sessionContentValues.put(TCDatabaseContract.SessionEntry.NOTES,s.getNotes());
+
+        //Generate a comma separated list of strings for the two history entries
+        String history = TextUtils.join(",",s.getHistory());
+        String opt_history = TextUtils.join(",",s.getOptionHistory());
+
+        sessionContentValues.put(TCDatabaseContract.SessionEntry.HISTORY,history);
+        sessionContentValues.put(TCDatabaseContract.SessionEntry.OPTION_HISTORY,opt_history);
+        sessionContentValues.put(TCDatabaseContract.SessionEntry.FLOWCHART_ID,s.getFlowchart());
+
+        return sessionContentValues;
     }
 }
