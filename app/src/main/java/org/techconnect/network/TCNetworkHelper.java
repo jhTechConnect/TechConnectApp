@@ -176,14 +176,14 @@ public class TCNetworkHelper {
      * @param c        - The actual comment object
      * @throws IOException
      */
-    public FlowChart comment(String chart_id, Comment c, UserAuth auth) throws IOException {
+    public Comment comment(String chart_id, Comment c, UserAuth auth) throws IOException {
         Response<JsendResponse> resp = service.postComment(auth.getAuthToken(), auth.getUserId(), chart_id, c).execute();
         lastCode = resp.code();
         if (!resp.isSuccessful()) {
             lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
             return null;
         }
-        return gson.fromJson(resp.body().getData().get("flowchart"), FlowChart.class);
+        return gson.fromJson(resp.body().getData().get("comment"), Comment.class);
     }
 
     /**

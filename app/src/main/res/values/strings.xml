@@ -118,4 +118,13 @@
     <string name="logging_out">Signing out</string>
     <string name="dont_show_again">Don\'t show again</string>
     <string name="comments">Comments</string>
+    <string name="download">Download</string>
+    <string name="updating">Updating...</string>
+    <string name="write_comment">Write Comment...</string>
+    <string name="login_required">Login Required</string>
+    <string name="login_req_post_comment">You must be logged in to post a comment</string>
+    <string name="posting">Posting...</string>
+    <string name="error">Error</string>
+    <string name="failed_post_comment">Failed to post the comment</string>
+    <string name="couldnt_login">Could not sign in. Check your email and password and try again</string>
 </resources>

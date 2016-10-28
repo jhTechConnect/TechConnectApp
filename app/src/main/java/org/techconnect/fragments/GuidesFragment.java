@@ -11,6 +11,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -79,6 +80,20 @@ public class GuidesFragment extends Fragment implements SwipeRefreshLayout.OnRef
                 Intent intent = new Intent(getContext(), GuideActivity.class);
                 intent.putExtra(GuideActivity.EXTRA_CHART, guideView.getFlowChart());
                 startActivity(intent);
+            }
+        });
+        guidesListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int i) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int firstVisibleItem, int i1, int i2) {
+                int topRowVerticalPosition =
+                        (guidesListView == null || guidesListView.getChildCount() == 0) ?
+                                0 : guidesListView.getChildAt(0).getTop();
+                refreshLayout.setEnabled(firstVisibleItem == 0 && topRowVerticalPosition >= 0);
             }
         });
         return view;

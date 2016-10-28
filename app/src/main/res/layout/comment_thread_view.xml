@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <org.techconnect.views.CommentThreadView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/thread_linearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -16,4 +17,29 @@
         android:text="@string/no_comments"
         android:textSize="18sp"
         android:textStyle="normal|bold" />
+
+    <LinearLayout
+        android:id="@+id/postcomment_linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/comment_editText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/write_comment"
+            android:inputType="textMultiLine" />
+
+        <ImageButton
+            android:id="@+id/post_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            app:srcCompat="@drawable/ic_menu_send" />
+
+    </LinearLayout>
 </org.techconnect.views.CommentThreadView>
