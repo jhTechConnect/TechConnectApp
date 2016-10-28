@@ -18,6 +18,16 @@
         android:textSize="18sp"
         android:textStyle="normal|bold" />
 
+    <TextView
+        android:id="@+id/signin_to_comment_textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center_horizontal"
+        android:text="@string/sign_in_to_comment"
+        android:textSize="16sp" />
+
     <LinearLayout
         android:id="@+id/postcomment_linearLayout"
         android:layout_width="match_parent"

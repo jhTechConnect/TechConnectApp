@@ -34,6 +34,8 @@ public class CommentThreadView extends LinearLayout {
     EditText commentEditText;
     @Bind(R.id.post_button)
     ImageButton imageButton;
+    @Bind(R.id.signin_to_comment_textView)
+    TextView signinToCommentTextView;
 
     private Commentable commentable;
     private String chartId;
@@ -63,6 +65,8 @@ public class CommentThreadView extends LinearLayout {
         }
         if (AuthManager.get(getContext()).hasAuth()) {
             addView(postcommentLinearLayout);
+        } else {
+            addView(signinToCommentTextView);
         }
 
         LayoutInflater inflater = LayoutInflater.from(getContext());
