@@ -1,7 +1,7 @@
 package org.techconnect.views;
 
+import android.app.AlertDialog;
 import android.content.Context;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -25,6 +25,7 @@ import butterknife.OnClick;
  */
 
 public class CommentThreadView extends LinearLayout {
+
 
     @Bind(R.id.comments_headerTextView)
     TextView headerTextView;

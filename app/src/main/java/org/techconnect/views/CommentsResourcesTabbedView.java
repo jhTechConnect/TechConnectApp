@@ -47,6 +47,7 @@ public class CommentsResourcesTabbedView extends LinearLayout implements TabLayo
         super(context, attrs, defStyleAttr);
     }
 
+
     public void setItems(Commentable commentable, List<String> resources, String chartId) {
         this.commentable = commentable;
         this.resources = resources;
