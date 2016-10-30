@@ -1,13 +1,12 @@
 package org.techconnect.model.session;
 
-import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import org.techconnect.model.FlowChart;
 import org.techconnect.model.GraphTraversal;
 import org.techconnect.model.Vertex;
-import org.techconnect.sql.TCDatabaseHelper;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -46,10 +45,8 @@ public class Session implements Parcelable {
     private List<String> history = new ArrayList<>(); //list of seen vertex IDs
     private List<String> optionHistory = new ArrayList<>();//list of user responses
 
-    private Context context;
 
-    public Session(FlowChart flowchart, Context context) {
-        this.context = context;
+    public Session(FlowChart flowchart) {
         this.createdDate = new Date().getTime();
         this.flowchart_id = flowchart.getId();
         this.traversal = new GraphTraversal(flowchart.getGraph());
@@ -71,15 +68,7 @@ public class Session implements Parcelable {
         in.readList(this.optionHistory,String.class.getClassLoader());
         flowchart_id = in.readString();
 
-        FlowChart f = TCDatabaseHelper.get(context).getChart(flowchart_id);
-
-        //Now, just need to setup the traversal
-        traversal = new GraphTraversal(f.getGraph());
-        if (history.size() > 1) {
-            //Get last vertex, that's where we're at
-            traversal.setCurrentVertex(history.get(history.size() -1));
-        }
-
+        //Will wait to setup the Graph Traversal until solidly within the activity
     }
 
     /*
@@ -101,6 +90,18 @@ public class Session implements Parcelable {
         return report.toString();
     }
     */
+
+    public void setTraversal(FlowChart f) {
+        if (f.getId().equals(flowchart_id)) {
+            traversal = new GraphTraversal(f.getGraph());
+            if (history.size() > 1) {
+                //Get last vertex, that's where we're at
+                traversal.setCurrentVertex(history.get(history.size() -1));
+            }
+        } else {
+            Log.e("Session Setup","Incorrect Flowchart supplied to setup traversal");
+        }
+    }
 
     //Save
     public long getCreatedDate() {

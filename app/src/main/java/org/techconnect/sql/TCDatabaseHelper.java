@@ -560,7 +560,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         if (c.getCount() > 0) {
             String flowchart_id = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FLOWCHART_ID));
             FlowChart flow = getChart(flowchart_id);
-            Session s = new Session(flow,context);
+            Session s = new Session(flow);
             s.setCreatedDate(c.getLong(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.CREATED_DATE)));
             s.setDepartment(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.DEPARTMENT)));
             s.setModelNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.MODEL)));
