@@ -56,6 +56,9 @@
             android:name="org.techconnect.activities.GetGuidesActivity"
             android:label="@string/guide_catalog" />
         <activity
+            android:name="org.techconnect.activities.ProfileActivity"
+            android:label="Personal Profile" />
+        <activity
             android:name="org.techconnect.activities.GuideActivity"
             android:label="@string/title_activity_guide"
             android:parentActivityName="org.techconnect.activities.MainActivity">

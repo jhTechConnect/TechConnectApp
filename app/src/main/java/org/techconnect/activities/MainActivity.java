@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
         dropDownButton.setVisibility(View.INVISIBLE);//Not initially there
-        
+
         toggle.syncState();
 
         AuthManager.get(this).addAuthListener(new AuthListener() {
@@ -315,6 +315,7 @@ public class MainActivity extends AppCompatActivity
             return true;
         } else if (id == R.id.profile) {
             //Open up Account info
+            onViewProfile();
             return true;
         }
 
@@ -348,6 +349,10 @@ public class MainActivity extends AppCompatActivity
                 }
             }.execute(AuthManager.get(this).getAuth());
         }
+    }
+
+    private void onViewProfile() {
+        startActivity(new Intent(MainActivity.this, ProfileActivity.class));
     }
 
     private void setCurrentFragment(int frag) {
