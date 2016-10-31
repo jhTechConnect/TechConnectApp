@@ -21,7 +21,7 @@ import org.techconnect.activities.ImageViewActivity;
 import org.techconnect.misc.ResourceHandler;
 import org.techconnect.model.Vertex;
 import org.techconnect.model.session.Session;
-import org.techconnect.model.session.SessionCompleteListener;
+import org.techconnect.model.session.SessionListener;
 
 import java.io.File;
 import java.util.List;
@@ -54,7 +54,7 @@ public class GuideFlowView extends ScrollView implements View.OnClickListener {
 
     CommentsResourcesTabbedView commentsResourcesTabbedView;
     private Session session;
-    private SessionCompleteListener listener;
+    private SessionListener listener;
 
     public GuideFlowView(Context context) {
         super(context);
@@ -68,7 +68,7 @@ public class GuideFlowView extends ScrollView implements View.OnClickListener {
         super(context, attrs, defStyleAttr);
     }
 
-    public void setSession(Session session, SessionCompleteListener listener) {
+    public void setSession(Session session, SessionListener listener) {
         this.listener = listener;
         this.session = session;
         updateViews();
@@ -88,7 +88,7 @@ public class GuideFlowView extends ScrollView implements View.OnClickListener {
         commentsResourcesTabbedView = (CommentsResourcesTabbedView) LayoutInflater.from(getContext())
                 .inflate(R.layout.comments_resources_tabbed_view, tabContainer, false);
         commentsResourcesTabbedView.setItems(curr_step, curr_step.getResources(),
-                session.getFlowchart().getId());
+                session.getFlowchart());
         tabContainer.addView(commentsResourcesTabbedView);
     }
 

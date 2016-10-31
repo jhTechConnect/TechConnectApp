@@ -168,6 +168,8 @@ public class MainActivity extends AppCompatActivity
         if (hasPermissions && !userLearnedDrawer) {
             drawerLayout.openDrawer(Gravity.LEFT);
         }
+        updateNavHeader();
+        checkPermissions();
     }
 
     @OnClick(R.id.grant_permission_btn)
