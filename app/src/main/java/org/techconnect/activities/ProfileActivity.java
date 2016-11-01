@@ -24,6 +24,8 @@ import java.util.List;
 import butterknife.ButterKnife;
 
 public class ProfileActivity extends AppCompatActivity {
+    TableLayout skills_table;
+    List<ImageButton> row_buttons;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +49,8 @@ public class ProfileActivity extends AppCompatActivity {
         email.setText(user.getEmail());
 
         //Create all rows from list of skills in profile
-        final TableLayout skills_table = (TableLayout) findViewById(R.id.skills_table);
-        final List<ImageButton> row_buttons = new ArrayList<ImageButton>(); //Store reference of where buttons are
+        skills_table = (TableLayout) findViewById(R.id.skills_table);
+        row_buttons = new ArrayList<ImageButton>(); //Store reference of where buttons are
 
         for (int i = 0; i < user.getExpertises().size(); i++) {
             TableRow toAdd = (TableRow) getLayoutInflater().inflate(R.layout.skill_tablerow,null,false);
@@ -59,7 +61,6 @@ public class ProfileActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     //We want to delete the entire row that it belongs to
-                    row_buttons.indexOf(row_button);
                     skills_table.removeViewAt(row_buttons.indexOf(row_button));
                     row_buttons.remove(row_button);
                 }
@@ -110,48 +111,19 @@ public class ProfileActivity extends AppCompatActivity {
         final ImageButton editSkill = (ImageButton) findViewById(R.id.edit_skill_button);
         editSkill.setOnClickListener(new View.OnClickListener() {
             boolean isAdding = false;
-            TableRow toAdd;
-            TextInputLayout inputLayout;
-            ImageButton icon;
-            EditText add_skill;
-            TextView skill_text;
             @Override
             public void onClick(View view) {
                 //Add a new row to the list of skills or deleting old skills
                 if (!isAdding) {
-                    //Turn on all imagebuttons
-                    for (ImageButton button : row_buttons) {
-                        button.setClickable(true);
-                        button.setImageResource(R.drawable.ic_close_black_24dp);
-                    }
-                    //Activate a potential new row
-                    toAdd = (TableRow) getLayoutInflater().inflate(R.layout.skill_tablerow,null,false);
-                    inputLayout = (TextInputLayout) toAdd.findViewById(R.id.edit_skill_layout);
-                    icon = (ImageButton) toAdd.findViewById(R.id.skill_icon);
-                    icon.setImageResource(R.drawable.ic_add_box_black_24dp);
-                    add_skill = (EditText) toAdd.findViewById(R.id.edit_skill_text);
-                    skill_text = (TextView) toAdd.findViewById(R.id.skill_text);
-
-                    icon.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            //User actually entered something
-                            if (add_skill.getText().length() > 0) {
-                                skill_text.setText(add_skill.getText());
-                                icon.setImageResource(R.drawable.ic_build_black_24dp);
-                                skill_text.setVisibility(View.VISIBLE);
-                                inputLayout.setVisibility(View.GONE);
-                                row_buttons.add(icon);
-                            }
-                        }
-                    });
-
+                for (ImageButton button : row_buttons) {
+                    button.setClickable(true);
+                    button.setImageResource(R.drawable.ic_close_black_24dp);
+                }
+                    onRowAddRequest();
                     editSkill.setImageResource(R.drawable.ic_done_black_24dp);
-                    skills_table.addView(toAdd);
                 } else { //Stopping adding
-                    if (skill_text.getVisibility() != View.VISIBLE) {
-                        skills_table.removeView(toAdd);
-                    }
+                    skills_table.removeViewAt(skills_table.getChildCount() -1);//Always delete the last one
+                    row_buttons.remove(row_buttons.size() - 1); //Remove the last one
                     for (ImageButton button: row_buttons) {
                         button.setImageResource(R.drawable.ic_build_black_24dp);
                         button.setClickable(false);
@@ -182,5 +154,46 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private TableRow onRowAddRequest() {
+        final TableRow toAdd;
+        final TextInputLayout inputLayout;
+        final ImageButton icon;
+        final EditText add_skill;
+        final TextView skill_text;
+
+        toAdd = (TableRow) getLayoutInflater().inflate(R.layout.skill_tablerow,null,false);
+        inputLayout = (TextInputLayout) toAdd.findViewById(R.id.edit_skill_layout);
+        icon = (ImageButton) toAdd.findViewById(R.id.skill_icon);
+        icon.setImageResource(R.drawable.ic_add_box_black_24dp);
+        add_skill = (EditText) toAdd.findViewById(R.id.edit_skill_text);
+        skill_text = (TextView) toAdd.findViewById(R.id.skill_text);
+
+        icon.setOnClickListener(new View.OnClickListener() {
+            boolean adding = true; //Initially, adding a new row
+            @Override
+            public void onClick(View view) {
+                //User actually entered something
+                if (adding) {
+                    if (add_skill.getText().length() > 0) {
+                        skill_text.setText(add_skill.getText());
+                        icon.setImageResource(R.drawable.ic_close_black_24dp);
+                        skill_text.setVisibility(View.VISIBLE);
+                        inputLayout.setVisibility(View.GONE);
+                        onRowAddRequest();
+                        adding = false;
+                    }
+                } else {
+                    //We want to delete the entire row that it belongs to
+                    skills_table.removeViewAt(row_buttons.indexOf(icon));
+                    row_buttons.remove(icon);
+                }
+            }
+        });
+
+        row_buttons.add(icon);
+        skills_table.addView(toAdd);
+        return toAdd;
     }
 }
