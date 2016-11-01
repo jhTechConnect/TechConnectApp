@@ -165,9 +165,27 @@ public class MainActivity extends AppCompatActivity
         User user;
         if (loggedIn && (user = TCDatabaseHelper.get(this).getUser(AuthManager.get(this).getAuth().getUserId())) != null) {
             headerTextView.setText(user.getName());
+            headerTextView.setOnClickListener(new View.OnClickListener() {
+                boolean isClicked = false;
+                @Override
+                public void onClick(View view) {
+                    if (isClicked) {
+                        //Close the profile options
+                        dropDownButton.setImageResource(R.drawable.ic_arrow_drop_down_white_24dp);
+                        logoutMenuItem.setVisible(false);
+                        viewProfileMenuItem.setVisible(false);
+                    } else {
+                        //Open the profile options
+                        dropDownButton.setImageResource(R.drawable.ic_arrow_drop_up_white_24dp);
+                        logoutMenuItem.setVisible(true);
+                        viewProfileMenuItem.setVisible(true);
+                    }
+                    isClicked = !isClicked;
+                }
+            });
             dropDownButton.setVisibility(View.VISIBLE);
             dropDownButton.setImageResource(R.drawable.ic_arrow_drop_down_white_24dp);
-            dropDownButton.setOnClickListener(new View.OnClickListener() {
+            /*dropDownButton.setOnClickListener(new View.OnClickListener() {
                 boolean isClicked = false;
 
                 @Override
@@ -185,7 +203,7 @@ public class MainActivity extends AppCompatActivity
                     }
                     isClicked = !isClicked;
                 }
-            });
+            });*/
         } else {
             headerTextView.setText(R.string.app_name);
             dropDownButton.setVisibility(View.INVISIBLE);
