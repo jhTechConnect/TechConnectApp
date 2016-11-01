@@ -89,6 +89,18 @@ public class TCNetworkHelper {
         }
     }
 
+    public User updateUser(User user, UserAuth userAuth) throws IOException {
+        Response<JsendResponse> resp = service.updateUser(userAuth.getAuthToken(), userAuth.getUserId(), user).execute();
+        lastCode = resp.code();
+        if (!resp.isSuccessful()) {
+            lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            return null;
+        } else {
+            JsonObject obj = resp.body().getData();
+            return gson.fromJson(obj.get("user"), User.class);
+        }
+    }
+
     public User getUser(String id) throws IOException {
         Response<JsendResponse> resp = service.getUser(id).execute();
         lastCode = resp.code();

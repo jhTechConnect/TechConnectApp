@@ -35,6 +35,8 @@ public class CommentThreadView extends LinearLayout {
     EditText commentEditText;
     @Bind(R.id.post_button)
     ImageButton imageButton;
+    @Bind(R.id.signin_to_comment_textView)
+    TextView signinToCommentTextView;
 
     private Commentable commentable;
     private String chartId;
@@ -59,21 +61,20 @@ public class CommentThreadView extends LinearLayout {
 
     private void updateViews() {
         removeAllViews();
-        if (commentable.getComments().size() > 0) {
-            LayoutInflater inflater = LayoutInflater.from(getContext());
-            for (Comment comment : commentable.getComments()) {
-                CommentView view = (CommentView) inflater.inflate(R.layout.comment_view, this, false);
-                view.setComment(comment);
-                addView(view);
-            }
-            if (AuthManager.get(getContext()).hasAuth()) {
-                addView(postcommentLinearLayout);
-            }
+        if (AuthManager.get(getContext()).hasAuth()) {
+            addView(postcommentLinearLayout);
         } else {
+            addView(signinToCommentTextView);
+        }
+        if (commentable.getComments().size() == 0) {
             addView(headerTextView);
-            if (AuthManager.get(getContext()).hasAuth()) {
-                addView(postcommentLinearLayout);
-            }
+        }
+
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        for (Comment comment : commentable.getComments()) {
+            CommentView view = (CommentView) inflater.inflate(R.layout.comment_view, this, false);
+            view.setComment(comment);
+            addView(view);
         }
     }
 
@@ -93,7 +94,7 @@ public class CommentThreadView extends LinearLayout {
                 @Override
                 protected void onPostExecute(Comment postedComment) {
                     if (postedComment != null) {
-                        commentable.getComments().add(postedComment);
+                        commentable.getComments().add(0, postedComment);
                         commentEditText.setText("");
                         updateViews();
                     } else {

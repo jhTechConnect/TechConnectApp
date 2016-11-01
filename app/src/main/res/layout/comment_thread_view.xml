@@ -9,19 +9,11 @@
     android:paddingTop="16dp"
     android:showDividers="middle">
 
-    <TextView
-        android:id="@+id/comments_headerTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:text="@string/no_comments"
-        android:textSize="18sp"
-        android:textStyle="normal|bold" />
-
     <LinearLayout
         android:id="@+id/postcomment_linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
         android:orientation="horizontal">
 
@@ -42,4 +34,26 @@
             app:srcCompat="@drawable/ic_menu_send" />
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/comments_headerTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center_horizontal"
+        android:text="@string/no_comments"
+        android:textSize="18sp"
+        android:textStyle="normal|bold" />
+
+    <TextView
+        android:id="@+id/signin_to_comment_textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center_horizontal"
+        android:text="@string/sign_in_to_comment"
+        android:textSize="16sp" />
+
 </org.techconnect.views.CommentThreadView>
