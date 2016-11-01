@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -18,11 +17,9 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 
 import org.centum.techconnect.R;
+import org.techconnect.asynctasks.RegisterAsyncTask;
 import org.techconnect.model.User;
-import org.techconnect.network.TCNetworkHelper;
 import org.techconnect.sql.TCDatabaseHelper;
-
-import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -78,27 +75,17 @@ public class RegisterActivity extends AppCompatActivity {
             final String password = passwordEditText.getText().toString();
 
             String expertises = expertisesEditText.getText().toString();
-            final String[] expertisesArr;
+            final String[] skillsArr;
             if (TextUtils.isEmpty(expertises.trim())) {
-                expertisesArr = new String[0];
+                skillsArr = new String[0];
             } else {
-                expertisesArr = expertises.split(",");
-                for (int i = 0; i < expertisesArr.length; i++) {
-                    expertisesArr[i] = expertisesArr[i].trim();
+                skillsArr = expertises.split(",");
+                for (int i = 0; i < skillsArr.length; i++) {
+                    skillsArr[i] = skillsArr[i].trim();
                 }
             }
 
-            new AsyncTask<Void, Void, User>() {
-
-                @Override
-                protected User doInBackground(Void... voids) {
-                    try {
-                        return new TCNetworkHelper().register(email, password, locale, name, org, expertisesArr);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        return null;
-                    }
-                }
+            new RegisterAsyncTask(locale, name, email, org, password, skillsArr) {
 
                 @Override
                 protected void onPostExecute(User user) {
@@ -134,7 +121,6 @@ public class RegisterActivity extends AppCompatActivity {
         String name = nameEditText.getText().toString();
         String email = emailEditText.getText().toString();
         String org = orgEditText.getText().toString();
-        String expertises = expertisesEditText.getText().toString();
         String password = passwordEditText.getText().toString();
         String cPassword = confirmPasswordEditText.getText().toString();
 

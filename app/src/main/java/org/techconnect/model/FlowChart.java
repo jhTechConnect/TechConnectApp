@@ -27,6 +27,7 @@ public class FlowChart implements Parcelable, Commentable {
     private String owner;
     private Graph graph;
     private List<String> all_res;
+    private List<String> all_usr_ids;
     private List<Comment> comments;
     private String image;
     private List<String> resources;
@@ -45,6 +46,7 @@ public class FlowChart implements Parcelable, Commentable {
         version = in.readString();
         owner = in.readString();
         all_res = in.createStringArrayList();
+        all_usr_ids = in.createStringArrayList();
         comments = in.createTypedArrayList(Comment.CREATOR);
         image = in.readString();
         resources = in.createStringArrayList();
@@ -176,12 +178,21 @@ public class FlowChart implements Parcelable, Commentable {
         parcel.writeString(version);
         parcel.writeString(owner);
         parcel.writeStringList(all_res);
+        parcel.writeStringList(all_usr_ids);
         parcel.writeTypedList(comments);
         parcel.writeString(image);
         parcel.writeStringList(resources);
         parcel.writeInt(score);
         parcel.writeString(type.name());
         parcel.writeParcelable(graph, 0);
+    }
+
+    public List<String> getAllUserIds() {
+        return all_usr_ids;
+    }
+
+    public void setAllUserIds(List<String> all_user_ids) {
+        this.all_usr_ids = all_user_ids;
     }
 
     public enum ChartType {
