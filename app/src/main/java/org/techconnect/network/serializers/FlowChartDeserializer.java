@@ -81,6 +81,7 @@ public class FlowChartDeserializer implements JsonDeserializer<FlowChart> {
         flowchart.setAllUserIds(all_users);
         flowchart.setComments(comments);
         flowchart.setType(type);
+        flowchart.setScore(score);
 
         //Here are the nullable fields
         final JsonElement image = jsonObject.get("image");
