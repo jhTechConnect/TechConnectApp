@@ -9,7 +9,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -19,12 +18,18 @@ import org.techconnect.misc.auth.AuthManager;
 import org.techconnect.model.User;
 import org.techconnect.sql.TCDatabaseHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.ButterKnife;
+
 public class ProfileActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        ButterKnife.bind(this);
         User user = TCDatabaseHelper.get(this).getUser(AuthManager.get(this).getAuth().getUserId());
 
         //Add return arrow to action bar
@@ -43,12 +48,26 @@ public class ProfileActivity extends AppCompatActivity {
 
         //Create all rows from list of skills in profile
         final TableLayout skills_table = (TableLayout) findViewById(R.id.skills_table);
-        for (String skill : user.getExpertises()) {
+        final List<ImageButton> row_buttons = new ArrayList<ImageButton>(); //Store reference of where buttons are
+
+        for (int i = 0; i < user.getExpertises().size(); i++) {
             TableRow toAdd = (TableRow) getLayoutInflater().inflate(R.layout.skill_tablerow,null,false);
+            final ImageButton row_button = (ImageButton) toAdd.findViewById(R.id.skill_icon);
+            row_buttons.add(row_button);
+            row_button.setTag(i); //View that the button belongs to
+            row_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //We want to delete the entire row that it belongs to
+                    row_buttons.indexOf(row_button);
+                    skills_table.removeViewAt(row_buttons.indexOf(row_button));
+                    row_buttons.remove(row_button);
+                }
+            });
             TextInputLayout addSkill = (TextInputLayout) toAdd.findViewById(R.id.edit_skill_layout);
             addSkill.setVisibility(View.GONE);
             TextView toAddText = (TextView)  toAdd.findViewById(R.id.skill_text);
-            toAddText.setText(skill);
+            toAddText.setText(user.getExpertises().get(i));
             toAddText.setVisibility(View.VISIBLE);
             skills_table.addView(toAdd);
         }
@@ -86,35 +105,58 @@ public class ProfileActivity extends AppCompatActivity {
                 isEditing = !isEditing;
             }
         });
-        final ImageButton addSkill = (ImageButton) findViewById(R.id.add_skill_button);
-        addSkill.setOnClickListener(new View.OnClickListener() {
+
+
+        final ImageButton editSkill = (ImageButton) findViewById(R.id.edit_skill_button);
+        editSkill.setOnClickListener(new View.OnClickListener() {
             boolean isAdding = false;
             TableRow toAdd;
             TextInputLayout inputLayout;
-            ImageView icon;
+            ImageButton icon;
             EditText add_skill;
             TextView skill_text;
             @Override
             public void onClick(View view) {
-                //Add a new row to the list of skills
+                //Add a new row to the list of skills or deleting old skills
                 if (!isAdding) {
+                    //Turn on all imagebuttons
+                    for (ImageButton button : row_buttons) {
+                        button.setClickable(true);
+                        button.setImageResource(R.drawable.ic_close_black_24dp);
+                    }
+                    //Activate a potential new row
                     toAdd = (TableRow) getLayoutInflater().inflate(R.layout.skill_tablerow,null,false);
                     inputLayout = (TextInputLayout) toAdd.findViewById(R.id.edit_skill_layout);
-                    icon = (ImageView) toAdd.findViewById(R.id.skill_icon);
-                    add_skill = (EditText) toAdd.findViewById(R.id.edit_skill_text);
+                    icon = (ImageButton) toAdd.findViewById(R.id.skill_icon);
                     icon.setImageResource(R.drawable.ic_add_box_black_24dp);
-                    add_skill.setText("Add Skill");
-                    addSkill.setImageResource(R.drawable.ic_done_black_24dp);
+                    add_skill = (EditText) toAdd.findViewById(R.id.edit_skill_text);
+                    skill_text = (TextView) toAdd.findViewById(R.id.skill_text);
+
+                    icon.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            //User actually entered something
+                            if (add_skill.getText().length() > 0) {
+                                skill_text.setText(add_skill.getText());
+                                icon.setImageResource(R.drawable.ic_build_black_24dp);
+                                skill_text.setVisibility(View.VISIBLE);
+                                inputLayout.setVisibility(View.GONE);
+                                row_buttons.add(icon);
+                            }
+                        }
+                    });
+
+                    editSkill.setImageResource(R.drawable.ic_done_black_24dp);
                     skills_table.addView(toAdd);
                 } else { //Stopping adding
-                    toAdd = (TableRow) skills_table.getChildAt(skills_table.getChildCount()- 1 );
-                    skill_text = (TextView) toAdd.findViewById(R.id.skill_text);
-                    skill_text.setText(add_skill.getText());
-
-                    icon.setImageResource(R.drawable.ic_build_black_24dp);
-                    skill_text.setVisibility(View.VISIBLE);
-                    inputLayout.setVisibility(View.GONE);
-                    addSkill.setImageResource(R.drawable.ic_add_box_black_24dp);
+                    if (skill_text.getVisibility() != View.VISIBLE) {
+                        skills_table.removeView(toAdd);
+                    }
+                    for (ImageButton button: row_buttons) {
+                        button.setImageResource(R.drawable.ic_build_black_24dp);
+                        button.setClickable(false);
+                    }
+                    editSkill.setImageResource(R.drawable.ic_mode_edit_black_24dp);
                 }
                 isAdding = !isAdding;
             }
