@@ -1,5 +1,8 @@
 package org.techconnect.activities;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TextInputLayout;
@@ -7,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TableLayout;
@@ -14,25 +18,43 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import org.centum.techconnect.R;
+import org.techconnect.asynctasks.UpdateUserAsyncTask;
 import org.techconnect.misc.auth.AuthManager;
 import org.techconnect.model.User;
 import org.techconnect.sql.TCDatabaseHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import butterknife.ButterKnife;
 
 public class ProfileActivity extends AppCompatActivity {
     TableLayout skills_table;
     List<ImageButton> row_buttons;
+    User temp_user;
+    List<String> tmp_skills; //Hold onto the actual final set of skills for the user
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         ButterKnife.bind(this);
+
+        //Here, we access the current User from the Database, create a temporary user in case we need to update
         User user = TCDatabaseHelper.get(this).getUser(AuthManager.get(this).getAuth().getUserId());
+        temp_user = new User();
+
+        tmp_skills = new ArrayList<String>();
+        temp_user.set_id(user.get_id());
+        temp_user.setEmail(user.getEmail());
+        temp_user.setName(user.getName());
+        temp_user.setCountryCode(user.getCountryCode());
+        temp_user.setCountry(user.getCountry());
+        temp_user.setOrganization(user.getOrganization());
+
+        //Setup the button to save the data
+        final Button saveButton = (Button) findViewById(R.id.save_button);
 
         //Add return arrow to action bar
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -62,6 +84,7 @@ public class ProfileActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     //We want to delete the entire row that it belongs to
                     skills_table.removeViewAt(row_buttons.indexOf(row_button));
+                    tmp_skills.remove(row_buttons.indexOf(row_button));
                     row_buttons.remove(row_button);
                 }
             });
@@ -70,6 +93,7 @@ public class ProfileActivity extends AppCompatActivity {
             TextView toAddText = (TextView)  toAdd.findViewById(R.id.skill_text);
             toAddText.setText(user.getExpertises().get(i));
             toAddText.setVisibility(View.VISIBLE);
+            tmp_skills.add(user.getExpertises().get(i));
             skills_table.addView(toAdd);
         }
 
@@ -87,6 +111,7 @@ public class ProfileActivity extends AppCompatActivity {
             boolean isEditing = false;
             @Override
             public void onClick(View view) {
+
                 if (!isEditing) {
                     org.setVisibility(View.GONE);
                     email.setVisibility(View.GONE);
@@ -98,10 +123,13 @@ public class ProfileActivity extends AppCompatActivity {
                     email.setVisibility(View.VISIBLE);
                     org.setText(edit_org.getText());
                     email.setText(edit_email.getText());
+                    temp_user.setOrganization(edit_org.getText().toString());//Update Reference
+                    temp_user.setEmail(edit_email.getText().toString());
 
                     edit_org_layout.setVisibility(View.GONE);
                     edit_email_layout.setVisibility(View.GONE);
                     editWork.setImageResource(R.drawable.ic_mode_edit_black_24dp);
+                    saveButton.setVisibility(View.VISIBLE);
                 }
                 isEditing = !isEditing;
             }
@@ -115,10 +143,10 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //Add a new row to the list of skills or deleting old skills
                 if (!isAdding) {
-                for (ImageButton button : row_buttons) {
-                    button.setClickable(true);
-                    button.setImageResource(R.drawable.ic_close_black_24dp);
-                }
+                    for (ImageButton button : row_buttons) {
+                        button.setClickable(true);
+                        button.setImageResource(R.drawable.ic_close_black_24dp);
+                    }
                     onRowAddRequest();
                     editSkill.setImageResource(R.drawable.ic_done_black_24dp);
                 } else { //Stopping adding
@@ -129,6 +157,7 @@ public class ProfileActivity extends AppCompatActivity {
                         button.setClickable(false);
                     }
                     editSkill.setImageResource(R.drawable.ic_mode_edit_black_24dp);
+                    saveButton.setVisibility(View.VISIBLE);
                 }
                 isAdding = !isAdding;
             }
@@ -178,6 +207,7 @@ public class ProfileActivity extends AppCompatActivity {
                 if (adding) {
                     if (add_skill.getText().length() > 0) {
                         skill_text.setText(add_skill.getText());
+                        tmp_skills.add(add_skill.getText().toString());//Add to temp user
                         icon.setImageResource(R.drawable.ic_close_black_24dp);
                         skill_text.setVisibility(View.VISIBLE);
                         inputLayout.setVisibility(View.GONE);
@@ -187,6 +217,7 @@ public class ProfileActivity extends AppCompatActivity {
                 } else {
                     //We want to delete the entire row that it belongs to
                     skills_table.removeViewAt(row_buttons.indexOf(icon));
+                    tmp_skills.remove(row_buttons.indexOf(icon));//Remove expertise
                     row_buttons.remove(icon);
                 }
             }
@@ -196,4 +227,38 @@ public class ProfileActivity extends AppCompatActivity {
         skills_table.addView(toAdd);
         return toAdd;
     }
+
+    public void writeUserToDatabase(View v) throws ExecutionException, InterruptedException {
+        //Use the temp_user object to write any user changes to the database
+        final Context context = this;
+        temp_user.setExpertises(tmp_skills);
+        new UpdateUserAsyncTask(context) {
+            ProgressDialog pd;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                pd = ProgressDialog.show(ProfileActivity.this, getString(R.string.save_changes), null, true, false);
+            }
+
+            @Override
+            protected void onPostExecute(User u) {
+                pd.dismiss();
+                pd = null;
+                if (u != null) {
+                    TCDatabaseHelper.get(context).upsertUser(u);
+
+                } else {
+                    new AlertDialog.Builder(context)
+                            .setTitle(R.string.error)
+                            .setMessage(R.string.failed_update_user)
+                            .show();
+
+                }
+            }
+        }.execute(temp_user);
+
+        v.setVisibility(View.GONE);
+    }
+
 }

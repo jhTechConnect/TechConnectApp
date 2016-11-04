@@ -1,8 +1,9 @@
 package org.techconnect.network;
 
+import com.google.gson.JsonObject;
+
 import org.techconnect.model.Comment;
 import org.techconnect.model.JsendResponse;
-import org.techconnect.model.User;
 
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -46,7 +47,7 @@ public interface TCRetrofit {
 
     // POST update user
     @POST("api/v1/user/{id}")
-    Call<JsendResponse> updateUser(@Header("X-Auth-Token") String auth_token, @Header("X-User-Id") String userId, @Body User user);
+    Call<JsendResponse> updateUser(@Header("X-Auth-Token") String auth_token, @Header("X-User-Id") String userId, @Path("id") String id, @Body JsonObject user);
 
     // GET user
     @GET("api/v1/user/{id}")

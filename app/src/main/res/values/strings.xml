@@ -120,6 +120,7 @@
     <string name="dont_show_again">Don\'t show again</string>
     <string name="comments">Comments</string>
     <string name="download">Download</string>
+    <string name="save_changes">Save Changes</string>
     <string name="updating">Updating...</string>
     <string name="write_comment">Write Comment...</string>
     <string name="login_required">Login Required</string>
@@ -127,6 +128,7 @@
     <string name="posting">Posting...</string>
     <string name="error">Error</string>
     <string name="failed_post_comment">Failed to post the comment</string>
+    <string name="failed_update_user">Failed to update profile info</string>
     <string name="couldnt_login">Could not sign in. Check your email and password and try again</string>
     <string name="view_profile">View Profile</string>
     <string name="sign_in_to_comment">Please sign in to comment</string>
