@@ -349,7 +349,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void onViewProfile() {
-        startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+        //Only visible when user is actually logged in
+        User user = TCDatabaseHelper.get(this).getUser(AuthManager.get(this).getAuth().getUserId());
+        Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+        intent.putExtra("user",user);
+        startActivity(intent);
     }
 
     private void setCurrentFragment(int frag) {

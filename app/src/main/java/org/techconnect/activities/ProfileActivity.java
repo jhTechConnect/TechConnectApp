@@ -30,10 +30,15 @@ import java.util.concurrent.ExecutionException;
 import butterknife.ButterKnife;
 
 public class ProfileActivity extends AppCompatActivity {
+    //Do all of the butterknife binding
+
     TableLayout skills_table;
     List<ImageButton> row_buttons;
-    User temp_user;
+    User head_user; //In cases without editing, this is only user needed
+    User temp_user; //In cases with editing, need temporary user to store changes until committed
+
     List<String> tmp_skills; //Hold onto the actual final set of skills for the user
+    boolean isEditable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,16 +47,23 @@ public class ProfileActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         //Here, we access the current User from the Database, create a temporary user in case we need to update
-        User user = TCDatabaseHelper.get(this).getUser(AuthManager.get(this).getAuth().getUserId());
-        temp_user = new User();
+        head_user = getIntent().getExtras().getParcelable("user");
 
-        tmp_skills = new ArrayList<String>();
-        temp_user.set_id(user.get_id());
-        temp_user.setEmail(user.getEmail());
-        temp_user.setName(user.getName());
-        temp_user.setCountryCode(user.getCountryCode());
-        temp_user.setCountry(user.getCountry());
-        temp_user.setOrganization(user.getOrganization());
+        //Setup whether the user can edit this profile
+        isEditable = AuthManager.get(this).hasAuth() && head_user.get_id().equals(AuthManager.get(this).getAuth().getUserId());
+
+        //Only setup the temp user and skills in case where user is actual user
+        if (isEditable) {
+            temp_user = new User();
+            tmp_skills = new ArrayList<String>();
+            temp_user.set_id(head_user.get_id());
+            temp_user.setEmail(head_user.getEmail());
+            temp_user.setName(head_user.getName());
+            temp_user.setCountryCode(head_user.getCountryCode());
+            temp_user.setCountry(head_user.getCountry());
+            temp_user.setOrganization(head_user.getOrganization());
+        }
+
 
         //Setup the button to save the data
         final Button saveButton = (Button) findViewById(R.id.save_button);
@@ -62,19 +74,19 @@ public class ProfileActivity extends AppCompatActivity {
 
         //Setup the Toolbar Title
         CollapsingToolbarLayout layout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
-        layout.setTitle(user.getName());
+        layout.setTitle(head_user.getName());
 
         //Add organization, email, and skills to the list below
         final TextView org = (TextView) findViewById(R.id.profile_work);
         final TextView email = (TextView) findViewById(R.id.profile_email);
-        org.setText(user.getOrganization());
-        email.setText(user.getEmail());
+        org.setText(head_user.getOrganization());
+        email.setText(head_user.getEmail());
 
         //Create all rows from list of skills in profile
         skills_table = (TableLayout) findViewById(R.id.skills_table);
         row_buttons = new ArrayList<ImageButton>(); //Store reference of where buttons are
 
-        for (int i = 0; i < user.getExpertises().size(); i++) {
+        for (int i = 0; i < head_user.getExpertises().size(); i++) {
             TableRow toAdd = (TableRow) getLayoutInflater().inflate(R.layout.tablerow_skill,null,false);
             final ImageButton row_button = (ImageButton) toAdd.findViewById(R.id.skill_icon);
             row_buttons.add(row_button);
@@ -88,12 +100,17 @@ public class ProfileActivity extends AppCompatActivity {
                     row_buttons.remove(row_button);
                 }
             });
+            row_button.setClickable(isEditable);
             TextInputLayout addSkill = (TextInputLayout) toAdd.findViewById(R.id.edit_skill_layout);
             addSkill.setVisibility(View.GONE);
             TextView toAddText = (TextView)  toAdd.findViewById(R.id.skill_text);
-            toAddText.setText(user.getExpertises().get(i));
+            toAddText.setText(head_user.getExpertises().get(i));
             toAddText.setVisibility(View.VISIBLE);
-            tmp_skills.add(user.getExpertises().get(i));
+
+            if (isEditable) { //Only need tmp_skills if editing
+                tmp_skills.add(head_user.getExpertises().get(i));
+            }
+
             skills_table.addView(toAdd);
         }
 
@@ -102,8 +119,8 @@ public class ProfileActivity extends AppCompatActivity {
         final TextInputLayout edit_email_layout = (TextInputLayout) findViewById(R.id.edit_email_layout);
         final EditText edit_org = (EditText) findViewById(R.id.edit_work_text);
         final EditText edit_email = (EditText) findViewById(R.id.edit_email_text);
-        edit_org.setText(user.getOrganization());
-        edit_email.setText(user.getEmail());
+        edit_org.setText(head_user.getOrganization());
+        edit_email.setText(head_user.getEmail());
 
         //Setup the edit button listeners to make changes to the profile info
         final ImageButton editWork = (ImageButton) findViewById(R.id.edit_work_button);
@@ -123,7 +140,7 @@ public class ProfileActivity extends AppCompatActivity {
                     email.setVisibility(View.VISIBLE);
                     org.setText(edit_org.getText());
                     email.setText(edit_email.getText());
-                    temp_user.setOrganization(edit_org.getText().toString());//Update Reference
+                    head_user.setOrganization(edit_org.getText().toString());//Update Reference
                     temp_user.setEmail(edit_email.getText().toString());
 
                     edit_org_layout.setVisibility(View.GONE);
@@ -134,7 +151,7 @@ public class ProfileActivity extends AppCompatActivity {
                 isEditing = !isEditing;
             }
         });
-
+        editWork.setClickable(isEditable);
 
         final ImageButton editSkill = (ImageButton) findViewById(R.id.edit_skill_button);
         editSkill.setOnClickListener(new View.OnClickListener() {
@@ -162,6 +179,7 @@ public class ProfileActivity extends AppCompatActivity {
                 isAdding = !isAdding;
             }
         });
+        editSkill.setClickable(isEditable);
     }
 
     //This comes from the Options Menu on the upper right
