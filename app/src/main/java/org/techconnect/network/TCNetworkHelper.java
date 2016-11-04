@@ -1,5 +1,7 @@
 package org.techconnect.network;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -82,6 +84,24 @@ public class TCNetworkHelper {
         lastCode = resp.code();
         if (!resp.isSuccessful()) {
             lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            return null;
+        } else {
+            JsonObject obj = resp.body().getData();
+            return gson.fromJson(obj.get("user"), User.class);
+        }
+    }
+
+    public User updateUser(User user, UserAuth userAuth) throws IOException {
+        JsonObject user_obj = new JsonObject();
+        Log.d("Update User","Attempt to convert to JsonObject");
+        Log.d("Update User",gson.toJson(user));
+        user_obj.add("user",gson.toJsonTree(user));
+        Log.d("Update User",user_obj.toString());
+        Response<JsendResponse> resp = service.updateUser(userAuth.getAuthToken(), userAuth.getUserId(),userAuth.getUserId(), user_obj).execute();
+        lastCode = resp.code();
+        if (!resp.isSuccessful()) {
+            lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            Log.e("Update User",lastError.getMessage());
             return null;
         } else {
             JsonObject obj = resp.body().getData();
@@ -176,14 +196,14 @@ public class TCNetworkHelper {
      * @param c        - The actual comment object
      * @throws IOException
      */
-    public FlowChart comment(String chart_id, Comment c, UserAuth auth) throws IOException {
+    public Comment comment(String chart_id, Comment c, UserAuth auth) throws IOException {
         Response<JsendResponse> resp = service.postComment(auth.getAuthToken(), auth.getUserId(), chart_id, c).execute();
         lastCode = resp.code();
         if (!resp.isSuccessful()) {
             lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
             return null;
         }
-        return gson.fromJson(resp.body().getData().get("flowchart"), FlowChart.class);
+        return gson.fromJson(resp.body().getData().get("comment"), Comment.class);
     }
 
     /**

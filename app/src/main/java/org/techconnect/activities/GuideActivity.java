@@ -4,17 +4,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.widget.NestedScrollView;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -30,30 +29,22 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class GuideActivity extends AppCompatActivity {
+public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     public static String EXTRA_CHART = "org.techconnect.guideactivity.flowchart";
 
-    @Bind(R.id.coordinatorLayout)
-    CoordinatorLayout coordinatorLayout;
     @Bind(R.id.content_linearLayout)
     LinearLayout contentLinearLayout;
-    @Bind(R.id.download_fab)
-    FloatingActionButton fab;
+    @Bind(R.id.button)
+    Button button;
     @Bind(R.id.header_imageView)
     ImageView headerImageView;
-    @Bind(R.id.nestedScrollView)
-    NestedScrollView nestedScrollView;
-    @Bind(R.id.type_textView)
-    TextView typeTextView;
-    @Bind(R.id.score_textView)
-    TextView scoreTextView;
-    @Bind(R.id.version_textView)
-    TextView versionTextView;
+    @Bind(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.description_textView)
     TextView descriptionTextView;
-    @Bind(R.id.update_TextView)
-    TextView updateTextView;
+    @Bind(R.id.scrollView)
+    ScrollView scrollView;
 
     CommentsResourcesTabbedView commentsResourcesTabbedView;
     private FlowChart flowChart;
@@ -65,13 +56,22 @@ public class GuideActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guide);
         ButterKnife.bind(this);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         commentsResourcesTabbedView = (CommentsResourcesTabbedView) getLayoutInflater()
                 .inflate(R.layout.comments_resources_tabbed_view, contentLinearLayout, false);
         contentLinearLayout.addView(commentsResourcesTabbedView);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                if (scrollView.getScrollY() == 0) {
+                    swipeRefreshLayout.setEnabled(true);
+                } else {
+                    swipeRefreshLayout.setEnabled(false);
+                }
+            }
+        });
 
         if (getIntent() != null && getIntent().hasExtra(EXTRA_CHART)) {
             flowChart = getIntent().getParcelableExtra(EXTRA_CHART);
@@ -89,21 +89,14 @@ public class GuideActivity extends AppCompatActivity {
         updateViews();
     }
 
-    @OnClick(R.id.download_fab)
+    @OnClick(R.id.button)
     protected void onFabAction() {
         if (!downloadingChart) {
             if (inDB) {
                 onPlay();
             } else {
-                reloadChart();
+                onRefresh();
             }
-        }
-    }
-
-    @OnClick(R.id.update_TextView)
-    protected void onUpdate() {
-        if (!downloadingChart && inDB) {
-            reloadChart();
         }
     }
 
@@ -112,17 +105,12 @@ public class GuideActivity extends AppCompatActivity {
             setTitle(flowChart.getName());
         }
         if (inDB) {
-            fab.setImageResource(R.drawable.ic_play_arrow_white_48dp);
-            updateTextView.setVisibility(View.VISIBLE);
+            button.setText(R.string.start_session);
         } else {
-            fab.setImageResource(R.drawable.ic_file_download_white_48dp);
-            updateTextView.setVisibility(View.GONE);
+            button.setText(R.string.download);
         }
-        typeTextView.setText(flowChart.getType().toString().toLowerCase());
-        scoreTextView.setText(flowChart.getScore() + "");
-        versionTextView.setText(flowChart.getVersion());
         descriptionTextView.setText(flowChart.getDescription());
-        commentsResourcesTabbedView.setItems(flowChart.getComments(), flowChart.getResources());
+        commentsResourcesTabbedView.setItems(flowChart, flowChart.getResources(), flowChart.getId());
         updateHeaderImage();
     }
 
@@ -132,38 +120,18 @@ public class GuideActivity extends AppCompatActivity {
                 // Load offline image
                 Picasso.with(this)
                         .load(getFileStreamPath(
-                                ResourceHandler.get().getStringResource(flowChart.getImage())))
+                                ResourceHandler.get(this).getStringResource(flowChart.getImage())))
+                        .placeholder(R.drawable.ic_sync_black_48dp)
                         .into(headerImageView);
             } else {
                 // Load online image
                 Picasso.with(this)
                         .load(flowChart.getImage())
+                        .placeholder(R.drawable.ic_sync_black_48dp)
                         .into(headerImageView);
             }
-        }
-    }
-
-    private void reloadChart() {
-        if (flowChart != null) {
-            downloadingChart = true;
-            fab.setImageResource(R.drawable.ic_sync_white_48dp);
-            fab.setEnabled(false);
-            updateTextView.setEnabled(false);
-            TCService.startLoadCharts(this, new String[]{flowChart.getId()}, new ResultReceiver(new Handler()) {
-                @Override
-                protected void onReceiveResult(int resultCode, Bundle resultData) {
-                    super.onReceiveResult(resultCode, resultData);
-                    downloadingChart = false;
-                    fab.setEnabled(true);
-                    updateTextView.setEnabled(true);
-                    checkDBForFlowchart();
-                    if (resultCode == TCService.LOAD_CHARTS_RESULT_SUCCESS) {
-                        Snackbar.make(coordinatorLayout, getString(R.string.guide_updated), Snackbar.LENGTH_SHORT).show();
-                    } else {
-                        Snackbar.make(coordinatorLayout, getString(R.string.fail_update_guide), Snackbar.LENGTH_SHORT).show();
-                    }
-                }
-            });
+        } else {
+            headerImageView.setVisibility(View.GONE);
         }
     }
 
@@ -188,12 +156,32 @@ public class GuideActivity extends AppCompatActivity {
     @OnClick(R.id.header_imageView)
     protected void onHeaderImageAction() {
         Intent intent = new Intent(this, ImageViewActivity.class);
-        if (ResourceHandler.get().hasStringResource(flowChart.getImage())) {
+        if (ResourceHandler.get(this).hasStringResource(flowChart.getImage())) {
             intent.putExtra(ImageViewActivity.EXTRA_PATH, getFileStreamPath(
-                    ResourceHandler.get().getStringResource(flowChart.getImage())).getAbsolutePath());
+                    ResourceHandler.get(this).getStringResource(flowChart.getImage())).getAbsolutePath());
         } else {
             intent.putExtra(ImageViewActivity.EXTRA_URL, flowChart.getImage());
         }
         startActivity(intent);
+    }
+
+    @Override
+    public void onRefresh() {
+        if (flowChart != null && !downloadingChart) {
+            swipeRefreshLayout.setRefreshing(true);
+            downloadingChart = true;
+            button.setText(R.string.updating);
+            button.setEnabled(false);
+            TCService.startLoadCharts(this, new String[]{flowChart.getId()}, new ResultReceiver(new Handler()) {
+                @Override
+                protected void onReceiveResult(int resultCode, Bundle resultData) {
+                    super.onReceiveResult(resultCode, resultData);
+                    downloadingChart = false;
+                    button.setEnabled(true);
+                    checkDBForFlowchart();
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            });
+        }
     }
 }

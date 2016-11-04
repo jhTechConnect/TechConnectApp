@@ -51,6 +51,15 @@ public class FlowChartSerializer implements JsonSerializer<FlowChart> {
 			}
 			jsonObject.add("comments", comments);
 		}
+
+		//Users
+		final JsonArray users = new JsonArray();
+		if (flowchart.getAllUserIds() != null) {
+			for (String user : flowchart.getAllUserIds()) {
+				users.add(user);
+			}
+			jsonObject.add("all_usr_id", comments);
+		}
 		
 		//Now, we have to convert the TinkerGraph, which is beautiful
 		JsonObject graph = new JsonObject();

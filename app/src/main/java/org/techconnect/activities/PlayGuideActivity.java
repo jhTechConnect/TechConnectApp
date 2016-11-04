@@ -115,7 +115,7 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
     }
 
     private void saveSession() {
-        TCDatabaseHelper.get().insertSession(session);//Write to the SQL Database
+        TCDatabaseHelper.get(this).insertSession(session);//Write to the SQL Database
     }
 
     private void loadFlowchart() {

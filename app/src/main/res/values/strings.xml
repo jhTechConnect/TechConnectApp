@@ -63,6 +63,7 @@
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
+    <string name="prompt_skill">Skill</string>
     <string name="action_sign_in">Sign in</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
@@ -118,4 +119,17 @@
     <string name="logging_out">Signing out</string>
     <string name="dont_show_again">Don\'t show again</string>
     <string name="comments">Comments</string>
+    <string name="download">Download</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="updating">Updating...</string>
+    <string name="write_comment">Write Comment...</string>
+    <string name="login_required">Login Required</string>
+    <string name="login_req_post_comment">You must be logged in to post a comment</string>
+    <string name="posting">Posting...</string>
+    <string name="error">Error</string>
+    <string name="failed_post_comment">Failed to post the comment</string>
+    <string name="failed_update_user">Failed to update profile info</string>
+    <string name="couldnt_login">Could not sign in. Check your email and password and try again</string>
+    <string name="view_profile">View Profile</string>
+    <string name="sign_in_to_comment">Please sign in to comment</string>
 </resources>

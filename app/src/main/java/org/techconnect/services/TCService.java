@@ -12,6 +12,7 @@ import android.util.Log;
 import org.centum.techconnect.R;
 import org.techconnect.misc.ResourceHandler;
 import org.techconnect.model.FlowChart;
+import org.techconnect.model.User;
 import org.techconnect.network.TCNetworkHelper;
 import org.techconnect.sql.TCDatabaseHelper;
 
@@ -22,8 +23,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class TCService extends IntentService {
 
@@ -37,12 +36,10 @@ public class TCService extends IntentService {
 
     private NotificationManager notificationManager;
     private TCNetworkHelper TCNetworkHelper;
-    private ResourceHandler resourceHandler;
 
     public TCService() {
         super("TechConnectService");
         TCNetworkHelper = new TCNetworkHelper();
-        resourceHandler = ResourceHandler.get();
     }
 
     /**
@@ -90,10 +87,13 @@ public class TCService extends IntentService {
             FlowChart[] flowCharts = TCNetworkHelper.getCharts(chartIds);
             TCDatabaseHelper.get(getApplicationContext()).upsertCharts(flowCharts);
             Set<String> res = new HashSet<>();
+            Set<String> userIds = new HashSet<>();
             for (FlowChart chart : flowCharts) {
                 res.addAll(chart.getAllRes());
+                userIds.addAll(chart.getAllUserIds());
             }
             loadResources(res.toArray(new String[res.size()]));
+            loadUsers(userIds.toArray(new String[userIds.size()]));
             resultCode = LOAD_CHARTS_RESULT_SUCCESS;
         } catch (IOException e) {
             resultCode = LOAD_CHARTS_RESULT_ERROR;
@@ -105,22 +105,47 @@ public class TCService extends IntentService {
     }
 
     /**
+     * Downloads the users by ID and adds them to the database
+     *
+     * @param userIds
+     */
+    private void loadUsers(String[] userIds) {
+        TCDatabaseHelper db = TCDatabaseHelper.get(getApplicationContext());
+        TCNetworkHelper network = new TCNetworkHelper();
+        User user;
+        for (String id : userIds) {
+            user = null;
+            try {
+                user = network.getUser(id);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (user == null) {
+                Log.e(this.getClass().getName(), "Failed to load user " + id);
+            } else {
+                db.upsertUser(user);
+                Log.i(this.getClass().getName(), "Downloaded user " + id);
+            }
+        }
+    }
+
+    /**
      * Downloads the resources and adds them to the resource handler.
      *
      * @param resources
      */
     private void loadResources(String resources[]) {
         for (String resUrl : resources) {
-            if (resourceHandler.hasStringResource(resUrl)) {
+            if (ResourceHandler.get(getApplicationContext()).hasStringResource(resUrl)) {
                 Log.d(this.getClass().getName(), "ResourceHandler has \"" + resUrl + "\"");
             } else {
                 String fileName;
                 try {
                     fileName = downloadFile(resUrl);
-                    resourceHandler.addStringResource(resUrl, fileName);
+                    ResourceHandler.get(getApplicationContext()).addStringResource(resUrl, fileName);
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Log.e(TCNetworkHelper.class.getName(), "Failed to load: " + resUrl);
+                    Log.e(this.getClass().getName(), "Failed to load: " + resUrl);
                 }
             }
         }
@@ -154,7 +179,7 @@ public class TCService extends IntentService {
         fileOutputStream.flush();
         fileOutputStream.close();
 
-        Logger.getLogger(getClass().getName()).log(Level.INFO, "Downloaded file: " + fileUrl + " --> " + fileName);
+        Log.i(getClass().getName(), "Downloaded file: " + fileUrl + " --> " + fileName);
         return fileName;
     }
 

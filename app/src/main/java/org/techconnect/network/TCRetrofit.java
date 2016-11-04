@@ -1,5 +1,7 @@
 package org.techconnect.network;
 
+import com.google.gson.JsonObject;
+
 import org.techconnect.model.Comment;
 import org.techconnect.model.JsendResponse;
 
@@ -37,12 +39,17 @@ public interface TCRetrofit {
                                  @Field("countryCode") String countryCode,
                                  @Field("name") String name,
                                  @Field("organization") String org,
-                                 @Field("expertises") String expertises[]);
+                                 @Field("expertises[]") String[] expertises);
 
     //Logout the user. I don't think that I need to pass in anything? Maybe the user?
     @POST("api/v1/logout")
     Call<JsendResponse> logout(@Header("X-Auth-Token") String auth_token, @Header("X-User-Id") String userId);
 
+    // POST update user
+    @POST("api/v1/user/{id}")
+    Call<JsendResponse> updateUser(@Header("X-Auth-Token") String auth_token, @Header("X-User-Id") String userId, @Path("id") String id, @Body JsonObject user);
+
+    // GET user
     @GET("api/v1/user/{id}")
     Call<JsendResponse> getUser(@Path("id") String id);
 

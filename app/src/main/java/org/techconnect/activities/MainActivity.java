@@ -18,9 +18,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -49,6 +51,8 @@ public class MainActivity extends AppCompatActivity
 
     private static final int PERMISSIONS_REQUEST_READ_STORAGE = 1;
     private static final String SHOWN_TUTORIAL = "org.techconnect.prefs.shownturotial";
+    private static final String USER_LEARNED_DRAWER = "org.techconnect.prefs.shownturotial.learneddrawer";
+    private static final String ASKED_PERMISSION = "org.techconnect.prefs.shownturotial.askedpermission";
 
     private static final int FRAGMENT_GUIDES = 0;
     private static final int FRAGMENT_REPORTS = 1;
@@ -66,12 +70,15 @@ public class MainActivity extends AppCompatActivity
     FrameLayout fragmentContainer;
 
     TextView headerTextView;
+    ImageButton dropDownButton;
     MenuItem logoutMenuItem;
     MenuItem loginMenuItem;
+    MenuItem viewProfileMenuItem;
 
     private String[] fragmentTitles;
     private int currentFragment = -1;
     private boolean showedLogin = false;
+    private boolean userLearnedDrawer = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,15 +89,53 @@ public class MainActivity extends AppCompatActivity
         ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        userLearnedDrawer = getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE).getBoolean(USER_LEARNED_DRAWER, false);
         loadingLayout.setVisibility(View.GONE);
         // Lock until we have permission (in check permissions)
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                if (!userLearnedDrawer) {
+                    // The user manually opened the drawer; store this flag to prevent auto-showing
+                    // the navigation drawer automatically in the future.
+                    userLearnedDrawer = true;
+                    getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE).edit()
+                            .putBoolean(USER_LEARNED_DRAWER, true).apply();
+                }
+            }
+        };
         drawerLayout.addDrawerListener(toggle);
+        //Set MenuItem properties for profile-related options
         logoutMenuItem = navigationView.getMenu().findItem(R.id.logout);
         loginMenuItem = navigationView.getMenu().findItem(R.id.login);
+        viewProfileMenuItem = navigationView.getMenu().findItem(R.id.profile);
+
         headerTextView = (TextView) navigationView.getHeaderView(0).findViewById(R.id.headerTextView);
+        dropDownButton = (ImageButton) navigationView.getHeaderView(0).findViewById(R.id.dropDownButton);
+        dropDownButton.setOnClickListener(new View.OnClickListener() {
+            boolean isClicked = false;
+
+            @Override
+            public void onClick(View view) {
+                if (isClicked) {
+                    //Close the profile options
+                    dropDownButton.setImageResource(R.drawable.ic_arrow_drop_down_white_24dp);
+                    logoutMenuItem.setVisible(false);
+                    viewProfileMenuItem.setVisible(false);
+                } else {
+                    //Open the profile options
+                    dropDownButton.setImageResource(R.drawable.ic_arrow_drop_up_white_24dp);
+                    logoutMenuItem.setVisible(true);
+                    viewProfileMenuItem.setVisible(true);
+                }
+                isClicked = !isClicked;
+            }
+        });
+        dropDownButton.setVisibility(View.INVISIBLE);//Not initially there
+
         toggle.syncState();
 
         AuthManager.get(this).addAuthListener(new AuthListener() {
@@ -120,14 +165,36 @@ public class MainActivity extends AppCompatActivity
         User user;
         if (loggedIn && (user = TCDatabaseHelper.get(this).getUser(AuthManager.get(this).getAuth().getUserId())) != null) {
             headerTextView.setText(user.getName());
+            headerTextView.setOnClickListener(new View.OnClickListener() {
+                boolean isClicked = false;
+                @Override
+                public void onClick(View view) {
+                    if (isClicked) {
+                        //Close the profile options
+                        dropDownButton.setImageResource(R.drawable.ic_arrow_drop_down_white_24dp);
+                        logoutMenuItem.setVisible(false);
+                        viewProfileMenuItem.setVisible(false);
+                    } else {
+                        //Open the profile options
+                        dropDownButton.setImageResource(R.drawable.ic_arrow_drop_up_white_24dp);
+                        logoutMenuItem.setVisible(true);
+                        viewProfileMenuItem.setVisible(true);
+                    }
+                    isClicked = !isClicked;
+                }
+            });
+            dropDownButton.setVisibility(View.VISIBLE);
+            dropDownButton.setImageResource(R.drawable.ic_arrow_drop_down_white_24dp);
         } else {
             headerTextView.setText(R.string.app_name);
+            dropDownButton.setVisibility(View.INVISIBLE);
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        boolean hasPermissions = checkPermissions();
         boolean showedIntro = getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE)
                 .getBoolean(SHOWN_TUTORIAL, false);
         if (!showedIntro) {
@@ -137,21 +204,26 @@ public class MainActivity extends AppCompatActivity
                     .putBoolean(SHOWN_TUTORIAL, true)
                     .apply();
             //startActivity(new Intent(MainActivity.this, IntroTutorial.class));
-        } else if (!showedLogin && !AuthManager.get(this).hasAuth()) {
+        } else if (!showedLogin && !AuthManager.get(this).hasAuth() && hasPermissions) {
             onShowLogin();
         } else if (AuthManager.get(this).hasAuth()) {
             loginMenuItem.setVisible(false);
-            logoutMenuItem.setVisible(true);
+            logoutMenuItem.setVisible(false);
+            viewProfileMenuItem.setVisible(false);
+
         } else {
             loginMenuItem.setVisible(true);
             logoutMenuItem.setVisible(false);
+            viewProfileMenuItem.setVisible(false);
         }
         updateNavHeader();
-        checkPermissions();
+        if (hasPermissions && !userLearnedDrawer) {
+            drawerLayout.openDrawer(Gravity.LEFT);
+        }
     }
 
     @OnClick(R.id.grant_permission_btn)
-    public void ensurePermissions() {
+    public void askForPermission() {
         if (!checkPermissions()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 ActivityCompat.requestPermissions(this,
@@ -168,13 +240,21 @@ public class MainActivity extends AppCompatActivity
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED);
             permissionLayout.setVisibility(View.GONE);
             fragmentContainer.setVisibility(View.VISIBLE);
+        } else {
+            if (!getSharedPreferences(getClass().getName(), MODE_PRIVATE).getBoolean(ASKED_PERMISSION, false)) {
+                getSharedPreferences(getClass().getName(), MODE_PRIVATE)
+                        .edit()
+                        .putBoolean(ASKED_PERMISSION, true)
+                        .apply();
+                askForPermission();
+            }
         }
         return havePermission;
     }
 
     private void updateResources() {
         loadingLayout.setVisibility(View.VISIBLE);
-        String ids[] = TCDatabaseHelper.get().getAllChartIds();
+        String ids[] = TCDatabaseHelper.get(this).getAllChartIds();
         TCService.startLoadCharts(this, ids, new ResultReceiver(new Handler()) {
             @Override
             protected void onReceiveResult(int resultCode, Bundle resultData) {
@@ -230,6 +310,10 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.logout) {
             onLogout();
             return true;
+        } else if (id == R.id.profile) {
+            //Open up Account info
+            onViewProfile();
+            return true;
         }
 
         drawer.closeDrawer(GravityCompat.START);
@@ -262,6 +346,10 @@ public class MainActivity extends AppCompatActivity
                 }
             }.execute(AuthManager.get(this).getAuth());
         }
+    }
+
+    private void onViewProfile() {
+        startActivity(new Intent(MainActivity.this, ProfileActivity.class));
     }
 
     private void setCurrentFragment(int frag) {
