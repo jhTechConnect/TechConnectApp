@@ -75,7 +75,7 @@ public class ProfileActivity extends AppCompatActivity {
         row_buttons = new ArrayList<ImageButton>(); //Store reference of where buttons are
 
         for (int i = 0; i < user.getExpertises().size(); i++) {
-            TableRow toAdd = (TableRow) getLayoutInflater().inflate(R.layout.skill_tablerow,null,false);
+            TableRow toAdd = (TableRow) getLayoutInflater().inflate(R.layout.tablerow_skill,null,false);
             final ImageButton row_button = (ImageButton) toAdd.findViewById(R.id.skill_icon);
             row_buttons.add(row_button);
             row_button.setTag(i); //View that the button belongs to
@@ -192,7 +192,7 @@ public class ProfileActivity extends AppCompatActivity {
         final EditText add_skill;
         final TextView skill_text;
 
-        toAdd = (TableRow) getLayoutInflater().inflate(R.layout.skill_tablerow,null,false);
+        toAdd = (TableRow) getLayoutInflater().inflate(R.layout.tablerow_skill,null,false);
         inputLayout = (TextInputLayout) toAdd.findViewById(R.id.edit_skill_layout);
         icon = (ImageButton) toAdd.findViewById(R.id.skill_icon);
         icon.setImageResource(R.drawable.ic_add_box_black_24dp);
