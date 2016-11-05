@@ -19,6 +19,7 @@ public class TCDatabaseContract {
         public static final String COUNTRY_CODE = "country_code";
         public static final String COUNTRY = "country";
         public static final String ORGANIZATION = "organization";
+        public static final String PIC = "pic";
         public static final String EXPERTISES = "expertises";
         // Create the users table
         public static final String CREATE_USER_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
@@ -28,6 +29,7 @@ public class TCDatabaseContract {
                 COUNTRY_CODE + " DATE," +
                 COUNTRY + " TEXT," +
                 ORGANIZATION + " TEXT," +
+                PIC + " TEXT," +
                 EXPERTISES + " TEXT);";
     }
 
@@ -184,18 +186,19 @@ public class TCDatabaseContract {
 
 
         public static final String CREATE_SESSION_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (\n" +
-                ID +          " TEXT PRIMARY KEY NOT NULL UNIQUE,\n" +
-                CREATED_DATE  + " DATE,\n" +
-                FINISHED +       " BOOLEAN,\n" +
-                DEPARTMENT +   " TEXT,\n" +
-                MODEL +   " TEXT,\n" +
-                SERIAL +  " TEXT,\n" +
-                NOTES +        " TEXT,\n" +
-                HISTORY +       " TEXT,\n" +
-                OPTION_HISTORY+ " TEXT,\n" +
+                ID + " TEXT PRIMARY KEY NOT NULL UNIQUE,\n" +
+                CREATED_DATE + " DATE,\n" +
+                FINISHED + " BOOLEAN,\n" +
+                DEPARTMENT + " TEXT,\n" +
+                MODEL + " TEXT,\n" +
+                SERIAL + " TEXT,\n" +
+                NOTES + " TEXT,\n" +
+                HISTORY + " TEXT,\n" +
+                OPTION_HISTORY + " TEXT,\n" +
                 FLOWCHART_ID + " TEXT" +
                 ");";
-        private SessionEntry(){
+
+        private SessionEntry() {
         }
     }
 }

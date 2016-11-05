@@ -74,7 +74,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int fromV, int toV) {
     }
 
     public void upsertCharts(FlowChart charts[]) {
@@ -97,6 +97,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(TCDatabaseContract.UserEntry.EMAIL, user.getEmail());
         contentValues.put(TCDatabaseContract.UserEntry.NAME, user.getName());
         contentValues.put(TCDatabaseContract.UserEntry.ORGANIZATION, user.getOrganization());
+        contentValues.put(TCDatabaseContract.UserEntry.PIC, user.getPic());
         contentValues.put(TCDatabaseContract.UserEntry.EXPERTISES, TextUtils.join(",", user.getExpertises()));
         getWritableDatabase().insertWithOnConflict(TCDatabaseContract.UserEntry.TABLE_NAME, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
     }
@@ -117,6 +118,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         user.setEmail(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.EMAIL)));
         user.setName(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.NAME)));
         user.setOrganization(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.ORGANIZATION)));
+        user.setPic(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.PIC)));
         String expertises = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.EXPERTISES));
         if (TextUtils.isEmpty(expertises.trim())) {
             user.setExpertises(new ArrayList<String>(0));
@@ -574,13 +576,14 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Return list of all Session IDs currently stored in the database
+     *
      * @return
      */
     public List<String> getSessions() {
         List<String> ids = new ArrayList<String>();
-        Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + TCDatabaseContract.SessionEntry.TABLE_NAME +" " ,null);
+        Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + TCDatabaseContract.SessionEntry.TABLE_NAME + " ", null);
         cursor.moveToFirst();
-        while(cursor.moveToNext()) {
+        while (cursor.moveToNext()) {
             ids.add(cursor.getString(cursor.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.ID)));
         }
         return ids;
@@ -588,21 +591,21 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
 
     private ContentValues getSessionContentValues(Session s) {
         ContentValues sessionContentValues = new ContentValues();
-        sessionContentValues.put(TCDatabaseContract.SessionEntry.ID,getRandomId());
-        sessionContentValues.put(TCDatabaseContract.SessionEntry.CREATED_DATE,s.getCreatedDate());
+        sessionContentValues.put(TCDatabaseContract.SessionEntry.ID, getRandomId());
+        sessionContentValues.put(TCDatabaseContract.SessionEntry.CREATED_DATE, s.getCreatedDate());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.FINISHED, s.isFinished());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.DEPARTMENT, s.getDepartment());
-        sessionContentValues.put(TCDatabaseContract.SessionEntry.MODEL,s.getModelNumber());
+        sessionContentValues.put(TCDatabaseContract.SessionEntry.MODEL, s.getModelNumber());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.SERIAL, s.getSerialNumber());
-        sessionContentValues.put(TCDatabaseContract.SessionEntry.NOTES,s.getNotes());
+        sessionContentValues.put(TCDatabaseContract.SessionEntry.NOTES, s.getNotes());
 
         //Generate a comma separated list of strings for the two history entries
-        String history = TextUtils.join(",",s.getHistory());
-        String opt_history = TextUtils.join(",",s.getOptionHistory());
+        String history = TextUtils.join(",", s.getHistory());
+        String opt_history = TextUtils.join(",", s.getOptionHistory());
 
-        sessionContentValues.put(TCDatabaseContract.SessionEntry.HISTORY,history);
-        sessionContentValues.put(TCDatabaseContract.SessionEntry.OPTION_HISTORY,opt_history);
-        sessionContentValues.put(TCDatabaseContract.SessionEntry.FLOWCHART_ID,s.getFlowchart());
+        sessionContentValues.put(TCDatabaseContract.SessionEntry.HISTORY, history);
+        sessionContentValues.put(TCDatabaseContract.SessionEntry.OPTION_HISTORY, opt_history);
+        sessionContentValues.put(TCDatabaseContract.SessionEntry.FLOWCHART_ID, s.getFlowchart());
 
         return sessionContentValues;
     }
