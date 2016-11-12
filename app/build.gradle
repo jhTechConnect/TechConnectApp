@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.3"
 
     defaultConfig {
-        applicationId "org.centum.techconnect"
+        applicationId "org.techconnect"
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 1
