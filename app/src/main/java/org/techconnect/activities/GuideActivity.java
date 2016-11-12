@@ -32,6 +32,7 @@ import butterknife.OnClick;
 public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     public static String EXTRA_CHART = "org.techconnect.guideactivity.flowchart";
+    public static String EXTRA_ALLOW_REFRESH = "org.techconnect.guideactivity.allow_refresh";
 
     @Bind(R.id.content_linearLayout)
     LinearLayout contentLinearLayout;
@@ -76,6 +77,9 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
         if (getIntent() != null && getIntent().hasExtra(EXTRA_CHART)) {
             flowChart = getIntent().getParcelableExtra(EXTRA_CHART);
             checkDBForFlowchart();
+        }
+        if (getIntent() != null && getIntent().hasExtra(EXTRA_ALLOW_REFRESH)) {
+            swipeRefreshLayout.setEnabled(getIntent().getBooleanExtra(EXTRA_ALLOW_REFRESH, true));
         }
     }
 
