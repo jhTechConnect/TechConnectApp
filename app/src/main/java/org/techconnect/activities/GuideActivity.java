@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.squareup.picasso.Picasso;
 
 import org.centum.techconnect.R;
@@ -46,8 +47,8 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
     TextView descriptionTextView;
     @Bind(R.id.scrollView)
     ScrollView scrollView;
-
     CommentsResourcesTabbedView commentsResourcesTabbedView;
+    private FirebaseAnalytics firebaseAnalytics;
     private FlowChart flowChart;
     private boolean inDB = true;
     private boolean downloadingChart = false;
@@ -57,6 +58,7 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guide);
         ButterKnife.bind(this);
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         commentsResourcesTabbedView = (CommentsResourcesTabbedView) getLayoutInflater()
@@ -76,6 +78,11 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
 
         if (getIntent() != null && getIntent().hasExtra(EXTRA_CHART)) {
             flowChart = getIntent().getParcelableExtra(EXTRA_CHART);
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, flowChart.getId());
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, flowChart.getName());
+            bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "guides");
+            firebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM, bundle);
             checkDBForFlowchart();
         }
         if (getIntent() != null && getIntent().hasExtra(EXTRA_ALLOW_REFRESH)) {
@@ -141,6 +148,11 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
 
     private void onPlay() {
         if (flowChart != null) {
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, flowChart.getId());
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, flowChart.getName());
+            bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "guides");
+            firebaseAnalytics.logEvent("start_session", bundle);
             Intent intent = new Intent(this, PlayGuideActivity.class);
             intent.putExtra(PlayGuideActivity.EXTRA_CHART_ID, flowChart.getId());
             startActivity(intent);

@@ -26,6 +26,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import org.centum.techconnect.R;
 import org.techconnect.asynctasks.LogoutAsyncTask;
 import org.techconnect.fragments.GuidesFragment;
@@ -56,7 +58,6 @@ public class MainActivity extends AppCompatActivity
     private static final int FRAGMENT_GUIDES = 0;
     private static final int FRAGMENT_REPORTS = 1;
     private final Fragment[] FRAGMENTS = new Fragment[]{new GuidesFragment(), new ReportsFragment()};
-
     @Bind(R.id.drawer_layout)
     DrawerLayout drawerLayout;
     @Bind(R.id.nav_view)
@@ -67,11 +68,10 @@ public class MainActivity extends AppCompatActivity
     LinearLayout permissionLayout;
     @Bind(R.id.main_fragment_container)
     FrameLayout fragmentContainer;
-
     TextView headerTextView;
     MenuItem logoutMenuItem;
     MenuItem loginMenuItem;
-
+    private FirebaseAnalytics firebaseAnalytics;
     private String[] fragmentTitles;
     private int currentFragment = -1;
     private boolean showedLogin = false;
@@ -81,6 +81,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.APP_OPEN, null);
         ResourceHandler.get(this);
         TCDatabaseHelper.get(this);
         ButterKnife.bind(this);

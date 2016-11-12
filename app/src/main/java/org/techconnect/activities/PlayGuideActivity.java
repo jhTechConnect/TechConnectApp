@@ -16,6 +16,8 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import org.centum.techconnect.R;
 import org.techconnect.model.FlowChart;
 import org.techconnect.model.session.Session;
@@ -53,6 +55,7 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
     @Bind(R.id.notes_editText)
     EditText notesEditText;
 
+    private FirebaseAnalytics firebaseAnalytics;
     private GuideFlowView flowView;
     private FlowChart flowChart = null;
     private Session session;
@@ -62,15 +65,22 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_guide);
         ButterKnife.bind(this);
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         flowView = (GuideFlowView) LayoutInflater.from(this).inflate(R.layout.guide_flow_view, flowContainer, false);
         flowContainer.addView(flowView);
         loadFlowchart();
+        if (flowChart != null) {
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, flowChart.getId());
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, flowChart.getName());
+            bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "guides");
+            firebaseAnalytics.logEvent("session_start", bundle);
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_play_guide, menu);
-        ;
         return true;
     }
 
@@ -103,6 +113,13 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         dialogInterface.dismiss();
+                        if (flowChart != null) {
+                            Bundle bundle = new Bundle();
+                            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, flowChart.getId());
+                            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, flowChart.getName());
+                            bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "guides");
+                            firebaseAnalytics.logEvent("session_end_early", bundle);
+                        }
                         endSession();
                     }
                 })
@@ -178,6 +195,13 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
     public void onSessionComplete() {
         session.setFinished(true);
         endSession();
+        if (flowChart != null) {
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, flowChart.getId());
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, flowChart.getName());
+            bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "guides");
+            firebaseAnalytics.logEvent("session_complete", bundle);
+        }
     }
 
     private void endSession() {
