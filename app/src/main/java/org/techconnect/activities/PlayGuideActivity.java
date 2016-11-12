@@ -187,7 +187,7 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
 
     @Override
     public void onSessionPaused() {
-        // TODO store the progress made somewhere
+        // TODO store the progress_spinner made somewhere
     }
 }
 

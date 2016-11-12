@@ -10,7 +10,7 @@
     android:orientation="vertical"
     tools:context="org.techconnect.activities.LoginActivity">
 
-    <!-- Login progress -->
+    <!-- Login progress_spinner -->
 
     <ProgressBar
         android:id="@+id/login_progress"

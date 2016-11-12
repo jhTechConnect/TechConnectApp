@@ -139,7 +139,7 @@ public class GuideFlowView extends ScrollView implements View.OnClickListener {
                     imageView.setVisibility(VISIBLE);
                     Picasso.with(getContext())
                             .load(file)
-                            .placeholder(R.drawable.ic_sync_black_48dp)
+                            .placeholder(R.drawable.progress_animation)
                             .into(imageView);
                     imageView.setOnClickListener(new OnClickListener() {
                         @Override

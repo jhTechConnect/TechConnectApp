@@ -125,13 +125,13 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
                 Picasso.with(this)
                         .load(getFileStreamPath(
                                 ResourceHandler.get(this).getStringResource(flowChart.getImage())))
-                        .placeholder(R.drawable.ic_sync_black_48dp)
+                        .placeholder(R.drawable.progress_animation)
                         .into(headerImageView);
             } else {
                 // Load online image
                 Picasso.with(this)
                         .load(flowChart.getImage())
-                        .placeholder(R.drawable.ic_sync_black_48dp)
+                        .placeholder(R.drawable.progress_animation)
                         .into(headerImageView);
             }
         } else {
