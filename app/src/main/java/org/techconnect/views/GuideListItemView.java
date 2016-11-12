@@ -76,6 +76,7 @@ public class GuideListItemView extends LinearLayout implements View.OnClickListe
             descriptionTextView.setText("");
             Picasso.with(getContext())
                     .load(R.drawable.flowchart_icon)
+                    .fit()
                     .transform(new CircleTransform())
                     .into(guideImageView);
         } else {
@@ -97,6 +98,7 @@ public class GuideListItemView extends LinearLayout implements View.OnClickListe
                     Picasso.with(getContext())
                             .load(getContext().getFileStreamPath(
                                     ResourceHandler.get(getContext()).getStringResource(flowChart.getImage())))
+                            .fit()
                             .error(R.drawable.flowchart_icon)
                             .transform(new CircleTransform())
                             .into(guideImageView);
@@ -104,6 +106,7 @@ public class GuideListItemView extends LinearLayout implements View.OnClickListe
                     // Try to load from online
                     Picasso.with(getContext())
                             .load(flowChart.getImage())
+                            .fit()
                             .error(R.drawable.flowchart_icon)
                             .transform(new CircleTransform())
                             .into(guideImageView);
@@ -111,6 +114,7 @@ public class GuideListItemView extends LinearLayout implements View.OnClickListe
             } else {
                 Picasso.with(getContext())
                         .load(R.drawable.flowchart_icon)
+                        .fit()
                         .transform(new CircleTransform())
                         .into(guideImageView);
             }
