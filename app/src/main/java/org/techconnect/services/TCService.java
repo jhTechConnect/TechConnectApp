@@ -38,12 +38,10 @@ public class TCService extends IntentService {
 
     private NotificationManager notificationManager;
     private TCNetworkHelper TCNetworkHelper;
-    private FirebaseAnalytics firebaseAnalytics;
 
     public TCService() {
         super("TechConnectService");
         TCNetworkHelper = new TCNetworkHelper();
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
     }
 
     /**
@@ -104,7 +102,7 @@ public class TCService extends IntentService {
                 fbBundle.putString(FirebaseAnalytics.Param.ITEM_ID, chart.getId());
                 fbBundle.putString(FirebaseAnalytics.Param.ITEM_NAME, chart.getName());
                 fbBundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "guides");
-                firebaseAnalytics.logEvent("download_guide", fbBundle);
+                FirebaseAnalytics.getInstance(this).logEvent("download_guide", fbBundle);
             }
 
             resultCode = LOAD_CHARTS_RESULT_SUCCESS;
