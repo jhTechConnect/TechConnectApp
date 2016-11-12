@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -37,6 +38,8 @@ public class GuideListItemView extends LinearLayout implements View.OnClickListe
     TextView descriptionTextView;
     @Bind(R.id.downloadImageView)
     ImageView downloadImageView;
+    @Bind(R.id.downloadProgressBar)
+    ProgressBar downloadProgressBar;
 
     private FlowChart flowChart = null;
     private boolean showDownload = false;
@@ -67,6 +70,7 @@ public class GuideListItemView extends LinearLayout implements View.OnClickListe
     private void updateViews() {
         downloadImageView.setOnClickListener(null);
         downloadImageView.setVisibility(GONE);
+        downloadProgressBar.setVisibility(GONE);
         if (this.flowChart == null) {
             nameTextView.setText("");
             descriptionTextView.setText("");
@@ -82,6 +86,7 @@ public class GuideListItemView extends LinearLayout implements View.OnClickListe
                 if (TCDatabaseHelper.get(getContext()).getChart(flowChart.getId()) == null) {
                     downloadImageView.setImageResource(R.drawable.ic_file_download_black_48dp);
                 } else {
+                    downloadImageView.setOnClickListener(null);
                     downloadImageView.setImageResource(R.drawable.ic_done_black_48dp);
                 }
                 downloadImageView.setOnClickListener(this);
@@ -130,7 +135,8 @@ public class GuideListItemView extends LinearLayout implements View.OnClickListe
 
     private void onDownload() {
         downloadImageView.setOnClickListener(null);
-        downloadImageView.setImageResource(R.drawable.ic_sync_black_48dp);
+        downloadImageView.setVisibility(GONE);
+        downloadProgressBar.setVisibility(VISIBLE);
         TCService.startLoadCharts(getContext(), new String[]{flowChart.getId()}, new ResultReceiver(new Handler()) {
             @Override
             protected void onReceiveResult(int resultCode, Bundle resultData) {
