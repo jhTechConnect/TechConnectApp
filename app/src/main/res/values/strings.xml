@@ -121,6 +121,7 @@
     <string name="comments">Comments</string>
     <string name="download">Download</string>
     <string name="save_changes">Save Changes</string>
+    <string name="discard_changes">Discard Changes</string>
     <string name="updating">Updating...</string>
     <string name="write_comment">Write Comment...</string>
     <string name="login_required">Login Required</string>

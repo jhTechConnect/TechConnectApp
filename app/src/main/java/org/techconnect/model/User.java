@@ -9,7 +9,7 @@ import java.util.List;
  * Created by Phani on 10/26/2016.
  */
 
-public class User implements Parcelable {
+public class User implements Parcelable, Cloneable {
 
     public static final Creator<User> CREATOR = new Creator<User>() {
         @Override
@@ -103,6 +103,22 @@ public class User implements Parcelable {
     public int describeContents() {
         return 0;
     }
+
+    @Override
+    public User clone() throws CloneNotSupportedException {
+        super.clone(); //Do I need this?
+        User new_user = new User();
+        new_user.set_id(this.get_id());
+        new_user.setEmail(this.getEmail());
+        new_user.setExpertises(this.getExpertises());
+        new_user.setCountry(this.getCountry());
+        new_user.setCountryCode(this.getCountryCode());
+        new_user.setName(this.getName());
+        new_user.setOrganization(this.getOrganization());
+
+        return new_user;
+    }
+
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
