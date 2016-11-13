@@ -67,7 +67,11 @@ public class TCNetworkHelper {
         lastCode = resp.code();
         //First check to see if the request succeeded
         if (!resp.isSuccessful()) {
-            JsendResponse test = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            try {
+                lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
             return null;
         } else {
             //Now, I'm expecting a data object with fields relevant
@@ -80,7 +84,11 @@ public class TCNetworkHelper {
         Response<JsendResponse> resp = service.logout(auth.getAuthToken(), auth.getUserId()).execute();
         lastCode = resp.code();
         if (!resp.isSuccessful()) {
-            lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            try {
+                lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
             return false;
         }
         return true;
@@ -92,7 +100,11 @@ public class TCNetworkHelper {
         Response<JsendResponse> resp = service.register(email, password, countryCode, name, organization, expertises).execute();
         lastCode = resp.code();
         if (!resp.isSuccessful()) {
-            lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            try {
+                lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
             return null;
         } else {
             JsonObject obj = resp.body().getData();
@@ -104,7 +116,11 @@ public class TCNetworkHelper {
         Response<JsendResponse> resp = service.updateUser(userAuth.getAuthToken(), userAuth.getUserId(), user).execute();
         lastCode = resp.code();
         if (!resp.isSuccessful()) {
-            lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            try {
+                lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
             return null;
         } else {
             JsonObject obj = resp.body().getData();
@@ -116,7 +132,11 @@ public class TCNetworkHelper {
         Response<JsendResponse> resp = service.getUser(id).execute();
         lastCode = resp.code();
         if (!resp.isSuccessful()) {
-            lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            try {
+                lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
             return null;
         } else {
             JsonObject obj = resp.body().getData();
@@ -136,7 +156,11 @@ public class TCNetworkHelper {
         //First, check whether there is an error. HAVE TO DO THIS TO SATISFY RETROFIT!
         //Cheking first if the http request was successful. if not, have to manually deserialize the JSON
         if (!resp.isSuccessful()) {
-            lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            try {
+                lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
             return null;
         } else {
             //Now, I'm expecting a getCatalog
@@ -156,7 +180,11 @@ public class TCNetworkHelper {
         lastCode = resp.code();
         //First, check whether there is an error
         if (!resp.isSuccessful()) {
-            lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            try {
+                lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
             return null;
         } else {
             //Now, I know that there is a FlowChart contained in this resp. Just get it
@@ -178,7 +206,11 @@ public class TCNetworkHelper {
         Response<JsendResponse> resp = service.getFlowcharts(ids).execute();
         lastCode = resp.code();
         if (!resp.isSuccessful()) {
-            lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            try {
+                lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
             return null;
         } else {
             //Now I know, I should be getting two objects. bad ID strings as well as the actual flowcharts
@@ -203,7 +235,11 @@ public class TCNetworkHelper {
         Response<JsendResponse> resp = service.postComment(auth.getAuthToken(), auth.getUserId(), chart_id, c).execute();
         lastCode = resp.code();
         if (!resp.isSuccessful()) {
-            lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            try {
+                lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
             return null;
         }
         return gson.fromJson(resp.body().getData().get("comment"), Comment.class);
@@ -224,7 +260,11 @@ public class TCNetworkHelper {
                 chart_id, requestBody).execute();
         lastCode = resp.code();
         if (!resp.isSuccessful()) {
-            lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            try {
+                lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
             return null;
         }
         return gson.fromJson(resp.body().getData().get("flowchart"), FlowChart.class);
@@ -246,7 +286,11 @@ public class TCNetworkHelper {
                 auth.getUserId(), chart_id, requestBody).execute();
         lastCode = resp.code();
         if (!resp.isSuccessful()) {
-            lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            try {
+                lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
             return null;
         }
         return gson.fromJson(resp.body().getData().get("flowchart"), FlowChart.class);
