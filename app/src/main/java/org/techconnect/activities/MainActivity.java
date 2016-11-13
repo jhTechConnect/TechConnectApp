@@ -240,9 +240,9 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (id == R.id.nav_guides) {
             newFrag = FRAGMENT_GUIDES;
-        } else if (id == R.id.nav_reports) {
+        } /*else if (id == R.id.nav_reports) {
             newFrag = FRAGMENT_REPORTS;
-        } else if (id == R.id.call_dir) {
+        }*/ else if (id == R.id.call_dir) {
             startActivity(new Intent(this, CallActivity.class));
             drawer.closeDrawer(GravityCompat.START);
             return true;
