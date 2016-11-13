@@ -605,7 +605,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
 
         sessionContentValues.put(TCDatabaseContract.SessionEntry.HISTORY, history);
         sessionContentValues.put(TCDatabaseContract.SessionEntry.OPTION_HISTORY, opt_history);
-        sessionContentValues.put(TCDatabaseContract.SessionEntry.FLOWCHART_ID, s.getFlowchart());
+        sessionContentValues.put(TCDatabaseContract.SessionEntry.FLOWCHART_ID, s.getFlowchart().getId());
 
         return sessionContentValues;
     }

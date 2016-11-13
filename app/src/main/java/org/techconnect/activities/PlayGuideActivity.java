@@ -33,6 +33,7 @@ import butterknife.OnClick;
 public class PlayGuideActivity extends AppCompatActivity implements SessionListener {
 
     public static final String EXTRA_CHART_ID = "org.techconnect.playguide.chartid";
+    private static final String STATE_SESSION = "session";
     private static final int LAYOUT_INFO = 0;
     private static final int LAYOUT_FLOW = 1;
     private static final int LAYOUT_ERROR = 2;
@@ -76,6 +77,17 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
             bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "guides");
             firebaseAnalytics.logEvent("session_start", bundle);
         }
+        if (savedInstanceState != null && savedInstanceState.containsKey(STATE_SESSION)) {
+            this.session = savedInstanceState.getParcelable(STATE_SESSION);
+            flowView.setSession(session, this);
+        }
+        updateViews();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(STATE_SESSION, session);
     }
 
     @Override
@@ -139,7 +151,6 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
         if (getIntent() != null && getIntent().hasExtra(EXTRA_CHART_ID)) {
             flowChart = TCDatabaseHelper.get(this).getChart(getIntent().getStringExtra(EXTRA_CHART_ID));
         }
-        updateViews();
     }
 
     private void updateViews() {

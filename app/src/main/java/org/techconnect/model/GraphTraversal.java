@@ -1,5 +1,10 @@
 package org.techconnect.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
@@ -10,10 +15,10 @@ import java.util.Stack;
  * we see fit to extract data
  * Created by doranwalsten on 9/24/16.
  */
-public class GraphTraversal {
+public class GraphTraversal implements Parcelable {
 
     private Graph g; //This is the graph that we are traversing
-    private Map<String,String> currOptions;//Map of the current option, next vertex pairs for the current v
+    private Map<String, String> currOptions;//Map of the current option, next vertex pairs for the current v
     private String curr;//Id of the current vertex we're working with
     private boolean done; //Store whether the current vertex corresponds to the end of a flowchart
     private Stack<String> stack = new Stack<>();//Use this to track a current traversal of the graph
@@ -25,9 +30,48 @@ public class GraphTraversal {
         this.done = false;
     }
 
+    protected GraphTraversal(Parcel in) {
+        g = in.readParcelable(Graph.class.getClassLoader());
+        curr = in.readString();
+        done = in.readByte() != 0;
+        List<String> stackList = new ArrayList<>();
+        in.readStringList(stackList);
+        this.stack = new Stack<>();
+        for (String s : stackList) {
+            this.stack.push(s);
+        }
+        setCurrentVertex(curr);
+    }
+
+    protected GraphTraversal(Parcel in) {
+        g = in.readParcelable(Graph.class.getClassLoader());
+        curr = in.readString();
+        done = in.readByte() != 0;
+        List<String> stackList = new ArrayList<>();
+        in.readStringList(stackList);
+        this.stack = new Stack<>();
+        for (String s : stackList) {
+            this.stack.push(s);
+        }
+        setCurrentVertex(curr);
+    }
+
+    public static final Creator<GraphTraversal> CREATOR = new Creator<GraphTraversal>() {
+        @Override
+        public GraphTraversal createFromParcel(Parcel in) {
+            return new GraphTraversal(in);
+        }
+
+        @Override
+        public GraphTraversal[] newArray(int size) {
+            return new GraphTraversal[size];
+        }
+    };
+
     /**
      * When we select an option to go to the next vertex in a flowchart, traverse to that vertex
      * in the graph.
+     *
      * @param opt - The string option which corresponds to the next vertex in the graph to visit
      */
     public void selectOption(String opt) {
@@ -58,6 +102,7 @@ public class GraphTraversal {
 
     /**
      * Used to determine if there have been previous steps in the traversal of the graph
+     *
      * @return If the stack is not empty, there have been previous steps
      */
     public boolean hasPrevious() {
@@ -81,6 +126,7 @@ public class GraphTraversal {
      * Use the currVertex string to return the current Vertex object if we need to access fields
      * This is because most operations are on the actual object itself intead of the ID
      * We store the ID in the traversal to save space (?)
+     *
      * @return The corresponding vertex object
      */
     public Vertex getCurrentVertex() {
@@ -92,4 +138,16 @@ public class GraphTraversal {
         this.currOptions = g.getOptions(v_id);
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeParcelable(g, i);
+        parcel.writeString(curr);
+        parcel.writeByte((byte) (done ? 1 : 0));
+        parcel.writeStringList(new ArrayList<String>(stack));
+    }
 }

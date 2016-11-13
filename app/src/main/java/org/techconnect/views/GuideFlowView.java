@@ -88,7 +88,7 @@ public class GuideFlowView extends ScrollView implements View.OnClickListener {
         commentsResourcesTabbedView = (CommentsResourcesTabbedView) LayoutInflater.from(getContext())
                 .inflate(R.layout.comments_resources_tabbed_view, tabContainer, false);
         commentsResourcesTabbedView.setItems(curr_step, curr_step.getResources(),
-                session.getFlowchart());
+                session.getFlowchart().getId());
         tabContainer.addView(commentsResourcesTabbedView);
     }
 
