@@ -129,6 +129,36 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         return user;
     }
 
+    public List<User> getAllUsers() {
+        Cursor c = getReadableDatabase().query(TCDatabaseContract.UserEntry.TABLE_NAME,
+                null, null, null, null, null, null);
+        c.moveToFirst();
+        if (c.getCount() < 1) {
+            return new ArrayList<>();
+        }
+        List<User> users = new ArrayList<>();
+        while (!c.isAfterLast()) {
+            User user = new User();
+            user.set_id(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.ID)));
+            user.setCountry(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.COUNTRY)));
+            user.setCountryCode(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.COUNTRY_CODE)));
+            user.setEmail(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.EMAIL)));
+            user.setName(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.NAME)));
+            user.setOrganization(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.ORGANIZATION)));
+            user.setPic(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.PIC)));
+            String expertises = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.EXPERTISES));
+            if (TextUtils.isEmpty(expertises.trim())) {
+                user.setExpertises(new ArrayList<String>(0));
+            } else {
+                user.setExpertises(Arrays.asList(expertises.split(",")));
+            }
+            c.close();
+            users.add(user);
+            c.moveToNext();
+        }
+        return users;
+    }
+
     /**
      * Get a map of chart names, mapping to their id.
      */

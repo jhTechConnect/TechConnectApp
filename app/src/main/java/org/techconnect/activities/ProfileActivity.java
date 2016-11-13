@@ -91,6 +91,9 @@ public class ProfileActivity extends AppCompatActivity {
             } catch (CloneNotSupportedException e) {
                 Log.e("Profile", e.getMessage());
             }
+        } else {
+            editWork.setVisibility(View.GONE);
+            editSkill.setVisibility(View.GONE);
         }
 
         //Add return arrow to action bar
