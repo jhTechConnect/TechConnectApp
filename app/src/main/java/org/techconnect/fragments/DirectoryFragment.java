@@ -1,109 +1,127 @@
 package org.techconnect.fragments;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 
 import org.centum.techconnect.R;
+import org.techconnect.adapters.UserListAdapter;
+import org.techconnect.asynctasks.SearchUsersAsyncTask;
+import org.techconnect.model.User;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link DirectoryFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link DirectoryFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class DirectoryFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+import java.util.List;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
-    private OnFragmentInteractionListener mListener;
+public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, View.OnClickListener, TextWatcher{
+
+    @Bind(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout refreshLayout;
+    @Bind(R.id.search_editText)
+    EditText searchEditText;
+    @Bind(R.id.clear_search_imageView)
+    ImageView clearSearchImageView;
+    @Bind(R.id.search_linearLayout)
+    LinearLayout searchLinearLayout;
+    @Bind(R.id.content_linearLayout)
+    LinearLayout contentLinearLayout;
+    @Bind(R.id.user_ListView)
+    ListView userListView;
+
+    UserListAdapter adapter;
 
     public DirectoryFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment DirectoryFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static DirectoryFragment newInstance(String param1, String param2) {
-        DirectoryFragment fragment = new DirectoryFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_directory, container, false);
+        View view = inflater.inflate(R.layout.fragment_directory, container, false);
+        ButterKnife.bind(this, view);
+        Log.d("Directory Setup", "View Initialized");
+        adapter = new UserListAdapter();
+        userListView.setAdapter(adapter);
+        updateUsers(null); //Want the full list of users initially
+        searchEditText.addTextChangedListener(this);
+        clearSearchImageView.setOnClickListener(this);
+        refreshLayout.setOnRefreshListener(this);
+        return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+    @Override
+    public void onResume() {
+        super.onResume();
+        onRefresh();
+    }
+
+    @Override
+    public void onRefresh() {
+        refreshLayout.setRefreshing(true);
+        searchLinearLayout.setVisibility(View.VISIBLE);
+        refreshLayout.setRefreshing(false);
+        updateUsers(searchEditText.getText().toString());
+        refreshLayout.setRefreshing(false);
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.clear_search_imageView) {
+            searchEditText.setText(null);
         }
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    @Override
+    public void afterTextChanged(Editable editable) {
+        //Here, instead search online
+        updateUsers(editable.toString());
     }
+
+    private void updateUsers(String filter) {
+
+        new SearchUsersAsyncTask(filter, 10,0) {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected void onPostExecute(List<User> users) {
+                if (users == null) {
+                    Log.e("Directory Setup","Null list of users");
+                }
+                System.out.println(users.size());
+                adapter.setUsers(users);
+                adapter.notifyDataSetChanged();
+            }
+        }.execute();
+    }
+
 }

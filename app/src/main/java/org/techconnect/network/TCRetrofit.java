@@ -53,6 +53,10 @@ public interface TCRetrofit {
     @GET("api/v1/user/{id}")
     Call<JsendResponse> getUser(@Path("id") String id);
 
+    // Search users
+    @POST("api/v1/users/search")
+    Call<JsendResponse> searchUsers(@Body RequestBody body);
+
     //Just want to get the getCatalog, no input needed
     @GET("api/v1/catalog")
     Call<JsendResponse> getCatalog();

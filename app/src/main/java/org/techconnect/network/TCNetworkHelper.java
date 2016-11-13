@@ -20,6 +20,7 @@ import org.techconnect.network.serializers.VertexDeserializer;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -118,6 +119,36 @@ public class TCNetworkHelper {
         } else {
             JsonObject obj = resp.body().getData();
             return gson.fromJson(obj.get("user"), User.class);
+        }
+    }
+
+    /**
+     * Goal is to search user fields for the filter. Used to identify users which fit a particular filter
+     *
+     * @param filter - string search query
+     * @return List of users which satisfy the search query
+     */
+    public List<User> searchUsers(String filter, int limit, int skip) throws IOException {
+        JsonObject body = new JsonObject();
+        body.addProperty("query",filter);
+        body.addProperty("limit",limit);
+        body.addProperty("skip",skip);
+        RequestBody requestBody = RequestBody.create(JSON, body.toString());
+        Response<JsendResponse> resp = service.searchUsers(requestBody).execute();
+        lastCode = resp.code();
+        if(!resp.isSuccessful()) {
+            lastError = gson.fromJson(resp.errorBody().string(), JsendResponse.class);
+            return null;
+        } else {
+            //Now, expecting a JsendResponse with a list of user objects
+            JsonObject obj = resp.body().getData();
+            ArrayList<User> users = new ArrayList<User>();
+            Log.d("Directory Setup",String.format("Num Users: %d",obj.get("results").getAsJsonArray().size()));
+            for (JsonElement j : obj.get("results").getAsJsonArray()) {
+                User u = gson.fromJson(j,User.class);
+                users.add(u);
+            }
+            return users;
         }
     }
 

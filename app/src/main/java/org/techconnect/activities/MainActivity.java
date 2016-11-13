@@ -18,6 +18,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,6 +30,7 @@ import android.widget.TextView;
 
 import org.centum.techconnect.R;
 import org.techconnect.asynctasks.LogoutAsyncTask;
+import org.techconnect.fragments.DirectoryFragment;
 import org.techconnect.fragments.GuidesFragment;
 import org.techconnect.fragments.ReportsFragment;
 import org.techconnect.misc.ResourceHandler;
@@ -56,7 +58,8 @@ public class MainActivity extends AppCompatActivity
 
     private static final int FRAGMENT_GUIDES = 0;
     private static final int FRAGMENT_REPORTS = 1;
-    private final Fragment[] FRAGMENTS = new Fragment[]{new GuidesFragment(), new ReportsFragment()};
+    private static final int FRAGMENT_DIRECTORY = 2;
+    private final Fragment[] FRAGMENTS = new Fragment[]{new GuidesFragment(), new ReportsFragment(), new DirectoryFragment()};
 
     @Bind(R.id.drawer_layout)
     DrawerLayout drawerLayout;
@@ -293,9 +296,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_reports) {
             newFrag = FRAGMENT_REPORTS;
         } else if (id == R.id.call_dir) {
-            startActivity(new Intent(this, CallActivity.class));
-            drawer.closeDrawer(GravityCompat.START);
-            return true;
+            Log.d("Directory Setup", "Selected from Nav View");
+            newFrag = FRAGMENT_DIRECTORY;
         } else if (id == R.id.nav_refresh) {
             updateResources();
             drawer.closeDrawer(GravityCompat.START);
