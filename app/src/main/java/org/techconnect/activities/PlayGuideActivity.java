@@ -207,6 +207,11 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
     private void endSession() {
         saveSession();
         finish();
+        long endTime = System.currentTimeMillis();
+        long duration = endTime - session.getCreatedDate();
+        Bundle bundle = new Bundle();
+        bundle.putLong(FirebaseAnalytics.Param.VALUE, duration);
+        firebaseAnalytics.logEvent("session_duration", bundle);
     }
 
     @Override
