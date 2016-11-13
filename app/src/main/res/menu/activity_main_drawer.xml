@@ -8,10 +8,11 @@
             android:id="@+id/nav_guides"
             android:icon="@android:drawable/ic_menu_help"
             android:title="@string/guides" />
+        <!--
         <item
             android:id="@+id/nav_reports"
             android:icon="@android:drawable/ic_menu_agenda"
-            android:title="@string/reports" />
+            android:title="@string/reports" />-->
         <item
             android:id="@+id/call_dir"
             android:icon="@android:drawable/ic_menu_call"
