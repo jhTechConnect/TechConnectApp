@@ -25,7 +25,7 @@ public class UserListAdapter extends BaseAdapter {
     }
 
     public void setUsers(List<User> u) {
-        Log.d("Directory Setup","Setting the List");
+        Log.d("Directory Setup", "Setting the List");
         this.users = u;
     }
 
@@ -59,9 +59,9 @@ public class UserListAdapter extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         ViewHolder holder;
-        if (view ==null) { //Has not been initialized
+        if (view == null) { //Has not been initialized
             holder = new ViewHolder();
-            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.user_list_item_view,null);
+            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.user_list_item_view, null);
             holder.user_view = (UserListItemView) view;
             view.setTag(holder);
         } else {

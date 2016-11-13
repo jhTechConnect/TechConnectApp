@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="@dimen/activity_horizontal_margin"
-    android:padding="@dimen/activity_horizontal_margin"
+    android:layout_margin="16dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_profile">
 
@@ -18,35 +17,35 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/work_header"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Work and Contact Info"
-            android:textStyle="bold"
-            android:textSize ="20dp"/>
+            <TextView
+                android:id="@+id/work_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Work and Contact Info"
+                android:textSize="20dp"
+                android:textStyle="bold" />
 
-        <ImageButton
-            android:id="@+id/edit_work_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_mode_edit_black_24dp"
-            android:layout_alignParentRight="true"
-            android:background="@android:color/transparent"/>
+            <ImageButton
+                android:id="@+id/edit_work_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_mode_edit_black_24dp" />
 
         </RelativeLayout>
 
         <TableLayout
-            android:id = "@+id/work_table"
+            android:id="@+id/work_table"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <include layout="@layout/tablerow_organization"/>
+            <include layout="@layout/tablerow_organization" />
 
-            <include layout="@layout/tablerow_email"/>
+            <include layout="@layout/tablerow_email" />
 
         </TableLayout>
-        
+
         <include layout="@layout/item_divider" />
 
         <RelativeLayout
@@ -58,27 +57,52 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Skills and Interests"
-                android:textStyle="bold"
-                android:textSize ="20dp"/>
+                android:textSize="20dp"
+                android:textStyle="bold" />
 
             <ImageButton
                 android:id="@+id/edit_skill_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_mode_edit_black_24dp"
                 android:layout_alignParentRight="true"
-                android:background="@android:color/transparent"/>
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_mode_edit_black_24dp" />
 
         </RelativeLayout>
 
         <TableLayout
-            android:id = "@+id/skills_table"
+            android:id="@+id/skills_table"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
 
         </TableLayout>
 
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_margin="8dp"
+            android:layout_weight="0"
+            android:background="@color/colorPrimary"
+            android:onClick="writeUserToDatabase"
+            android:text="@string/save_changes"
+            android:textColor="?android:attr/colorForegroundInverse"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/discard_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_margin="8dp"
+            android:layout_weight="0"
+            android:background="@android:color/darker_gray"
+            android:onClick="discardUserChanges"
+            android:text="@string/discard_changes"
+            android:textColor="?android:attr/colorForegroundInverse"
+            android:visibility="gone" />
     </LinearLayout>
 
 </android.support.v4.widget.NestedScrollView>

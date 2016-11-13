@@ -26,15 +26,15 @@ public class SearchUsersAsyncTask extends AsyncTask<Void, List<User>, List<User>
 
     /**
      * Returns search results, or null if it could not be completed.
+     *
      * @param voids
      * @return
      */
     @Override
     protected List<User> doInBackground(Void... voids) {
         try {
-            return new TCNetworkHelper().searchUsers(query,limit,skip);
-        }
-        catch(IOException ex){
+            return new TCNetworkHelper().searchUsers(query, limit, skip);
+        } catch (IOException ex) {
             return null;
         }
     }

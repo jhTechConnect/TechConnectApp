@@ -54,7 +54,8 @@
             android:label="@string/guide_catalog" />
         <activity
             android:name="org.techconnect.activities.ProfileActivity"
-            android:label="Personal Profile" />
+            android:label="Personal Profile"
+            android:screenOrientation="locked" />
         <activity
             android:name="org.techconnect.activities.GuideActivity"
             android:label="@string/title_activity_guide"

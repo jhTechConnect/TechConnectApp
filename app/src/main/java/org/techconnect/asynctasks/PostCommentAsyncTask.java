@@ -16,7 +16,7 @@ import java.io.IOException;
  * Created by Phani on 10/27/2016.
  */
 
-public class  PostCommentAsyncTask extends AsyncTask<Void, Void, Comment> {
+public class PostCommentAsyncTask extends AsyncTask<Void, Void, Comment> {
 
     private Context context;
     private String chartId;

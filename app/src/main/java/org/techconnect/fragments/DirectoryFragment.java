@@ -24,7 +24,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, View.OnClickListener, TextWatcher{
+public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, View.OnClickListener, TextWatcher {
 
     @Bind(R.id.swipe_refresh_layout)
     SwipeRefreshLayout refreshLayout;
@@ -105,7 +105,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
     private void updateUsers(String filter) {
 
-        new SearchUsersAsyncTask(filter, 10,0) {
+        new SearchUsersAsyncTask(filter, 10, 0) {
 
             @Override
             protected void onPreExecute() {
@@ -115,7 +115,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             @Override
             protected void onPostExecute(List<User> users) {
                 if (users == null) {
-                    Log.e("Directory Setup","Null list of users");
+                    Log.e("Directory Setup", "Null list of users");
                 }
                 System.out.println(users.size());
                 adapter.setUsers(users);
