@@ -17,6 +17,17 @@ import java.util.Stack;
  */
 public class GraphTraversal implements Parcelable {
 
+    public static final Creator<GraphTraversal> CREATOR = new Creator<GraphTraversal>() {
+        @Override
+        public GraphTraversal createFromParcel(Parcel in) {
+            return new GraphTraversal(in);
+        }
+
+        @Override
+        public GraphTraversal[] newArray(int size) {
+            return new GraphTraversal[size];
+        }
+    };
     private Graph g; //This is the graph that we are traversing
     private Map<String, String> currOptions;//Map of the current option, next vertex pairs for the current v
     private String curr;//Id of the current vertex we're working with
@@ -42,31 +53,6 @@ public class GraphTraversal implements Parcelable {
         }
         setCurrentVertex(curr);
     }
-
-    protected GraphTraversal(Parcel in) {
-        g = in.readParcelable(Graph.class.getClassLoader());
-        curr = in.readString();
-        done = in.readByte() != 0;
-        List<String> stackList = new ArrayList<>();
-        in.readStringList(stackList);
-        this.stack = new Stack<>();
-        for (String s : stackList) {
-            this.stack.push(s);
-        }
-        setCurrentVertex(curr);
-    }
-
-    public static final Creator<GraphTraversal> CREATOR = new Creator<GraphTraversal>() {
-        @Override
-        public GraphTraversal createFromParcel(Parcel in) {
-            return new GraphTraversal(in);
-        }
-
-        @Override
-        public GraphTraversal[] newArray(int size) {
-            return new GraphTraversal[size];
-        }
-    };
 
     /**
      * When we select an option to go to the next vertex in a flowchart, traverse to that vertex
