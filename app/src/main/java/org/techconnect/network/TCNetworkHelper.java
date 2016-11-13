@@ -51,6 +51,17 @@ public class TCNetworkHelper {
         return gsonBuilder.create();
     }
 
+    public boolean postAppFeedback(String userId, String text) throws IOException {
+        Response<JsendResponse> resp = service.postAppFeedback(userId, text).execute();
+        lastCode = resp.code();
+        //First check to see if the request succeeded
+        if (!resp.isSuccessful()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     public UserAuth login(String email, String password) throws IOException {
         Response<JsendResponse> resp = service.login(email, password).execute();
         lastCode = resp.code();

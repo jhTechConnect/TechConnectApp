@@ -46,4 +46,13 @@
             android:visible="false" />
     </group>
 
+
+    <group android:id="@+id/feedback_group">
+        <item
+            android:id="@+id/post_feedback"
+            android:icon="@android:drawable/ic_menu_send"
+            android:title="@string/action_post_app_feedback"
+            android:visible="true" />
+    </group>
+
 </menu>

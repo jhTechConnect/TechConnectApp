@@ -128,4 +128,7 @@
     <string name="failed_post_comment">Failed to post the comment</string>
     <string name="couldnt_login">Could not sign in. Check your email and password and try again</string>
     <string name="sign_in_to_comment">Please sign in to comment</string>
+    <string name="action_post_app_feedback">Send Feedback</string>
+    <string name="feedback_success">Thank you for your feedback</string>
+    <string name="feedback_fail">Failed to send the feedback</string>
 </resources>

@@ -2,13 +2,16 @@ package org.techconnect.activities;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,11 +19,15 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -30,6 +37,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.centum.techconnect.R;
 import org.techconnect.asynctasks.LogoutAsyncTask;
+import org.techconnect.asynctasks.PostAppFeedbackAsyncTask;
 import org.techconnect.fragments.GuidesFragment;
 import org.techconnect.fragments.ReportsFragment;
 import org.techconnect.misc.ResourceHandler;
@@ -58,6 +66,9 @@ public class MainActivity extends AppCompatActivity
     private static final int FRAGMENT_GUIDES = 0;
     private static final int FRAGMENT_REPORTS = 1;
     private final Fragment[] FRAGMENTS = new Fragment[]{new GuidesFragment(), new ReportsFragment()};
+
+    @Bind(R.id.coordinatorLayout)
+    CoordinatorLayout coordinatorLayout;
     @Bind(R.id.drawer_layout)
     DrawerLayout drawerLayout;
     @Bind(R.id.nav_view)
@@ -71,6 +82,7 @@ public class MainActivity extends AppCompatActivity
     TextView headerTextView;
     MenuItem logoutMenuItem;
     MenuItem loginMenuItem;
+
     private FirebaseAnalytics firebaseAnalytics;
     private String[] fragmentTitles;
     private int currentFragment = -1;
@@ -260,11 +272,48 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.logout) {
             onLogout();
             return true;
+        } else if (id == R.id.post_feedback) {
+            drawer.closeDrawer(GravityCompat.START);
+            onPostFeedback();
+            return true;
         }
 
         drawer.closeDrawer(GravityCompat.START);
         setCurrentFragment(newFrag);
         return true;
+    }
+
+    private void onPostFeedback() {
+        final EditText editText = new EditText(this);
+        editText.setInputType(InputType.TYPE_CLASS_TEXT);
+        editText.setSingleLine(false);
+        editText.setImeOptions(EditorInfo.IME_FLAG_NO_ENTER_ACTION);
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.action_post_app_feedback)
+                .setView(editText)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        new PostAppFeedbackAsyncTask(MainActivity.this) {
+                            @Override
+                            protected void onPostExecute(Boolean success) {
+                                if (success) {
+                                    Snackbar.make(coordinatorLayout, R.string.feedback_success, Snackbar.LENGTH_LONG).show();
+                                } else {
+                                    Snackbar.make(coordinatorLayout, R.string.feedback_fail, Snackbar.LENGTH_LONG).show();
+                                }
+                            }
+                        }.execute(editText.getText().toString());
+                        dialogInterface.dismiss();
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                })
+                .show();
     }
 
     private void onShowLogin() {

@@ -25,6 +25,11 @@ public interface TCRetrofit {
             "X-User-Id: "
     })
 
+    //Post app feedback
+    @FormUrlEncoded
+    @POST("api/v1/sys/feedback")
+    Call<JsendResponse> postAppFeedback(@Field("userId") String userId, @Field("text") String text);
+
     //Login the user
     @FormUrlEncoded
     @POST("api/v1/login")
