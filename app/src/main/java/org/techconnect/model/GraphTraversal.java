@@ -28,30 +28,27 @@ public class GraphTraversal implements Parcelable {
             return new GraphTraversal[size];
         }
     };
-    private Graph g; //This is the graph that we are traversing
-    private Map<String, String> currOptions;//Map of the current option, next vertex pairs for the current v
-    private String curr;//Id of the current vertex we're working with
-    private boolean done; //Store whether the current vertex corresponds to the end of a flowchart
-    private Stack<String> stack = new Stack<>();//Use this to track a current traversal of the graph
+    private Graph graph;
+    private Map<String, String> currentOptions;
+    private String currentVertexId;
+    private Stack<String> historyStack = new Stack<>();//Use this to track a current traversal of the graph
 
     public GraphTraversal(Graph g) {
-        this.g = g;
-        this.curr = g.getFirstVertex();
-        this.currOptions = g.getOptions(g.getFirstVertex());
-        this.done = false;
+        this.graph = g;
+        this.currentVertexId = g.getFirstVertex();
+        this.currentOptions = g.getOptions(g.getFirstVertex());
     }
 
     protected GraphTraversal(Parcel in) {
-        g = in.readParcelable(Graph.class.getClassLoader());
-        curr = in.readString();
-        done = in.readByte() != 0;
+        graph = in.readParcelable(Graph.class.getClassLoader());
+        currentVertexId = in.readString();
         List<String> stackList = new ArrayList<>();
         in.readStringList(stackList);
-        this.stack = new Stack<>();
+        this.historyStack = new Stack<>();
         for (String s : stackList) {
-            this.stack.push(s);
+            this.historyStack.push(s);
         }
-        setCurrentVertex(curr);
+        setCurrentVertex(currentVertexId);
     }
 
     /**
@@ -61,14 +58,10 @@ public class GraphTraversal implements Parcelable {
      * @param opt - The string option which corresponds to the next vertex in the graph to visit
      */
     public void selectOption(String opt) {
-        //Push the past vertex to the stack
-        stack.push(this.curr);
-        //Update the current Vertex
-        this.curr = this.currOptions.get(opt);
-        //Update the new options available
-        this.currOptions.clear();
-        this.currOptions = this.g.getOptions(this.curr);
-        //Check to
+        historyStack.push(this.currentVertexId);
+        this.currentVertexId = this.currentOptions.get(opt);
+        this.currentOptions.clear();
+        this.currentOptions = this.graph.getOptions(this.currentVertexId);
     }
 
 
@@ -76,36 +69,20 @@ public class GraphTraversal implements Parcelable {
      * If we need to go back to the previous vertex seen
      */
     public void stepBack() {
-        //Get the ID of the Vertex to visit
-        String prev = stack.pop();
-        //Update the ID of the current Vertex
-        this.curr = prev;
-        //Update the options now available
-        this.currOptions.clear();
-        this.currOptions = this.g.getOptions(this.curr);
-
+        setCurrentVertex(historyStack.pop());
     }
 
     /**
      * Used to determine if there have been previous steps in the traversal of the graph
      *
-     * @return If the stack is not empty, there have been previous steps
+     * @return If the historyStack is not empty, there have been previous steps
      */
     public boolean hasPrevious() {
-        return !stack.isEmpty();
+        return !historyStack.isEmpty();
     }
 
-    /**
-     * Use this method to reset the stack so a new traversal can begin
-     */
-    public void resetTraversal() {
-        this.stack.clear();
-    }
-
-    //Figure out if we need to modify this structure to not be a set. I think we can still iterate
-    //over it easily
     public Set<String> getOptions() {
-        return this.currOptions.keySet();
+        return this.currentOptions.keySet();
     }
 
     /**
@@ -116,12 +93,12 @@ public class GraphTraversal implements Parcelable {
      * @return The corresponding vertex object
      */
     public Vertex getCurrentVertex() {
-        return this.g.getVertex(this.curr);
+        return this.graph.getVertex(this.currentVertexId);
     }
 
-    public void setCurrentVertex(String v_id) {
-        this.curr = v_id;
-        this.currOptions = g.getOptions(v_id);
+    private void setCurrentVertex(String vertexId) {
+        this.currentVertexId = vertexId;
+        this.currentOptions = graph.getOptions(vertexId);
     }
 
     @Override
@@ -131,9 +108,8 @@ public class GraphTraversal implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeParcelable(g, i);
-        parcel.writeString(curr);
-        parcel.writeByte((byte) (done ? 1 : 0));
-        parcel.writeStringList(new ArrayList<String>(stack));
+        parcel.writeParcelable(graph, i);
+        parcel.writeString(currentVertexId);
+        parcel.writeStringList(new ArrayList<>(historyStack));
     }
 }
