@@ -24,6 +24,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -34,6 +35,7 @@ import org.centum.techconnect.R;
 import org.techconnect.asynctasks.LogoutAsyncTask;
 import org.techconnect.asynctasks.PostAppFeedbackAsyncTask;
 import org.techconnect.dialogs.SendFeedbackDialogFragment;
+import org.techconnect.fragments.DirectoryFragment;
 import org.techconnect.fragments.GuidesFragment;
 import org.techconnect.fragments.ReportsFragment;
 import org.techconnect.misc.ResourceHandler;
@@ -61,7 +63,8 @@ public class MainActivity extends AppCompatActivity
 
     private static final int FRAGMENT_GUIDES = 0;
     private static final int FRAGMENT_REPORTS = 1;
-    private final Fragment[] FRAGMENTS = new Fragment[]{new GuidesFragment(), new ReportsFragment()};
+    private static final int FRAGMENT_DIRECTORY = 2;
+    private final Fragment[] FRAGMENTS = new Fragment[]{new GuidesFragment(), new ReportsFragment(), new DirectoryFragment()};
 
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout coordinatorLayout;
@@ -76,8 +79,10 @@ public class MainActivity extends AppCompatActivity
     @Bind(R.id.main_fragment_container)
     FrameLayout fragmentContainer;
     TextView headerTextView;
+    ImageButton dropDownButton;
     MenuItem logoutMenuItem;
     MenuItem loginMenuItem;
+    MenuItem viewProfileMenuItem;
 
     private FirebaseAnalytics firebaseAnalytics;
     private String[] fragmentTitles;
@@ -115,9 +120,34 @@ public class MainActivity extends AppCompatActivity
             }
         };
         drawerLayout.addDrawerListener(toggle);
+        //Set MenuItem properties for profile-related options
         logoutMenuItem = navigationView.getMenu().findItem(R.id.logout);
         loginMenuItem = navigationView.getMenu().findItem(R.id.login);
+        viewProfileMenuItem = navigationView.getMenu().findItem(R.id.profile);
+
         headerTextView = (TextView) navigationView.getHeaderView(0).findViewById(R.id.headerTextView);
+        dropDownButton = (ImageButton) navigationView.getHeaderView(0).findViewById(R.id.dropDownButton);
+        dropDownButton.setOnClickListener(new View.OnClickListener() {
+            boolean isClicked = false;
+
+            @Override
+            public void onClick(View view) {
+                if (isClicked) {
+                    //Close the profile options
+                    dropDownButton.setImageResource(R.drawable.ic_arrow_drop_down_white_24dp);
+                    logoutMenuItem.setVisible(false);
+                    viewProfileMenuItem.setVisible(false);
+                } else {
+                    //Open the profile options
+                    dropDownButton.setImageResource(R.drawable.ic_arrow_drop_up_white_24dp);
+                    logoutMenuItem.setVisible(true);
+                    viewProfileMenuItem.setVisible(true);
+                }
+                isClicked = !isClicked;
+            }
+        });
+        dropDownButton.setVisibility(View.INVISIBLE);//Not initially there
+
         toggle.syncState();
 
         AuthManager.get(this).addAuthListener(new AuthListener() {
@@ -149,8 +179,30 @@ public class MainActivity extends AppCompatActivity
         User user;
         if (loggedIn && (user = TCDatabaseHelper.get(this).getUser(AuthManager.get(this).getAuth().getUserId())) != null) {
             headerTextView.setText(user.getName());
+            headerTextView.setOnClickListener(new View.OnClickListener() {
+                boolean isClicked = false;
+
+                @Override
+                public void onClick(View view) {
+                    if (isClicked) {
+                        //Close the profile options
+                        dropDownButton.setImageResource(R.drawable.ic_arrow_drop_down_white_24dp);
+                        logoutMenuItem.setVisible(false);
+                        viewProfileMenuItem.setVisible(false);
+                    } else {
+                        //Open the profile options
+                        dropDownButton.setImageResource(R.drawable.ic_arrow_drop_up_white_24dp);
+                        logoutMenuItem.setVisible(true);
+                        viewProfileMenuItem.setVisible(true);
+                    }
+                    isClicked = !isClicked;
+                }
+            });
+            dropDownButton.setVisibility(View.VISIBLE);
+            dropDownButton.setImageResource(R.drawable.ic_arrow_drop_down_white_24dp);
         } else {
             headerTextView.setText(R.string.app_name);
+            dropDownButton.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -171,10 +223,13 @@ public class MainActivity extends AppCompatActivity
             onShowLogin();
         } else if (AuthManager.get(this).hasAuth()) {
             loginMenuItem.setVisible(false);
-            logoutMenuItem.setVisible(true);
+            logoutMenuItem.setVisible(false);
+            viewProfileMenuItem.setVisible(false);
+
         } else {
             loginMenuItem.setVisible(true);
             logoutMenuItem.setVisible(false);
+            viewProfileMenuItem.setVisible(false);
         }
         updateNavHeader();
         if (hasPermissions && !userLearnedDrawer) {
@@ -254,9 +309,7 @@ public class MainActivity extends AppCompatActivity
         } /*else if (id == R.id.nav_reports) {
             newFrag = FRAGMENT_REPORTS;
         }*/ else if (id == R.id.call_dir) {
-            startActivity(new Intent(this, CallActivity.class));
-            drawer.closeDrawer(GravityCompat.START);
-            return true;
+            newFrag = FRAGMENT_DIRECTORY;
         } else if (id == R.id.nav_refresh) {
             updateResources();
             drawer.closeDrawer(GravityCompat.START);
@@ -274,6 +327,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.post_feedback) {
             drawer.closeDrawer(GravityCompat.START);
             onSendFeedback();
+        } else if (id == R.id.profile) {
+            onViewProfile();
             return true;
         }
 
@@ -333,6 +388,14 @@ public class MainActivity extends AppCompatActivity
                 }
             }.execute(AuthManager.get(this).getAuth());
         }
+    }
+
+    private void onViewProfile() {
+        //Only visible when user is actually logged in
+        User user = TCDatabaseHelper.get(this).getUser(AuthManager.get(this).getAuth().getUserId());
+        Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+        intent.putExtra("user", user);
+        startActivity(intent);
     }
 
     private void setCurrentFragment(int frag) {
