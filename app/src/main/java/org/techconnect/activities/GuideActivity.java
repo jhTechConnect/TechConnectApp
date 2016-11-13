@@ -148,11 +148,6 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
 
     private void onPlay() {
         if (flowChart != null) {
-            Bundle bundle = new Bundle();
-            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, flowChart.getId());
-            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, flowChart.getName());
-            bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "guides");
-            firebaseAnalytics.logEvent("start_session", bundle);
             Intent intent = new Intent(this, PlayGuideActivity.class);
             intent.putExtra(PlayGuideActivity.EXTRA_CHART_ID, flowChart.getId());
             startActivity(intent);
