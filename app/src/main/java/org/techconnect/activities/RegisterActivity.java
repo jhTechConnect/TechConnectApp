@@ -67,6 +67,25 @@ public class RegisterActivity extends AppCompatActivity {
         if (getIntent() != null && getIntent().hasExtra(EXTRA_PASSWORD)) {
             passwordEditText.setText(getIntent().getStringExtra(EXTRA_PASSWORD));
         }
+        if (savedInstanceState != null) {
+            nameEditText.setText(savedInstanceState.getString("name"));
+            emailEditText.setText(savedInstanceState.getString("email"));
+            orgEditText.setText(savedInstanceState.getString("org"));
+            expertisesEditText.setText(savedInstanceState.getString("skills"));
+            passwordEditText.setText(savedInstanceState.getString("password"));
+            confirmPasswordEditText.setText(savedInstanceState.getString("cpassword"));
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("name", nameEditText.getText().toString());
+        outState.putString("email", emailEditText.getText().toString());
+        outState.putString("org", orgEditText.getText().toString());
+        outState.putString("skills", expertisesEditText.getText().toString());
+        outState.putString("password", passwordEditText.getText().toString());
+        outState.putString("cpassword", confirmPasswordEditText.getText().toString());
     }
 
     @OnClick(R.id.register_button)

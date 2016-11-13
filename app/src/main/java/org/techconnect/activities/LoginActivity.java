@@ -48,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final String SHOW_SKIP_ALERT = "org.techconnect.login.skipalert";
     // UI references.
     @Bind(R.id.email)
-    TextView mEmailView;
+    EditText mEmailView;
     @Bind(R.id.password)
     EditText mPasswordView;
     @Bind(R.id.login_progress)
@@ -88,6 +88,18 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        if (savedInstanceState != null) {
+            mEmailView.setText(savedInstanceState.getString("email"));
+            mPasswordView.setText(savedInstanceState.getString("password"));
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("email", mEmailView.getText().toString());
+        outState.putString("password", mPasswordView.getText().toString());
     }
 
     @Override

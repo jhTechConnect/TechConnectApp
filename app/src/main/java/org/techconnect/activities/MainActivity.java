@@ -2,7 +2,6 @@ package org.techconnect.activities;
 
 import android.Manifest;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -19,15 +18,11 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -38,6 +33,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import org.centum.techconnect.R;
 import org.techconnect.asynctasks.LogoutAsyncTask;
 import org.techconnect.asynctasks.PostAppFeedbackAsyncTask;
+import org.techconnect.dialogs.SendFeedbackDialogFragment;
 import org.techconnect.fragments.GuidesFragment;
 import org.techconnect.fragments.ReportsFragment;
 import org.techconnect.misc.ResourceHandler;
@@ -142,9 +138,11 @@ public class MainActivity extends AppCompatActivity
         int fragToOpen = FRAGMENT_GUIDES;
         if (savedInstanceState != null) {
             fragToOpen = savedInstanceState.getInt("org.techconnect.mainactivity.frag", FRAGMENT_GUIDES);
+            showedLogin = savedInstanceState.getBoolean("shown_login");
         }
         setCurrentFragment(fragToOpen);
     }
+
 
     private void updateNavHeader() {
         boolean loggedIn = AuthManager.get(this).hasAuth();
@@ -232,6 +230,7 @@ public class MainActivity extends AppCompatActivity
         if (currentFragment > -1) {
             outState.putInt("frag", currentFragment);
         }
+        outState.putBoolean("shown_login", showedLogin);
     }
 
     @Override
@@ -274,7 +273,7 @@ public class MainActivity extends AppCompatActivity
             return true;
         } else if (id == R.id.post_feedback) {
             drawer.closeDrawer(GravityCompat.START);
-            onPostFeedback();
+            onSendFeedback();
             return true;
         }
 
@@ -283,37 +282,30 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void onPostFeedback() {
-        final EditText editText = new EditText(this);
-        editText.setInputType(InputType.TYPE_CLASS_TEXT);
-        editText.setSingleLine(false);
-        editText.setImeOptions(EditorInfo.IME_FLAG_NO_ENTER_ACTION);
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.action_post_app_feedback)
-                .setView(editText)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+    private void onSendFeedback() {
+        final SendFeedbackDialogFragment dialogFragment = new SendFeedbackDialogFragment();
+        dialogFragment.setListener(new SendFeedbackDialogFragment.FeedbackListener() {
+            @Override
+            public void onYes(String text) {
+                new PostAppFeedbackAsyncTask(MainActivity.this) {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        new PostAppFeedbackAsyncTask(MainActivity.this) {
-                            @Override
-                            protected void onPostExecute(Boolean success) {
-                                if (success) {
-                                    Snackbar.make(coordinatorLayout, R.string.feedback_success, Snackbar.LENGTH_LONG).show();
-                                } else {
-                                    Snackbar.make(coordinatorLayout, R.string.feedback_fail, Snackbar.LENGTH_LONG).show();
-                                }
-                            }
-                        }.execute(editText.getText().toString());
-                        dialogInterface.dismiss();
+                    protected void onPostExecute(Boolean success) {
+                        if (success) {
+                            Snackbar.make(coordinatorLayout, R.string.feedback_success, Snackbar.LENGTH_LONG).show();
+                        } else {
+                            Snackbar.make(coordinatorLayout, R.string.feedback_fail, Snackbar.LENGTH_LONG).show();
+                        }
                     }
-                })
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                })
-                .show();
+                }.execute(text);
+                dialogFragment.dismiss();
+            }
+
+            @Override
+            public void onNo() {
+                dialogFragment.dismiss();
+            }
+        });
+        dialogFragment.show(getFragmentManager(), "sendFeedback");
     }
 
     private void onShowLogin() {
