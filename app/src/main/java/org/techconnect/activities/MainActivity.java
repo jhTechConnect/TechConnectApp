@@ -24,7 +24,6 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -79,7 +78,6 @@ public class MainActivity extends AppCompatActivity
     @Bind(R.id.main_fragment_container)
     FrameLayout fragmentContainer;
     TextView headerTextView;
-    ImageButton dropDownButton;
     MenuItem logoutMenuItem;
     MenuItem loginMenuItem;
     MenuItem viewProfileMenuItem;
@@ -124,42 +122,19 @@ public class MainActivity extends AppCompatActivity
         logoutMenuItem = navigationView.getMenu().findItem(R.id.logout);
         loginMenuItem = navigationView.getMenu().findItem(R.id.login);
         viewProfileMenuItem = navigationView.getMenu().findItem(R.id.profile);
-
         headerTextView = (TextView) navigationView.getHeaderView(0).findViewById(R.id.headerTextView);
-        dropDownButton = (ImageButton) navigationView.getHeaderView(0).findViewById(R.id.dropDownButton);
-        dropDownButton.setOnClickListener(new View.OnClickListener() {
-            boolean isClicked = false;
-
-            @Override
-            public void onClick(View view) {
-                if (isClicked) {
-                    //Close the profile options
-                    dropDownButton.setImageResource(R.drawable.ic_arrow_drop_down_white_24dp);
-                    logoutMenuItem.setVisible(false);
-                    viewProfileMenuItem.setVisible(false);
-                } else {
-                    //Open the profile options
-                    dropDownButton.setImageResource(R.drawable.ic_arrow_drop_up_white_24dp);
-                    logoutMenuItem.setVisible(true);
-                    viewProfileMenuItem.setVisible(true);
-                }
-                isClicked = !isClicked;
-            }
-        });
-        dropDownButton.setVisibility(View.INVISIBLE);//Not initially there
-
         toggle.syncState();
-
+        updateNav();
         AuthManager.get(this).addAuthListener(new AuthListener() {
 
             @Override
             public void onLoginSucces(UserAuth auth) {
-                updateNavHeader();
+                updateNav();
             }
 
             @Override
             public void onLogout() {
-                updateNavHeader();
+                updateNav();
             }
         });
 
@@ -174,35 +149,19 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    private void updateNavHeader() {
+    private void updateNav() {
         boolean loggedIn = AuthManager.get(this).hasAuth();
         User user;
         if (loggedIn && (user = TCDatabaseHelper.get(this).getUser(AuthManager.get(this).getAuth().getUserId())) != null) {
             headerTextView.setText(user.getName());
-            headerTextView.setOnClickListener(new View.OnClickListener() {
-                boolean isClicked = false;
-
-                @Override
-                public void onClick(View view) {
-                    if (isClicked) {
-                        //Close the profile options
-                        dropDownButton.setImageResource(R.drawable.ic_arrow_drop_down_white_24dp);
-                        logoutMenuItem.setVisible(false);
-                        viewProfileMenuItem.setVisible(false);
-                    } else {
-                        //Open the profile options
-                        dropDownButton.setImageResource(R.drawable.ic_arrow_drop_up_white_24dp);
-                        logoutMenuItem.setVisible(true);
-                        viewProfileMenuItem.setVisible(true);
-                    }
-                    isClicked = !isClicked;
-                }
-            });
-            dropDownButton.setVisibility(View.VISIBLE);
-            dropDownButton.setImageResource(R.drawable.ic_arrow_drop_down_white_24dp);
+            loginMenuItem.setVisible(false);
+            logoutMenuItem.setVisible(true);
+            viewProfileMenuItem.setVisible(true);
         } else {
             headerTextView.setText(R.string.app_name);
-            dropDownButton.setVisibility(View.INVISIBLE);
+            loginMenuItem.setVisible(true);
+            logoutMenuItem.setVisible(false);
+            viewProfileMenuItem.setVisible(false);
         }
     }
 
@@ -221,17 +180,8 @@ public class MainActivity extends AppCompatActivity
             //startActivity(new Intent(MainActivity.this, IntroTutorial.class));
         } else if (!showedLogin && !AuthManager.get(this).hasAuth() && hasPermissions) {
             onShowLogin();
-        } else if (AuthManager.get(this).hasAuth()) {
-            loginMenuItem.setVisible(false);
-            logoutMenuItem.setVisible(false);
-            viewProfileMenuItem.setVisible(false);
-
-        } else {
-            loginMenuItem.setVisible(true);
-            logoutMenuItem.setVisible(false);
-            viewProfileMenuItem.setVisible(false);
         }
-        updateNavHeader();
+        updateNav();
         if (hasPermissions && !userLearnedDrawer) {
             drawerLayout.openDrawer(Gravity.LEFT);
         }

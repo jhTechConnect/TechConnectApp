@@ -75,7 +75,6 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     public void onRefresh() {
         refreshLayout.setRefreshing(true);
         searchLinearLayout.setVisibility(View.VISIBLE);
-        refreshLayout.setRefreshing(false);
         updateUsers(searchEditText.getText().toString());
         refreshLayout.setRefreshing(false);
     }

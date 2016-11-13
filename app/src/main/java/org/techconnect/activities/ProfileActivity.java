@@ -3,6 +3,7 @@ package org.techconnect.activities;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TextInputLayout;
@@ -26,10 +27,10 @@ import org.techconnect.sql.TCDatabaseHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class ProfileActivity extends AppCompatActivity {
     //Do all of the butterknife binding
@@ -118,10 +119,35 @@ public class ProfileActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         } else if (id == android.R.id.home) {
-            finish();
+            onBackPressed();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (saveButton.getVisibility() == View.VISIBLE) {
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.save_changes)
+                    .setMessage(R.string.save_changes_msg)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                            updateUser();
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                            finish();
+                        }
+                    }).show();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     private TableRow onRowAddRequest() {
@@ -168,7 +194,8 @@ public class ProfileActivity extends AppCompatActivity {
         return toAdd;
     }
 
-    public void writeUserToDatabase(View v) throws ExecutionException, InterruptedException {
+    @OnClick(R.id.save_button)
+    public void updateUser() {
         //Use the temp_user object to write any user changes to the database
         final Context context = this;
         temp_user.setExpertises(tmp_skills);
@@ -200,7 +227,7 @@ public class ProfileActivity extends AppCompatActivity {
         //Reset the head user to be the newly edited version, which is now stored in the database
         head_user = TCDatabaseHelper.get(context).getUser(temp_user.get_id());
 
-        v.setVisibility(View.GONE);
+        saveButton.setVisibility(View.GONE);
         discardButton.setVisibility(View.GONE);
     }
 

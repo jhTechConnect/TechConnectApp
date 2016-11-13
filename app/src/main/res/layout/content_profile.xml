@@ -86,7 +86,6 @@
             android:layout_margin="8dp"
             android:layout_weight="0"
             android:background="@color/colorPrimary"
-            android:onClick="writeUserToDatabase"
             android:text="@string/save_changes"
             android:textColor="?android:attr/colorForegroundInverse"
             android:visibility="gone" />
