@@ -21,9 +21,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="org.techconnect.activities.CallActivity"
-            android:label="Call Directory" />
-        <activity
             android:name="org.techconnect.activities.ImageViewActivity"
             android:label="Image"
             android:theme="@style/Theme.Transparent" />
@@ -55,6 +52,9 @@
         <activity
             android:name="org.techconnect.activities.GetGuidesActivity"
             android:label="@string/guide_catalog" />
+        <activity
+            android:name="org.techconnect.activities.ProfileActivity"
+            android:label="Personal Profile" />
         <activity
             android:name="org.techconnect.activities.GuideActivity"
             android:label="@string/title_activity_guide"
