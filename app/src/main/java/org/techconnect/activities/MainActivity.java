@@ -142,9 +142,10 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         int fragToOpen = FRAGMENT_GUIDES;
         if (savedInstanceState != null) {
-            fragToOpen = savedInstanceState.getInt("org.techconnect.mainactivity.frag", FRAGMENT_GUIDES);
+            fragToOpen = savedInstanceState.getInt("frag", FRAGMENT_GUIDES);
             showedLogin = savedInstanceState.getBoolean("shown_login");
         }
+        currentFragment = -1;
         setCurrentFragment(fragToOpen);
     }
 

@@ -101,7 +101,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             isLoading = true;
             String query = searchEditText.getText().toString();
             if (query != null && !TextUtils.isEmpty(query)) {
-                new SearchUsersAsyncTask(query, 10, 0) {
+                new SearchUsersAsyncTask(getActivity(), query, 10, 0) {
 
                     @Override
                     protected void onPreExecute() {

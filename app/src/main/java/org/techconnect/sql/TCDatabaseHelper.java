@@ -152,10 +152,10 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             } else {
                 user.setExpertises(Arrays.asList(expertises.split(",")));
             }
-            c.close();
             users.add(user);
             c.moveToNext();
         }
+        c.close();
         return users;
     }
 
