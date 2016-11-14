@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -36,8 +35,6 @@ import butterknife.OnClick;
 
 public class ProfileActivity extends AppCompatActivity {
     //Do all of the butterknife binding
-    @Bind(R.id.toolbar_layout)
-    CollapsingToolbarLayout layout;
     @Bind(R.id.profile_work)
     TextView org;
     @Bind(R.id.profile_email)
@@ -94,14 +91,9 @@ public class ProfileActivity extends AppCompatActivity {
             editSkill.setVisibility(View.GONE);
         }
 
-        //Add return arrow to action bar
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        //Setup the Toolbar Title
-        layout.setTitle(head_user.getName());
-
-        //Setup the UI with the head_user information
+        setTitle(head_user.getName());
         setupProfile();
     }
 
