@@ -30,24 +30,6 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="#212121" />
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/edit_email_layout"
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_toRightOf="@id/email_icon"
-            android:textColorHint="@color/colorPrimary"
-            android:visibility="gone">
-
-            <EditText
-                android:id="@+id/edit_email_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/prompt_email"
-                android:inputType="textEmailAddress"
-                android:maxLines="1"
-                android:textColor="@color/colorPrimary" />
-        </android.support.design.widget.TextInputLayout>
 
     </RelativeLayout>
 </TableRow>
