@@ -46,12 +46,8 @@ public class ProfileActivity extends AppCompatActivity {
     //All of the editable text fields
     @Bind(R.id.edit_work_layout)
     TextInputLayout edit_org_layout;
-    @Bind(R.id.edit_email_layout)
-    TextInputLayout edit_email_layout;
     @Bind(R.id.edit_work_text)
     EditText edit_org;
-    @Bind(R.id.edit_email_text)
-    EditText edit_email;
 
     //All of the edit buttons
     @Bind(R.id.edit_work_button)
@@ -292,7 +288,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         //Register the edit text fields for changing account info
         edit_org.setText(head_user.getOrganization());
-        edit_email.setText(head_user.getEmail());
 
         //Setup the edit button listeners to make changes to the profile info
         if (isEditable) {
@@ -345,20 +340,14 @@ public class ProfileActivity extends AppCompatActivity {
     private void updateEditViews() {
         if (isEditing) {
             org.setVisibility(View.GONE);
-            email.setVisibility(View.GONE);
             edit_org_layout.setVisibility(View.VISIBLE);
-            edit_email_layout.setVisibility(View.VISIBLE);
             editWork.setImageResource(R.drawable.ic_done_black_24dp);
         } else {
             org.setVisibility(View.VISIBLE);
-            email.setVisibility(View.VISIBLE);
             org.setText(edit_org.getText());
-            email.setText(edit_email.getText());
             temp_user.setOrganization(edit_org.getText().toString());//Update Reference
-            temp_user.setEmail(edit_email.getText().toString());
 
             edit_org_layout.setVisibility(View.GONE);
-            edit_email_layout.setVisibility(View.GONE);
             editWork.setImageResource(R.drawable.ic_mode_edit_black_24dp);
             saveButton.setVisibility(View.VISIBLE);
             discardButton.setVisibility(View.VISIBLE);
