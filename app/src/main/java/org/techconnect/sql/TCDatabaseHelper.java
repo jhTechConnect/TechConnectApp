@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
+import android.support.v4.content.CursorLoader;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -35,9 +36,11 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "FlowChart.db";
     private static TCDatabaseHelper instance = null;
+    private Context context;
 
     private TCDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     public static TCDatabaseHelper get(Context context) {
@@ -186,6 +189,15 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         }
         c.close();
         return ids.toArray(new String[ids.size()]);
+    }
+
+    public CursorLoader getAllFlowchartsCursorLoader(final String filter) {
+        return new CursorLoader(context, null, null, null, null, null) {
+            @Override
+            public Cursor loadInBackground() {
+                return getAllFlowchartsCursor(filter);
+            }
+        };
     }
 
     public Cursor getAllFlowchartsCursor() {
