@@ -115,7 +115,9 @@ public class GuidesFragment extends Fragment
     }
 
     public void onRefresh() {
-        getLoaderManager().restartLoader(GUIDE_LOADER, null, this);
+        if (getActivity() != null) {
+            getLoaderManager().restartLoader(GUIDE_LOADER, null, this);
+        }
     }
 
     @Override
