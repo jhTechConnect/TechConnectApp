@@ -30,7 +30,7 @@ import butterknife.OnClick;
 public class RegisterActivity extends AppCompatActivity {
 
     public static final String RESULT_REGISTERED_EMAIL = "org.techconnect.register.result.useremail";
-    public static final String EXTRA_EMAIL = "org.techconnect.register.email";
+    public static final String EXTRA_EMAIL = "org.techconnect.register.emailTextView";
     public static final String EXTRA_PASSWORD = "org.techconnect.register.password";
 
     @Bind(R.id.activity_register)
@@ -69,7 +69,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
         if (savedInstanceState != null) {
             nameEditText.setText(savedInstanceState.getString("name"));
-            emailEditText.setText(savedInstanceState.getString("email"));
+            emailEditText.setText(savedInstanceState.getString("emailTextView"));
             orgEditText.setText(savedInstanceState.getString("org"));
             expertisesEditText.setText(savedInstanceState.getString("skills"));
             passwordEditText.setText(savedInstanceState.getString("password"));
@@ -81,7 +81,7 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString("name", nameEditText.getText().toString());
-        outState.putString("email", emailEditText.getText().toString());
+        outState.putString("emailTextView", emailEditText.getText().toString());
         outState.putString("org", orgEditText.getText().toString());
         outState.putString("skills", expertisesEditText.getText().toString());
         outState.putString("password", passwordEditText.getText().toString());

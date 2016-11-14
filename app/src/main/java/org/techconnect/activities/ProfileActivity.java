@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TextInputLayout;
@@ -39,7 +41,7 @@ public class ProfileActivity extends AppCompatActivity {
     @Bind(R.id.profile_work)
     TextView org;
     @Bind(R.id.profile_email)
-    TextView email;
+    TextView emailTextView;
     @Bind(R.id.skills_table)
     TableLayout skills_table;
 
@@ -149,6 +151,12 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
+    @OnClick(R.id.profile_email)
+    public void onEmailClicked() {
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + emailTextView.getText().toString()));
+        startActivity(Intent.createChooser(emailIntent, "Email"));
+    }
+
     private TableRow onRowAddRequest() {
         final TableRow toAdd;
         final TextInputLayout inputLayout;
@@ -248,9 +256,9 @@ public class ProfileActivity extends AppCompatActivity {
 
 
     private void setupProfile() {
-        //Add organization, email, and skills to the list below
+        //Add organization, emailTextView, and skills to the list below
         org.setText(head_user.getOrganization());
-        email.setText(head_user.getEmail());
+        emailTextView.setText(head_user.getEmail());
 
         //Create all rows from list of skills in profile
         row_buttons = new ArrayList<ImageButton>(); //Store reference of where buttons are
