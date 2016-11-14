@@ -25,6 +25,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import org.centum.techconnect.R;
 import org.techconnect.misc.auth.AuthManager;
 import org.techconnect.model.User;
@@ -46,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final String SHOW_SKIP_ALERT = "org.techconnect.login.skipalert";
     // UI references.
     @Bind(R.id.email)
-    TextView mEmailView;
+    EditText mEmailView;
     @Bind(R.id.password)
     EditText mPasswordView;
     @Bind(R.id.login_progress)
@@ -61,6 +63,9 @@ public class LoginActivity extends AppCompatActivity {
     Button mSkipSigninButton;
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout coordinatorLayout;
+
+    FirebaseAnalytics firebaseAnalytics;
+
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -71,6 +76,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -82,6 +88,18 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        if (savedInstanceState != null) {
+            mEmailView.setText(savedInstanceState.getString("email"));
+            mPasswordView.setText(savedInstanceState.getString("password"));
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("email", mEmailView.getText().toString());
+        outState.putString("password", mPasswordView.getText().toString());
     }
 
     @Override
@@ -168,7 +186,7 @@ public class LoginActivity extends AppCompatActivity {
             // form field with an error.
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
+            // Show a progress_spinner spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
             mAuthTask = new UserLoginTask(email, password);
@@ -177,13 +195,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * Shows the progress UI and hides the login form.
+     * Shows the progress_spinner UI and hides the login form.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
+        // the progress_spinner spinner.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
@@ -256,6 +274,8 @@ public class LoginActivity extends AppCompatActivity {
                 UserAuth auth = (UserAuth) objs[1];
                 TCDatabaseHelper.get(LoginActivity.this).upsertUser(user);
                 AuthManager.get(LoginActivity.this).setAuth(auth);
+                Bundle bundle = new Bundle();
+                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, null);
                 finish();
             }
         }

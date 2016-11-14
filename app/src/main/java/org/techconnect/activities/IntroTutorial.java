@@ -8,14 +8,19 @@ import android.view.WindowManager;
 
 import com.github.paolorotolo.appintro.AppIntro;
 import com.github.paolorotolo.appintro.AppIntroFragment;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.centum.techconnect.R;
 
 public class IntroTutorial extends AppIntro {
 
+    private FirebaseAnalytics firebaseAnalytics;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.TUTORIAL_BEGIN, null);
         setDepthAnimation();
         showSkipButton(true);
         setProgressIndicator();
@@ -65,12 +70,14 @@ public class IntroTutorial extends AppIntro {
     @Override
     public void onSkipPressed(Fragment currentFragment) {
         super.onSkipPressed(currentFragment);
+        firebaseAnalytics.logEvent("tutorial_skip", null);
         finish();
     }
 
     @Override
     public void onDonePressed(Fragment currentFragment) {
         super.onDonePressed(currentFragment);
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.TUTORIAL_COMPLETE, null);
         finish();
     }
 

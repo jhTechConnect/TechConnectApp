@@ -3,5 +3,6 @@
     <string-array name="fragment_titles">
         <item>Guides</item>
         <item>Reports</item>
+        <item>Directory</item>
     </string-array>
 </resources>

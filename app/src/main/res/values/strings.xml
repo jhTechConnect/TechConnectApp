@@ -15,6 +15,9 @@
     <string name="no_reports">No Reports</string>
     <string name="department">Department</string>
     <string name="device">Device</string>
+    <string name="devices">Devices</string>
+    <string name="user">User</string>
+    <string name="users">Users</string>
     <string name="role">Role</string>
     <string name="start_session">Start Session</string>
     <string name="notes">Notes</string>
@@ -121,6 +124,7 @@
     <string name="comments">Comments</string>
     <string name="download">Download</string>
     <string name="save_changes">Save Changes</string>
+    <string name="discard_changes">Discard Changes</string>
     <string name="updating">Updating...</string>
     <string name="write_comment">Write Comment...</string>
     <string name="login_required">Login Required</string>
@@ -132,4 +136,8 @@
     <string name="couldnt_login">Could not sign in. Check your email and password and try again</string>
     <string name="view_profile">View Profile</string>
     <string name="sign_in_to_comment">Please sign in to comment</string>
+    <string name="action_post_app_feedback">Send Feedback</string>
+    <string name="feedback_success">Thank you for your feedback</string>
+    <string name="feedback_fail">Failed to send the feedback</string>
+    <string name="save_changes_msg">Would you like to save your profile changes?</string>
 </resources>

@@ -88,7 +88,7 @@ public class GuideFlowView extends ScrollView implements View.OnClickListener {
         commentsResourcesTabbedView = (CommentsResourcesTabbedView) LayoutInflater.from(getContext())
                 .inflate(R.layout.comments_resources_tabbed_view, tabContainer, false);
         commentsResourcesTabbedView.setItems(curr_step, curr_step.getResources(),
-                session.getFlowchart());
+                session.getFlowchart().getId());
         tabContainer.addView(commentsResourcesTabbedView);
     }
 
@@ -139,7 +139,7 @@ public class GuideFlowView extends ScrollView implements View.OnClickListener {
                     imageView.setVisibility(VISIBLE);
                     Picasso.with(getContext())
                             .load(file)
-                            .placeholder(R.drawable.ic_sync_black_48dp)
+                            .placeholder(R.drawable.progress_animation)
                             .into(imageView);
                     imageView.setOnClickListener(new OnClickListener() {
                         @Override

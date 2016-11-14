@@ -26,6 +26,11 @@ public interface TCRetrofit {
             "X-User-Id: "
     })
 
+    //Post app feedback
+    @FormUrlEncoded
+    @POST("api/v1/sys/feedback")
+    Call<JsendResponse> postAppFeedback(@Field("userId") String userId, @Field("text") String text);
+
     //Login the user
     @FormUrlEncoded
     @POST("api/v1/login")
@@ -52,6 +57,10 @@ public interface TCRetrofit {
     // GET user
     @GET("api/v1/user/{id}")
     Call<JsendResponse> getUser(@Path("id") String id);
+
+    // Search users
+    @POST("api/v1/users/search")
+    Call<JsendResponse> searchUsers(@Body RequestBody body);
 
     //Just want to get the getCatalog, no input needed
     @GET("api/v1/catalog")

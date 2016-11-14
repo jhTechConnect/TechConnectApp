@@ -60,4 +60,11 @@
         android:scaleType="fitCenter"
         app:srcCompat="@drawable/ic_file_download_black_48dp" />
 
+    <ProgressBar
+        android:id="@+id/downloadProgressBar"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:indeterminate="true" />
+
 </org.techconnect.views.GuideListItemView>

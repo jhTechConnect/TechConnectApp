@@ -9,7 +9,7 @@ import java.util.List;
  * Created by Phani on 10/26/2016.
  */
 
-public class User implements Parcelable {
+public class User implements Parcelable, Cloneable {
 
     public static final Creator<User> CREATOR = new Creator<User>() {
         @Override
@@ -28,6 +28,7 @@ public class User implements Parcelable {
     private String countryCode;
     private String country;
     private String organization;
+    private String pic;
     private List<String> expertises;
 
     public User() {
@@ -40,6 +41,7 @@ public class User implements Parcelable {
         countryCode = in.readString();
         country = in.readString();
         organization = in.readString();
+        pic = in.readString();
         expertises = in.createStringArrayList();
     }
 
@@ -99,10 +101,34 @@ public class User implements Parcelable {
         this.expertises = expertises;
     }
 
+    public String getPic() {
+        return pic;
+    }
+
+    public void setPic(String pic) {
+        this.pic = pic;
+    }
+
     @Override
     public int describeContents() {
         return 0;
     }
+
+    @Override
+    public User clone() throws CloneNotSupportedException {
+        super.clone(); //Do I need this?
+        User new_user = new User();
+        new_user.set_id(this.get_id());
+        new_user.setEmail(this.getEmail());
+        new_user.setExpertises(this.getExpertises());
+        new_user.setCountry(this.getCountry());
+        new_user.setCountryCode(this.getCountryCode());
+        new_user.setName(this.getName());
+        new_user.setOrganization(this.getOrganization());
+
+        return new_user;
+    }
+
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
@@ -112,6 +138,7 @@ public class User implements Parcelable {
         parcel.writeString(countryCode);
         parcel.writeString(country);
         parcel.writeString(organization);
+        parcel.writeString(pic);
         parcel.writeStringList(expertises);
     }
 }

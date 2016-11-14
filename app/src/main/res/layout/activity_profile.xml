@@ -43,18 +43,4 @@
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/content_profile" />
-
-    <Button
-        android:id="@+id/save_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_weight="0"
-        android:background="@color/colorPrimary"
-        android:text="@string/save_changes"
-        android:layout_gravity="bottom"
-        android:textColor="?android:attr/colorForegroundInverse"
-        android:visibility="gone"
-        android:onClick="writeUserToDatabase"/>
-
 </android.support.design.widget.CoordinatorLayout>

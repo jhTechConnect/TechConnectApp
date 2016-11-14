@@ -24,6 +24,7 @@ import org.centum.techconnect.R;
 import org.techconnect.activities.GetGuidesActivity;
 import org.techconnect.activities.GuideActivity;
 import org.techconnect.adapters.FlowchartCursorAdapter;
+import org.techconnect.asynctasks.GetChartsCursorAsyncTask;
 import org.techconnect.sql.TCDatabaseHelper;
 import org.techconnect.views.GuideListItemView;
 
@@ -50,6 +51,7 @@ public class GuidesFragment extends Fragment implements SwipeRefreshLayout.OnRef
     LinearLayout searchLinearLayout;
 
     private FlowchartCursorAdapter adapter;
+    private boolean isRefreshing = false;
 
     public GuidesFragment() {
         // Required empty public constructor
@@ -107,17 +109,34 @@ public class GuidesFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
     @Override
     public void onRefresh() {
-        refreshLayout.setRefreshing(true);
-        noGuidesLayout.setVisibility(View.GONE);
-        guidesListView.setVisibility(View.VISIBLE);
-        searchLinearLayout.setVisibility(View.VISIBLE);
-        adapter.changeCursor(TCDatabaseHelper.get(getContext()).getAllFlowchartsCursor(searchEditText.getText().toString()));
-        if (adapter.getCount() == 0) {
-            noGuidesLayout.setVisibility(View.VISIBLE);
-            guidesListView.setVisibility(View.GONE);
-            searchLinearLayout.setVisibility(View.GONE);
+        if (!isRefreshing) {
+            isRefreshing = true;
+            refreshLayout.setRefreshing(true);
+            new GetChartsCursorAsyncTask(getContext()) {
+                @Override
+                protected void onPostExecute(Cursor cursor) {
+                    adapter.changeCursor(cursor);
+                    if (adapter.getCount() == 0) {
+                        noGuidesLayout.setVisibility(View.VISIBLE);
+                        guidesListView.setVisibility(View.GONE);
+                        searchLinearLayout.setVisibility(View.GONE);
+                    } else {
+                        noGuidesLayout.setVisibility(View.GONE);
+                        guidesListView.setVisibility(View.VISIBLE);
+                        searchLinearLayout.setVisibility(View.VISIBLE);
+                    }
+                    refreshLayout.setRefreshing(false);
+                    isRefreshing = false;
+                }
+
+                @Override
+                protected void onCancelled() {
+                    super.onCancelled();
+                    refreshLayout.setRefreshing(false);
+                    isRefreshing = false;
+                }
+            }.execute(searchEditText.getText().toString());
         }
-        refreshLayout.setRefreshing(false);
     }
 
     @Override

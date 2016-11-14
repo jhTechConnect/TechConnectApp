@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.squareup.picasso.Picasso;
 
 import org.centum.techconnect.R;
@@ -32,6 +33,7 @@ import butterknife.OnClick;
 public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     public static String EXTRA_CHART = "org.techconnect.guideactivity.flowchart";
+    public static String EXTRA_ALLOW_REFRESH = "org.techconnect.guideactivity.allow_refresh";
 
     @Bind(R.id.content_linearLayout)
     LinearLayout contentLinearLayout;
@@ -45,8 +47,8 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
     TextView descriptionTextView;
     @Bind(R.id.scrollView)
     ScrollView scrollView;
-
     CommentsResourcesTabbedView commentsResourcesTabbedView;
+    private FirebaseAnalytics firebaseAnalytics;
     private FlowChart flowChart;
     private boolean inDB = true;
     private boolean downloadingChart = false;
@@ -56,6 +58,7 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guide);
         ButterKnife.bind(this);
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         commentsResourcesTabbedView = (CommentsResourcesTabbedView) getLayoutInflater()
@@ -75,7 +78,15 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
 
         if (getIntent() != null && getIntent().hasExtra(EXTRA_CHART)) {
             flowChart = getIntent().getParcelableExtra(EXTRA_CHART);
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, flowChart.getId());
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, flowChart.getName());
+            bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "guides");
+            firebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM, bundle);
             checkDBForFlowchart();
+        }
+        if (getIntent() != null && getIntent().hasExtra(EXTRA_ALLOW_REFRESH)) {
+            swipeRefreshLayout.setEnabled(getIntent().getBooleanExtra(EXTRA_ALLOW_REFRESH, true));
         }
     }
 
@@ -121,13 +132,13 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
                 Picasso.with(this)
                         .load(getFileStreamPath(
                                 ResourceHandler.get(this).getStringResource(flowChart.getImage())))
-                        .placeholder(R.drawable.ic_sync_black_48dp)
+                        .placeholder(R.drawable.progress_animation)
                         .into(headerImageView);
             } else {
                 // Load online image
                 Picasso.with(this)
                         .load(flowChart.getImage())
-                        .placeholder(R.drawable.ic_sync_black_48dp)
+                        .placeholder(R.drawable.progress_animation)
                         .into(headerImageView);
             }
         } else {
