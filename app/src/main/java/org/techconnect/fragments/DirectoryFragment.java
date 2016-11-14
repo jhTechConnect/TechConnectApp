@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -44,6 +43,8 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     ListView userListView;
     @Bind(R.id.progress)
     ProgressBar progressBar;
+    @Bind(R.id.offline_label)
+    TextView offlineTextView;
 
     private UserListAdapter adapter;
     private boolean isLoading = false;
@@ -98,43 +99,39 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             adapter.setUsers(new ArrayList<User>());
             progressBar.setVisibility(View.VISIBLE);
             userListView.setVisibility(View.GONE);
+            offlineTextView.setVisibility(View.GONE);
             isLoading = true;
             String query = searchEditText.getText().toString();
-            if (query != null && !TextUtils.isEmpty(query)) {
-                new SearchUsersAsyncTask(getActivity(), query, 10, 0) {
+            new SearchUsersAsyncTask(getActivity(), query, 10, 0) {
 
-                    @Override
-                    protected void onPreExecute() {
-                        super.onPreExecute();
-                    }
+                @Override
+                protected void onPreExecute() {
+                    super.onPreExecute();
+                }
 
-                    @Override
-                    protected void onPostExecute(List<User> users) {
-                        if (users == null) {
-                            adapter.setUsers(TCDatabaseHelper.get(getActivity()).getAllUsers());
-                        } else {
-                            adapter.setUsers(users);
-                        }
-                        adapter.notifyDataSetChanged();
-                        isLoading = false;
-                        userListView.setVisibility(View.VISIBLE);
-                        progressBar.setVisibility(View.GONE);
+                @Override
+                protected void onPostExecute(List<User> users) {
+                    if (users == null) {
+                        adapter.setUsers(TCDatabaseHelper.get(getActivity()).getAllUsers());
+                        offlineTextView.setVisibility(View.VISIBLE);
+                    } else {
+                        adapter.setUsers(users);
                     }
+                    adapter.notifyDataSetChanged();
+                    isLoading = false;
+                    userListView.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.GONE);
+                }
 
-                    @Override
-                    protected void onCancelled() {
-                        isLoading = false;
-                        userListView.setVisibility(View.VISIBLE);
-                        progressBar.setVisibility(View.GONE);
-                    }
-                }.execute();
-            } else {
-                adapter.setUsers(TCDatabaseHelper.get(getActivity()).getAllUsers());
-                adapter.notifyDataSetChanged();
-                isLoading = false;
-                userListView.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.GONE);
-            }
+                @Override
+                protected void onCancelled() {
+                    isLoading = false;
+                    userListView.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.GONE);
+                    adapter.setUsers(TCDatabaseHelper.get(getActivity()).getAllUsers());
+                    offlineTextView.setVisibility(View.VISIBLE);
+                }
+            }.execute();
         }
     }
 

@@ -140,4 +140,5 @@
     <string name="feedback_success">Thank you for your feedback</string>
     <string name="feedback_fail">Failed to send the feedback</string>
     <string name="save_changes_msg">Would you like to save your profile changes?</string>
+    <string name="offline_results_shown">Offline Results Shown</string>
 </resources>
