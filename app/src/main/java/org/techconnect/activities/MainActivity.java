@@ -181,11 +181,10 @@ public class MainActivity extends AppCompatActivity
             //startActivity(new Intent(MainActivity.this, IntroTutorial.class));
         } else if (!showedLogin && !AuthManager.get(this).hasAuth() && hasPermissions) {
             onShowLogin();
-        }
-        updateNav();
-        if (hasPermissions && !userLearnedDrawer) {
+        } else if (hasPermissions && !userLearnedDrawer) {
             drawerLayout.openDrawer(Gravity.LEFT);
         }
+        updateNav();
     }
 
     @OnClick(R.id.grant_permission_btn)
