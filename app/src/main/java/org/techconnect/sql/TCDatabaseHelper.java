@@ -240,8 +240,15 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         return chart;
     }
 
+
+    /**
+     * Get a stub chart, for use in listviews when you don't need comments and the graph.
+     *
+     * @param c
+     * @return
+     */
     @NonNull
-    public FlowChart getChartFromCursor(Cursor c) {
+    public FlowChart getChartStubFromCursor(Cursor c) {
         FlowChart chart = new FlowChart();
         chart.setId(c.getString(c.getColumnIndexOrThrow(ChartEntry.ID)));
         chart.setName(c.getString(c.getColumnIndexOrThrow(ChartEntry.NAME)));
@@ -252,6 +259,12 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         chart.setImage(c.getString(c.getColumnIndexOrThrow(ChartEntry.IMAGE)));
         chart.setType(FlowChart.ChartType.valueOf(c.getString(c.getColumnIndexOrThrow(ChartEntry.TYPE))));
         chart.setScore(c.getInt(c.getColumnIndexOrThrow(ChartEntry.SCORE)));
+        return chart;
+    }
+
+    @NonNull
+    public FlowChart getChartFromCursor(Cursor c) {
+        FlowChart chart = getChartStubFromCursor(c);
         String allRes = c.getString(c.getColumnIndexOrThrow(ChartEntry.ALL_RESOURCES));
         String res = c.getString(c.getColumnIndexOrThrow(ChartEntry.RESOURCES));
         if (allRes != null && !TextUtils.isEmpty(allRes.trim())) {

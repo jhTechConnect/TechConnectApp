@@ -85,7 +85,9 @@ public class GuidesFragment extends Fragment
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 GuideListItemView guideView = ((GuideListItemView) view);
                 Intent intent = new Intent(getContext(), GuideActivity.class);
-                intent.putExtra(GuideActivity.EXTRA_CHART, guideView.getFlowChart());
+                // Get the non-stub chart and open
+                intent.putExtra(GuideActivity.EXTRA_CHART,
+                        TCDatabaseHelper.get(getActivity()).getChart(guideView.getFlowChart().getId()));
                 startActivity(intent);
             }
         });
