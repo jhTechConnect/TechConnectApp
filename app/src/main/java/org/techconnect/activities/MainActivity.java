@@ -278,6 +278,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.post_feedback) {
             drawer.closeDrawer(GravityCompat.START);
             onSendFeedback();
+            return true;
         } else if (id == R.id.profile) {
             onViewProfile();
             return true;
