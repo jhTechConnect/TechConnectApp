@@ -144,7 +144,9 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
     }
 
     private void saveSession() {
-        TCDatabaseHelper.get(this).insertSession(session);//Write to the SQL Database
+        if (session != null) {
+            TCDatabaseHelper.get(this).insertSession(session);//Write to the SQL Database
+        }
     }
 
     private void loadFlowchart() {
@@ -217,12 +219,14 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
 
     private void endSession() {
         saveSession();
+        if (session != null) {
+            long endTime = System.currentTimeMillis();
+            long duration = endTime - session.getCreatedDate();
+            Bundle bundle = new Bundle();
+            bundle.putLong(FirebaseAnalytics.Param.VALUE, duration);
+            firebaseAnalytics.logEvent("session_duration", bundle);
+        }
         finish();
-        long endTime = System.currentTimeMillis();
-        long duration = endTime - session.getCreatedDate();
-        Bundle bundle = new Bundle();
-        bundle.putLong(FirebaseAnalytics.Param.VALUE, duration);
-        firebaseAnalytics.logEvent("session_duration", bundle);
     }
 
     @Override
