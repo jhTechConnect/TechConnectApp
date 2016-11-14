@@ -36,26 +36,30 @@
     <string name="tutorial_title_welcome">Welcome to TechConnect!</string>
     <string name="tutorial_msg_welcome">Swipe for some quick tips</string>
 
-    <string name="tutorial_title_self_help_home">Self Help Homescreen</string>
-    <string name="tutorial_msg_self_help_home">This is the self help start screen</string>
+    <string name="tutorial_title_guides_home">Guide Homescreen</string>
+    <string name="tutorial_msg_guides_home">This screen contains all charts that have been downloaded to the device. Additional guides can be added by pressing the yellow button</string>
 
-    <string name="tutorial_title_select_room_device">Enter Room and Device</string>
-    <string name="tutorial_msg_select_room_device">Enter the name of the department the device is from and select the type of device from the drop-down menu</string>
+    <string name="tutorial_title_device_home">View device details and start a session</string>
+    <string name="tutorial_msg_device_home">Each device has a page with additional resources and comments on the guide as a whole. Press the \"Start Session\" button to begin</string>
 
-    <string name="tutorial_title_add_notes">Add Notes and Start</string>
-    <string name="tutorial_msg_add_notes">Add any additional notes then press \"Start Session\" to start</string>
+    <string name="tutorial_title_step">Start Session and Begin Troubleshooting</string>
+    <string name="tutorial_msg_step">Each troubleshooting step contains instructions on what to do next during the repair</string>
 
-    <string name="tutorial_title_troubleshoot">Work Through Troubleshooting Steps</string>
-    <string name="tutorial_msg_troubleshoot">You will be guided through a series of questions. Answer each question based on how the device is responding</string>
+    <string name="tutorial_title_step_details">Comments and Resources on Each Step</string>
+    <string name="tutorial_msg_step_details">Users have the ability to comment on any step of the chart. In addition, resources relevant to the step may be provided</string>
 
-    <string name="tutorial_title_tutorials">Read Skills Tutorials</string>
-    <string name="tutorial_msg_tutorials">For some steps, helpful resources will be provided for your reference</string>
+    <string name="tutorial_title_hamburger">Other Features</string>
+    <string name="tutorial_msg_hamburger">Other than the guides, you have access to other fuctions from the main menu including your profile and a directory</string>
 
-    <string name="tutorial_title_finish_repair">Finish Repair</string>
-    <string name="tutorial_msg_finish_repair">At some point, you will completely repair the device. Success!</string>
+    <string name="tutorial_title_profile">Profile Page</string>
+    <string name="tutorial_msg_profile">You can view and edit your profile page</string>
 
-    <string name="tutorial_title_additional_features">Additional Features</string>
-    <string name="tutorial_msg_additional_features">When you tap the expanded menu button at the upper left, you will be able to access other features such as reports and syncing</string>
+    <string name="tutorial_title_directory">User Directory</string>
+    <string name="tutorial_msg_directory">The directory allows you to connect with other technicians in order to get help on a repair</string>
+
+    <string name="tutorial_title_directory_skill">Search by Skill or Name</string>
+    <string name="tutorial_msg_directory_skill">The search bar allows you to search for technicians either by name or by a particular skill</string>
+
     <string name="click_im_preview">Click an image preview to zoom in</string>
     <string name="loading_resources">Loading Resources</string>
     <string name="error_loading_resources">Error loading resources</string>
