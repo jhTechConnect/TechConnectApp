@@ -216,6 +216,7 @@ public class ProfileActivity extends AppCompatActivity {
                 pd.dismiss();
                 pd = null;
                 if (u != null) {
+                    Log.d("Update User", u.getEmail());
                     TCDatabaseHelper.get(context).upsertUser(u);
 
                 } else {
@@ -237,6 +238,7 @@ public class ProfileActivity extends AppCompatActivity {
     public void discardUserChanges(View v) {
         //Want to restore the original user (head_user)
         skills_table.removeAllViews(); //Clear out all previous rows
+        tmp_skills.clear(); // Clear out all temporary skills
         setupProfile();
         try {
             temp_user = head_user.clone();
@@ -352,7 +354,7 @@ public class ProfileActivity extends AppCompatActivity {
             email.setVisibility(View.VISIBLE);
             org.setText(edit_org.getText());
             email.setText(edit_email.getText());
-            head_user.setOrganization(edit_org.getText().toString());//Update Reference
+            temp_user.setOrganization(edit_org.getText().toString());//Update Reference
             temp_user.setEmail(edit_email.getText().toString());
 
             edit_org_layout.setVisibility(View.GONE);

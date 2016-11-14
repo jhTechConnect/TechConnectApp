@@ -2,6 +2,7 @@ package org.techconnect.asynctasks;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.techconnect.misc.auth.AuthManager;
 import org.techconnect.model.User;
@@ -26,6 +27,7 @@ public class UpdateUserAsyncTask extends AsyncTask<User, Void, User> {
         TCNetworkHelper helper = new TCNetworkHelper();
         if (users.length > 0) {
             try {
+                Log.d("Update User",users[0].getEmail());
                 return helper.updateUser(users[0], AuthManager.get(context).getAuth());
             } catch (IOException e) {
                 e.printStackTrace();
