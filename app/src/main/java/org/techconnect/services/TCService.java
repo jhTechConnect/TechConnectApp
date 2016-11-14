@@ -9,6 +9,8 @@ import android.os.ResultReceiver;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import org.centum.techconnect.R;
 import org.techconnect.misc.ResourceHandler;
 import org.techconnect.model.FlowChart;
@@ -94,6 +96,15 @@ public class TCService extends IntentService {
             }
             loadResources(res.toArray(new String[res.size()]));
             loadUsers(userIds.toArray(new String[userIds.size()]));
+
+            for (FlowChart chart : flowCharts) {
+                Bundle fbBundle = new Bundle();
+                fbBundle.putString(FirebaseAnalytics.Param.ITEM_ID, chart.getId());
+                fbBundle.putString(FirebaseAnalytics.Param.ITEM_NAME, chart.getName());
+                fbBundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "guides");
+                FirebaseAnalytics.getInstance(this).logEvent("download_guide", fbBundle);
+            }
+
             resultCode = LOAD_CHARTS_RESULT_SUCCESS;
         } catch (IOException e) {
             resultCode = LOAD_CHARTS_RESULT_ERROR;

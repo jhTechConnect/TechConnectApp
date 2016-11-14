@@ -28,6 +28,7 @@ public class User implements Parcelable, Cloneable {
     private String countryCode;
     private String country;
     private String organization;
+    private String pic;
     private List<String> expertises;
 
     public User() {
@@ -40,6 +41,7 @@ public class User implements Parcelable, Cloneable {
         countryCode = in.readString();
         country = in.readString();
         organization = in.readString();
+        pic = in.readString();
         expertises = in.createStringArrayList();
     }
 
@@ -99,6 +101,14 @@ public class User implements Parcelable, Cloneable {
         this.expertises = expertises;
     }
 
+    public String getPic() {
+        return pic;
+    }
+
+    public void setPic(String pic) {
+        this.pic = pic;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -128,6 +138,7 @@ public class User implements Parcelable, Cloneable {
         parcel.writeString(countryCode);
         parcel.writeString(country);
         parcel.writeString(organization);
+        parcel.writeString(pic);
         parcel.writeStringList(expertises);
     }
 }

@@ -3,6 +3,8 @@ package org.techconnect.asynctasks;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import org.techconnect.misc.auth.AuthManager;
 import org.techconnect.model.Comment;
 import org.techconnect.network.TCNetworkHelper;
@@ -14,7 +16,7 @@ import java.io.IOException;
  * Created by Phani on 10/27/2016.
  */
 
-public class  PostCommentAsyncTask extends AsyncTask<Void, Void, Comment> {
+public class PostCommentAsyncTask extends AsyncTask<Void, Void, Comment> {
 
     private Context context;
     private String chartId;
@@ -36,6 +38,7 @@ public class  PostCommentAsyncTask extends AsyncTask<Void, Void, Comment> {
             } else {
                 TCDatabaseHelper.get(context).insertComment(postedComment, chartId, Comment.PARENT_TYPE_CHART);
             }
+            FirebaseAnalytics.getInstance(context).logEvent("post_comment", null);
             return postedComment;
         } catch (IOException e) {
             e.printStackTrace();

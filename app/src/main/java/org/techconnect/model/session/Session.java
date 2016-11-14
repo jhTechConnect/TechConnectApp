@@ -2,7 +2,6 @@ package org.techconnect.model.session;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import org.techconnect.model.FlowChart;
 import org.techconnect.model.GraphTraversal;
@@ -32,7 +31,7 @@ public class Session implements Parcelable {
             return new Session[size];
         }
     };
-    private String flowchart_id;
+    private FlowChart flowChart;
     private GraphTraversal traversal; //Step through the graph
 
     private long createdDate;
@@ -48,13 +47,14 @@ public class Session implements Parcelable {
 
     public Session(FlowChart flowchart) {
         this.createdDate = new Date().getTime();
-        this.flowchart_id = flowchart.getId();
+        this.flowChart = flowchart;
         this.traversal = new GraphTraversal(flowchart.getGraph());
         history.add(this.traversal.getCurrentVertex().getId());
     }
 
     /**
      * Build a Session from a Parcel object
+     *
      * @param in
      */
     public Session(Parcel in) {
@@ -64,43 +64,10 @@ public class Session implements Parcelable {
         this.modelNumber = in.readString();
         this.serialNumber = in.readString();
         this.notes = in.readString();
-        in.readList(this.history,String.class.getClassLoader());
-        in.readList(this.optionHistory,String.class.getClassLoader());
-        flowchart_id = in.readString();
-
-        //Will wait to setup the Graph Traversal until solidly within the activity
-    }
-
-    /*
-    public String getReport() {
-        StringBuilder report = new StringBuilder();
-        report.append("Date: ").append(new Date(createdDate).toString()).append('\n');
-        report.append("Department: ").append(department).append('\n');
-        report.append("Notes: ").append(notes).append('\n');
-        report.append("Flowchart: ").append(flowchart.getName()).append('\n');
-        //report.append("Role: " + ((role == 0) ? "Technician" : "End User"));
-        report.append("History:\n------------------------").append("\n\n");
-        for (int i = 0; i < history.size(); i++) {
-            String question = history.get(i).getName();
-            if (question.length() > 26) {
-                question = question.substring(0, 23) + "...";
-            }
-            report.append(question).append(": ").append(optionHistory.get(i)).append("\n\n");
-        }
-        return report.toString();
-    }
-    */
-
-    public void setTraversal(FlowChart f) {
-        if (f.getId().equals(flowchart_id)) {
-            traversal = new GraphTraversal(f.getGraph());
-            if (history.size() > 1) {
-                //Get last vertex, that's where we're at
-                traversal.setCurrentVertex(history.get(history.size() -1));
-            }
-        } else {
-            Log.e("Session Setup","Incorrect Flowchart supplied to setup traversal");
-        }
+        in.readList(this.history, String.class.getClassLoader());
+        in.readList(this.optionHistory, String.class.getClassLoader());
+        this.flowChart = in.readParcelable(FlowChart.class.getClassLoader());
+        this.traversal = in.readParcelable(GraphTraversal.class.getClassLoader());
     }
 
     //Save
@@ -135,6 +102,7 @@ public class Session implements Parcelable {
         return serialNumber;
 
     }
+
     public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
     }
@@ -174,8 +142,8 @@ public class Session implements Parcelable {
         return this.traversal.getOptions();
     }
 
-    public String getFlowchart() {
-        return flowchart_id;
+    public FlowChart getFlowchart() {
+        return flowChart;
     }
 
 
@@ -217,7 +185,8 @@ public class Session implements Parcelable {
         parcel.writeString(notes);
         parcel.writeList(history);
         parcel.writeList(optionHistory);
-        parcel.writeString(flowchart_id);//Just need the flowchart, not traversal
+        parcel.writeParcelable(flowChart, 0);//Just need the flowchart, not traversal
+        parcel.writeParcelable(traversal, 0);
 
     }
 

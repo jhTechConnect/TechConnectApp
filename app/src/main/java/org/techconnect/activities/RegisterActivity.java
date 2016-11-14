@@ -16,6 +16,8 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import org.centum.techconnect.R;
 import org.techconnect.asynctasks.RegisterAsyncTask;
 import org.techconnect.model.User;
@@ -50,10 +52,13 @@ public class RegisterActivity extends AppCompatActivity {
     @Bind(R.id.confirm_password)
     EditText confirmPasswordEditText;
 
+    FirebaseAnalytics firebaseAnalytics;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         ButterKnife.bind(this);
 
         if (getIntent() != null && getIntent().hasExtra(EXTRA_EMAIL)) {
@@ -62,6 +67,25 @@ public class RegisterActivity extends AppCompatActivity {
         if (getIntent() != null && getIntent().hasExtra(EXTRA_PASSWORD)) {
             passwordEditText.setText(getIntent().getStringExtra(EXTRA_PASSWORD));
         }
+        if (savedInstanceState != null) {
+            nameEditText.setText(savedInstanceState.getString("name"));
+            emailEditText.setText(savedInstanceState.getString("email"));
+            orgEditText.setText(savedInstanceState.getString("org"));
+            expertisesEditText.setText(savedInstanceState.getString("skills"));
+            passwordEditText.setText(savedInstanceState.getString("password"));
+            confirmPasswordEditText.setText(savedInstanceState.getString("cpassword"));
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("name", nameEditText.getText().toString());
+        outState.putString("email", emailEditText.getText().toString());
+        outState.putString("org", orgEditText.getText().toString());
+        outState.putString("skills", expertisesEditText.getText().toString());
+        outState.putString("password", passwordEditText.getText().toString());
+        outState.putString("cpassword", confirmPasswordEditText.getText().toString());
     }
 
     @OnClick(R.id.register_button)
@@ -92,8 +116,10 @@ public class RegisterActivity extends AppCompatActivity {
                     showProgress(false);
                     if (user == null) {
                         Snackbar.make(coordinatorLayout, R.string.failed_register, Snackbar.LENGTH_LONG).show();
+                        firebaseAnalytics.logEvent("register_fail", null);
                     } else {
                         // Store the user, probably need it later
+                        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SIGN_UP, null);
                         TCDatabaseHelper.get(RegisterActivity.this).upsertUser(user);
                         Intent intent = new Intent();
                         intent.putExtra(RESULT_REGISTERED_EMAIL, user.getEmail());
@@ -155,13 +181,13 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     /**
-     * Shows the progress UI and hides the login form.
+     * Shows the progress_spinner UI and hides the login form.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
+        // the progress_spinner spinner.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 

@@ -8,7 +8,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -18,18 +20,20 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import org.centum.techconnect.R;
 import org.techconnect.asynctasks.LogoutAsyncTask;
+import org.techconnect.asynctasks.PostAppFeedbackAsyncTask;
+import org.techconnect.dialogs.SendFeedbackDialogFragment;
 import org.techconnect.fragments.DirectoryFragment;
 import org.techconnect.fragments.GuidesFragment;
 import org.techconnect.fragments.ReportsFragment;
@@ -61,6 +65,8 @@ public class MainActivity extends AppCompatActivity
     private static final int FRAGMENT_DIRECTORY = 2;
     private final Fragment[] FRAGMENTS = new Fragment[]{new GuidesFragment(), new ReportsFragment(), new DirectoryFragment()};
 
+    @Bind(R.id.coordinatorLayout)
+    CoordinatorLayout coordinatorLayout;
     @Bind(R.id.drawer_layout)
     DrawerLayout drawerLayout;
     @Bind(R.id.nav_view)
@@ -71,13 +77,12 @@ public class MainActivity extends AppCompatActivity
     LinearLayout permissionLayout;
     @Bind(R.id.main_fragment_container)
     FrameLayout fragmentContainer;
-
     TextView headerTextView;
-    ImageButton dropDownButton;
     MenuItem logoutMenuItem;
     MenuItem loginMenuItem;
     MenuItem viewProfileMenuItem;
 
+    private FirebaseAnalytics firebaseAnalytics;
     private String[] fragmentTitles;
     private int currentFragment = -1;
     private boolean showedLogin = false;
@@ -87,6 +92,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.APP_OPEN, null);
         ResourceHandler.get(this);
         TCDatabaseHelper.get(this);
         ButterKnife.bind(this);
@@ -115,42 +122,19 @@ public class MainActivity extends AppCompatActivity
         logoutMenuItem = navigationView.getMenu().findItem(R.id.logout);
         loginMenuItem = navigationView.getMenu().findItem(R.id.login);
         viewProfileMenuItem = navigationView.getMenu().findItem(R.id.profile);
-
         headerTextView = (TextView) navigationView.getHeaderView(0).findViewById(R.id.headerTextView);
-        dropDownButton = (ImageButton) navigationView.getHeaderView(0).findViewById(R.id.dropDownButton);
-        dropDownButton.setOnClickListener(new View.OnClickListener() {
-            boolean isClicked = false;
-
-            @Override
-            public void onClick(View view) {
-                if (isClicked) {
-                    //Close the profile options
-                    dropDownButton.setImageResource(R.drawable.ic_arrow_drop_down_white_24dp);
-                    logoutMenuItem.setVisible(false);
-                    viewProfileMenuItem.setVisible(false);
-                } else {
-                    //Open the profile options
-                    dropDownButton.setImageResource(R.drawable.ic_arrow_drop_up_white_24dp);
-                    logoutMenuItem.setVisible(true);
-                    viewProfileMenuItem.setVisible(true);
-                }
-                isClicked = !isClicked;
-            }
-        });
-        dropDownButton.setVisibility(View.INVISIBLE);//Not initially there
-
         toggle.syncState();
-
+        updateNav();
         AuthManager.get(this).addAuthListener(new AuthListener() {
 
             @Override
             public void onLoginSucces(UserAuth auth) {
-                updateNavHeader();
+                updateNav();
             }
 
             @Override
             public void onLogout() {
-                updateNavHeader();
+                updateNav();
             }
         });
 
@@ -158,39 +142,27 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         int fragToOpen = FRAGMENT_GUIDES;
         if (savedInstanceState != null) {
-            fragToOpen = savedInstanceState.getInt("org.techconnect.mainactivity.frag", FRAGMENT_GUIDES);
+            fragToOpen = savedInstanceState.getInt("frag", FRAGMENT_GUIDES);
+            showedLogin = savedInstanceState.getBoolean("shown_login");
         }
+        currentFragment = -1;
         setCurrentFragment(fragToOpen);
     }
 
-    private void updateNavHeader() {
+
+    private void updateNav() {
         boolean loggedIn = AuthManager.get(this).hasAuth();
         User user;
         if (loggedIn && (user = TCDatabaseHelper.get(this).getUser(AuthManager.get(this).getAuth().getUserId())) != null) {
             headerTextView.setText(user.getName());
-            headerTextView.setOnClickListener(new View.OnClickListener() {
-                boolean isClicked = false;
-                @Override
-                public void onClick(View view) {
-                    if (isClicked) {
-                        //Close the profile options
-                        dropDownButton.setImageResource(R.drawable.ic_arrow_drop_down_white_24dp);
-                        logoutMenuItem.setVisible(false);
-                        viewProfileMenuItem.setVisible(false);
-                    } else {
-                        //Open the profile options
-                        dropDownButton.setImageResource(R.drawable.ic_arrow_drop_up_white_24dp);
-                        logoutMenuItem.setVisible(true);
-                        viewProfileMenuItem.setVisible(true);
-                    }
-                    isClicked = !isClicked;
-                }
-            });
-            dropDownButton.setVisibility(View.VISIBLE);
-            dropDownButton.setImageResource(R.drawable.ic_arrow_drop_down_white_24dp);
+            loginMenuItem.setVisible(false);
+            logoutMenuItem.setVisible(true);
+            viewProfileMenuItem.setVisible(true);
         } else {
             headerTextView.setText(R.string.app_name);
-            dropDownButton.setVisibility(View.INVISIBLE);
+            loginMenuItem.setVisible(true);
+            logoutMenuItem.setVisible(false);
+            viewProfileMenuItem.setVisible(false);
         }
     }
 
@@ -209,17 +181,8 @@ public class MainActivity extends AppCompatActivity
             //startActivity(new Intent(MainActivity.this, IntroTutorial.class));
         } else if (!showedLogin && !AuthManager.get(this).hasAuth() && hasPermissions) {
             onShowLogin();
-        } else if (AuthManager.get(this).hasAuth()) {
-            loginMenuItem.setVisible(false);
-            logoutMenuItem.setVisible(false);
-            viewProfileMenuItem.setVisible(false);
-
-        } else {
-            loginMenuItem.setVisible(true);
-            logoutMenuItem.setVisible(false);
-            viewProfileMenuItem.setVisible(false);
         }
-        updateNavHeader();
+        updateNav();
         if (hasPermissions && !userLearnedDrawer) {
             drawerLayout.openDrawer(Gravity.LEFT);
         }
@@ -273,6 +236,7 @@ public class MainActivity extends AppCompatActivity
         if (currentFragment > -1) {
             outState.putInt("frag", currentFragment);
         }
+        outState.putBoolean("shown_login", showedLogin);
     }
 
     @Override
@@ -293,10 +257,9 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (id == R.id.nav_guides) {
             newFrag = FRAGMENT_GUIDES;
-        } else if (id == R.id.nav_reports) {
+        } /*else if (id == R.id.nav_reports) {
             newFrag = FRAGMENT_REPORTS;
-        } else if (id == R.id.call_dir) {
-            Log.d("Directory Setup", "Selected from Nav View");
+        }*/ else if (id == R.id.call_dir) {
             newFrag = FRAGMENT_DIRECTORY;
         } else if (id == R.id.nav_refresh) {
             updateResources();
@@ -312,8 +275,10 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.logout) {
             onLogout();
             return true;
+        } else if (id == R.id.post_feedback) {
+            drawer.closeDrawer(GravityCompat.START);
+            onSendFeedback();
         } else if (id == R.id.profile) {
-            //Open up Account info
             onViewProfile();
             return true;
         }
@@ -321,6 +286,32 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         setCurrentFragment(newFrag);
         return true;
+    }
+
+    private void onSendFeedback() {
+        final SendFeedbackDialogFragment dialogFragment = new SendFeedbackDialogFragment();
+        dialogFragment.setListener(new SendFeedbackDialogFragment.FeedbackListener() {
+            @Override
+            public void onYes(String text) {
+                new PostAppFeedbackAsyncTask(MainActivity.this) {
+                    @Override
+                    protected void onPostExecute(Boolean success) {
+                        if (success) {
+                            Snackbar.make(coordinatorLayout, R.string.feedback_success, Snackbar.LENGTH_LONG).show();
+                        } else {
+                            Snackbar.make(coordinatorLayout, R.string.feedback_fail, Snackbar.LENGTH_LONG).show();
+                        }
+                    }
+                }.execute(text);
+                dialogFragment.dismiss();
+            }
+
+            @Override
+            public void onNo() {
+                dialogFragment.dismiss();
+            }
+        });
+        dialogFragment.show(getFragmentManager(), "sendFeedback");
     }
 
     private void onShowLogin() {
@@ -354,7 +345,7 @@ public class MainActivity extends AppCompatActivity
         //Only visible when user is actually logged in
         User user = TCDatabaseHelper.get(this).getUser(AuthManager.get(this).getAuth().getUserId());
         Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
-        intent.putExtra("user",user);
+        intent.putExtra("user", user);
         startActivity(intent);
     }
 

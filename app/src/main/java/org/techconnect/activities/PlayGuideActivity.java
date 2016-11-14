@@ -16,6 +16,8 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import org.centum.techconnect.R;
 import org.techconnect.model.FlowChart;
 import org.techconnect.model.session.Session;
@@ -31,6 +33,7 @@ import butterknife.OnClick;
 public class PlayGuideActivity extends AppCompatActivity implements SessionListener {
 
     public static final String EXTRA_CHART_ID = "org.techconnect.playguide.chartid";
+    private static final String STATE_SESSION = "session";
     private static final int LAYOUT_INFO = 0;
     private static final int LAYOUT_FLOW = 1;
     private static final int LAYOUT_ERROR = 2;
@@ -53,6 +56,7 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
     @Bind(R.id.notes_editText)
     EditText notesEditText;
 
+    private FirebaseAnalytics firebaseAnalytics;
     private GuideFlowView flowView;
     private FlowChart flowChart = null;
     private Session session;
@@ -62,15 +66,33 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_guide);
         ButterKnife.bind(this);
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         flowView = (GuideFlowView) LayoutInflater.from(this).inflate(R.layout.guide_flow_view, flowContainer, false);
         flowContainer.addView(flowView);
         loadFlowchart();
+        if (flowChart != null) {
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, flowChart.getId());
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, flowChart.getName());
+            bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "guides");
+            firebaseAnalytics.logEvent("session_start", bundle);
+        }
+        if (savedInstanceState != null && savedInstanceState.containsKey(STATE_SESSION)) {
+            this.session = savedInstanceState.getParcelable(STATE_SESSION);
+            flowView.setSession(session, this);
+        }
+        updateViews();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(STATE_SESSION, session);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_play_guide, menu);
-        ;
         return true;
     }
 
@@ -103,6 +125,13 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         dialogInterface.dismiss();
+                        if (flowChart != null) {
+                            Bundle bundle = new Bundle();
+                            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, flowChart.getId());
+                            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, flowChart.getName());
+                            bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "guides");
+                            firebaseAnalytics.logEvent("session_end_early", bundle);
+                        }
                         endSession();
                     }
                 })
@@ -122,7 +151,6 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
         if (getIntent() != null && getIntent().hasExtra(EXTRA_CHART_ID)) {
             flowChart = TCDatabaseHelper.get(this).getChart(getIntent().getStringExtra(EXTRA_CHART_ID));
         }
-        updateViews();
     }
 
     private void updateViews() {
@@ -178,16 +206,28 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
     public void onSessionComplete() {
         session.setFinished(true);
         endSession();
+        if (flowChart != null) {
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, flowChart.getId());
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, flowChart.getName());
+            bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "guides");
+            firebaseAnalytics.logEvent("session_complete", bundle);
+        }
     }
 
     private void endSession() {
         saveSession();
         finish();
+        long endTime = System.currentTimeMillis();
+        long duration = endTime - session.getCreatedDate();
+        Bundle bundle = new Bundle();
+        bundle.putLong(FirebaseAnalytics.Param.VALUE, duration);
+        firebaseAnalytics.logEvent("session_duration", bundle);
     }
 
     @Override
     public void onSessionPaused() {
-        // TODO store the progress made somewhere
+        // TODO store the progress_spinner made somewhere
     }
 }
 
