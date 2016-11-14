@@ -224,7 +224,9 @@ public class MainActivity extends AppCompatActivity
             @Override
             protected void onReceiveResult(int resultCode, Bundle resultData) {
                 loadingLayout.setVisibility(View.GONE);
-                ((GuidesFragment) FRAGMENTS[FRAGMENT_GUIDES]).onRefresh();
+                if (currentFragment == FRAGMENT_GUIDES) {
+                    ((GuidesFragment) FRAGMENTS[FRAGMENT_GUIDES]).onRefresh();
+                }
             }
         });
     }
