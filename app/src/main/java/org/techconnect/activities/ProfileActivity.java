@@ -4,8 +4,9 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -18,6 +19,8 @@ import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.centum.techconnect.R;
 import org.techconnect.asynctasks.UpdateUserAsyncTask;
@@ -34,12 +37,10 @@ import butterknife.OnClick;
 
 public class ProfileActivity extends AppCompatActivity {
     //Do all of the butterknife binding
-    @Bind(R.id.toolbar_layout)
-    CollapsingToolbarLayout layout;
     @Bind(R.id.profile_work)
     TextView org;
     @Bind(R.id.profile_email)
-    TextView email;
+    TextView emailTextView;
     @Bind(R.id.skills_table)
     TableLayout skills_table;
 
@@ -66,15 +67,21 @@ public class ProfileActivity extends AppCompatActivity {
     private List<String> tmp_skills; //Hold onto the actual final set of skills for the user
     private boolean isEditable;
     private boolean isEditing = false;
+    private FirebaseAnalytics firebaseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         ButterKnife.bind(this);
 
         //Here, we access the current User from the Database, create a temporary user in case we need to update
         head_user = getIntent().getExtras().getParcelable("user");
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, head_user.get_id());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "user");
+        firebaseAnalytics.logEvent("view_profile", bundle);
 
         //Setup whether the user can edit this profile
         isEditable = AuthManager.get(this).hasAuth() && head_user.get_id().equals(AuthManager.get(this).getAuth().getUserId());
@@ -92,14 +99,9 @@ public class ProfileActivity extends AppCompatActivity {
             editSkill.setVisibility(View.GONE);
         }
 
-        //Add return arrow to action bar
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        //Setup the Toolbar Title
-        layout.setTitle(head_user.getName());
-
-        //Setup the UI with the head_user information
+        setTitle(head_user.getName());
         setupProfile();
     }
 
@@ -147,6 +149,16 @@ public class ProfileActivity extends AppCompatActivity {
         } else {
             super.onBackPressed();
         }
+    }
+
+    @OnClick(R.id.profile_email)
+    public void onEmailClicked() {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, head_user.get_id());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "user");
+        firebaseAnalytics.logEvent("clicked_email", bundle);
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + emailTextView.getText().toString()));
+        startActivity(Intent.createChooser(emailIntent, "Email"));
     }
 
     private TableRow onRowAddRequest() {
@@ -248,9 +260,9 @@ public class ProfileActivity extends AppCompatActivity {
 
 
     private void setupProfile() {
-        //Add organization, email, and skills to the list below
+        //Add organization, emailTextView, and skills to the list below
         org.setText(head_user.getOrganization());
-        email.setText(head_user.getEmail());
+        emailTextView.setText(head_user.getEmail());
 
         //Create all rows from list of skills in profile
         row_buttons = new ArrayList<ImageButton>(); //Store reference of where buttons are

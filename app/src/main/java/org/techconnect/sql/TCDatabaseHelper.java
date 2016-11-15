@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
+import android.support.v4.content.CursorLoader;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -35,9 +36,11 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "FlowChart.db";
     private static TCDatabaseHelper instance = null;
+    private Context context;
 
     private TCDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     public static TCDatabaseHelper get(Context context) {
@@ -188,6 +191,15 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         return ids.toArray(new String[ids.size()]);
     }
 
+    public CursorLoader getAllFlowchartsCursorLoader(final String filter) {
+        return new CursorLoader(context, null, null, null, null, null) {
+            @Override
+            public Cursor loadInBackground() {
+                return getAllFlowchartsCursor(filter);
+            }
+        };
+    }
+
     public Cursor getAllFlowchartsCursor() {
         return getAllFlowchartsCursor(null);
     }
@@ -228,8 +240,15 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         return chart;
     }
 
+
+    /**
+     * Get a stub chart, for use in listviews when you don't need comments and the graph.
+     *
+     * @param c
+     * @return
+     */
     @NonNull
-    public FlowChart getChartFromCursor(Cursor c) {
+    public FlowChart getChartStubFromCursor(Cursor c) {
         FlowChart chart = new FlowChart();
         chart.setId(c.getString(c.getColumnIndexOrThrow(ChartEntry.ID)));
         chart.setName(c.getString(c.getColumnIndexOrThrow(ChartEntry.NAME)));
@@ -240,6 +259,12 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         chart.setImage(c.getString(c.getColumnIndexOrThrow(ChartEntry.IMAGE)));
         chart.setType(FlowChart.ChartType.valueOf(c.getString(c.getColumnIndexOrThrow(ChartEntry.TYPE))));
         chart.setScore(c.getInt(c.getColumnIndexOrThrow(ChartEntry.SCORE)));
+        return chart;
+    }
+
+    @NonNull
+    public FlowChart getChartFromCursor(Cursor c) {
+        FlowChart chart = getChartStubFromCursor(c);
         String allRes = c.getString(c.getColumnIndexOrThrow(ChartEntry.ALL_RESOURCES));
         String res = c.getString(c.getColumnIndexOrThrow(ChartEntry.RESOURCES));
         if (allRes != null && !TextUtils.isEmpty(allRes.trim())) {

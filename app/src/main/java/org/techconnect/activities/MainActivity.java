@@ -181,11 +181,10 @@ public class MainActivity extends AppCompatActivity
             //startActivity(new Intent(MainActivity.this, IntroTutorial.class));
         } else if (!showedLogin && !AuthManager.get(this).hasAuth() && hasPermissions) {
             onShowLogin();
-        }
-        updateNav();
-        if (hasPermissions && !userLearnedDrawer) {
+        } else if (hasPermissions && !userLearnedDrawer) {
             drawerLayout.openDrawer(Gravity.LEFT);
         }
+        updateNav();
     }
 
     @OnClick(R.id.grant_permission_btn)
@@ -225,7 +224,9 @@ public class MainActivity extends AppCompatActivity
             @Override
             protected void onReceiveResult(int resultCode, Bundle resultData) {
                 loadingLayout.setVisibility(View.GONE);
-                ((GuidesFragment) FRAGMENTS[FRAGMENT_GUIDES]).onRefresh();
+                if (currentFragment == FRAGMENT_GUIDES) {
+                    ((GuidesFragment) FRAGMENTS[FRAGMENT_GUIDES]).onRefresh();
+                }
             }
         });
     }
