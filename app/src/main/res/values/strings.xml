@@ -79,7 +79,7 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="skip_sign_in">Skip</string>
+    <string name="skip_sign_in">Skip sign in</string>
     <string name="skip_sign_in_msg">Skipping signin will make some features unavailable, such as commenting.</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="search_guides">Search</string>
