@@ -77,6 +77,12 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/try_again" />
 
+            <Button
+                android:id="@+id/view_offline_guides"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/offline_guides" />
+
         </LinearLayout>
 
     </RelativeLayout>

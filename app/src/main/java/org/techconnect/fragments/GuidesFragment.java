@@ -3,7 +3,6 @@ package org.techconnect.fragments;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -31,6 +30,7 @@ import org.techconnect.views.GuideListItemView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class GuidesFragment extends Fragment
         implements SwipeRefreshLayout.OnRefreshListener,
@@ -48,8 +48,6 @@ public class GuidesFragment extends Fragment
     EditText searchEditText;
     @Bind(R.id.clear_search_imageView)
     ImageView clearSearchImageView;
-    @Bind(R.id.download_floatingActionButton)
-    FloatingActionButton downloadFab;
     @Bind(R.id.download_guides_button)
     Button downloadGuidesButton;
     @Bind(R.id.no_guides_layout)
@@ -79,8 +77,6 @@ public class GuidesFragment extends Fragment
         guidesListView.setAdapter(adapter);
         searchEditText.addTextChangedListener(this);
         clearSearchImageView.setOnClickListener(this);
-        downloadFab.setOnClickListener(this);
-        downloadGuidesButton.setOnClickListener(this);
         guidesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -128,13 +124,11 @@ public class GuidesFragment extends Fragment
     public void onClick(View view) {
         if (view.getId() == R.id.clear_search_imageView) {
             searchEditText.setText(null);
-        } else if (view.getId() == R.id.download_floatingActionButton ||
-                view.getId() == R.id.download_guides_button) {
-            onDownloadGuides();
         }
     }
 
-    private void onDownloadGuides() {
+    @OnClick(R.id.download_guides_button)
+    public void onDownloadGuides() {
         if (getActivity() != null && getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).setCurrentFragment(MainActivity.FRAGMENT_CATALOG);
         }

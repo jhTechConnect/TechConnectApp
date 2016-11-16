@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
 
 import org.centum.techconnect.R;
 import org.techconnect.activities.GuideActivity;
+import org.techconnect.activities.MainActivity;
 import org.techconnect.adapters.FlowchartAdapter;
 import org.techconnect.adapters.FlowchartCursorAdapter;
 import org.techconnect.asynctasks.GetCatalogAsyncTask;
@@ -26,6 +27,7 @@ import org.techconnect.views.GuideListItemView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by Phani on 11/16/2016.
@@ -101,6 +103,13 @@ public class CatalogFragment extends Fragment implements TextWatcher, View.OnCli
         super.onResume();
         if (getActivity() != null) {
             getActivity().setTitle(R.string.guide_catalog);
+        }
+    }
+
+    @OnClick(R.id.view_offline_guides)
+    public void onViewOfflineGuides() {
+        if (getActivity() != null && getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setCurrentFragment(MainActivity.FRAGMENT_GUIDES);
         }
     }
 
