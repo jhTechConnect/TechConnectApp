@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="fragment_titles">
+        <item>Catalog</item>
         <item>Guides</item>
         <item>Reports</item>
         <item>Directory</item>

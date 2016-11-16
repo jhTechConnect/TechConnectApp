@@ -23,8 +23,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import org.centum.techconnect.R;
-import org.techconnect.activities.GetGuidesActivity;
 import org.techconnect.activities.GuideActivity;
+import org.techconnect.activities.MainActivity;
 import org.techconnect.adapters.FlowchartCursorAdapter;
 import org.techconnect.sql.TCDatabaseHelper;
 import org.techconnect.views.GuideListItemView;
@@ -131,7 +131,9 @@ public class GuidesFragment extends Fragment
     }
 
     private void onDownloadGuides() {
-        startActivity(new Intent(getActivity(), GetGuidesActivity.class));
+        if (getActivity() != null && getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setCurrentFragment(MainActivity.FRAGMENT_CATALOG);
+        }
     }
 
     @Override

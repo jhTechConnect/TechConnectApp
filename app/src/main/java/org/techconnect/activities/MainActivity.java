@@ -34,6 +34,7 @@ import org.centum.techconnect.R;
 import org.techconnect.asynctasks.LogoutAsyncTask;
 import org.techconnect.asynctasks.PostAppFeedbackAsyncTask;
 import org.techconnect.dialogs.SendFeedbackDialogFragment;
+import org.techconnect.fragments.CatalogFragment;
 import org.techconnect.fragments.DirectoryFragment;
 import org.techconnect.fragments.GuidesFragment;
 import org.techconnect.fragments.ReportsFragment;
@@ -55,15 +56,16 @@ import butterknife.OnClick;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static final int FRAGMENT_CATALOG = 0;
+    public static final int FRAGMENT_GUIDES = 1;
+    public static final int FRAGMENT_REPORTS = 2;
+    public static final int FRAGMENT_DIRECTORY = 3;
     private static final int PERMISSIONS_REQUEST_READ_STORAGE = 1;
     private static final String SHOWN_TUTORIAL = "org.techconnect.prefs.shownturotial";
     private static final String USER_LEARNED_DRAWER = "org.techconnect.prefs.shownturotial.learneddrawer";
     private static final String ASKED_PERMISSION = "org.techconnect.prefs.shownturotial.askedpermission";
-
-    private static final int FRAGMENT_GUIDES = 0;
-    private static final int FRAGMENT_REPORTS = 1;
-    private static final int FRAGMENT_DIRECTORY = 2;
-    private final Fragment[] FRAGMENTS = new Fragment[]{new GuidesFragment(), new ReportsFragment(), new DirectoryFragment()};
+    private final Fragment[] FRAGMENTS = new Fragment[]{new CatalogFragment(),
+            new GuidesFragment(), new ReportsFragment(), new DirectoryFragment()};
 
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout coordinatorLayout;
@@ -140,9 +142,11 @@ public class MainActivity extends AppCompatActivity
 
         fragmentTitles = getResources().getStringArray(R.array.fragment_titles);
         navigationView.setNavigationItemSelectedListener(this);
-        int fragToOpen = FRAGMENT_GUIDES;
+
+        int numCharts = TCDatabaseHelper.get(this).getNumFlowcharts();
+        int fragToOpen = numCharts > 0 ? FRAGMENT_GUIDES : FRAGMENT_CATALOG;
         if (savedInstanceState != null) {
-            fragToOpen = savedInstanceState.getInt("frag", FRAGMENT_GUIDES);
+            fragToOpen = savedInstanceState.getInt("frag", fragToOpen);
             showedLogin = savedInstanceState.getBoolean("shown_login");
         }
         currentFragment = -1;
@@ -256,7 +260,9 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         int newFrag = -1;
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (id == R.id.nav_guides) {
+        if (id == R.id.nav_catalog) {
+            newFrag = FRAGMENT_CATALOG;
+        } else if (id == R.id.nav_guides) {
             newFrag = FRAGMENT_GUIDES;
         } /*else if (id == R.id.nav_reports) {
             newFrag = FRAGMENT_REPORTS;
@@ -351,7 +357,7 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
-    private void setCurrentFragment(int frag) {
+    public void setCurrentFragment(int frag) {
         if (this.currentFragment != frag || this.currentFragment == -1) {
             this.currentFragment = frag;
             FragmentManager fragmentManager = getSupportFragmentManager();

@@ -178,6 +178,15 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         return set;
     }
 
+    public int getNumFlowcharts() {
+        List<String> ids = new LinkedList<>();
+        Cursor c = getReadableDatabase().query(ChartEntry.TABLE_NAME, new String[]{ChartEntry.ID}, null,
+                null, null, null, null);
+        int count = c.getCount();
+        c.close();
+        return count;
+    }
+
     public String[] getAllChartIds() {
         List<String> ids = new LinkedList<>();
         Cursor c = getReadableDatabase().query(ChartEntry.TABLE_NAME, new String[]{ChartEntry.ID}, null,
