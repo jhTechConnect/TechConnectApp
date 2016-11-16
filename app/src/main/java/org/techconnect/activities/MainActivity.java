@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity
     private static final String ASKED_PERMISSION = "org.techconnect.prefs.shownturotial.askedpermission";
     private final Fragment[] FRAGMENTS = new Fragment[]{new CatalogFragment(),
             new GuidesFragment(), new ReportsFragment(), new DirectoryFragment()};
+    private final int[] FRAGMENT_MENU_IDS = new int[]{R.id.nav_catalog, R.id.nav_guides, 0/*R.id.nav_reports*/, R.id.call_dir};
 
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout coordinatorLayout;
@@ -258,41 +259,39 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
-        int newFrag = -1;
+        int newFragIndex = -1;
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (id == R.id.nav_catalog) {
-            newFrag = FRAGMENT_CATALOG;
-        } else if (id == R.id.nav_guides) {
-            newFrag = FRAGMENT_GUIDES;
-        } /*else if (id == R.id.nav_reports) {
-            newFrag = FRAGMENT_REPORTS;
-        }*/ else if (id == R.id.call_dir) {
-            newFrag = FRAGMENT_DIRECTORY;
-        } else if (id == R.id.nav_refresh) {
-            updateResources();
-            drawer.closeDrawer(GravityCompat.START);
-            return true;
-        } else if (id == R.id.nav_view_tut) {
-            startActivity(new Intent(this, IntroTutorial.class));
-            drawer.closeDrawer(GravityCompat.START);
-            return true;
-        } else if (id == R.id.login) {
-            onShowLogin();
-            return true;
-        } else if (id == R.id.logout) {
-            onLogout();
-            return true;
-        } else if (id == R.id.post_feedback) {
-            drawer.closeDrawer(GravityCompat.START);
-            onSendFeedback();
-            return true;
-        } else if (id == R.id.profile) {
-            onViewProfile();
-            return true;
+        for (int i = 0; i < fragmentTitles.length; i++) {
+            if (id == FRAGMENT_MENU_IDS[i]) {
+                newFragIndex = i;
+            }
         }
-
+        if (newFragIndex == -1) {
+            if (id == R.id.nav_refresh) {
+                updateResources();
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            } else if (id == R.id.nav_view_tut) {
+                startActivity(new Intent(this, IntroTutorial.class));
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            } else if (id == R.id.login) {
+                onShowLogin();
+                return true;
+            } else if (id == R.id.logout) {
+                onLogout();
+                return true;
+            } else if (id == R.id.post_feedback) {
+                drawer.closeDrawer(GravityCompat.START);
+                onSendFeedback();
+                return true;
+            } else if (id == R.id.profile) {
+                onViewProfile();
+                return true;
+            }
+        }
         drawer.closeDrawer(GravityCompat.START);
-        setCurrentFragment(newFrag);
+        setCurrentFragment(newFragIndex);
         return true;
     }
 
@@ -365,7 +364,7 @@ public class MainActivity extends AppCompatActivity
                     .replace(R.id.main_fragment_container, FRAGMENTS[frag])
                     .commit();
             setTitle(fragmentTitles[frag]);
-            navigationView.getMenu().getItem(frag).setChecked(true);
+            navigationView.getMenu().findItem(FRAGMENT_MENU_IDS[frag]).setChecked(true);
         }
     }
 
