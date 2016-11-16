@@ -46,6 +46,7 @@ import org.techconnect.model.UserAuth;
 import org.techconnect.services.TCService;
 import org.techconnect.sql.TCDatabaseHelper;
 
+import java.util.ArrayList;
 import java.util.Stack;
 
 import butterknife.Bind;
@@ -150,6 +151,11 @@ public class MainActivity extends AppCompatActivity
         if (savedInstanceState != null) {
             fragToOpen = savedInstanceState.getInt("frag", fragToOpen);
             showedLogin = savedInstanceState.getBoolean("shown_login");
+            ArrayList<Integer> stack = savedInstanceState.getIntegerArrayList("frag_stack");
+            fragStack = new Stack<>();
+            for (Integer i : stack) {
+                fragStack.push(i);
+            }
         }
         currentFragment = -1;
         setCurrentFragment(fragToOpen);
@@ -243,6 +249,7 @@ public class MainActivity extends AppCompatActivity
         if (currentFragment > -1) {
             outState.putInt("frag", currentFragment);
         }
+        outState.putIntegerArrayList("frag_stack", new ArrayList<>(fragStack));
         outState.putBoolean("shown_login", showedLogin);
     }
 
