@@ -86,7 +86,6 @@ public class MainActivity extends AppCompatActivity
     MenuItem viewProfileMenuItem;
 
     private FirebaseAnalytics firebaseAnalytics;
-    private String[] fragmentTitles;
     private int currentFragment = -1;
     private boolean showedLogin = false;
     private boolean userLearnedDrawer = false;
@@ -141,7 +140,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        fragmentTitles = getResources().getStringArray(R.array.fragment_titles);
         navigationView.setNavigationItemSelectedListener(this);
 
         int numCharts = TCDatabaseHelper.get(this).getNumFlowcharts();
@@ -261,7 +259,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         int newFragIndex = -1;
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        for (int i = 0; i < fragmentTitles.length; i++) {
+        for (int i = 0; i < FRAGMENT_MENU_IDS.length; i++) {
             if (id == FRAGMENT_MENU_IDS[i]) {
                 newFragIndex = i;
             }
@@ -357,13 +355,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void setCurrentFragment(int frag) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
         if (this.currentFragment != frag || this.currentFragment == -1) {
-            this.currentFragment = frag;
-            FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.main_fragment_container, FRAGMENTS[frag])
                     .commit();
-            setTitle(fragmentTitles[frag]);
+            this.currentFragment = frag;
             navigationView.getMenu().findItem(FRAGMENT_MENU_IDS[frag]).setChecked(true);
         }
     }

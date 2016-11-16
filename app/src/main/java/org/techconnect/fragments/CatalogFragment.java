@@ -96,6 +96,14 @@ public class CatalogFragment extends Fragment implements TextWatcher, View.OnCli
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getActivity() != null) {
+            getActivity().setTitle(R.string.guide_catalog);
+        }
+    }
+
     private void loadCatalog() {
         contentLayout.setVisibility(View.GONE);
         failedContentLayout.setVisibility(View.GONE);

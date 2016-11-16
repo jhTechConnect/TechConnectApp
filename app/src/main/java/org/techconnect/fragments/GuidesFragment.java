@@ -109,9 +109,13 @@ public class GuidesFragment extends Fragment
         return view;
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
+        if (getActivity() != null) {
+            getActivity().setTitle(R.string.guides);
+        }
     }
 
     public void onRefresh() {
