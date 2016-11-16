@@ -46,6 +46,8 @@ import org.techconnect.model.UserAuth;
 import org.techconnect.services.TCService;
 import org.techconnect.sql.TCDatabaseHelper;
 
+import java.util.Stack;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -89,6 +91,7 @@ public class MainActivity extends AppCompatActivity
     private int currentFragment = -1;
     private boolean showedLogin = false;
     private boolean userLearnedDrawer = false;
+    private Stack<Integer> fragStack = new Stack<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -249,7 +252,12 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            if (fragStack.size() > 0) {
+                setCurrentFragment(fragStack.pop());
+                fragStack.pop(); // don't wanna store this change
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 
@@ -357,6 +365,10 @@ public class MainActivity extends AppCompatActivity
     public void setCurrentFragment(int frag) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (this.currentFragment != frag || this.currentFragment == -1) {
+            if (this.currentFragment != -1) {
+                // Not the first fragment
+                fragStack.push(currentFragment);
+            }
             fragmentManager.beginTransaction()
                     .replace(R.id.main_fragment_container, FRAGMENTS[frag])
                     .commit();
