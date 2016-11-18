@@ -34,6 +34,7 @@ import org.centum.techconnect.R;
 import org.techconnect.asynctasks.LogoutAsyncTask;
 import org.techconnect.asynctasks.PostAppFeedbackAsyncTask;
 import org.techconnect.dialogs.SendFeedbackDialogFragment;
+import org.techconnect.fragments.CatalogFragment;
 import org.techconnect.fragments.DirectoryFragment;
 import org.techconnect.fragments.GuidesFragment;
 import org.techconnect.fragments.ReportsFragment;
@@ -45,6 +46,9 @@ import org.techconnect.model.UserAuth;
 import org.techconnect.services.TCService;
 import org.techconnect.sql.TCDatabaseHelper;
 
+import java.util.ArrayList;
+import java.util.Stack;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -55,15 +59,17 @@ import butterknife.OnClick;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static final int FRAGMENT_CATALOG = 0;
+    public static final int FRAGMENT_GUIDES = 1;
+    public static final int FRAGMENT_REPORTS = 2;
+    public static final int FRAGMENT_DIRECTORY = 3;
     private static final int PERMISSIONS_REQUEST_READ_STORAGE = 1;
     private static final String SHOWN_TUTORIAL = "org.techconnect.prefs.shownturotial";
     private static final String USER_LEARNED_DRAWER = "org.techconnect.prefs.shownturotial.learneddrawer";
     private static final String ASKED_PERMISSION = "org.techconnect.prefs.shownturotial.askedpermission";
-
-    private static final int FRAGMENT_GUIDES = 0;
-    private static final int FRAGMENT_REPORTS = 1;
-    private static final int FRAGMENT_DIRECTORY = 2;
-    private final Fragment[] FRAGMENTS = new Fragment[]{new GuidesFragment(), new ReportsFragment(), new DirectoryFragment()};
+    private final Fragment[] FRAGMENTS = new Fragment[]{new CatalogFragment(),
+            new GuidesFragment(), new ReportsFragment(), new DirectoryFragment()};
+    private final int[] FRAGMENT_MENU_IDS = new int[]{R.id.nav_catalog, R.id.nav_guides, 0/*R.id.nav_reports*/, R.id.call_dir};
 
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout coordinatorLayout;
@@ -83,10 +89,10 @@ public class MainActivity extends AppCompatActivity
     MenuItem viewProfileMenuItem;
 
     private FirebaseAnalytics firebaseAnalytics;
-    private String[] fragmentTitles;
     private int currentFragment = -1;
     private boolean showedLogin = false;
     private boolean userLearnedDrawer = false;
+    private Stack<Integer> fragStack = new Stack<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,12 +144,18 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        fragmentTitles = getResources().getStringArray(R.array.fragment_titles);
         navigationView.setNavigationItemSelectedListener(this);
-        int fragToOpen = FRAGMENT_GUIDES;
+
+        int numCharts = TCDatabaseHelper.get(this).getNumFlowcharts();
+        int fragToOpen = numCharts > 0 ? FRAGMENT_GUIDES : FRAGMENT_CATALOG;
         if (savedInstanceState != null) {
-            fragToOpen = savedInstanceState.getInt("frag", FRAGMENT_GUIDES);
+            fragToOpen = savedInstanceState.getInt("frag", fragToOpen);
             showedLogin = savedInstanceState.getBoolean("shown_login");
+            ArrayList<Integer> stack = savedInstanceState.getIntegerArrayList("frag_stack");
+            fragStack = new Stack<>();
+            for (Integer i : stack) {
+                fragStack.push(i);
+            }
         }
         currentFragment = -1;
         setCurrentFragment(fragToOpen);
@@ -237,6 +249,7 @@ public class MainActivity extends AppCompatActivity
         if (currentFragment > -1) {
             outState.putInt("frag", currentFragment);
         }
+        outState.putIntegerArrayList("frag_stack", new ArrayList<>(fragStack));
         outState.putBoolean("shown_login", showedLogin);
     }
 
@@ -246,7 +259,12 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            if (fragStack.size() > 0) {
+                setCurrentFragment(fragStack.pop());
+                fragStack.pop(); // don't wanna store this change
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 
@@ -254,39 +272,39 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
-        int newFrag = -1;
+        int newFragIndex = -1;
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (id == R.id.nav_guides) {
-            newFrag = FRAGMENT_GUIDES;
-        } /*else if (id == R.id.nav_reports) {
-            newFrag = FRAGMENT_REPORTS;
-        }*/ else if (id == R.id.call_dir) {
-            newFrag = FRAGMENT_DIRECTORY;
-        } else if (id == R.id.nav_refresh) {
-            updateResources();
-            drawer.closeDrawer(GravityCompat.START);
-            return true;
-        } else if (id == R.id.nav_view_tut) {
-            startActivity(new Intent(this, IntroTutorial.class));
-            drawer.closeDrawer(GravityCompat.START);
-            return true;
-        } else if (id == R.id.login) {
-            onShowLogin();
-            return true;
-        } else if (id == R.id.logout) {
-            onLogout();
-            return true;
-        } else if (id == R.id.post_feedback) {
-            drawer.closeDrawer(GravityCompat.START);
-            onSendFeedback();
-            return true;
-        } else if (id == R.id.profile) {
-            onViewProfile();
-            return true;
+        for (int i = 0; i < FRAGMENT_MENU_IDS.length; i++) {
+            if (id == FRAGMENT_MENU_IDS[i]) {
+                newFragIndex = i;
+            }
         }
-
+        if (newFragIndex == -1) {
+            if (id == R.id.nav_refresh) {
+                updateResources();
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            } else if (id == R.id.nav_view_tut) {
+                startActivity(new Intent(this, IntroTutorial.class));
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            } else if (id == R.id.login) {
+                onShowLogin();
+                return true;
+            } else if (id == R.id.logout) {
+                onLogout();
+                return true;
+            } else if (id == R.id.post_feedback) {
+                drawer.closeDrawer(GravityCompat.START);
+                onSendFeedback();
+                return true;
+            } else if (id == R.id.profile) {
+                onViewProfile();
+                return true;
+            }
+        }
         drawer.closeDrawer(GravityCompat.START);
-        setCurrentFragment(newFrag);
+        setCurrentFragment(newFragIndex);
         return true;
     }
 
@@ -351,15 +369,18 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
-    private void setCurrentFragment(int frag) {
+    public void setCurrentFragment(int frag) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
         if (this.currentFragment != frag || this.currentFragment == -1) {
-            this.currentFragment = frag;
-            FragmentManager fragmentManager = getSupportFragmentManager();
+            if (this.currentFragment != -1) {
+                // Not the first fragment
+                fragStack.push(currentFragment);
+            }
             fragmentManager.beginTransaction()
                     .replace(R.id.main_fragment_container, FRAGMENTS[frag])
                     .commit();
-            setTitle(fragmentTitles[frag]);
-            navigationView.getMenu().getItem(frag).setChecked(true);
+            this.currentFragment = frag;
+            navigationView.getMenu().findItem(FRAGMENT_MENU_IDS[frag]).setChecked(true);
         }
     }
 

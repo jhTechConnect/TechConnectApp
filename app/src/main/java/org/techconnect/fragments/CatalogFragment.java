@@ -1,11 +1,12 @@
-package org.techconnect.activities;
+package org.techconnect.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -16,6 +17,8 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import org.centum.techconnect.R;
+import org.techconnect.activities.GuideActivity;
+import org.techconnect.activities.MainActivity;
 import org.techconnect.adapters.FlowchartAdapter;
 import org.techconnect.adapters.FlowchartCursorAdapter;
 import org.techconnect.asynctasks.GetCatalogAsyncTask;
@@ -24,8 +27,13 @@ import org.techconnect.views.GuideListItemView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
-public class GetGuidesActivity extends AppCompatActivity implements TextWatcher, View.OnClickListener {
+/**
+ * Created by Phani on 11/16/2016.
+ */
+
+public class CatalogFragment extends Fragment implements TextWatcher, View.OnClickListener {
 
     @Bind(R.id.swipe_refresh_layout)
     SwipeRefreshLayout refreshLayout;
@@ -41,13 +49,17 @@ public class GetGuidesActivity extends AppCompatActivity implements TextWatcher,
     ListView guidesListView;
 
     private ListAdapter adapter;
-    private boolean loaded = false;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_get_guides);
-        ButterKnife.bind(this);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_catalog, container, false);
+        ButterKnife.bind(this, view);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -62,7 +74,7 @@ public class GetGuidesActivity extends AppCompatActivity implements TextWatcher,
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 GuideListItemView guideView = ((GuideListItemView) view);
-                Intent intent = new Intent(GetGuidesActivity.this, GuideActivity.class);
+                Intent intent = new Intent(getActivity(), GuideActivity.class);
                 intent.putExtra(GuideActivity.EXTRA_CHART, guideView.getFlowChart());
                 intent.putExtra(GuideActivity.EXTRA_ALLOW_REFRESH, false);
                 startActivity(intent);
@@ -82,13 +94,22 @@ public class GetGuidesActivity extends AppCompatActivity implements TextWatcher,
                 refreshLayout.setEnabled(firstVisibleItem == 0 && topRowVerticalPosition >= 0);
             }
         });
+        loadCatalog();
+        return view;
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
-        if (!loaded) {
-            loadCatalog();
+        if (getActivity() != null) {
+            getActivity().setTitle(R.string.guide_catalog);
+        }
+    }
+
+    @OnClick(R.id.view_offline_guides)
+    public void onViewOfflineGuides() {
+        if (getActivity() != null && getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setCurrentFragment(MainActivity.FRAGMENT_GUIDES);
         }
     }
 
@@ -111,8 +132,7 @@ public class GetGuidesActivity extends AppCompatActivity implements TextWatcher,
     }
 
     private void setCatalog(FlowChart[] flowCharts) {
-        loaded = true;
-        adapter = new FlowchartAdapter(this, flowCharts);
+        adapter = new FlowchartAdapter(getActivity(), flowCharts);
         guidesListView.setAdapter(adapter);
         failedContentLayout.setVisibility(View.GONE);
         progressBar.setVisibility(View.GONE);
@@ -140,4 +160,5 @@ public class GetGuidesActivity extends AppCompatActivity implements TextWatcher,
             loadCatalog();
         }
     }
+
 }

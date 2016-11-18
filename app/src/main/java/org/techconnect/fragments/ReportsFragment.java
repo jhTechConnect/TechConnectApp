@@ -42,8 +42,12 @@ public class ReportsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if (getActivity() != null) {
+            getActivity().setTitle(R.string.reports);
+        }
         update();
     }
+
 
     private void update() {
         Set<String> reports = getContext().getSharedPreferences("sessions", Context.MODE_PRIVATE).getStringSet("sessions", new HashSet<String>());

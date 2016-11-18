@@ -63,7 +63,7 @@
     <string name="click_im_preview">Click an image preview to zoom in</string>
     <string name="loading_resources">Loading Resources</string>
     <string name="error_loading_resources">Error loading resources</string>
-    <string name="view_tutorial">View Tutorial</string>
+    <string name="view_tutorial">Getting Started</string>
     <string name="downloading_resources">Downloading Resources</string>
     <string name="title_activity_login">Sign in</string>
 
@@ -79,7 +79,7 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="skip_sign_in">Skip</string>
+    <string name="skip_sign_in">Skip sign in</string>
     <string name="skip_sign_in_msg">Skipping signin will make some features unavailable, such as commenting.</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="search_guides">Search</string>
@@ -89,12 +89,12 @@
     <string name="available_guides">Available Guides</string>
     <string name="no_guides">No guides have been downloaded yet</string>
     <string name="download_guides">Download Guides</string>
-    <string name="title_activity_guide">Guide</string>
+    <string name="title_activity_guide">Your Guide</string>
     <string name="description">Description</string>
     <string name="type">Type</string>
     <string name="score">Score</string>
     <string name="version">Version</string>
-    <string name="guides">Guides</string>
+    <string name="guides">Your Guides</string>
     <string name="error_play_guide">There was an error displaying this guide. Try re-downloading the guide</string>
     <string name="update_guide">Update Guide</string>
     <string name="serial_number">Serial Number</string>
@@ -146,4 +146,5 @@
     <string name="save_changes_msg">Would you like to save your profile changes?</string>
     <string name="offline_results_shown">Offline Results Shown</string>
     <string name="search_skills_or_names">Search for skills or users</string>
+    <string name="offline_guides">View Downloaded Guides</string>
 </resources>
