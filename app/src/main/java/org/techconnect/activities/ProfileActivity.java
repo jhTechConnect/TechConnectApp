@@ -276,9 +276,14 @@ public class ProfileActivity extends AppCompatActivity {
 
             //Make the button invisible
             row_button.setVisibility(View.INVISIBLE);
+            row_button.setClickable(false);
             //Chance the text to be appropriate to having no skills
             toAddText.setText(R.string.no_skills);
-            toAddText.setTextColor(Color.GRAY); //Maybe?
+            toAddText.setTextColor(Color.GRAY);
+            toAddText.setVisibility(View.VISIBLE);
+            //Still need to cancel out the edit text view
+            TextInputLayout addSkill = (TextInputLayout) toAdd.findViewById(R.id.edit_skill_layout);
+            addSkill.setVisibility(View.GONE);
             skills_table.addView(toAdd);
         } else {
             for (int i = 0; i < head_user.getExpertises().size(); i++) {
@@ -341,6 +346,10 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //Add a new row to the list of skills or deleting old skills
                 if (!isAdding) {
+                    //Check to see if the temp user currently has no skills
+                    if (tmp_skills.size() == 0) {
+                        skills_table.removeViewAt(0);//Remove dummy row
+                    }
                     for (ImageButton button : row_buttons) {
                         button.setClickable(true);
                         button.setImageResource(R.drawable.ic_close_black_24dp);
@@ -353,6 +362,24 @@ public class ProfileActivity extends AppCompatActivity {
                     for (ImageButton button : row_buttons) {
                         button.setImageResource(R.drawable.ic_build_black_24dp);
                         button.setClickable(false);
+                    }
+                    if (tmp_skills.size() == 0) { //No new skills have been added
+                        //Current User lists no skills
+                        TableRow toAdd = (TableRow) getLayoutInflater().inflate(R.layout.tablerow_skill, null, false);
+                        ImageButton row_button = (ImageButton) toAdd.findViewById(R.id.skill_icon);
+                        TextView toAddText = (TextView) toAdd.findViewById(R.id.skill_text);
+
+                        //Make the button invisible
+                        row_button.setVisibility(View.INVISIBLE);
+                        row_button.setClickable(false);
+                        //Chance the text to be appropriate to having no skills
+                        toAddText.setText(R.string.no_skills);
+                        toAddText.setTextColor(Color.GRAY);
+                        toAddText.setVisibility(View.VISIBLE);
+                        //Still need to cancel out the edit text view
+                        TextInputLayout addSkill = (TextInputLayout) toAdd.findViewById(R.id.edit_skill_layout);
+                        addSkill.setVisibility(View.GONE);
+                        skills_table.addView(toAdd);
                     }
                     editSkill.setImageResource(R.drawable.ic_mode_edit_black_24dp);
                     saveButton.setVisibility(View.VISIBLE);
