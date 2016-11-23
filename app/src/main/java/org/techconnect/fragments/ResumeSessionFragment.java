@@ -64,20 +64,11 @@ public class ResumeSessionFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_directory, container, false);
+        View view = inflater.inflate(R.layout.fragment_resume_session, container, false);
         ButterKnife.bind(this, view);
         Log.d("Directory Setup", "View Initialized");
         adapter = new SessionCursorAdapter(getContext());
         sessionListView.setAdapter(adapter);
-        sessionListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                User user = ((UserListItemView) view).getUser();
-                Intent intent = new Intent(getContext(), ProfileActivity.class);
-                intent.putExtra("user", user);
-                startActivity(intent);
-            }
-        });
         searchEditText.addTextChangedListener(this);
         onRefresh();
         clearSearchImageView.setOnClickListener(this);

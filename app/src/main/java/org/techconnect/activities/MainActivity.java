@@ -38,6 +38,7 @@ import org.techconnect.fragments.CatalogFragment;
 import org.techconnect.fragments.DirectoryFragment;
 import org.techconnect.fragments.GuidesFragment;
 import org.techconnect.fragments.ReportsFragment;
+import org.techconnect.fragments.ResumeSessionFragment;
 import org.techconnect.misc.ResourceHandler;
 import org.techconnect.misc.auth.AuthListener;
 import org.techconnect.misc.auth.AuthManager;
@@ -68,8 +69,8 @@ public class MainActivity extends AppCompatActivity
     private static final String USER_LEARNED_DRAWER = "org.techconnect.prefs.shownturotial.learneddrawer";
     private static final String ASKED_PERMISSION = "org.techconnect.prefs.shownturotial.askedpermission";
     private final Fragment[] FRAGMENTS = new Fragment[]{new CatalogFragment(),
-            new GuidesFragment(), new ReportsFragment(), new DirectoryFragment()};
-    private final int[] FRAGMENT_MENU_IDS = new int[]{R.id.nav_catalog, R.id.nav_guides, 0/*R.id.nav_reports*/, R.id.call_dir};
+            new GuidesFragment(), new ResumeSessionFragment(), new DirectoryFragment()};
+    private final int[] FRAGMENT_MENU_IDS = new int[]{R.id.nav_catalog, R.id.nav_guides, R.id.nav_resume_session, R.id.call_dir};
 
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout coordinatorLayout;

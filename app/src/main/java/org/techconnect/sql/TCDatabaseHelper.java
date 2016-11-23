@@ -685,8 +685,21 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
     public Cursor getActiveSessionsCursor() {
         String selection = TCDatabaseContract.SessionEntry.FINISHED + " = ?";
         String selectionArgs[] = {"0"}; //False in boolean
-        return getReadableDatabase().query(TCDatabaseContract.GraphEntry.TABLE_NAME,
+        return getReadableDatabase().query(TCDatabaseContract.SessionEntry.TABLE_NAME,
                 null, selection, selectionArgs, null, null, null);
+    }
+
+    public Session getSessionFromCursor(Cursor c) {
+        String flowchart_id = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FLOWCHART_ID));
+        FlowChart flow = getChart(flowchart_id);
+        Session s = new Session(flow);
+        s.setCreatedDate(c.getLong(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.CREATED_DATE)));
+        s.setDepartment(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.DEPARTMENT)));
+        s.setModelNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.MODEL)));
+        s.setSerialNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.SERIAL)));
+        s.setNotes(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.NOTES)));
+        s.setFinished(c.getInt(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FINISHED)) != 0);
+        return s;
     }
 
     private ContentValues getSessionContentValues(Session s) {
