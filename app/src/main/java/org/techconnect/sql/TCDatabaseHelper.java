@@ -653,6 +653,42 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         return ids;
     }
 
+    /**
+     * Used to return a list of all active sessions currently stored in database
+     *
+     * @return The actual list of te active sessions (as objects)
+     */
+    public List<Session> getActiveSessions() {
+        String selection = TCDatabaseContract.SessionEntry.FINISHED + " = ?";
+        String selectionArgs[] = {"0"}; //False in boolean
+        Cursor c = getReadableDatabase().query(TCDatabaseContract.GraphEntry.TABLE_NAME,
+                null, selection, selectionArgs, null, null, null);
+        c.moveToFirst();
+        List<Session> sessions = new ArrayList<Session>(c.getCount());
+
+        while (!c.isAfterLast()) {
+            String flowchart_id = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FLOWCHART_ID));
+            FlowChart flow = getChart(flowchart_id);
+            Session s = new Session(flow);
+            s.setCreatedDate(c.getLong(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.CREATED_DATE)));
+            s.setDepartment(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.DEPARTMENT)));
+            s.setModelNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.MODEL)));
+            s.setSerialNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.SERIAL)));
+            s.setNotes(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.NOTES)));
+            s.setFinished(c.getInt(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FINISHED)) != 0);
+            sessions.add(s);
+            c.moveToNext();
+        }
+        return sessions;
+    }
+
+    public Cursor getActiveSessionsCursor() {
+        String selection = TCDatabaseContract.SessionEntry.FINISHED + " = ?";
+        String selectionArgs[] = {"0"}; //False in boolean
+        return getReadableDatabase().query(TCDatabaseContract.GraphEntry.TABLE_NAME,
+                null, selection, selectionArgs, null, null, null);
+    }
+
     private ContentValues getSessionContentValues(Session s) {
         ContentValues sessionContentValues = new ContentValues();
         sessionContentValues.put(TCDatabaseContract.SessionEntry.ID, getRandomId());
