@@ -67,6 +67,9 @@
     <string name="downloading_resources">Downloading Resources</string>
     <string name="title_activity_login">Sign in</string>
 
+    <!-- Strings related to profile -->
+    <string name="no_skills">No Skills Provided</string>
+
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
