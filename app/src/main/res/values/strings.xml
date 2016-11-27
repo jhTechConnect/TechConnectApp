@@ -71,6 +71,10 @@
     <!-- Strings related to profile -->
     <string name="no_skills">No Skills Provided</string>
 
+    <!-- Strings related to Session -->
+    <string name="curr_step">Current Step</string>
+    <string name="delete_session">Delete Session</string>
+
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
