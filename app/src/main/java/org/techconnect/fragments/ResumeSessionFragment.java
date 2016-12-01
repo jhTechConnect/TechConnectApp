@@ -1,42 +1,33 @@
 package org.techconnect.fragments;
 
 
-import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import org.centum.techconnect.R;
-import org.techconnect.activities.ProfileActivity;
 import org.techconnect.adapters.SessionCursorAdapter;
-import org.techconnect.adapters.UserListAdapter;
-import org.techconnect.asynctasks.SearchUsersAsyncTask;
-import org.techconnect.model.User;
 import org.techconnect.sql.TCDatabaseHelper;
-import org.techconnect.views.UserListItemView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class ResumeSessionFragment extends Fragment implements
         View.OnClickListener,
-        TextWatcher {
+        TextWatcher,
+        LoaderManager.LoaderCallbacks<Cursor> {
 
     //All of the binds
 
@@ -49,25 +40,26 @@ public class ResumeSessionFragment extends Fragment implements
     @Bind(R.id.session_ListView)
     ListView sessionListView;
 
+    //Loader options
+    private static final int SESSION_LOADER = 0;
+
     private SessionCursorAdapter adapter;
     private boolean isLoading = false;
+
 
     public ResumeSessionFragment() {
         // Required empty public constructor
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_resume_session, container, false);
-        ButterKnife.bind(this, view);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        View view =  inflater.inflate(R.layout.fragment_resume_session,container,false);
+        ButterKnife.bind(this,view);
         Log.d("Directory Setup", "View Initialized");
-        adapter = new SessionCursorAdapter(getContext());
+        getLoaderManager().initLoader(SESSION_LOADER, null, this);
+        adapter = new SessionCursorAdapter(this.getContext());
         sessionListView.setAdapter(adapter);
         searchEditText.addTextChangedListener(this);
         onRefresh();
@@ -109,5 +101,25 @@ public class ResumeSessionFragment extends Fragment implements
     @Override
     public void afterTextChanged(Editable editable) {
         onRefresh();
+    }
+
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        if (id == SESSION_LOADER) {
+            Log.d("Resume Session","Initiate Cursor Loader");
+            return TCDatabaseHelper.get(this.getContext()).getActiveSessionsCursorLoader();
+        }
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        adapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }

@@ -689,6 +689,15 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
                 null, selection, selectionArgs, null, null, null);
     }
 
+    public CursorLoader getActiveSessionsCursorLoader() {
+        return new CursorLoader(context, null, null, null, null, null) {
+            @Override
+            public Cursor loadInBackground() {
+                return getActiveSessionsCursor();
+            }
+        };
+    }
+
     public Session getSessionFromCursor(Cursor c) {
         String flowchart_id = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FLOWCHART_ID));
         FlowChart flow = getChart(flowchart_id);
