@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import org.centum.techconnect.R;
 import org.techconnect.model.session.Session;
+import org.techconnect.sql.TCDatabaseHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -40,6 +41,7 @@ public class SessionActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_session);
         ButterKnife.bind(this);
 
@@ -74,5 +76,11 @@ public class SessionActivity extends AppCompatActivity {
     }
 
     public void deleteSession(View view) {
+        //Have a pop up to confirm deletion
+
+        //Simply want to remove the session stored in this object from the SQL database
+        TCDatabaseHelper.get(this).deleteSession(session);
+        //End this activity and return to previous
+        finish();
     }
 }

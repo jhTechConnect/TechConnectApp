@@ -1,6 +1,7 @@
 package org.techconnect.fragments;
 
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,14 +13,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import org.centum.techconnect.R;
+import org.techconnect.activities.SessionActivity;
 import org.techconnect.adapters.SessionCursorAdapter;
 import org.techconnect.sql.TCDatabaseHelper;
+import org.techconnect.views.SessionListItemView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -61,6 +65,19 @@ public class ResumeSessionFragment extends Fragment implements
         getLoaderManager().initLoader(SESSION_LOADER, null, this);
         adapter = new SessionCursorAdapter(this.getContext());
         sessionListView.setAdapter(adapter);
+        sessionListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                SessionListItemView sessionView = ((SessionListItemView) view);
+                Intent intent = new Intent(getContext(), SessionActivity.class);
+                // Get the non-stub chart and open
+                intent.putExtra(SessionActivity.EXTRA_SESSION,
+                        sessionView.getSession()); //Maybe? Not sure if this is a good idea
+                startActivity(intent);
+
+            }
+        });
         searchEditText.addTextChangedListener(this);
         onRefresh();
         clearSearchImageView.setOnClickListener(this);
@@ -69,6 +86,7 @@ public class ResumeSessionFragment extends Fragment implements
 
     @Override
     public void onResume() {
+        Log.d("Resume Session","Resume Fragment");
         super.onResume();
         if (getActivity() != null) {
             getActivity().setTitle(R.string.resume_session);
@@ -77,7 +95,10 @@ public class ResumeSessionFragment extends Fragment implements
     }
 
     public void onRefresh() {
-        //Somehow reset the SQL cursor? TBD
+        Log.d("Resume Session","Refresh Session List");
+        if (getActivity() != null) {
+            getLoaderManager().restartLoader(SESSION_LOADER, null, this);
+        }
     }
 
     @Override
@@ -116,6 +137,8 @@ public class ResumeSessionFragment extends Fragment implements
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         adapter.swapCursor(data);
+        adapter.notifyDataSetChanged();
+        Log.d("Resume Session",String.format("Update Adapter, %d",adapter.getCount()));
     }
 
     @Override

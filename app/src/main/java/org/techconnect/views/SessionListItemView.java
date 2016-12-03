@@ -55,6 +55,10 @@ public class SessionListItemView extends LinearLayout {
         updateViews();
     }
 
+    public Session getSession() {
+        return this.session;
+    }
+
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();

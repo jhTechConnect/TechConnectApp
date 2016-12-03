@@ -627,6 +627,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             String flowchart_id = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FLOWCHART_ID));
             FlowChart flow = getChart(flowchart_id);
             Session s = new Session(flow);
+            s.setId(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.ID)));
             s.setCreatedDate(c.getLong(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.CREATED_DATE)));
             s.setDepartment(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.DEPARTMENT)));
             s.setModelNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.MODEL)));
@@ -651,6 +652,14 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             ids.add(cursor.getString(cursor.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.ID)));
         }
         return ids;
+    }
+
+    public void deleteSession(Session s) {
+        String selection = TCDatabaseContract.SessionEntry.ID + " = ?";
+        String selectionArgs[] = {s.getId()};
+        int result = getWritableDatabase().delete(TCDatabaseContract.SessionEntry.TABLE_NAME, selection, selectionArgs);
+        Log.d("Delete Session",String.format("%d",result));
+
     }
 
     /**
@@ -702,6 +711,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         String flowchart_id = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FLOWCHART_ID));
         FlowChart flow = getChart(flowchart_id);
         Session s = new Session(flow);
+        s.setId(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.ID)));
         s.setCreatedDate(c.getLong(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.CREATED_DATE)));
         s.setDepartment(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.DEPARTMENT)));
         s.setModelNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.MODEL)));
@@ -713,7 +723,8 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
 
     private ContentValues getSessionContentValues(Session s) {
         ContentValues sessionContentValues = new ContentValues();
-        sessionContentValues.put(TCDatabaseContract.SessionEntry.ID, getRandomId());
+        s.setId(getRandomId()); //Set the random ID field
+        sessionContentValues.put(TCDatabaseContract.SessionEntry.ID,s.getId());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.CREATED_DATE, s.getCreatedDate());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.FINISHED, s.isFinished());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.DEPARTMENT, s.getDepartment());
