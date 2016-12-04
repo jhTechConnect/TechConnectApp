@@ -129,8 +129,16 @@ public class Session implements Parcelable {
         return history;
     }
 
+    public void setHistory(List<String> hist) {
+        this.history = hist;
+    }
+
     public List<String> getOptionHistory() {
         return optionHistory;
+    }
+
+    public void setOptionHistory(List<String> opt_hist) {
+        this.optionHistory = opt_hist;
     }
 
     /**
@@ -141,6 +149,10 @@ public class Session implements Parcelable {
      */
     public Vertex getCurrentVertex() {
         return this.traversal.getCurrentVertex();//Simplify where this is referenced
+    }
+
+    public void setCurrentVertex(String id) {
+        this.traversal.setCurrentVertex(id);
     }
 
     /**

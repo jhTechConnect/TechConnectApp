@@ -96,7 +96,7 @@ public class GraphTraversal implements Parcelable {
         return this.graph.getVertex(this.currentVertexId);
     }
 
-    private void setCurrentVertex(String vertexId) {
+    public void setCurrentVertex(String vertexId) {
         this.currentVertexId = vertexId;
         this.currentOptions = graph.getOptions(vertexId);
     }

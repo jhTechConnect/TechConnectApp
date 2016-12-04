@@ -634,6 +634,17 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             s.setSerialNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.SERIAL)));
             s.setNotes(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.NOTES)));
             s.setFinished(c.getInt(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FINISHED)) != 0);
+
+            //Restore the Session status based on History
+            String raw_history = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.HISTORY));
+            ArrayList<String> history = new ArrayList<>(Arrays.asList(raw_history.split(",")));
+            String raw_opt_history = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.OPTION_HISTORY));
+            ArrayList<String> opt_history = new ArrayList<>(Arrays.asList(raw_opt_history.split(",")));
+            s.setHistory(history);
+            s.setOptionHistory(opt_history);
+
+            //Set the current vertex in the traversal as the most recent vertex ID in the history list
+            s.setCurrentVertex(history.get(history.size() - 1));
             return s;
         }
         return null;
@@ -659,7 +670,6 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         String selectionArgs[] = {s.getId()};
         int result = getWritableDatabase().delete(TCDatabaseContract.SessionEntry.TABLE_NAME, selection, selectionArgs);
         Log.d("Delete Session",String.format("%d",result));
-
     }
 
     /**
@@ -685,6 +695,18 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             s.setSerialNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.SERIAL)));
             s.setNotes(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.NOTES)));
             s.setFinished(c.getInt(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FINISHED)) != 0);
+
+            //Restore the Session status based on History
+            String raw_history = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.HISTORY));
+            ArrayList<String> history = new ArrayList<>(Arrays.asList(raw_history.split(",")));
+            String raw_opt_history = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.OPTION_HISTORY));
+            ArrayList<String> opt_history = new ArrayList<>(Arrays.asList(raw_opt_history.split(",")));
+            s.setHistory(history);
+            s.setOptionHistory(opt_history);
+
+            //Set the current vertex in the traversal as the most recent vertex ID in the history list
+            s.setCurrentVertex(history.get(history.size() - 1));
+
             sessions.add(s);
             c.moveToNext();
         }
@@ -718,6 +740,17 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         s.setSerialNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.SERIAL)));
         s.setNotes(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.NOTES)));
         s.setFinished(c.getInt(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FINISHED)) != 0);
+
+        //Restore the Session status based on History
+        String raw_history = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.HISTORY));
+        ArrayList<String> history = new ArrayList<>(Arrays.asList(raw_history.split(",")));
+        String raw_opt_history = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.OPTION_HISTORY));
+        ArrayList<String> opt_history = new ArrayList<>(Arrays.asList(raw_opt_history.split(",")));
+        s.setHistory(history);
+        s.setOptionHistory(opt_history);
+
+        //Set the current vertex in the traversal as the most recent vertex ID in the history list
+        s.setCurrentVertex(history.get(history.size() - 1));
         return s;
     }
 
