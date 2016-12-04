@@ -133,6 +133,13 @@ public class Session implements Parcelable {
         this.history = hist;
     }
 
+    /**
+     * Use the current history object to restore the traversal stack object
+     */
+    public void updateHistoryStack() {
+        this.traversal.setHistoryStack(history);
+    }
+
     public List<String> getOptionHistory() {
         return optionHistory;
     }

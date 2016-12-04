@@ -645,6 +645,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
 
             //Set the current vertex in the traversal as the most recent vertex ID in the history list
             s.setCurrentVertex(history.get(history.size() - 1));
+            s.updateHistoryStack();
             return s;
         }
         return null;
@@ -706,6 +707,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
 
             //Set the current vertex in the traversal as the most recent vertex ID in the history list
             s.setCurrentVertex(history.get(history.size() - 1));
+            s.updateHistoryStack();
 
             sessions.add(s);
             c.moveToNext();
@@ -751,6 +753,8 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
 
         //Set the current vertex in the traversal as the most recent vertex ID in the history list
         s.setCurrentVertex(history.get(history.size() - 1));
+        s.updateHistoryStack();
+
         return s;
     }
 

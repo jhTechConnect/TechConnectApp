@@ -101,6 +101,17 @@ public class GraphTraversal implements Parcelable {
         this.currentOptions = graph.getOptions(vertexId);
     }
 
+    /**
+     * When resotring a session from SQL, need to restore the history in the traversal
+     *
+     * @param history - stack of past vertex IDs
+     */
+    public void setHistoryStack(List<String> history) {
+        for (int i = 0; i < history.size() - 2; i++) {
+            this.historyStack.push(history.get(i));
+        }
+    }
+
     @Override
     public int describeContents() {
         return 0;
