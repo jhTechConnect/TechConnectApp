@@ -9,7 +9,9 @@
     <FrameLayout
         android:id="@+id/flowContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true"/>
 
     <ScrollView
         android:id="@+id/session_info_layout"

@@ -627,12 +627,25 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             String flowchart_id = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FLOWCHART_ID));
             FlowChart flow = getChart(flowchart_id);
             Session s = new Session(flow);
+            s.setId(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.ID)));
             s.setCreatedDate(c.getLong(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.CREATED_DATE)));
             s.setDepartment(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.DEPARTMENT)));
             s.setModelNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.MODEL)));
             s.setSerialNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.SERIAL)));
             s.setNotes(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.NOTES)));
             s.setFinished(c.getInt(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FINISHED)) != 0);
+
+            //Restore the Session status based on History
+            String raw_history = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.HISTORY));
+            ArrayList<String> history = new ArrayList<>(Arrays.asList(raw_history.split(",")));
+            String raw_opt_history = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.OPTION_HISTORY));
+            ArrayList<String> opt_history = new ArrayList<>(Arrays.asList(raw_opt_history.split(",")));
+            s.setHistory(history);
+            s.setOptionHistory(opt_history);
+
+            //Set the current vertex in the traversal as the most recent vertex ID in the history list
+            s.setCurrentVertex(history.get(history.size() - 1));
+            s.updateHistoryStack();
             return s;
         }
         return null;
@@ -653,9 +666,102 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         return ids;
     }
 
+    public void deleteSession(Session s) {
+        String selection = TCDatabaseContract.SessionEntry.ID + " = ?";
+        String selectionArgs[] = {s.getId()};
+        int result = getWritableDatabase().delete(TCDatabaseContract.SessionEntry.TABLE_NAME, selection, selectionArgs);
+        Log.d("Delete Session",String.format("%d",result));
+    }
+
+    /**
+     * Used to return a list of all active sessions currently stored in database
+     *
+     * @return The actual list of te active sessions (as objects)
+     */
+    public List<Session> getActiveSessions() {
+        String selection = TCDatabaseContract.SessionEntry.FINISHED + " = ?";
+        String selectionArgs[] = {"0"}; //False in boolean
+        Cursor c = getReadableDatabase().query(TCDatabaseContract.GraphEntry.TABLE_NAME,
+                null, selection, selectionArgs, null, null, null);
+        c.moveToFirst();
+        List<Session> sessions = new ArrayList<Session>(c.getCount());
+
+        while (!c.isAfterLast()) {
+            String flowchart_id = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FLOWCHART_ID));
+            FlowChart flow = getChart(flowchart_id);
+            Session s = new Session(flow);
+            s.setCreatedDate(c.getLong(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.CREATED_DATE)));
+            s.setDepartment(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.DEPARTMENT)));
+            s.setModelNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.MODEL)));
+            s.setSerialNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.SERIAL)));
+            s.setNotes(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.NOTES)));
+            s.setFinished(c.getInt(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FINISHED)) != 0);
+
+            //Restore the Session status based on History
+            String raw_history = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.HISTORY));
+            ArrayList<String> history = new ArrayList<>(Arrays.asList(raw_history.split(",")));
+            String raw_opt_history = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.OPTION_HISTORY));
+            ArrayList<String> opt_history = new ArrayList<>(Arrays.asList(raw_opt_history.split(",")));
+            s.setHistory(history);
+            s.setOptionHistory(opt_history);
+
+            //Set the current vertex in the traversal as the most recent vertex ID in the history list
+            s.setCurrentVertex(history.get(history.size() - 1));
+            s.updateHistoryStack();
+
+            sessions.add(s);
+            c.moveToNext();
+        }
+        return sessions;
+    }
+
+    public Cursor getActiveSessionsCursor() {
+        String selection = TCDatabaseContract.SessionEntry.FINISHED + " = ?";
+        String selectionArgs[] = {"0"}; //False in boolean
+        return getReadableDatabase().query(TCDatabaseContract.SessionEntry.TABLE_NAME,
+                null, selection, selectionArgs, null, null, null);
+    }
+
+    public CursorLoader getActiveSessionsCursorLoader() {
+        return new CursorLoader(context, null, null, null, null, null) {
+            @Override
+            public Cursor loadInBackground() {
+                return getActiveSessionsCursor();
+            }
+        };
+    }
+
+    public Session getSessionFromCursor(Cursor c) {
+        String flowchart_id = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FLOWCHART_ID));
+        FlowChart flow = getChart(flowchart_id);
+        Session s = new Session(flow);
+        s.setId(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.ID)));
+        s.setCreatedDate(c.getLong(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.CREATED_DATE)));
+        s.setDepartment(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.DEPARTMENT)));
+        s.setModelNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.MODEL)));
+        s.setSerialNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.SERIAL)));
+        s.setNotes(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.NOTES)));
+        s.setFinished(c.getInt(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FINISHED)) != 0);
+
+        //Restore the Session status based on History
+        String raw_history = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.HISTORY));
+        ArrayList<String> history = new ArrayList<>(Arrays.asList(raw_history.split(",")));
+        String raw_opt_history = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.OPTION_HISTORY));
+        ArrayList<String> opt_history = new ArrayList<>(Arrays.asList(raw_opt_history.split(",")));
+        s.setHistory(history);
+        s.setOptionHistory(opt_history);
+
+        //Set the current vertex in the traversal as the most recent vertex ID in the history list
+        s.setCurrentVertex(history.get(history.size() - 1));
+        s.updateHistoryStack();
+
+        return s;
+    }
+
     private ContentValues getSessionContentValues(Session s) {
         ContentValues sessionContentValues = new ContentValues();
-        sessionContentValues.put(TCDatabaseContract.SessionEntry.ID, getRandomId());
+        s.setId(getRandomId()); //Set the random ID field
+        sessionContentValues.put(TCDatabaseContract.SessionEntry.ID,s.getId());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.CREATED_DATE, s.getCreatedDate());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.FINISHED, s.isFinished());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.DEPARTMENT, s.getDepartment());

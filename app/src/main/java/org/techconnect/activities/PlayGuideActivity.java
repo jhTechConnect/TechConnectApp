@@ -33,6 +33,7 @@ import butterknife.OnClick;
 public class PlayGuideActivity extends AppCompatActivity implements SessionListener {
 
     public static final String EXTRA_CHART_ID = "org.techconnect.playguide.chartid";
+    public static final String EXTRA_SESSION = "org.techconnect.playguide.session"; //Resuming from session
     private static final String STATE_SESSION = "session";
     private static final int LAYOUT_INFO = 0;
     private static final int LAYOUT_FLOW = 1;
@@ -152,6 +153,12 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
     private void loadFlowchart() {
         if (getIntent() != null && getIntent().hasExtra(EXTRA_CHART_ID)) {
             flowChart = TCDatabaseHelper.get(this).getChart(getIntent().getStringExtra(EXTRA_CHART_ID));
+        }
+
+        if (getIntent() != null && getIntent().hasExtra(EXTRA_SESSION)) {
+            session = TCDatabaseHelper.get(this).getSession(getIntent().getStringExtra(EXTRA_SESSION),this);
+            flowView.setSession(session,this);
+
         }
     }
 
