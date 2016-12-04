@@ -1,5 +1,6 @@
 package org.techconnect.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -73,6 +74,10 @@ public class SessionActivity extends AppCompatActivity {
         }
     }
     public void resumeSession(View view) {
+        Intent intent = new Intent(this, PlayGuideActivity.class);
+        intent.putExtra(PlayGuideActivity.EXTRA_CHART_ID, session.getFlowchart().getId());
+        intent.putExtra(PlayGuideActivity.EXTRA_SESSION,session.getId());//Let the next activity load in the session
+        startActivity(intent);
     }
 
     public void deleteSession(View view) {
