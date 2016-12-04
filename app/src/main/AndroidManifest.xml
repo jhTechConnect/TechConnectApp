@@ -50,11 +50,8 @@
             android:name="org.techconnect.activities.LoginActivity"
             android:label="@string/title_activity_login" />
         <activity
-            android:name="org.techconnect.activities.GetGuidesActivity"
-            android:label="@string/guide_catalog" />
-        <activity
             android:name="org.techconnect.activities.ProfileActivity"
-            android:label="Personal Profile"
+            android:label="Profile"
             android:screenOrientation="locked" />
         <activity
             android:name="org.techconnect.activities.GuideActivity"
@@ -64,7 +61,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.techconnect.activities.MainActivity" />
         </activity>
-        <activity android:name="org.techconnect.activities.PlayGuideActivity" />
+        <activity
+            android:name="org.techconnect.activities.SessionActivity"
+            android:label="@string/session_title"/>
+        <activity
+            android:name="org.techconnect.activities.PlayGuideActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
             android:name="org.techconnect.activities.RegisterActivity"
             android:label="@string/register"></activity>

@@ -56,6 +56,14 @@ public class TCService extends IntentService {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (notificationManager != null) {
+            notificationManager.cancel(LOAD_CHARTS_NOTIFICATION);
+        }
+    }
+
+    @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
             final String action = intent.getAction();

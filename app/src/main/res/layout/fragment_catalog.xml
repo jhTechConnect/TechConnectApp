@@ -9,7 +9,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="org.techconnect.activities.GetGuidesActivity">
+    tools:context="org.techconnect.activities.MainActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -76,6 +76,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/try_again" />
+
+            <Button
+                android:id="@+id/view_offline_guides"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/offline_guides" />
 
         </LinearLayout>
 

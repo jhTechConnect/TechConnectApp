@@ -3,8 +3,8 @@ package org.techconnect.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.text.TextUtils;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -32,7 +32,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, View.OnClickListener {
+public class DirectoryFragment extends Fragment implements View.OnClickListener {
 
     @Bind(R.id.search_editText)
     EditText searchEditText;
@@ -44,6 +44,8 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     ListView userListView;
     @Bind(R.id.progress)
     ProgressBar progressBar;
+    @Bind(R.id.offline_label)
+    TextView offlineTextView;
 
     private UserListAdapter adapter;
     private boolean isLoading = false;
@@ -77,11 +79,27 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         searchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                onRefresh();
+                onRefresh(true);
                 return true;
             }
         });
-        onRefresh();
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                onRefresh(false);
+            }
+        });
+        onRefresh(true);
         clearSearchImageView.setOnClickListener(this);
         return view;
     }
@@ -89,52 +107,50 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     @Override
     public void onResume() {
         super.onResume();
-        onRefresh();
+        if (getActivity() != null) {
+            getActivity().setTitle(R.string.call_directory);
+        }
+        onRefresh(true);
     }
 
-    @Override
-    public void onRefresh() {
-        if (!isLoading) {
+    public void onRefresh(boolean force) {
+        if (!isLoading || force) {
             adapter.setUsers(new ArrayList<User>());
             progressBar.setVisibility(View.VISIBLE);
             userListView.setVisibility(View.GONE);
+            offlineTextView.setVisibility(View.GONE);
             isLoading = true;
             String query = searchEditText.getText().toString();
-            if (query != null && !TextUtils.isEmpty(query)) {
-                new SearchUsersAsyncTask(getActivity(), query, 10, 0) {
+            new SearchUsersAsyncTask(getActivity(), query, 10, 0) {
 
-                    @Override
-                    protected void onPreExecute() {
-                        super.onPreExecute();
-                    }
+                @Override
+                protected void onPreExecute() {
+                    super.onPreExecute();
+                }
 
-                    @Override
-                    protected void onPostExecute(List<User> users) {
-                        if (users == null) {
-                            adapter.setUsers(TCDatabaseHelper.get(getActivity()).getAllUsers());
-                        } else {
-                            adapter.setUsers(users);
-                        }
-                        adapter.notifyDataSetChanged();
-                        isLoading = false;
-                        userListView.setVisibility(View.VISIBLE);
-                        progressBar.setVisibility(View.GONE);
+                @Override
+                protected void onPostExecute(List<User> users) {
+                    if (users == null) {
+                        adapter.setUsers(TCDatabaseHelper.get(getActivity()).getAllUsers());
+                        offlineTextView.setVisibility(View.VISIBLE);
+                    } else {
+                        adapter.setUsers(users);
                     }
+                    adapter.notifyDataSetChanged();
+                    isLoading = false;
+                    userListView.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.GONE);
+                }
 
-                    @Override
-                    protected void onCancelled() {
-                        isLoading = false;
-                        userListView.setVisibility(View.VISIBLE);
-                        progressBar.setVisibility(View.GONE);
-                    }
-                }.execute();
-            } else {
-                adapter.setUsers(TCDatabaseHelper.get(getActivity()).getAllUsers());
-                adapter.notifyDataSetChanged();
-                isLoading = false;
-                userListView.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.GONE);
-            }
+                @Override
+                protected void onCancelled() {
+                    isLoading = false;
+                    userListView.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.GONE);
+                    adapter.setUsers(TCDatabaseHelper.get(getActivity()).getAllUsers());
+                    offlineTextView.setVisibility(View.VISIBLE);
+                }
+            }.execute();
         }
     }
 
@@ -142,7 +158,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     public void onClick(View view) {
         if (view.getId() == R.id.clear_search_imageView) {
             searchEditText.setText(null);
-            onRefresh();
+            onRefresh(true);
         }
     }
 }

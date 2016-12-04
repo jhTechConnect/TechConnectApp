@@ -22,14 +22,17 @@
         android:id="@+id/nav_group"
         android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_catalog"
+            android:icon="@android:drawable/ic_menu_add"
+            android:title="@string/guide_catalog" />
+        <item
             android:id="@+id/nav_guides"
             android:icon="@android:drawable/ic_menu_help"
             android:title="@string/guides" />
-        <!--
         <item
-            android:id="@+id/nav_reports"
+            android:id="@+id/nav_resume_session"
             android:icon="@android:drawable/ic_menu_agenda"
-            android:title="@string/reports" />-->
+            android:title="@string/resume_session" />
         <item
             android:id="@+id/call_dir"
             android:icon="@android:drawable/ic_menu_call"

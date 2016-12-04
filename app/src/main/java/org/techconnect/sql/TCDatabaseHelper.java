@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
+import android.support.v4.content.CursorLoader;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -35,9 +36,11 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "FlowChart.db";
     private static TCDatabaseHelper instance = null;
+    private Context context;
 
     private TCDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     public static TCDatabaseHelper get(Context context) {
@@ -175,6 +178,15 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         return set;
     }
 
+    public int getNumFlowcharts() {
+        List<String> ids = new LinkedList<>();
+        Cursor c = getReadableDatabase().query(ChartEntry.TABLE_NAME, new String[]{ChartEntry.ID}, null,
+                null, null, null, null);
+        int count = c.getCount();
+        c.close();
+        return count;
+    }
+
     public String[] getAllChartIds() {
         List<String> ids = new LinkedList<>();
         Cursor c = getReadableDatabase().query(ChartEntry.TABLE_NAME, new String[]{ChartEntry.ID}, null,
@@ -186,6 +198,15 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         }
         c.close();
         return ids.toArray(new String[ids.size()]);
+    }
+
+    public CursorLoader getAllFlowchartsCursorLoader(final String filter) {
+        return new CursorLoader(context, null, null, null, null, null) {
+            @Override
+            public Cursor loadInBackground() {
+                return getAllFlowchartsCursor(filter);
+            }
+        };
     }
 
     public Cursor getAllFlowchartsCursor() {
@@ -228,8 +249,15 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         return chart;
     }
 
+
+    /**
+     * Get a stub chart, for use in listviews when you don't need comments and the graph.
+     *
+     * @param c
+     * @return
+     */
     @NonNull
-    public FlowChart getChartFromCursor(Cursor c) {
+    public FlowChart getChartStubFromCursor(Cursor c) {
         FlowChart chart = new FlowChart();
         chart.setId(c.getString(c.getColumnIndexOrThrow(ChartEntry.ID)));
         chart.setName(c.getString(c.getColumnIndexOrThrow(ChartEntry.NAME)));
@@ -240,6 +268,12 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         chart.setImage(c.getString(c.getColumnIndexOrThrow(ChartEntry.IMAGE)));
         chart.setType(FlowChart.ChartType.valueOf(c.getString(c.getColumnIndexOrThrow(ChartEntry.TYPE))));
         chart.setScore(c.getInt(c.getColumnIndexOrThrow(ChartEntry.SCORE)));
+        return chart;
+    }
+
+    @NonNull
+    public FlowChart getChartFromCursor(Cursor c) {
+        FlowChart chart = getChartStubFromCursor(c);
         String allRes = c.getString(c.getColumnIndexOrThrow(ChartEntry.ALL_RESOURCES));
         String res = c.getString(c.getColumnIndexOrThrow(ChartEntry.RESOURCES));
         if (allRes != null && !TextUtils.isEmpty(allRes.trim())) {
@@ -593,12 +627,25 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             String flowchart_id = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FLOWCHART_ID));
             FlowChart flow = getChart(flowchart_id);
             Session s = new Session(flow);
+            s.setId(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.ID)));
             s.setCreatedDate(c.getLong(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.CREATED_DATE)));
             s.setDepartment(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.DEPARTMENT)));
             s.setModelNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.MODEL)));
             s.setSerialNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.SERIAL)));
             s.setNotes(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.NOTES)));
             s.setFinished(c.getInt(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FINISHED)) != 0);
+
+            //Restore the Session status based on History
+            String raw_history = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.HISTORY));
+            ArrayList<String> history = new ArrayList<>(Arrays.asList(raw_history.split(",")));
+            String raw_opt_history = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.OPTION_HISTORY));
+            ArrayList<String> opt_history = new ArrayList<>(Arrays.asList(raw_opt_history.split(",")));
+            s.setHistory(history);
+            s.setOptionHistory(opt_history);
+
+            //Set the current vertex in the traversal as the most recent vertex ID in the history list
+            s.setCurrentVertex(history.get(history.size() - 1));
+            s.updateHistoryStack();
             return s;
         }
         return null;
@@ -619,9 +666,102 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         return ids;
     }
 
+    public void deleteSession(Session s) {
+        String selection = TCDatabaseContract.SessionEntry.ID + " = ?";
+        String selectionArgs[] = {s.getId()};
+        int result = getWritableDatabase().delete(TCDatabaseContract.SessionEntry.TABLE_NAME, selection, selectionArgs);
+        Log.d("Delete Session",String.format("%d",result));
+    }
+
+    /**
+     * Used to return a list of all active sessions currently stored in database
+     *
+     * @return The actual list of te active sessions (as objects)
+     */
+    public List<Session> getActiveSessions() {
+        String selection = TCDatabaseContract.SessionEntry.FINISHED + " = ?";
+        String selectionArgs[] = {"0"}; //False in boolean
+        Cursor c = getReadableDatabase().query(TCDatabaseContract.GraphEntry.TABLE_NAME,
+                null, selection, selectionArgs, null, null, null);
+        c.moveToFirst();
+        List<Session> sessions = new ArrayList<Session>(c.getCount());
+
+        while (!c.isAfterLast()) {
+            String flowchart_id = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FLOWCHART_ID));
+            FlowChart flow = getChart(flowchart_id);
+            Session s = new Session(flow);
+            s.setCreatedDate(c.getLong(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.CREATED_DATE)));
+            s.setDepartment(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.DEPARTMENT)));
+            s.setModelNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.MODEL)));
+            s.setSerialNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.SERIAL)));
+            s.setNotes(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.NOTES)));
+            s.setFinished(c.getInt(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FINISHED)) != 0);
+
+            //Restore the Session status based on History
+            String raw_history = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.HISTORY));
+            ArrayList<String> history = new ArrayList<>(Arrays.asList(raw_history.split(",")));
+            String raw_opt_history = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.OPTION_HISTORY));
+            ArrayList<String> opt_history = new ArrayList<>(Arrays.asList(raw_opt_history.split(",")));
+            s.setHistory(history);
+            s.setOptionHistory(opt_history);
+
+            //Set the current vertex in the traversal as the most recent vertex ID in the history list
+            s.setCurrentVertex(history.get(history.size() - 1));
+            s.updateHistoryStack();
+
+            sessions.add(s);
+            c.moveToNext();
+        }
+        return sessions;
+    }
+
+    public Cursor getActiveSessionsCursor() {
+        String selection = TCDatabaseContract.SessionEntry.FINISHED + " = ?";
+        String selectionArgs[] = {"0"}; //False in boolean
+        return getReadableDatabase().query(TCDatabaseContract.SessionEntry.TABLE_NAME,
+                null, selection, selectionArgs, null, null, null);
+    }
+
+    public CursorLoader getActiveSessionsCursorLoader() {
+        return new CursorLoader(context, null, null, null, null, null) {
+            @Override
+            public Cursor loadInBackground() {
+                return getActiveSessionsCursor();
+            }
+        };
+    }
+
+    public Session getSessionFromCursor(Cursor c) {
+        String flowchart_id = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FLOWCHART_ID));
+        FlowChart flow = getChart(flowchart_id);
+        Session s = new Session(flow);
+        s.setId(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.ID)));
+        s.setCreatedDate(c.getLong(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.CREATED_DATE)));
+        s.setDepartment(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.DEPARTMENT)));
+        s.setModelNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.MODEL)));
+        s.setSerialNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.SERIAL)));
+        s.setNotes(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.NOTES)));
+        s.setFinished(c.getInt(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FINISHED)) != 0);
+
+        //Restore the Session status based on History
+        String raw_history = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.HISTORY));
+        ArrayList<String> history = new ArrayList<>(Arrays.asList(raw_history.split(",")));
+        String raw_opt_history = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.OPTION_HISTORY));
+        ArrayList<String> opt_history = new ArrayList<>(Arrays.asList(raw_opt_history.split(",")));
+        s.setHistory(history);
+        s.setOptionHistory(opt_history);
+
+        //Set the current vertex in the traversal as the most recent vertex ID in the history list
+        s.setCurrentVertex(history.get(history.size() - 1));
+        s.updateHistoryStack();
+
+        return s;
+    }
+
     private ContentValues getSessionContentValues(Session s) {
         ContentValues sessionContentValues = new ContentValues();
-        sessionContentValues.put(TCDatabaseContract.SessionEntry.ID, getRandomId());
+        s.setId(getRandomId()); //Set the random ID field
+        sessionContentValues.put(TCDatabaseContract.SessionEntry.ID,s.getId());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.CREATED_DATE, s.getCreatedDate());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.FINISHED, s.isFinished());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.DEPARTMENT, s.getDepartment());

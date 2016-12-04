@@ -4,8 +4,10 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -18,6 +20,8 @@ import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.centum.techconnect.R;
 import org.techconnect.asynctasks.UpdateUserAsyncTask;
@@ -34,24 +38,18 @@ import butterknife.OnClick;
 
 public class ProfileActivity extends AppCompatActivity {
     //Do all of the butterknife binding
-    @Bind(R.id.toolbar_layout)
-    CollapsingToolbarLayout layout;
     @Bind(R.id.profile_work)
     TextView org;
     @Bind(R.id.profile_email)
-    TextView email;
+    TextView emailTextView;
     @Bind(R.id.skills_table)
     TableLayout skills_table;
 
     //All of the editable text fields
     @Bind(R.id.edit_work_layout)
     TextInputLayout edit_org_layout;
-    @Bind(R.id.edit_email_layout)
-    TextInputLayout edit_email_layout;
     @Bind(R.id.edit_work_text)
     EditText edit_org;
-    @Bind(R.id.edit_email_text)
-    EditText edit_email;
 
     //All of the edit buttons
     @Bind(R.id.edit_work_button)
@@ -70,15 +68,21 @@ public class ProfileActivity extends AppCompatActivity {
     private List<String> tmp_skills; //Hold onto the actual final set of skills for the user
     private boolean isEditable;
     private boolean isEditing = false;
+    private FirebaseAnalytics firebaseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         ButterKnife.bind(this);
 
         //Here, we access the current User from the Database, create a temporary user in case we need to update
         head_user = getIntent().getExtras().getParcelable("user");
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, head_user.get_id());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "user");
+        firebaseAnalytics.logEvent("view_profile", bundle);
 
         //Setup whether the user can edit this profile
         isEditable = AuthManager.get(this).hasAuth() && head_user.get_id().equals(AuthManager.get(this).getAuth().getUserId());
@@ -96,14 +100,9 @@ public class ProfileActivity extends AppCompatActivity {
             editSkill.setVisibility(View.GONE);
         }
 
-        //Add return arrow to action bar
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        //Setup the Toolbar Title
-        layout.setTitle(head_user.getName());
-
-        //Setup the UI with the head_user information
+        setTitle(head_user.getName());
         setupProfile();
     }
 
@@ -151,6 +150,16 @@ public class ProfileActivity extends AppCompatActivity {
         } else {
             super.onBackPressed();
         }
+    }
+
+    @OnClick(R.id.profile_email)
+    public void onEmailClicked() {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, head_user.get_id());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "user");
+        firebaseAnalytics.logEvent("clicked_email", bundle);
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + emailTextView.getText().toString()));
+        startActivity(Intent.createChooser(emailIntent, "Email"));
     }
 
     private TableRow onRowAddRequest() {
@@ -216,6 +225,7 @@ public class ProfileActivity extends AppCompatActivity {
                 pd.dismiss();
                 pd = null;
                 if (u != null) {
+                    Log.d("Update User", u.getEmail());
                     TCDatabaseHelper.get(context).upsertUser(u);
 
                 } else {
@@ -237,6 +247,7 @@ public class ProfileActivity extends AppCompatActivity {
     public void discardUserChanges(View v) {
         //Want to restore the original user (head_user)
         skills_table.removeAllViews(); //Clear out all previous rows
+        tmp_skills.clear(); // Clear out all temporary skills
         setupProfile();
         try {
             temp_user = head_user.clone();
@@ -250,47 +261,65 @@ public class ProfileActivity extends AppCompatActivity {
 
 
     private void setupProfile() {
-        //Add organization, email, and skills to the list below
+        //Add organization, emailTextView, and skills to the list below
         org.setText(head_user.getOrganization());
-        email.setText(head_user.getEmail());
+        emailTextView.setText(head_user.getEmail());
 
         //Create all rows from list of skills in profile
         row_buttons = new ArrayList<ImageButton>(); //Store reference of where buttons are
 
-        for (int i = 0; i < head_user.getExpertises().size(); i++) {
+        if (head_user.getExpertises().size() == 0) {
+            //Current User lists no skills
             TableRow toAdd = (TableRow) getLayoutInflater().inflate(R.layout.tablerow_skill, null, false);
-            final ImageButton row_button = (ImageButton) toAdd.findViewById(R.id.skill_icon);
-            row_buttons.add(row_button);
-            row_button.setTag(i); //View that the button belongs to
+            ImageButton row_button = (ImageButton) toAdd.findViewById(R.id.skill_icon);
+            TextView toAddText = (TextView) toAdd.findViewById(R.id.skill_text);
 
-            //Don't know if I should set the click listener every time, but doing it for now
-            row_button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //We want to delete the entire row that it belongs to
-                    skills_table.removeViewAt(row_buttons.indexOf(row_button));
-                    tmp_skills.remove(row_buttons.indexOf(row_button));
-                    row_buttons.remove(row_button);
-                }
-            });
+            //Make the button invisible
+            row_button.setVisibility(View.INVISIBLE);
             row_button.setClickable(false);
-
+            //Chance the text to be appropriate to having no skills
+            toAddText.setText(R.string.no_skills);
+            toAddText.setTextColor(Color.GRAY);
+            toAddText.setVisibility(View.VISIBLE);
+            //Still need to cancel out the edit text view
             TextInputLayout addSkill = (TextInputLayout) toAdd.findViewById(R.id.edit_skill_layout);
             addSkill.setVisibility(View.GONE);
-            TextView toAddText = (TextView) toAdd.findViewById(R.id.skill_text);
-            toAddText.setText(head_user.getExpertises().get(i));
-            toAddText.setVisibility(View.VISIBLE);
-
-            if (isEditable) { //Only need tmp_skills if editing
-                tmp_skills.add(head_user.getExpertises().get(i));
-            }
-
             skills_table.addView(toAdd);
+        } else {
+            for (int i = 0; i < head_user.getExpertises().size(); i++) {
+                TableRow toAdd = (TableRow) getLayoutInflater().inflate(R.layout.tablerow_skill, null, false);
+                final ImageButton row_button = (ImageButton) toAdd.findViewById(R.id.skill_icon);
+                row_buttons.add(row_button);
+                row_button.setTag(i); //View that the button belongs to
+
+                //Don't know if I should set the click listener every time, but doing it for now
+                row_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //We want to delete the entire row that it belongs to
+                        skills_table.removeViewAt(row_buttons.indexOf(row_button));
+                        tmp_skills.remove(row_buttons.indexOf(row_button));
+                        row_buttons.remove(row_button);
+                    }
+                });
+                row_button.setClickable(false);
+
+                TextInputLayout addSkill = (TextInputLayout) toAdd.findViewById(R.id.edit_skill_layout);
+                addSkill.setVisibility(View.GONE);
+                TextView toAddText = (TextView) toAdd.findViewById(R.id.skill_text);
+                toAddText.setText(head_user.getExpertises().get(i));
+                toAddText.setVisibility(View.VISIBLE);
+
+                if (isEditable) { //Only need tmp_skills if editing
+                    tmp_skills.add(head_user.getExpertises().get(i));
+                }
+
+                skills_table.addView(toAdd);
+            }
         }
 
         //Register the edit text fields for changing account info
         edit_org.setText(head_user.getOrganization());
-        edit_email.setText(head_user.getEmail());
 
         //Setup the edit button listeners to make changes to the profile info
         if (isEditable) {
@@ -317,6 +346,10 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //Add a new row to the list of skills or deleting old skills
                 if (!isAdding) {
+                    //Check to see if the temp user currently has no skills
+                    if (tmp_skills.size() == 0) {
+                        skills_table.removeViewAt(0);//Remove dummy row
+                    }
                     for (ImageButton button : row_buttons) {
                         button.setClickable(true);
                         button.setImageResource(R.drawable.ic_close_black_24dp);
@@ -329,6 +362,24 @@ public class ProfileActivity extends AppCompatActivity {
                     for (ImageButton button : row_buttons) {
                         button.setImageResource(R.drawable.ic_build_black_24dp);
                         button.setClickable(false);
+                    }
+                    if (tmp_skills.size() == 0) { //No new skills have been added
+                        //Current User lists no skills
+                        TableRow toAdd = (TableRow) getLayoutInflater().inflate(R.layout.tablerow_skill, null, false);
+                        ImageButton row_button = (ImageButton) toAdd.findViewById(R.id.skill_icon);
+                        TextView toAddText = (TextView) toAdd.findViewById(R.id.skill_text);
+
+                        //Make the button invisible
+                        row_button.setVisibility(View.INVISIBLE);
+                        row_button.setClickable(false);
+                        //Chance the text to be appropriate to having no skills
+                        toAddText.setText(R.string.no_skills);
+                        toAddText.setTextColor(Color.GRAY);
+                        toAddText.setVisibility(View.VISIBLE);
+                        //Still need to cancel out the edit text view
+                        TextInputLayout addSkill = (TextInputLayout) toAdd.findViewById(R.id.edit_skill_layout);
+                        addSkill.setVisibility(View.GONE);
+                        skills_table.addView(toAdd);
                     }
                     editSkill.setImageResource(R.drawable.ic_mode_edit_black_24dp);
                     saveButton.setVisibility(View.VISIBLE);
@@ -343,20 +394,14 @@ public class ProfileActivity extends AppCompatActivity {
     private void updateEditViews() {
         if (isEditing) {
             org.setVisibility(View.GONE);
-            email.setVisibility(View.GONE);
             edit_org_layout.setVisibility(View.VISIBLE);
-            edit_email_layout.setVisibility(View.VISIBLE);
             editWork.setImageResource(R.drawable.ic_done_black_24dp);
         } else {
             org.setVisibility(View.VISIBLE);
-            email.setVisibility(View.VISIBLE);
             org.setText(edit_org.getText());
-            email.setText(edit_email.getText());
-            head_user.setOrganization(edit_org.getText().toString());//Update Reference
-            temp_user.setEmail(edit_email.getText().toString());
+            temp_user.setOrganization(edit_org.getText().toString());//Update Reference
 
             edit_org_layout.setVisibility(View.GONE);
-            edit_email_layout.setVisibility(View.GONE);
             editWork.setImageResource(R.drawable.ic_mode_edit_black_24dp);
             saveButton.setVisibility(View.VISIBLE);
             discardButton.setVisibility(View.VISIBLE);

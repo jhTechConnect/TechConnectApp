@@ -41,7 +41,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
- * A login screen that offers login via email/password.
+ * A login screen that offers login via emailTextView/password.
  */
 public class LoginActivity extends AppCompatActivity {
     private static final int REGISTER_REQUEST = 1;
@@ -90,7 +90,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         if (savedInstanceState != null) {
-            mEmailView.setText(savedInstanceState.getString("email"));
+            mEmailView.setText(savedInstanceState.getString("emailTextView"));
             mPasswordView.setText(savedInstanceState.getString("password"));
         }
     }
@@ -98,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString("email", mEmailView.getText().toString());
+        outState.putString("emailTextView", mEmailView.getText().toString());
         outState.putString("password", mPasswordView.getText().toString());
     }
 
@@ -175,7 +175,7 @@ public class LoginActivity extends AppCompatActivity {
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid email address & password.
+        // Check for a valid emailTextView address & password.
         if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
             mEmailView.setError(getString(R.string.error_signin_field_required));
             focusView = mEmailView;

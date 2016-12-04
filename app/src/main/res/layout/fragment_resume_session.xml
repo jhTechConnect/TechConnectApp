@@ -37,7 +37,7 @@
     </LinearLayout>
 
     <ListView
-        android:id="@+id/user_ListView"
+        android:id="@+id/session_ListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -45,28 +45,6 @@
 
 
     </ListView>
-
-    <TextView
-        android:id="@+id/offline_label"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/darker_gray"
-        android:gravity="center_horizontal"
-        android:paddingBottom="8dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:paddingTop="8dp"
-        android:text="@string/offline_results_shown"
-        android:textSize="16sp" />
-
-    <ProgressBar
-        android:id="@+id/progress"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:indeterminate="true"
-        android:visibility="gone" />
 
 
 </LinearLayout>

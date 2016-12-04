@@ -31,6 +31,7 @@ public class Session implements Parcelable {
             return new Session[size];
         }
     };
+    private String id;
     private FlowChart flowChart;
     private GraphTraversal traversal; //Step through the graph
 
@@ -58,6 +59,7 @@ public class Session implements Parcelable {
      * @param in
      */
     public Session(Parcel in) {
+        this.id = in.readString();
         this.createdDate = in.readLong();
         finished = in.readByte() != 0;
         this.department = in.readString();
@@ -68,6 +70,14 @@ public class Session implements Parcelable {
         in.readList(this.optionHistory, String.class.getClassLoader());
         this.flowChart = in.readParcelable(FlowChart.class.getClassLoader());
         this.traversal = in.readParcelable(GraphTraversal.class.getClassLoader());
+    }
+
+    public String getId() {
+        return this.id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     //Save
@@ -119,8 +129,23 @@ public class Session implements Parcelable {
         return history;
     }
 
+    public void setHistory(List<String> hist) {
+        this.history = hist;
+    }
+
+    /**
+     * Use the current history object to restore the traversal stack object
+     */
+    public void updateHistoryStack() {
+        this.traversal.setHistoryStack(history);
+    }
+
     public List<String> getOptionHistory() {
         return optionHistory;
+    }
+
+    public void setOptionHistory(List<String> opt_hist) {
+        this.optionHistory = opt_hist;
     }
 
     /**
@@ -131,6 +156,10 @@ public class Session implements Parcelable {
      */
     public Vertex getCurrentVertex() {
         return this.traversal.getCurrentVertex();//Simplify where this is referenced
+    }
+
+    public void setCurrentVertex(String id) {
+        this.traversal.setCurrentVertex(id);
     }
 
     /**
@@ -177,6 +206,7 @@ public class Session implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         //Decided to not write GraphTraversal object since this can be initialized from the
         //FlowChart graph object and the end of history if need be
+        parcel.writeString(id);
         parcel.writeLong(createdDate);
         parcel.writeByte((byte) (finished ? 1 : 0));
         parcel.writeString(department);
