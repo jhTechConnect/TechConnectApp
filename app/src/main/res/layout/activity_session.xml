@@ -32,6 +32,27 @@
                 android:text="TextView"
                 android:textSize="16sp" />
             <TextView
+                android:id="@+id/manufacturer_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+
+                android:text="@string/manufacturer"
+                android:textSize="16sp"
+                android:textStyle="normal|bold" />
+
+            <TextView
+                android:id="@+id/manufacturer_textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="4dp"
+                android:text="TextView"
+                android:textSize="16sp" />
+            <TextView
                 android:id="@+id/model_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

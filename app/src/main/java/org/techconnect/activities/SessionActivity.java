@@ -23,6 +23,8 @@ import butterknife.ButterKnife;
 public class SessionActivity extends AppCompatActivity {
 
     //Bind all of the editable text views relevant to the session
+    @Bind(R.id.manufacturer_textView)
+    TextView manufacturerTextView;
     @Bind(R.id.model_textView)
     TextView modelTextView;
     @Bind(R.id.serial_textView)
@@ -56,6 +58,7 @@ public class SessionActivity extends AppCompatActivity {
 
     private void updateViews() {
         if (this.session != null) {
+            manufacturerTextView.setText(session.getManufacturer());
             modelTextView.setText(session.getModelNumber());
             serialTextView.setText(session.getSerialNumber());
             dateTextView.setText(new SimpleDateFormat("MM/dd/yyyy, HH:mm:ss").format(new Date(session.getCreatedDate())));
@@ -65,6 +68,7 @@ public class SessionActivity extends AppCompatActivity {
 
         } else {
             //Not very clean at the moment
+            manufacturerTextView.setVisibility(View.GONE);
             modelTextView.setVisibility(View.GONE);
             serialTextView.setVisibility(View.GONE);
             dateTextView.setVisibility(View.GONE);
