@@ -101,20 +101,20 @@ public class ResumeSessionFragment extends Fragment implements
         //onRefresh();
     }
 
-    /*
+
     public void onRefresh() {
         Log.d("Resume Session","Refresh Session List");
         if (getActivity() != null) {
             getLoaderManager().restartLoader(SESSION_LOADER, null, this);
         }
     }
-    */
+
 
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.clear_search_imageView) {
             searchEditText.setText(null);
-            //onRefresh();
+            onRefresh();
         }
     }
 

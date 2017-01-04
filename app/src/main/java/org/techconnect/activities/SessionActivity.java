@@ -3,6 +3,7 @@ package org.techconnect.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -53,6 +54,10 @@ public class SessionActivity extends AppCompatActivity {
             this.session = getIntent().getParcelableExtra(EXTRA_SESSION);
         }
         updateViews();
+
+        //Show the back arrow
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
 
@@ -91,5 +96,16 @@ public class SessionActivity extends AppCompatActivity {
         TCDatabaseHelper.get(this).deleteSession(session);
         //End this activity and return to previous
         finish();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle back arrow click here
+        if (item.getItemId() == android.R.id.home) {
+            //Want to go back to the list of past session
+            finish();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
