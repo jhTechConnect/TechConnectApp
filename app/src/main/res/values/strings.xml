@@ -10,6 +10,7 @@
     <string name="title_activity_intro_tutorial">TechConnect Tutorial</string>
     <string name="call_directory">Call Directory</string>
     <string name="resume_session">Resume Session</string>
+    <string name="repair_history">Repair History</string>
     <string name="reports">Reports</string>
     <string name="sync_online_resources">Update All Guides</string>
     <string name="loading">Loading</string>
@@ -157,6 +158,8 @@
     <string name="offline_results_shown">Offline Results Shown</string>
     <string name="search_skills_or_names">Search for skills or users</string>
     <string name="offline_guides">View Downloaded Guides</string>
+    <string name="sort">Sort</string>
+    <string name="date">Date</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
