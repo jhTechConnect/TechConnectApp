@@ -176,6 +176,7 @@ public class TCDatabaseContract {
         public static final String ID = "_id";
         public static final String CREATED_DATE = "createdDate";
         public static final String FINISHED = "finished";
+        public static final String MANUFACTURER = "manufacturer";
         public static final String DEPARTMENT = "department";
         public static final String MODEL = "modelNumber";
         public static final String SERIAL = "serialNumber";
@@ -189,6 +190,7 @@ public class TCDatabaseContract {
                 ID + " TEXT PRIMARY KEY NOT NULL UNIQUE,\n" +
                 CREATED_DATE + " DATE,\n" +
                 FINISHED + " BOOLEAN,\n" +
+                MANUFACTURER + " TEXT,\n" +
                 DEPARTMENT + " TEXT,\n" +
                 MODEL + " TEXT,\n" +
                 SERIAL + " TEXT,\n" +

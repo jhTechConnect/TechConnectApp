@@ -3,6 +3,7 @@ package org.techconnect.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -23,6 +24,8 @@ import butterknife.ButterKnife;
 public class SessionActivity extends AppCompatActivity {
 
     //Bind all of the editable text views relevant to the session
+    @Bind(R.id.manufacturer_textView)
+    TextView manufacturerTextView;
     @Bind(R.id.model_textView)
     TextView modelTextView;
     @Bind(R.id.serial_textView)
@@ -51,11 +54,16 @@ public class SessionActivity extends AppCompatActivity {
             this.session = getIntent().getParcelableExtra(EXTRA_SESSION);
         }
         updateViews();
+
+        //Show the back arrow
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
 
     private void updateViews() {
         if (this.session != null) {
+            manufacturerTextView.setText(session.getManufacturer());
             modelTextView.setText(session.getModelNumber());
             serialTextView.setText(session.getSerialNumber());
             dateTextView.setText(new SimpleDateFormat("MM/dd/yyyy, HH:mm:ss").format(new Date(session.getCreatedDate())));
@@ -65,6 +73,7 @@ public class SessionActivity extends AppCompatActivity {
 
         } else {
             //Not very clean at the moment
+            manufacturerTextView.setVisibility(View.GONE);
             modelTextView.setVisibility(View.GONE);
             serialTextView.setVisibility(View.GONE);
             dateTextView.setVisibility(View.GONE);
@@ -87,5 +96,16 @@ public class SessionActivity extends AppCompatActivity {
         TCDatabaseHelper.get(this).deleteSession(session);
         //End this activity and return to previous
         finish();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle back arrow click here
+        if (item.getItemId() == android.R.id.home) {
+            //Want to go back to the list of past session
+            finish();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

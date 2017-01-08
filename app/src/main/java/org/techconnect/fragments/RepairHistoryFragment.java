@@ -1,6 +1,5 @@
 package org.techconnect.fragments;
 
-
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -12,6 +11,9 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -30,7 +32,10 @@ import org.techconnect.views.SessionListItemView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class ResumeSessionFragment extends Fragment implements
+/**
+ * Used to facilitate accessing the repair history stored in the phone
+ */
+public class RepairHistoryFragment extends Fragment implements
         View.OnClickListener,
         TextWatcher,
         LoaderManager.LoaderCallbacks<Cursor> {
@@ -56,19 +61,18 @@ public class ResumeSessionFragment extends Fragment implements
     private SessionCursorAdapter adapter;
     private Cursor current_adapter;
     private boolean isLoading = false;
-
-
-    public ResumeSessionFragment() {
+    public RepairHistoryFragment() {
         // Required empty public constructor
     }
 
-
-    @Override
+       @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View view =  inflater.inflate(R.layout.fragment_resume_session,container,false);
+        View view =  inflater.inflate(R.layout.fragment_repair_history,container,false);
         ButterKnife.bind(this,view);
-        Log.d("Resume Session Setup", "View Initialized");
+
+
+
         //Don't want LoaderManager because we have no control over UI when the thing is done
         getLoaderManager().initLoader(SESSION_LOADER, null, this);
         //CursorLoader loader = TCDatabaseHelper.get(this.getContext()).getActiveSessionsCursorLoader();
@@ -86,8 +90,11 @@ public class ResumeSessionFragment extends Fragment implements
                 startActivity(intent);
             }
         });
+           setHasOptionsMenu(true);
         searchEditText.addTextChangedListener(this);
         clearSearchImageView.setOnClickListener(this);
+        Log.d("Repair History Setup", "View Initialized");
+
         return view;
     }
 
@@ -96,7 +103,7 @@ public class ResumeSessionFragment extends Fragment implements
         Log.d("Resume Session","Resume Fragment");
         super.onResume();
         if (getActivity() != null) {
-            getActivity().setTitle(R.string.resume_session);
+            getActivity().setTitle(R.string.repair_history);
         }
         //onRefresh();
     }
@@ -167,4 +174,24 @@ public class ResumeSessionFragment extends Fragment implements
     public void onLoaderReset(Loader<Cursor> loader) {
 
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+    {
+        super.onCreateOptionsMenu(menu, inflater);
+        MenuItem item = menu.findItem(R.id.action_sort);
+        item.setVisible(true);
+        //Initially, will have date be the initial way to sort the sessions
+        item.getSubMenu().findItem(R.id.date_item).setChecked(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.isChecked())
+            item.setChecked(false);
+        else
+            item.setChecked(true);
+        return true;
+    }
 }
+

@@ -48,6 +48,8 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
 
     @Bind(R.id.sync_button)
     Button syncButton;
+    @Bind(R.id.manufacturer_editText)
+    EditText manufacturerEditText;
     @Bind(R.id.department_editText)
     EditText departmentEditText;
     @Bind(R.id.model_editText)
@@ -179,6 +181,7 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
     protected void onStartSession() {
         if (flowChart != null) {
             session = new Session(flowChart);
+            session.setManufacturer(manufacturerEditText.getText().toString());
             session.setDepartment(departmentEditText.getText().toString());
             session.setModelNumber(modelEditText.getText().toString());
             session.setSerialNumber(serialEditText.getText().toString());

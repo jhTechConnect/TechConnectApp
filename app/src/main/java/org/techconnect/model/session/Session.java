@@ -36,6 +36,7 @@ public class Session implements Parcelable {
     private GraphTraversal traversal; //Step through the graph
 
     private long createdDate;
+    private String manufacturer = "";
     private String department = "";
     private String modelNumber = "";
     private String serialNumber = "";
@@ -63,6 +64,7 @@ public class Session implements Parcelable {
         this.createdDate = in.readLong();
         finished = in.readByte() != 0;
         this.department = in.readString();
+        this.manufacturer = in.readString();
         this.modelNumber = in.readString();
         this.serialNumber = in.readString();
         this.notes = in.readString();
@@ -210,6 +212,7 @@ public class Session implements Parcelable {
         parcel.writeLong(createdDate);
         parcel.writeByte((byte) (finished ? 1 : 0));
         parcel.writeString(department);
+        parcel.writeString(manufacturer);
         parcel.writeString(modelNumber);
         parcel.writeString(serialNumber);
         parcel.writeString(notes);
@@ -228,4 +231,11 @@ public class Session implements Parcelable {
         this.finished = finished;
     }
 
+    public String getManufacturer() {
+        return manufacturer;
+    }
+
+    public void setManufacturer(String manufacturer) {
+        this.manufacturer = manufacturer;
+    }
 }
