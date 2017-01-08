@@ -103,7 +103,7 @@ public class RepairHistoryFragment extends Fragment implements
         Log.d("Resume Session","Resume Fragment");
         super.onResume();
         if (getActivity() != null) {
-            getActivity().setTitle(R.string.resume_session);
+            getActivity().setTitle(R.string.repair_history);
         }
         //onRefresh();
     }
