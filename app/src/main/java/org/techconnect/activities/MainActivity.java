@@ -29,9 +29,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
-
 import org.centum.techconnect.R;
+import org.techconnect.analytics.FirebaseEvents;
 import org.techconnect.asynctasks.LogoutAsyncTask;
 import org.techconnect.asynctasks.PostAppFeedbackAsyncTask;
 import org.techconnect.dialogs.SendFeedbackDialogFragment;
@@ -90,7 +89,6 @@ public class MainActivity extends AppCompatActivity
     MenuItem loginMenuItem;
     MenuItem viewProfileMenuItem;
 
-    private FirebaseAnalytics firebaseAnalytics;
     private int currentFragment = -1;
     private boolean showedLogin = false;
     private boolean userLearnedDrawer = false;
@@ -100,8 +98,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.APP_OPEN, null);
+        FirebaseEvents.logAppOpen(this);
         ResourceHandler.get(this);
         TCDatabaseHelper.get(this);
         ButterKnife.bind(this);
@@ -412,7 +409,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.isChecked())
+        if (item.isChecked())
             item.setChecked(false);
         else
             item.setChecked(true);

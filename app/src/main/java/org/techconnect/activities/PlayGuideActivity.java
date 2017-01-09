@@ -16,9 +16,8 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
-
 import org.centum.techconnect.R;
+import org.techconnect.analytics.FirebaseEvents;
 import org.techconnect.model.FlowChart;
 import org.techconnect.model.session.Session;
 import org.techconnect.model.session.SessionListener;
@@ -59,7 +58,6 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
     @Bind(R.id.notes_editText)
     EditText notesEditText;
 
-    private FirebaseAnalytics firebaseAnalytics;
     private GuideFlowView flowView;
     private FlowChart flowChart = null;
     private Session session;
@@ -69,16 +67,11 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_guide);
         ButterKnife.bind(this);
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         flowView = (GuideFlowView) LayoutInflater.from(this).inflate(R.layout.guide_flow_view, flowContainer, false);
         flowContainer.addView(flowView);
         loadFlowchart();
         if (flowChart != null) {
-            Bundle bundle = new Bundle();
-            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, flowChart.getId());
-            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, flowChart.getName());
-            bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "guides");
-            firebaseAnalytics.logEvent("session_start", bundle);
+            FirebaseEvents.logStartSession(this, flowChart);
         }
         if (savedInstanceState != null && savedInstanceState.containsKey(STATE_SESSION)) {
             this.session = savedInstanceState.getParcelable(STATE_SESSION);
@@ -129,11 +122,7 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
                     public void onClick(DialogInterface dialogInterface, int i) {
                         dialogInterface.dismiss();
                         if (flowChart != null) {
-                            Bundle bundle = new Bundle();
-                            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, flowChart.getId());
-                            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, flowChart.getName());
-                            bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "guides");
-                            firebaseAnalytics.logEvent("session_end_early", bundle);
+                            FirebaseEvents.logEndSessionEarly(PlayGuideActivity.this, flowChart);
                         }
                         endSession();
                     }
@@ -158,8 +147,8 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
         }
 
         if (getIntent() != null && getIntent().hasExtra(EXTRA_SESSION)) {
-            session = TCDatabaseHelper.get(this).getSession(getIntent().getStringExtra(EXTRA_SESSION),this);
-            flowView.setSession(session,this);
+            session = TCDatabaseHelper.get(this).getSession(getIntent().getStringExtra(EXTRA_SESSION), this);
+            flowView.setSession(session, this);
 
         }
     }
@@ -219,22 +208,14 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
         session.setFinished(true);
         endSession();
         if (flowChart != null) {
-            Bundle bundle = new Bundle();
-            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, flowChart.getId());
-            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, flowChart.getName());
-            bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "guides");
-            firebaseAnalytics.logEvent("session_complete", bundle);
+            FirebaseEvents.logSessionComplete(this, flowChart);
         }
     }
 
     private void endSession() {
         saveSession();
         if (session != null) {
-            long endTime = System.currentTimeMillis();
-            long duration = endTime - session.getCreatedDate();
-            Bundle bundle = new Bundle();
-            bundle.putLong(FirebaseAnalytics.Param.VALUE, duration);
-            firebaseAnalytics.logEvent("session_duration", bundle);
+            FirebaseEvents.logSessionDuration(this, session);
         }
         finish();
     }

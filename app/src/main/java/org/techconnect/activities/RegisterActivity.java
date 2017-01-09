@@ -16,9 +16,8 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
-
 import org.centum.techconnect.R;
+import org.techconnect.analytics.FirebaseEvents;
 import org.techconnect.asynctasks.RegisterAsyncTask;
 import org.techconnect.model.User;
 import org.techconnect.sql.TCDatabaseHelper;
@@ -52,13 +51,10 @@ public class RegisterActivity extends AppCompatActivity {
     @Bind(R.id.confirm_password)
     EditText confirmPasswordEditText;
 
-    FirebaseAnalytics firebaseAnalytics;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         ButterKnife.bind(this);
 
         if (getIntent() != null && getIntent().hasExtra(EXTRA_EMAIL)) {
@@ -116,10 +112,10 @@ public class RegisterActivity extends AppCompatActivity {
                     showProgress(false);
                     if (user == null) {
                         Snackbar.make(coordinatorLayout, R.string.failed_register, Snackbar.LENGTH_LONG).show();
-                        firebaseAnalytics.logEvent("register_fail", null);
+                        FirebaseEvents.logRegistrationFailed(RegisterActivity.this);
                     } else {
                         // Store the user, probably need it later
-                        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SIGN_UP, null);
+                        FirebaseEvents.logRegistrationSuccess(RegisterActivity.this);
                         TCDatabaseHelper.get(RegisterActivity.this).upsertUser(user);
                         Intent intent = new Intent();
                         intent.putExtra(RESULT_REGISTERED_EMAIL, user.getEmail());
