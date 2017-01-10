@@ -15,17 +15,16 @@ import butterknife.ButterKnife;
 
 public class CategoryListItemView extends RelativeLayout {
 
-    public CategoryListItemView(Context context) {
-        super(context);
-    }
-
     @Bind(R.id.titleTextView)
     TextView titleTextView;
     @Bind(R.id.countTextView)
     TextView countTextView;
-
     private String title;
     private String count;
+
+    public CategoryListItemView(Context context) {
+        super(context);
+    }
 
     @Override
     protected void onFinishInflate() {

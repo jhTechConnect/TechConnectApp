@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_linearLayout"
     android:layout_width="match_parent"
@@ -7,23 +8,73 @@
     android:padding="16dp"
     tools:context="org.techconnect.fragments.GuidesFragment">
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleLarge"
+
+    <TextView
+        android:id="@+id/tempTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:text="Construction in Progress"
+        android:textSize="30dp"
         android:visibility="visible" />
 
     <ListView
-        android:id="@+id/session_ListView"
+        android:id="@+id/categoryListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:visibility="gone"></ListView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:background="@android:color/black"
         android:visibility="gone">
 
+        <TextView
+            android:id="@+id/categoryTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Category" />
 
-    </ListView>
+        <ImageButton
+            android:id="@+id/categoryButton"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:src="@android:drawable/ic_menu_close_clear_cancel" />
+    </RelativeLayout>
 
+    <LinearLayout
+        android:id="@+id/search_linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusableInTouchMode="true"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/search_editText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/search"
+            android:imeOptions="actionUnspecified"
+            android:inputType="text"
+            android:maxLines="1"
+            android:textColor="?android:attr/colorForeground" />
+
+        <ImageView
+            android:id="@+id/clear_search_imageView"
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0"
+            android:background="?attr/selectableItemBackground"
+            app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+
+    </LinearLayout>
 
 </LinearLayout>

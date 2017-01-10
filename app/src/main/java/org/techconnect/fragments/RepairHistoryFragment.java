@@ -1,12 +1,8 @@
 package org.techconnect.fragments;
 
-import android.content.Intent;
-import android.database.Cursor;
+
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -16,16 +12,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.LinearLayout;
+import android.widget.Adapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import org.centum.techconnect.R;
-import org.techconnect.activities.SessionActivity;
-import org.techconnect.adapters.SessionCursorAdapter;
-import org.techconnect.sql.TCDatabaseHelper;
-import org.techconnect.views.SessionListItemView;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -34,51 +29,55 @@ import butterknife.ButterKnife;
  * Used to facilitate accessing the repair history stored in the phone
  */
 public class RepairHistoryFragment extends Fragment implements
-        TextWatcher,
-        LoaderManager.LoaderCallbacks<Cursor> {
+        View.OnClickListener,
+        TextWatcher {
 
+    //Used to select the base for the adapter of the ListView
+    private static int SELECTION_DATE = 0;
+    private static int SELECTION_DEVICE = 1;
     //All of the binds
+    @Bind(R.id.categoryButton)
+    ImageButton categoryButton;
+    @Bind(R.id.categoryTextView)
+    TextView categoryTextView;
+    @Bind(R.id.categoryListView)
+    ListView categoryListView;
+    private Map<String, Integer> device_counts;
+    private Map<String, Integer> date_counts;
 
-    //Loader options
-    private static final int SESSION_LOADER = 0;
-    @Bind(R.id.progressBar)
-    ProgressBar progressBar;
-    @Bind(R.id.content_linearLayout)
-    LinearLayout contentLinearLayout;
-    @Bind(R.id.session_ListView)
-    ListView sessionListView;
-    private SessionCursorAdapter adapter;
-    private Cursor current_adapter;
-    private boolean isLoading = false;
+    //The current adapter for the ListView, will be either ___ or SessionCursorAdapter
+    private Adapter curr_adapter;
 
     public RepairHistoryFragment() {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
+            savedInstanceState) {
         super.onCreate(savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_repair_history, container, false);
         ButterKnife.bind(this, view);
+        device_counts = new HashMap<>();
+        date_counts = new HashMap<>();
 
+        //Load the map of Name -> Id
+        /*
+        Map<String,String> device_map = TCDatabaseHelper.get(this.getContext()).getChartNamesAndIDs();
+        //Determine the number of sessions associated with each device
+        for (String dev : device_map.keySet()) {
+            int count = TCDatabaseHelper.get(this.getContext()).getSessionsChartCount(device_map.get(dev));
+            device_counts.put(dev,count);
+            Log.d("Repair History", String.format("Device: %s, Count: %d", dev, count ));
+        }
+        //Determine months/years available in the session database
+        date_counts = TCDatabaseHelper.get(this.getContext()).getSessionDatesCounts();
+        for (String comb : date_counts.keySet()) {
+            Log.d("Repair History", String.format("Date: %s, Count: %d",comb,date_counts.get(comb)));
+        }
+        */
+        //Design an adpater to use a map<String, Integer> to make a ListView of the format desired
 
-        //Don't want LoaderManager because we have no control over UI when the thing is done
-        getLoaderManager().initLoader(SESSION_LOADER, null, this);
-        //CursorLoader loader = TCDatabaseHelper.get(this.getContext()).getActiveSessionsCursorLoader();
-        adapter = new SessionCursorAdapter(this.getContext());
-        sessionListView.setAdapter(adapter);
-        sessionListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                SessionListItemView sessionView = ((SessionListItemView) view);
-                Intent intent = new Intent(getContext(), SessionActivity.class);
-                // Get the non-stub chart and open
-                intent.putExtra(SessionActivity.EXTRA_SESSION,
-                        sessionView.getSession()); //Maybe? Not sure if this is a good idea
-                startActivity(intent);
-            }
-        });
         setHasOptionsMenu(true);
         Log.d("Repair History Setup", "View Initialized");
 
@@ -92,15 +91,16 @@ public class RepairHistoryFragment extends Fragment implements
         if (getActivity() != null) {
             getActivity().setTitle(R.string.repair_history);
         }
-        //onRefresh();
+        onRefresh();
     }
 
 
     public void onRefresh() {
         Log.d("Resume Session", "Refresh Session List");
-        if (getActivity() != null) {
-            getLoaderManager().restartLoader(SESSION_LOADER, null, this);
-        }
+    }
+
+    @Override
+    public void onClick(View view) {
     }
 
     @Override
@@ -115,41 +115,7 @@ public class RepairHistoryFragment extends Fragment implements
 
     @Override
     public void afterTextChanged(Editable editable) {
-        //onRefresh();
-    }
-
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if (id == SESSION_LOADER) {
-            Log.d("Resume Session", "Initiate Cursor Loader");
-            return TCDatabaseHelper.get(this.getContext()).getActiveSessionsCursorLoader();
-        }
-        return null;
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        adapter.swapCursor(data);
-        adapter.notifyDataSetChanged();
-        Log.d("Resume Session", String.format("Update Adapter, %d", adapter.getCount()));
-
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                sessionListView.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.GONE);
-            }
-        };
-
-        Handler h = new Handler();
-        h.postDelayed(r, 500);
-
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-
+        onRefresh();
     }
 
     @Override
