@@ -21,9 +21,8 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
-
 import org.centum.techconnect.R;
+import org.techconnect.analytics.FirebaseEvents;
 import org.techconnect.asynctasks.UpdateUserAsyncTask;
 import org.techconnect.misc.auth.AuthManager;
 import org.techconnect.model.User;
@@ -68,21 +67,16 @@ public class ProfileActivity extends AppCompatActivity {
     private List<String> tmp_skills; //Hold onto the actual final set of skills for the user
     private boolean isEditable;
     private boolean isEditing = false;
-    private FirebaseAnalytics firebaseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         ButterKnife.bind(this);
 
         //Here, we access the current User from the Database, create a temporary user in case we need to update
         head_user = getIntent().getExtras().getParcelable("user");
-        Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, head_user.get_id());
-        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "user");
-        firebaseAnalytics.logEvent("view_profile", bundle);
+        FirebaseEvents.logViewProfile(this, head_user);
 
         //Setup whether the user can edit this profile
         isEditable = AuthManager.get(this).hasAuth() && head_user.get_id().equals(AuthManager.get(this).getAuth().getUserId());
@@ -154,10 +148,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     @OnClick(R.id.profile_email)
     public void onEmailClicked() {
-        Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, head_user.get_id());
-        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "user");
-        firebaseAnalytics.logEvent("clicked_email", bundle);
+        FirebaseEvents.logEmailClicked(this, head_user);
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + emailTextView.getText().toString()));
         startActivity(Intent.createChooser(emailIntent, "Email"));
     }

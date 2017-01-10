@@ -25,9 +25,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
-
 import org.centum.techconnect.R;
+import org.techconnect.analytics.FirebaseEvents;
 import org.techconnect.misc.auth.AuthManager;
 import org.techconnect.model.User;
 import org.techconnect.model.UserAuth;
@@ -64,8 +63,6 @@ public class LoginActivity extends AppCompatActivity {
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout coordinatorLayout;
 
-    FirebaseAnalytics firebaseAnalytics;
-
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -76,7 +73,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -274,8 +270,7 @@ public class LoginActivity extends AppCompatActivity {
                 UserAuth auth = (UserAuth) objs[1];
                 TCDatabaseHelper.get(LoginActivity.this).upsertUser(user);
                 AuthManager.get(LoginActivity.this).setAuth(auth);
-                Bundle bundle = new Bundle();
-                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, null);
+                FirebaseEvents.logSignin(LoginActivity.this);
                 finish();
             }
         }

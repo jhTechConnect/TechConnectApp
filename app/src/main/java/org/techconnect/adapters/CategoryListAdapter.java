@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class CategoryListAdapter extends BaseAdapter {
 
-    private Map<String,Integer> baseMap;
+    private Map<String, Integer> baseMap;
 
     public CategoryListAdapter() {
 
@@ -43,11 +43,11 @@ public class CategoryListAdapter extends BaseAdapter {
             return null;
         } else {
             Iterator<String> it = this.baseMap.keySet().iterator();
-            for(int j = 0; j < i; j++) {
+            for (int j = 0; j < i; j++) {
                 it.next();
             }
             String key = it.next();
-            return new String[] {key, String.format("%d",this.baseMap.get(key))};
+            return new String[]{key, String.format("%d", this.baseMap.get(key))};
         }
     }
 
@@ -77,7 +77,6 @@ public class CategoryListAdapter extends BaseAdapter {
     private static class ViewHolder {
         private CategoryListItemView category_view;
     }
-
 
 
 }

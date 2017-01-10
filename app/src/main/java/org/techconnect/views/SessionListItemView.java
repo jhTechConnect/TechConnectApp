@@ -50,13 +50,13 @@ public class SessionListItemView extends LinearLayout {
         super(context, attrs, defStyleAttr);
     }
 
+    public Session getSession() {
+        return this.session;
+    }
+
     public void setSession(Session s) {
         this.session = s;
         updateViews();
-    }
-
-    public Session getSession() {
-        return this.session;
     }
 
     @Override
@@ -72,7 +72,12 @@ public class SessionListItemView extends LinearLayout {
      */
     private void updateViews() {
         if (session != null) {
-            numbersTextView.setText(String.format("%s, %s", session.getModelNumber(), session.getSerialNumber()));
+            if (session.getModelNumber() == null || TextUtils.isEmpty(session.getModelNumber()) ||
+                    session.getSerialNumber() == null || TextUtils.isEmpty(session.getSerialNumber())) {
+                numbersTextView.setText(session.getFlowchart().getName());
+            } else {
+                numbersTextView.setText(String.format("%s, %s", session.getModelNumber(), session.getSerialNumber()));
+            }
             dateTextView.setText(new SimpleDateFormat("MM/dd/yyyy, HH:mm:ss").format(new Date(session.getCreatedDate())));
 
             //Used the stored Flowchart to get the associated image needed for the image view
@@ -112,7 +117,6 @@ public class SessionListItemView extends LinearLayout {
         }
 
     }
-
 
 
 }
