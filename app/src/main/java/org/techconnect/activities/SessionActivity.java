@@ -1,7 +1,9 @@
 package org.techconnect.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +25,7 @@ import butterknife.ButterKnife;
 
 public class SessionActivity extends AppCompatActivity {
 
+    public static String EXTRA_SESSION = "org.techconnect.sessionactivity.session";
     //Bind all of the editable text views relevant to the session
     @Bind(R.id.manufacturer_textView)
     TextView manufacturerTextView;
@@ -38,10 +41,7 @@ public class SessionActivity extends AppCompatActivity {
     TextView stepTextView;
     @Bind(R.id.notes_textView)
     TextView notesTextView;
-
     private Session session;
-
-    public static String EXTRA_SESSION = "org.techconnect.sessionactivity.session";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +50,7 @@ public class SessionActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         //Get the Session from the Intent
-        if(getIntent() != null && getIntent().hasExtra(EXTRA_SESSION)) {
+        if (getIntent() != null && getIntent().hasExtra(EXTRA_SESSION)) {
             this.session = getIntent().getParcelableExtra(EXTRA_SESSION);
         }
         updateViews();
@@ -82,20 +82,32 @@ public class SessionActivity extends AppCompatActivity {
             notesTextView.setVisibility(View.GONE);
         }
     }
+
     public void resumeSession(View view) {
         Intent intent = new Intent(this, PlayGuideActivity.class);
         intent.putExtra(PlayGuideActivity.EXTRA_CHART_ID, session.getFlowchart().getId());
-        intent.putExtra(PlayGuideActivity.EXTRA_SESSION,session.getId());//Let the next activity load in the session
+        intent.putExtra(PlayGuideActivity.EXTRA_SESSION, session.getId());//Let the next activity load in the session
         startActivity(intent);
     }
 
     public void deleteSession(View view) {
-        //Have a pop up to confirm deletion
-
-        //Simply want to remove the session stored in this object from the SQL database
-        TCDatabaseHelper.get(this).deleteSession(session);
-        //End this activity and return to previous
-        finish();
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.delete_session)
+                .setMessage(R.string.confirm_delete_session)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        TCDatabaseHelper.get(SessionActivity.this).deleteSession(session);
+                        dialog.dismiss();
+                        finish();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).show();
     }
 
     @Override
