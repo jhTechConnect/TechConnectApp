@@ -157,6 +157,7 @@
     <string name="save_changes_msg">Would you like to save your profile changes?</string>
     <string name="offline_results_shown">Offline Results Shown</string>
     <string name="search_skills_or_names">Search for skills or users</string>
+    <string name="search">Search</string>
     <string name="offline_guides">View Downloaded Guides</string>
     <string name="sort">Sort</string>
     <string name="date">Date</string>
