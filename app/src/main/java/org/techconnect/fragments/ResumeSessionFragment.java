@@ -37,6 +37,8 @@ public class ResumeSessionFragment extends Fragment implements
 
     //All of the binds
 
+    //Loader options
+    private static final int SESSION_LOADER = 0;
     @Bind(R.id.search_editText)
     EditText searchEditText;
     @Bind(R.id.progressBar)
@@ -49,10 +51,6 @@ public class ResumeSessionFragment extends Fragment implements
     LinearLayout searchLinearLayout;
     @Bind(R.id.session_ListView)
     ListView sessionListView;
-
-    //Loader options
-    private static final int SESSION_LOADER = 0;
-
     private SessionCursorAdapter adapter;
     private Cursor current_adapter;
     private boolean isLoading = false;
@@ -98,7 +96,7 @@ public class ResumeSessionFragment extends Fragment implements
         if (getActivity() != null) {
             getActivity().setTitle(R.string.resume_session);
         }
-        //onRefresh();
+        onRefresh();
     }
 
 
@@ -132,8 +130,6 @@ public class ResumeSessionFragment extends Fragment implements
     public void afterTextChanged(Editable editable) {
         //onRefresh();
     }
-
-
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
