@@ -18,6 +18,7 @@ import android.widget.ScrollView;
 
 import org.centum.techconnect.R;
 import org.techconnect.analytics.FirebaseEvents;
+import org.techconnect.dialogs.GuideFeedbackDialogFragment;
 import org.techconnect.model.FlowChart;
 import org.techconnect.model.session.Session;
 import org.techconnect.model.session.SessionListener;
@@ -95,7 +96,7 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.end_session) {
-            showEndSessionDialog();
+            onEndSession();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -107,32 +108,17 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
             return;
         }
         if (session != null) {
-            showEndSessionDialog();
+            onEndSession();
         } else {
             super.onBackPressed();
         }
     }
 
-    private void showEndSessionDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle("End Session")
-                .setMessage("Are you sure you want to end the session?")
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                        if (flowChart != null) {
-                            FirebaseEvents.logEndSessionEarly(PlayGuideActivity.this, flowChart);
-                        }
-                        endSession();
-                    }
-                })
-                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                }).show();
+    private void onEndSession() {
+        if (flowChart != null) {
+            FirebaseEvents.logEndSessionEarly(PlayGuideActivity.this, flowChart);
+        }
+        endSession();
     }
 
     private void saveSession() {
@@ -213,11 +199,40 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
     }
 
     private void endSession() {
-        saveSession();
         if (session != null) {
+            if (!session.isFinished()) {
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.save_session)
+                        .setMessage(R.string.save_session_msg)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                saveSession();
+                                dialog.dismiss();
+                                finish();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                GuideFeedbackDialogFragment frag = GuideFeedbackDialogFragment.newInstance(session);
+                                frag.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                    @Override
+                                    public void onDismiss(DialogInterface dialog) {
+
+                                        finish();
+                                    }
+                                });
+                                frag.show(getFragmentManager(), "guide_feedback");
+                                dialog.dismiss();
+                            }
+                        }).show();
+            } else {
+                saveSession();
+                GuideFeedbackDialogFragment.newInstance(session).show(getFragmentManager(), "guide_feedback");
+            }
             FirebaseEvents.logSessionDuration(this, session);
         }
-        finish();
     }
 
     @Override
