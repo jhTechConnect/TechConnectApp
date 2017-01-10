@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import org.centum.techconnect.R;
+import org.techconnect.analytics.FirebaseEvents;
 import org.techconnect.model.session.Session;
 import org.techconnect.sql.TCDatabaseHelper;
 
@@ -97,6 +98,7 @@ public class SessionActivity extends AppCompatActivity {
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        FirebaseEvents.logDeleteSession(SessionActivity.this, session);
                         TCDatabaseHelper.get(SessionActivity.this).deleteSession(session);
                         dialog.dismiss();
                         finish();

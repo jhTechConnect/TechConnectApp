@@ -108,4 +108,10 @@ public class FirebaseEvents {
         fbBundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "guides");
         FirebaseAnalytics.getInstance(c).logEvent("download_guide", fbBundle);
     }
+
+    public static void logDeleteSession(Context c, Session session) {
+        Bundle fbBundle = new Bundle();
+        fbBundle.putBoolean("session_finished", session.isFinished());
+        FirebaseAnalytics.getInstance(c).logEvent("session_deleted", fbBundle);
+    }
 }
