@@ -175,4 +175,5 @@
     <string name="submit_feedback">Submit Feedback</string>
     <string name="save_session">Save Session</string>
     <string name="save_session_msg">Would you like to save this session?</string>
+    <string name="feedback_no_selections">Please select your feedback</string>
 </resources>

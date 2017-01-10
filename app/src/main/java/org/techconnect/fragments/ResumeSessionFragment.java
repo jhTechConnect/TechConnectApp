@@ -15,8 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -31,7 +29,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class ResumeSessionFragment extends Fragment implements
-        View.OnClickListener,
         TextWatcher,
         LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -39,16 +36,10 @@ public class ResumeSessionFragment extends Fragment implements
 
     //Loader options
     private static final int SESSION_LOADER = 0;
-    @Bind(R.id.search_editText)
-    EditText searchEditText;
     @Bind(R.id.progressBar)
     ProgressBar progressBar;
-    @Bind(R.id.clear_search_imageView)
-    ImageView clearSearchImageView;
     @Bind(R.id.content_linearLayout)
     LinearLayout contentLinearLayout;
-    @Bind(R.id.search_linearLayout)
-    LinearLayout searchLinearLayout;
     @Bind(R.id.session_ListView)
     ListView sessionListView;
     private SessionCursorAdapter adapter;
@@ -64,8 +55,8 @@ public class ResumeSessionFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View view =  inflater.inflate(R.layout.fragment_resume_session,container,false);
-        ButterKnife.bind(this,view);
+        View view = inflater.inflate(R.layout.fragment_resume_session, container, false);
+        ButterKnife.bind(this, view);
         Log.d("Resume Session Setup", "View Initialized");
         //Don't want LoaderManager because we have no control over UI when the thing is done
         getLoaderManager().initLoader(SESSION_LOADER, null, this);
@@ -84,14 +75,12 @@ public class ResumeSessionFragment extends Fragment implements
                 startActivity(intent);
             }
         });
-        searchEditText.addTextChangedListener(this);
-        clearSearchImageView.setOnClickListener(this);
         return view;
     }
 
     @Override
     public void onResume() {
-        Log.d("Resume Session","Resume Fragment");
+        Log.d("Resume Session", "Resume Fragment");
         super.onResume();
         if (getActivity() != null) {
             getActivity().setTitle(R.string.resume_session);
@@ -101,18 +90,9 @@ public class ResumeSessionFragment extends Fragment implements
 
 
     public void onRefresh() {
-        Log.d("Resume Session","Refresh Session List");
+        Log.d("Resume Session", "Refresh Session List");
         if (getActivity() != null) {
             getLoaderManager().restartLoader(SESSION_LOADER, null, this);
-        }
-    }
-
-
-    @Override
-    public void onClick(View view) {
-        if (view.getId() == R.id.clear_search_imageView) {
-            searchEditText.setText(null);
-            onRefresh();
         }
     }
 
@@ -134,7 +114,7 @@ public class ResumeSessionFragment extends Fragment implements
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if (id == SESSION_LOADER) {
-            Log.d("Resume Session","Initiate Cursor Loader");
+            Log.d("Resume Session", "Initiate Cursor Loader");
             return TCDatabaseHelper.get(this.getContext()).getActiveSessionsCursorLoader();
         }
         return null;
@@ -144,7 +124,7 @@ public class ResumeSessionFragment extends Fragment implements
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         adapter.swapCursor(data);
         adapter.notifyDataSetChanged();
-        Log.d("Resume Session",String.format("Update Adapter, %d",adapter.getCount()));
+        Log.d("Resume Session", String.format("Update Adapter, %d", adapter.getCount()));
 
         Runnable r = new Runnable() {
             @Override
@@ -155,7 +135,7 @@ public class ResumeSessionFragment extends Fragment implements
         };
 
         Handler h = new Handler();
-        h.postDelayed(r,500);
+        h.postDelayed(r, 500);
 
     }
 

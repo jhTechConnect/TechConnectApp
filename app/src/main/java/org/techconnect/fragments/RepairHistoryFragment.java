@@ -17,8 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -36,41 +34,32 @@ import butterknife.ButterKnife;
  * Used to facilitate accessing the repair history stored in the phone
  */
 public class RepairHistoryFragment extends Fragment implements
-        View.OnClickListener,
         TextWatcher,
         LoaderManager.LoaderCallbacks<Cursor> {
 
     //All of the binds
 
-    @Bind(R.id.search_editText)
-    EditText searchEditText;
-    @Bind(R.id.progressBar)
-    ProgressBar progressBar;
-    @Bind(R.id.clear_search_imageView)
-    ImageView clearSearchImageView;
-    @Bind(R.id.content_linearLayout)
-    LinearLayout contentLinearLayout;
-    @Bind(R.id.search_linearLayout)
-    LinearLayout searchLinearLayout;
-    @Bind(R.id.session_ListView)
-    ListView sessionListView;
-
     //Loader options
     private static final int SESSION_LOADER = 0;
-
+    @Bind(R.id.progressBar)
+    ProgressBar progressBar;
+    @Bind(R.id.content_linearLayout)
+    LinearLayout contentLinearLayout;
+    @Bind(R.id.session_ListView)
+    ListView sessionListView;
     private SessionCursorAdapter adapter;
     private Cursor current_adapter;
     private boolean isLoading = false;
+
     public RepairHistoryFragment() {
         // Required empty public constructor
     }
 
-       @Override
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View view =  inflater.inflate(R.layout.fragment_repair_history,container,false);
-        ButterKnife.bind(this,view);
-
+        View view = inflater.inflate(R.layout.fragment_repair_history, container, false);
+        ButterKnife.bind(this, view);
 
 
         //Don't want LoaderManager because we have no control over UI when the thing is done
@@ -90,9 +79,7 @@ public class RepairHistoryFragment extends Fragment implements
                 startActivity(intent);
             }
         });
-           setHasOptionsMenu(true);
-        searchEditText.addTextChangedListener(this);
-        clearSearchImageView.setOnClickListener(this);
+        setHasOptionsMenu(true);
         Log.d("Repair History Setup", "View Initialized");
 
         return view;
@@ -100,7 +87,7 @@ public class RepairHistoryFragment extends Fragment implements
 
     @Override
     public void onResume() {
-        Log.d("Resume Session","Resume Fragment");
+        Log.d("Resume Session", "Resume Fragment");
         super.onResume();
         if (getActivity() != null) {
             getActivity().setTitle(R.string.repair_history);
@@ -110,18 +97,9 @@ public class RepairHistoryFragment extends Fragment implements
 
 
     public void onRefresh() {
-        Log.d("Resume Session","Refresh Session List");
+        Log.d("Resume Session", "Refresh Session List");
         if (getActivity() != null) {
             getLoaderManager().restartLoader(SESSION_LOADER, null, this);
-        }
-    }
-
-
-    @Override
-    public void onClick(View view) {
-        if (view.getId() == R.id.clear_search_imageView) {
-            searchEditText.setText(null);
-            onRefresh();
         }
     }
 
@@ -141,11 +119,10 @@ public class RepairHistoryFragment extends Fragment implements
     }
 
 
-
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if (id == SESSION_LOADER) {
-            Log.d("Resume Session","Initiate Cursor Loader");
+            Log.d("Resume Session", "Initiate Cursor Loader");
             return TCDatabaseHelper.get(this.getContext()).getActiveSessionsCursorLoader();
         }
         return null;
@@ -155,7 +132,7 @@ public class RepairHistoryFragment extends Fragment implements
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         adapter.swapCursor(data);
         adapter.notifyDataSetChanged();
-        Log.d("Resume Session",String.format("Update Adapter, %d",adapter.getCount()));
+        Log.d("Resume Session", String.format("Update Adapter, %d", adapter.getCount()));
 
         Runnable r = new Runnable() {
             @Override
@@ -166,7 +143,7 @@ public class RepairHistoryFragment extends Fragment implements
         };
 
         Handler h = new Handler();
-        h.postDelayed(r,500);
+        h.postDelayed(r, 500);
 
     }
 
@@ -176,8 +153,7 @@ public class RepairHistoryFragment extends Fragment implements
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
-    {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         MenuItem item = menu.findItem(R.id.action_sort);
         item.setVisible(true);
@@ -187,7 +163,7 @@ public class RepairHistoryFragment extends Fragment implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.isChecked())
+        if (item.isChecked())
             item.setChecked(false);
         else
             item.setChecked(true);

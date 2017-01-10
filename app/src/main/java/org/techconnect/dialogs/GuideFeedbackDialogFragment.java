@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.centum.techconnect.R;
 import org.techconnect.analytics.FirebaseEvents;
@@ -102,8 +103,12 @@ public class GuideFeedbackDialogFragment extends DialogFragment {
 
     @OnClick(R.id.submit_button)
     void onSubmit() {
-        FirebaseEvents.logGuideFeedback(getActivity(), session, selectedExpFeedback, selectedContactFeedback, commentsEditText.getText().toString());
-        dismiss();
+        if (selectedContactFeedback == null || selectedExpFeedback == null) {
+            Toast.makeText(getActivity(), R.string.feedback_no_selections, Toast.LENGTH_SHORT).show();
+        } else {
+            FirebaseEvents.logGuideFeedback(getActivity(), session, selectedExpFeedback, selectedContactFeedback, commentsEditText.getText().toString());
+            dismiss();
+        }
     }
 
     @Override
