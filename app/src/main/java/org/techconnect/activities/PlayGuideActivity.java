@@ -232,6 +232,8 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
                 GuideFeedbackDialogFragment.newInstance(session).show(getFragmentManager(), "guide_feedback");
             }
             FirebaseEvents.logSessionDuration(this, session);
+        } else {
+            finish();
         }
     }
 
