@@ -111,7 +111,14 @@ public class FirebaseEvents {
 
     public static void logDeleteSession(Context c, Session session) {
         Bundle fbBundle = new Bundle();
+        fbBundle.putLong("session_created", session.getCreatedDate());
         fbBundle.putBoolean("session_finished", session.isFinished());
         FirebaseAnalytics.getInstance(c).logEvent("session_deleted", fbBundle);
+    }
+
+    public static void logResumeSession(Context c, Session session) {
+        Bundle fbBundle = new Bundle();
+        fbBundle.putLong("session_created", session.getCreatedDate());
+        FirebaseAnalytics.getInstance(c).logEvent("session_resumed", fbBundle);
     }
 }

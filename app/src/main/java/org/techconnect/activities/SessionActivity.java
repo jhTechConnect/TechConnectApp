@@ -85,6 +85,7 @@ public class SessionActivity extends AppCompatActivity {
     }
 
     public void resumeSession(View view) {
+        FirebaseEvents.logResumeSession(this, session);
         Intent intent = new Intent(this, PlayGuideActivity.class);
         intent.putExtra(PlayGuideActivity.EXTRA_CHART_ID, session.getFlowchart().getId());
         intent.putExtra(PlayGuideActivity.EXTRA_SESSION, session.getId());//Let the next activity load in the session
