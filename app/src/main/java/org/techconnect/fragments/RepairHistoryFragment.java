@@ -1,5 +1,6 @@
 package org.techconnect.fragments;
 
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -31,6 +32,9 @@ public class RepairHistoryFragment extends Fragment implements
         View.OnClickListener,
         TextWatcher {
 
+    //Used to select the base for the adapter of the ListView
+    private static int SELECTION_DATE = 0;
+    private static int SELECTION_DEVICE = 1;
     //All of the binds
     @Bind(R.id.categoryButton)
     ImageButton categoryButton;
@@ -38,13 +42,8 @@ public class RepairHistoryFragment extends Fragment implements
     TextView categoryTextView;
     @Bind(R.id.categoryListView)
     ListView categoryListView;
-
-    //Used to select the base for the adapter of the ListView
-    private static int SELECTION_DATE = 0;
-    private static int SELECTION_DEVICE = 1;
-
     private Map<String, Integer> device_counts;
-    private Map<String,Integer> date_counts;
+    private Map<String, Integer> date_counts;
 
     //The current adapter for the ListView, will be either ___ or SessionCursorAdapter
     private Adapter curr_adapter;
@@ -53,11 +52,12 @@ public class RepairHistoryFragment extends Fragment implements
         // Required empty public constructor
     }
 
-       @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
+            savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View view =  inflater.inflate(R.layout.fragment_repair_history,container,false);
-        ButterKnife.bind(this,view);
+        View view = inflater.inflate(R.layout.fragment_repair_history, container, false);
+        ButterKnife.bind(this, view);
         device_counts = new HashMap<>();
         date_counts = new HashMap<>();
 
@@ -86,7 +86,7 @@ public class RepairHistoryFragment extends Fragment implements
 
     @Override
     public void onResume() {
-        Log.d("Resume Session","Resume Fragment");
+        Log.d("Resume Session", "Resume Fragment");
         super.onResume();
         if (getActivity() != null) {
             getActivity().setTitle(R.string.repair_history);
@@ -96,9 +96,8 @@ public class RepairHistoryFragment extends Fragment implements
 
 
     public void onRefresh() {
-        Log.d("Resume Session","Refresh Session List");
+        Log.d("Resume Session", "Refresh Session List");
     }
-
 
     @Override
     public void onClick(View view) {
@@ -116,13 +115,11 @@ public class RepairHistoryFragment extends Fragment implements
 
     @Override
     public void afterTextChanged(Editable editable) {
-        //onRefresh();
+        onRefresh();
     }
 
-
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
-    {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         MenuItem item = menu.findItem(R.id.action_sort);
         item.setVisible(true);
@@ -132,7 +129,7 @@ public class RepairHistoryFragment extends Fragment implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.isChecked())
+        if (item.isChecked())
             item.setChecked(false);
         else
             item.setChecked(true);
