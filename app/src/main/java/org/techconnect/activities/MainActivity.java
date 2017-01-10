@@ -21,6 +21,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -37,7 +38,7 @@ import org.techconnect.dialogs.SendFeedbackDialogFragment;
 import org.techconnect.fragments.CatalogFragment;
 import org.techconnect.fragments.DirectoryFragment;
 import org.techconnect.fragments.GuidesFragment;
-import org.techconnect.fragments.ReportsFragment;
+import org.techconnect.fragments.RepairHistoryFragment;
 import org.techconnect.fragments.ResumeSessionFragment;
 import org.techconnect.misc.ResourceHandler;
 import org.techconnect.misc.auth.AuthListener;
@@ -69,8 +70,8 @@ public class MainActivity extends AppCompatActivity
     private static final String USER_LEARNED_DRAWER = "org.techconnect.prefs.shownturotial.learneddrawer";
     private static final String ASKED_PERMISSION = "org.techconnect.prefs.shownturotial.askedpermission";
     private final Fragment[] FRAGMENTS = new Fragment[]{new CatalogFragment(),
-            new GuidesFragment(), new ResumeSessionFragment(), new DirectoryFragment()};
-    private final int[] FRAGMENT_MENU_IDS = new int[]{R.id.nav_catalog, R.id.nav_guides, R.id.nav_resume_session, R.id.call_dir};
+            new GuidesFragment(), new ResumeSessionFragment(), new RepairHistoryFragment(), new DirectoryFragment()};
+    private final int[] FRAGMENT_MENU_IDS = new int[]{R.id.nav_catalog, R.id.nav_guides, R.id.nav_resume_session, R.id.nav_repair_history, R.id.call_dir};
 
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout coordinatorLayout;
@@ -106,6 +107,7 @@ public class MainActivity extends AppCompatActivity
         ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         userLearnedDrawer = getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE).getBoolean(USER_LEARNED_DRAWER, false);
         loadingLayout.setVisibility(View.GONE);
         // Lock until we have permission (in check permissions)
@@ -124,6 +126,8 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         };
+
+
         drawerLayout.addDrawerListener(toggle);
         //Set MenuItem properties for profile-related options
         logoutMenuItem = navigationView.getMenu().findItem(R.id.logout);
@@ -383,6 +387,36 @@ public class MainActivity extends AppCompatActivity
             this.currentFragment = frag;
             navigationView.getMenu().findItem(FRAGMENT_MENU_IDS[frag]).setChecked(true);
         }
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.activity_main_toolbar_menu, menu);
+        MenuItem item = menu.findItem(R.id.action_sort);
+        item.setVisible(false);
+        /*
+        Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
+
+        String[] arraySpinner = new String[] {
+                "Date", "Device"
+        };
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, arraySpinner);
+        spinner.setAdapter(adapter);
+        */
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.isChecked())
+            item.setChecked(false);
+        else
+            item.setChecked(true);
+        return true;
     }
 
 }

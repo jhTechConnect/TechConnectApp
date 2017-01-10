@@ -34,6 +34,10 @@
             android:icon="@android:drawable/ic_menu_agenda"
             android:title="@string/resume_session" />
         <item
+            android:id="@+id/nav_repair_history"
+            android:icon = "@drawable/ic_history_black_24dp"
+            android:title = "@string/repair_history" />
+        <item
             android:id="@+id/call_dir"
             android:icon="@android:drawable/ic_menu_call"
             android:title="@string/call_directory" />

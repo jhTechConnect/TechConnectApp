@@ -19,6 +19,7 @@ import org.techconnect.model.Vertex;
 import org.techconnect.model.session.Session;
 import org.techconnect.sql.TCDatabaseContract.ChartEntry;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -172,6 +173,23 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         c.moveToFirst();
         while (!c.isAfterLast()) {
             set.put(c.getString(c.getColumnIndexOrThrow(ChartEntry.NAME)), c.getString(c.getColumnIndexOrThrow(ChartEntry.ID)));
+            c.moveToNext();
+        }
+        c.close();
+        return set;
+    }
+
+    /**
+     * Opposite of previous function.
+     * @return Map of Flowchart ID to name
+     */
+    public Map<String,String> getChartIDsAndNames() {
+        Map<String, String> set = new HashMap<>();
+        Cursor c = getReadableDatabase().query(ChartEntry.TABLE_NAME, new String[]{ChartEntry.ID, ChartEntry.NAME}, null,
+                null, null, null, null);
+        c.moveToFirst();
+        while (!c.isAfterLast()) {
+            set.put(c.getString(c.getColumnIndexOrThrow(ChartEntry.ID)),c.getString(c.getColumnIndexOrThrow(ChartEntry.NAME)));
             c.moveToNext();
         }
         c.close();
@@ -629,6 +647,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             Session s = new Session(flow);
             s.setId(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.ID)));
             s.setCreatedDate(c.getLong(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.CREATED_DATE)));
+            s.setManufacturer(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.MANUFACTURER)));
             s.setDepartment(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.DEPARTMENT)));
             s.setModelNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.MODEL)));
             s.setSerialNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.SERIAL)));
@@ -691,6 +710,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             FlowChart flow = getChart(flowchart_id);
             Session s = new Session(flow);
             s.setCreatedDate(c.getLong(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.CREATED_DATE)));
+            s.setManufacturer(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.MANUFACTURER)));
             s.setDepartment(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.DEPARTMENT)));
             s.setModelNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.MODEL)));
             s.setSerialNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.SERIAL)));
@@ -731,12 +751,56 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         };
     }
 
+    //Need a method to get all unique devices stored in the
+
+    /**
+     * @param id - ID of chart of interest
+     * @return Count of sessions associated with chart of interest
+     */
+    public int getSessionsChartCount(String id) {
+        String selection = "SELECT COUNT( "+TCDatabaseContract.SessionEntry.FLOWCHART_ID+" ) FROM "
+                + TCDatabaseContract.SessionEntry.TABLE_NAME+ " WHERE "+TCDatabaseContract.SessionEntry.FLOWCHART_ID
+                + " = ?";
+        String selectionArgs[] = {id};
+        Cursor cursor = getReadableDatabase().rawQuery(selection, selectionArgs);
+        cursor.moveToFirst();
+        int counter = cursor.getInt(0);
+        cursor.close();
+        return counter;
+    }
+
+    /**
+     * @return Get Count of all sessions in unique (Month, Year)
+     */
+    public Map<String,Integer> getSessionDatesCounts() {
+        HashMap<String,Integer> map = new HashMap<>();
+        String selection = "Select " + TCDatabaseContract.SessionEntry.CREATED_DATE + " FROM " +
+                TCDatabaseContract.SessionEntry.TABLE_NAME;
+        Cursor cursor = getReadableDatabase().rawQuery(selection,null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            //Read in Date into format MM, YYYY
+            SimpleDateFormat dayFormat = new SimpleDateFormat("MMMM yyyy");
+            String dateTime = dayFormat.format(cursor.getLong(0));
+            if (map.containsKey(dateTime)) {
+                int curr = map.get(dateTime);
+                map.put(dateTime,++curr);
+            } else {
+                map.put(dateTime,1);
+            }
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return map;
+    }
+
     public Session getSessionFromCursor(Cursor c) {
         String flowchart_id = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FLOWCHART_ID));
         FlowChart flow = getChart(flowchart_id);
         Session s = new Session(flow);
         s.setId(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.ID)));
         s.setCreatedDate(c.getLong(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.CREATED_DATE)));
+        s.setManufacturer(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.MANUFACTURER)));
         s.setDepartment(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.DEPARTMENT)));
         s.setModelNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.MODEL)));
         s.setSerialNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.SERIAL)));
@@ -763,6 +827,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         s.setId(getRandomId()); //Set the random ID field
         sessionContentValues.put(TCDatabaseContract.SessionEntry.ID,s.getId());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.CREATED_DATE, s.getCreatedDate());
+        sessionContentValues.put(TCDatabaseContract.SessionEntry.MANUFACTURER, s.getManufacturer());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.FINISHED, s.isFinished());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.DEPARTMENT, s.getDepartment());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.MODEL, s.getModelNumber());
