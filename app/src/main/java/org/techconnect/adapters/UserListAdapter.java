@@ -61,7 +61,7 @@ public class UserListAdapter extends BaseAdapter {
         ViewHolder holder;
         if (view == null) { //Has not been initialized
             holder = new ViewHolder();
-            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.user_list_item_view, null);
+            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.listitem_view_user, null);
             holder.user_view = (UserListItemView) view;
             view.setTag(holder);
         } else {
