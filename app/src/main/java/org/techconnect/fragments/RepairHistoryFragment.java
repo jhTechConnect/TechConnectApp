@@ -18,7 +18,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.centum.techconnect.R;
-import org.techconnect.activities.MainActivity;
+import org.techconnect.adapters.CategoryListAdapter;
+import org.techconnect.adapters.SessionCursorAdapter;
 import org.techconnect.sql.TCDatabaseHelper;
 
 import java.util.HashMap;
@@ -44,6 +45,11 @@ public class RepairHistoryFragment extends Fragment implements
     TextView categoryTextView;
     @Bind(R.id.categoryListView)
     ListView categoryListView;
+
+    //Adapters
+    private SessionCursorAdapter sessionAdapter;
+    private CategoryListAdapter dateAdapter = new CategoryListAdapter();
+    private CategoryListAdapter deviceAdapter = new CategoryListAdapter();
 
     //Storage for list data
     private Map<String, Integer> deviceCounts = new HashMap<String,Integer>();
@@ -75,12 +81,14 @@ public class RepairHistoryFragment extends Fragment implements
         }
 
         //Design an adpater to use a map<String, Integer> to make a ListView of the format desired
-        ((MainActivity) getActivity()).getDateAdapter().setBaseMap(dateCounts);
-        ((MainActivity) getActivity()).getDeviceAdapter().setBaseMap((deviceCounts));
+        //((MainActivity) getActivity()).getDateAdapter().setBaseMap(dateCounts);
+        //((MainActivity) getActivity()).getDeviceAdapter().setBaseMap((deviceCounts));
+        dateAdapter.setBaseMap(dateCounts);
+        deviceAdapter.setBaseMap(deviceCounts);
 
 
         //Setup the ListView w/ adapter
-        categoryListView.setAdapter(((MainActivity) getActivity()).getDateAdapter());
+        categoryListView.setAdapter(dateAdapter);
 
         setHasOptionsMenu(true);
         Log.d("Repair History Setup", "View Initialized");
@@ -129,10 +137,39 @@ public class RepairHistoryFragment extends Fragment implements
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.activity_main_toolbar_menu, menu);
         MenuItem item = menu.findItem(R.id.action_sort);
         item.setVisible(true);
         //Initially, will have date be the initial way to sort the sessions
         item.getSubMenu().findItem(R.id.date_item).setChecked(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.isChecked())
+            item.setChecked(false);
+        else
+            item.setChecked(true);
+
+        switch(item.getItemId()) {
+            case R.id.date_item:
+                Log.d("Repair History","DATE");
+                setAdapter(dateAdapter);
+                //categoryAdapter.setBaseMap(date_counts);
+                break;
+            case R.id.device_item:
+                Log.d("Repair History","DEVICE");
+                setAdapter(deviceAdapter);
+                //categoryAdapter.setBaseMap(device_counts);
+                break;
+            case R.id.action_sort:
+                Log.d("Repair History","SORT");
+                break;
+            default:
+                Log.d("Repair History","DEVICE");
+                //categoryAdapter.setBaseMap(null);
+        }
+        return true;
     }
 }
 
