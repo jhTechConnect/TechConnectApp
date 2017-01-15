@@ -20,6 +20,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,6 +31,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.centum.techconnect.R;
+import org.techconnect.adapters.CategoryListAdapter;
+import org.techconnect.adapters.SessionCursorAdapter;
 import org.techconnect.analytics.FirebaseEvents;
 import org.techconnect.asynctasks.LogoutAsyncTask;
 import org.techconnect.asynctasks.PostAppFeedbackAsyncTask;
@@ -62,8 +65,9 @@ public class MainActivity extends AppCompatActivity
 
     public static final int FRAGMENT_CATALOG = 0;
     public static final int FRAGMENT_GUIDES = 1;
-    public static final int FRAGMENT_REPORTS = 2;
-    public static final int FRAGMENT_DIRECTORY = 3;
+    public static final int FRAGMENT_RESUME = 2;
+    public static final int FRAGMENT_HISTORY = 3;
+    public static final int FRAGMENT_DIRECTORY = 4;
     private static final int PERMISSIONS_REQUEST_READ_STORAGE = 1;
     private static final String SHOWN_TUTORIAL = "org.techconnect.prefs.shownturotial";
     private static final String USER_LEARNED_DRAWER = "org.techconnect.prefs.shownturotial.learneddrawer";
@@ -93,6 +97,11 @@ public class MainActivity extends AppCompatActivity
     private boolean showedLogin = false;
     private boolean userLearnedDrawer = false;
     private Stack<Integer> fragStack = new Stack<>();
+
+    //Adapters for Repair History Fragment Menu
+    private SessionCursorAdapter sessionAdapter;
+    private CategoryListAdapter dateAdapter = new CategoryListAdapter();
+    private CategoryListAdapter deviceAdapter = new CategoryListAdapter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -393,16 +402,8 @@ public class MainActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.activity_main_toolbar_menu, menu);
         MenuItem item = menu.findItem(R.id.action_sort);
         item.setVisible(false);
-        /*
-        Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
-
-        String[] arraySpinner = new String[] {
-                "Date", "Device"
-        };
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, arraySpinner);
-        spinner.setAdapter(adapter);
-        */
+        //Initially, will have date be the initial way to sort the sessions
+        item.getSubMenu().findItem(R.id.date_item).setChecked(true);
 
         return true;
     }
@@ -413,9 +414,51 @@ public class MainActivity extends AppCompatActivity
             item.setChecked(false);
         else
             item.setChecked(true);
+
+        switch(item.getItemId()) {
+            case R.id.date_item:
+                Log.d("Repair History","DATE");
+                ((RepairHistoryFragment) FRAGMENTS[FRAGMENT_HISTORY]).setAdapter(dateAdapter);
+                //categoryAdapter.setBaseMap(date_counts);
+                break;
+            case R.id.device_item:
+                Log.d("Repair History","DEVICE");
+                ((RepairHistoryFragment) FRAGMENTS[FRAGMENT_HISTORY]).setAdapter(deviceAdapter);
+                //categoryAdapter.setBaseMap(device_counts);
+                break;
+            case R.id.action_sort:
+                Log.d("Repair History","SORT");
+                break;
+            default:
+                Log.d("Repair History","DEVICE");
+                //categoryAdapter.setBaseMap(null);
+        }
         return true;
     }
 
+    public SessionCursorAdapter getSessionAdapter() {
+        return sessionAdapter;
+    }
+
+    public void setSessionAdapter(SessionCursorAdapter sessionAdapter) {
+        this.sessionAdapter = sessionAdapter;
+    }
+
+    public CategoryListAdapter getDeviceAdapter() {
+        return deviceAdapter;
+    }
+
+    public void setDeviceAdapter(CategoryListAdapter deviceAdapter) {
+        this.deviceAdapter = deviceAdapter;
+    }
+
+    public CategoryListAdapter getDateAdapter() {
+        return dateAdapter;
+    }
+
+    public void setDateAdapter(CategoryListAdapter dateAdapter) {
+        this.dateAdapter = dateAdapter;
+    }
 }
 
 
