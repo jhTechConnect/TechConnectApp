@@ -771,6 +771,30 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
+     *
+     * @param id - ID of chart of interest
+     * @return Cursor that points to all stored sessions associated with the flowchart of interest
+     */
+    public Cursor getSessionsFromChart(String id) {
+        String selection = TCDatabaseContract.SessionEntry.FLOWCHART_ID + " = ?";
+        return getReadableDatabase().query(TCDatabaseContract.SessionEntry.TABLE_NAME,
+                null, selection, new String[] {id}, null, null, null);
+    }
+
+    /**
+     *
+     * @return
+     */
+    public CursorLoader getSessionsFromChartCursorLoader(final String id) {
+        return new CursorLoader(context, null, null, null, null, null) {
+            @Override
+            public Cursor loadInBackground() {
+                return getSessionsFromChart(id);
+            }
+        };
+    }
+
+    /**
      * @return Get Count of all sessions in unique (Month, Year)
      */
     public Map<String, Integer> getSessionDatesCounts() {
