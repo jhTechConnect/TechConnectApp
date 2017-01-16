@@ -3,6 +3,7 @@ package org.techconnect.fragments;
 
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -19,6 +20,8 @@ import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.centum.techconnect.R;
@@ -51,12 +54,18 @@ public class RepairHistoryFragment extends Fragment implements
     TextView categoryTextView;
     @Bind(R.id.categoryListView)
     ListView categoryListView;
+    @Bind(R.id.progressBar)
+    ProgressBar progressBar;
+    @Bind(R.id.categoryLayout)
+    RelativeLayout categoryLayout;
+
 
     //Adapters
     private SessionCursorAdapter sessionAdapter;
     private CategoryListAdapter dateAdapter = new CategoryListAdapter();
     private CategoryListAdapter deviceAdapter = new CategoryListAdapter();
     private boolean categoryState = true; //True == Date, False == Device
+    private boolean sorting = true; //Sorting between date and device
 
     //Storage for list data
     private Map<String, Integer> deviceCounts = new HashMap<String,Integer>();
@@ -89,6 +98,23 @@ public class RepairHistoryFragment extends Fragment implements
             Log.d("Repair History", String.format("Date: %s, Count: %d",comb,dateCounts.get(comb)));
         }
 
+        //Set the click listener for the imagebutton
+        categoryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sorting = true; //Bring back menu item
+                categoryLayout.setVisibility(View.GONE);
+                if (categoryState) {
+                    //Bring back the date list
+                    categoryListView.setAdapter(dateAdapter);
+                } else {
+                    //Bring back the device list
+                    categoryListView.setAdapter(deviceAdapter);
+                }
+                getActivity().invalidateOptionsMenu();
+            }
+        });
+
         //Design an adpater to use a map<String, Integer> to make a ListView of the format desired
         dateAdapter.setBaseMap(dateCounts);
         deviceAdapter.setBaseMap(deviceCounts);
@@ -113,7 +139,18 @@ public class RepairHistoryFragment extends Fragment implements
                         categoryListView.setAdapter(sessionAdapter);
                         getLoaderManager().destroyLoader(SESSION_DEVICE_LOADER); //clear the loader so it's ready for new one
                         getLoaderManager().initLoader(SESSION_DEVICE_LOADER,args,temp);
+
+                        //Startup the ProgressBar
+                        categoryListView.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.VISIBLE);
+
+                        //Make the categoryLayoutVisible
+                        categoryLayout.setVisibility(View.VISIBLE);
+                        categoryTextView.setText(items[0]);
+
                     }
+                    sorting = false;
+                    getActivity().invalidateOptionsMenu();
                 } else if (categoryListView.getAdapter().getClass().equals(SessionCursorAdapter.class)) {
                     //Stuff for Sessions
                 }
@@ -170,9 +207,20 @@ public class RepairHistoryFragment extends Fragment implements
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.activity_main_toolbar_menu, menu);
         MenuItem item = menu.findItem(R.id.action_sort);
-        item.setVisible(true);
-        //Initially, will have date be the initial way to sort the sessions
-        item.getSubMenu().findItem(R.id.date_item).setChecked(true);
+        if (sorting) {
+            item.setVisible(true);
+            //Select correct button
+            if (categoryState) { //Date
+                //Initially, will have date be the initial way to sort the sessions
+                item.getSubMenu().findItem(R.id.date_item).setChecked(true);
+            } else {
+                //Initially, will have date be the initial way to sort the sessions
+                item.getSubMenu().findItem(R.id.device_item).setChecked(true);
+            }
+        } else {
+            item.setVisible(false);
+        }
+
     }
 
     @Override
@@ -225,6 +273,18 @@ public class RepairHistoryFragment extends Fragment implements
         sessionAdapter.notifyDataSetChanged();
 
         Log.d("Repair Session", "Made it through loader");
+        //Have a bit of a delay to ensure the progressBar doesn't mess with UI
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                categoryListView.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
+        };
+
+        Handler h = new Handler();
+        h.postDelayed(r, 500);
+
     }
 
     @Override
