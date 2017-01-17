@@ -123,7 +123,7 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
 
     private void saveSession() {
         if (session != null) {
-            TCDatabaseHelper.get(this).insertSession(session);//Write to the SQL Database
+            TCDatabaseHelper.get(this).upsertSession(session);//Write to the SQL Database
         }
     }
 
@@ -133,7 +133,8 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
         }
 
         if (getIntent() != null && getIntent().hasExtra(EXTRA_SESSION)) {
-            session = TCDatabaseHelper.get(this).getSession(getIntent().getStringExtra(EXTRA_SESSION), this);
+            session = (Session) getIntent().getParcelableExtra(EXTRA_SESSION);//Leverage the parcelable aspect of session
+            flowChart = session.getFlowchart();
             flowView.setSession(session, this);
 
         }
@@ -172,8 +173,7 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
         // Ideally this should never happen
         syncButton.setEnabled(false);
         if (getIntent() != null && getIntent().hasExtra(EXTRA_CHART_ID)) {
-            TCService.startLoadCharts(this,
-                    new String[]{getIntent().getStringExtra(EXTRA_CHART_ID)},
+            TCService.startLoadCharts(this, new String[]{getIntent().getStringExtra(EXTRA_CHART_ID)},
                     new ResultReceiver(new Handler()) {
                         @Override
                         protected void onReceiveResult(int resultCode, Bundle resultData) {

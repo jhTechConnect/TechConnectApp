@@ -639,6 +639,24 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         Log.d(this.getClass().getName(), "Session Info Inserted Successfully");
     }
 
+    public void upsertSession(Session s) {
+        ContentValues sessionContentValues = getSessionContentValues(s);
+        //Insert session into database
+        try {
+            int id = (int) getWritableDatabase().insertWithOnConflict(TCDatabaseContract.SessionEntry.TABLE_NAME, null, sessionContentValues, SQLiteDatabase.CONFLICT_IGNORE);
+            if (id == -1) {
+                Log.d(this.getClass().getName(), "Attempting Update of Existing Entry");
+                String selection = TCDatabaseContract.SessionEntry.ID + " = ?";
+                String[] selectionArgs = new String[] {sessionContentValues.getAsString(TCDatabaseContract.SessionEntry.ID)};
+                getWritableDatabase().update(TCDatabaseContract.SessionEntry.TABLE_NAME, sessionContentValues, selection, selectionArgs);  // number 1 is the _id here, update to variable for your code
+            }
+        } catch (Exception e) {
+            Log.e(this.getClass().getName(), e.getMessage());
+        }
+
+        Log.d(this.getClass().getName(), "Session Info Inserted Successfully");
+    }
+
     public Session getSession(String id, Context context) {
         String selection = TCDatabaseContract.SessionEntry.ID + " = ?";
         String selectionArgs[] = {id};
@@ -892,7 +910,9 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
 
     private ContentValues getSessionContentValues(Session s) {
         ContentValues sessionContentValues = new ContentValues();
-        s.setId(getRandomId()); //Set the random ID field
+        if (s.getId() == null) {
+            s.setId(getRandomId()); //Set the random ID field
+        }
         sessionContentValues.put(TCDatabaseContract.SessionEntry.ID,s.getId());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.CREATED_DATE, s.getCreatedDate());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.MANUFACTURER, s.getManufacturer());
