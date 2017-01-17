@@ -1,6 +1,7 @@
 package org.techconnect.fragments;
 
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,9 +26,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.centum.techconnect.R;
+import org.techconnect.activities.SessionActivity;
 import org.techconnect.adapters.CategoryListAdapter;
 import org.techconnect.adapters.SessionCursorAdapter;
 import org.techconnect.sql.TCDatabaseHelper;
+import org.techconnect.views.SessionListItemView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -169,7 +172,13 @@ public class RepairHistoryFragment extends Fragment implements
                     getActivity().invalidateOptionsMenu();
 
                 } else if (categoryListView.getAdapter().getClass().equals(SessionCursorAdapter.class)) {
-                    //Stuff for Sessions
+                    //Want to initiate a Session Activity just like in ResumeSessionFragment
+                    SessionListItemView sessionView = ((SessionListItemView) view);
+                    Intent intent = new Intent(getContext(), SessionActivity.class);
+                    // Get the non-stub chart and open
+                    intent.putExtra(SessionActivity.EXTRA_SESSION,
+                            sessionView.getSession()); //Maybe? Not sure if this is a good idea
+                    startActivity(intent);
                 }
             }
         });
@@ -215,10 +224,10 @@ public class RepairHistoryFragment extends Fragment implements
         onRefresh();
     }
 
-    public void setAdapter(ListAdapter a) {
+
+    private void setAdapter(ListAdapter a) {
         categoryListView.setAdapter(a);
     }
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
