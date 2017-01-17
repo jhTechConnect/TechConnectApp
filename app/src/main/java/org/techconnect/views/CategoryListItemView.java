@@ -1,6 +1,7 @@
 package org.techconnect.views;
 
 import android.content.Context;
+import android.util.AttributeSet;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -26,6 +27,14 @@ public class CategoryListItemView extends RelativeLayout {
         super(context);
     }
 
+    public CategoryListItemView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public CategoryListItemView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
+
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
@@ -43,7 +52,7 @@ public class CategoryListItemView extends RelativeLayout {
         if (this.count == null) {
             countTextView.setText("Placeholder text");
         } else {
-            countTextView.setText(String.format("%d", count));
+            countTextView.setText(count);
         }
     }
 

@@ -8,27 +8,11 @@
     android:padding="16dp"
     tools:context="org.techconnect.fragments.GuidesFragment">
 
-
-    <TextView
-        android:id="@+id/tempTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Construction in Progress"
-        android:textSize="30dp"
-        android:visibility="visible" />
-
-    <ListView
-        android:id="@+id/categoryListView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:visibility="gone"></ListView>
-
     <RelativeLayout
+        android:id="@+id/categoryLayout"
         android:layout_width="match_parent"
         android:layout_height="35dp"
-        android:background="@android:color/black"
+        android:background="@android:color/darker_gray"
         android:visibility="gone">
 
         <TextView
@@ -36,7 +20,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Category" />
+            android:text="Category"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"/>
 
         <ImageButton
             android:id="@+id/categoryButton"
@@ -47,6 +33,25 @@
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:src="@android:drawable/ic_menu_close_clear_cancel" />
     </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
+    <ListView
+        android:id="@+id/categoryListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        >
+
+    </ListView>
+
+
 
     <LinearLayout
         android:id="@+id/search_linearLayout"

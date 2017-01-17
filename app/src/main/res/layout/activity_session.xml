@@ -163,18 +163,18 @@
     </ScrollView>
 
     <Button
-        android:id="@+id/resume_button"
+        android:id="@+id/resumeButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:layout_above="@+id/delete_button"
+        android:layout_above="@+id/deleteButton"
         android:background="@color/colorPrimary"
         android:text="@string/resume_session"
         android:textColor="?android:attr/colorForegroundInverse"
         android:onClick="resumeSession"/>
 
     <Button
-        android:id="@+id/delete_button"
+        android:id="@+id/deleteButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"

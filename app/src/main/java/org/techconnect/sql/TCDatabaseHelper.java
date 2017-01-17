@@ -19,9 +19,12 @@ import org.techconnect.model.Vertex;
 import org.techconnect.model.session.Session;
 import org.techconnect.sql.TCDatabaseContract.ChartEntry;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -771,6 +774,30 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
+     *
+     * @param id - ID of chart of interest
+     * @return Cursor that points to all stored sessions associated with the flowchart of interest
+     */
+    public Cursor getSessionsFromChart(String id) {
+        String selection = TCDatabaseContract.SessionEntry.FLOWCHART_ID + " = ?";
+        return getReadableDatabase().query(TCDatabaseContract.SessionEntry.TABLE_NAME,
+                null, selection, new String[] {id}, null, null, null);
+    }
+
+    /**
+     *
+     * @return
+     */
+    public CursorLoader getSessionsFromChartCursorLoader(final String id) {
+        return new CursorLoader(context, null, null, null, null, null) {
+            @Override
+            public Cursor loadInBackground() {
+                return getSessionsFromChart(id);
+            }
+        };
+    }
+
+    /**
      * @return Get Count of all sessions in unique (Month, Year)
      */
     public Map<String, Integer> getSessionDatesCounts() {
@@ -783,6 +810,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             //Read in Date into format MM, YYYY
             SimpleDateFormat dayFormat = new SimpleDateFormat("MMMM yyyy");
             String dateTime = dayFormat.format(cursor.getLong(0));
+            //Log.d("SQL Database", new SimpleDateFormat("M").format(cursor.getLong(0)));
             if (map.containsKey(dateTime)) {
                 int curr = map.get(dateTime);
                 map.put(dateTime, ++curr);
@@ -794,6 +822,45 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return map;
     }
+
+    /**
+     *
+     * @param date - Date in the format "MMMM yyyy"
+     * @return Cursor representing all entries belonging to that month/year combo
+     */
+    public Cursor getSessionsFromDate(String date) {
+        String selection = "strftime('%m', " +
+                TCDatabaseContract.SessionEntry.CREATED_DATE + "/1000, 'unixepoch') = ? AND strftime('%Y', " + TCDatabaseContract.SessionEntry.CREATED_DATE +
+                "/1000, 'unixepoch') = ?";
+        String[] selectionArgs = date.split(" "); //Split into Month and Date
+        try {
+            Date d = new SimpleDateFormat("MMMM").parse(selectionArgs[0]);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(d);
+            selectionArgs[0] = String.format("%02d",cal.get(Calendar.MONTH)+1);
+            Log.d("SQL Database",String.format("%s, %s",selectionArgs[0],selectionArgs[1]));
+        } catch (ParseException e) {
+            Log.e("SQL Database", "Error in Month format for session recovery");
+        }
+
+        //If made it, place the query
+        return getReadableDatabase().query(TCDatabaseContract.SessionEntry.TABLE_NAME,
+                null, selection, selectionArgs, null, null, null);
+    }
+
+    /**
+     *
+     * @return
+     */
+    public CursorLoader getSessionsFromDateCursorLoader(final String date) {
+        return new CursorLoader(context, null, null, null, null, null) {
+            @Override
+            public Cursor loadInBackground() {
+                return getSessionsFromDate(date);
+            }
+        };
+    }
+
 
     public Session getSessionFromCursor(Cursor c) {
         String flowchart_id = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FLOWCHART_ID));
