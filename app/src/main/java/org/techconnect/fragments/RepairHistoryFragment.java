@@ -130,6 +130,21 @@ public class RepairHistoryFragment extends Fragment implements
                     String[] items = (String[]) categoryListView.getItemAtPosition(i);
                     Log.d("Repair History", String.format("Testing Click: %s, %s", items[0], items[1]));
                     if (categoryState) { //Date
+                        Log.d("Repair History", "Doing Date");
+                        Bundle args = new Bundle();
+                        args.putString("date",items[0]);
+                        categoryListView.setAdapter(sessionAdapter);
+                        getLoaderManager().destroyLoader(SESSION_DEVICE_LOADER);
+                        getLoaderManager().destroyLoader(SESSION_DATE_LOADER); //clear the loader so it's ready for new one
+                        getLoaderManager().initLoader(SESSION_DATE_LOADER,args,temp);
+
+                        //Startup the ProgressBar
+                        categoryListView.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.VISIBLE);
+
+                        //Make the categoryLayoutVisible
+                        categoryLayout.setVisibility(View.VISIBLE);
+                        categoryTextView.setText(items[0]);
 
                     } else { //Device
                         Log.d("Repair History", "Doing Device");
@@ -137,6 +152,7 @@ public class RepairHistoryFragment extends Fragment implements
                         args.putString("id",device_map.get(items[0]));
                         Log.d("Repair History",device_map.get(items[0]));
                         categoryListView.setAdapter(sessionAdapter);
+                        getLoaderManager().destroyLoader(SESSION_DATE_LOADER);
                         getLoaderManager().destroyLoader(SESSION_DEVICE_LOADER); //clear the loader so it's ready for new one
                         getLoaderManager().initLoader(SESSION_DEVICE_LOADER,args,temp);
 
@@ -151,6 +167,7 @@ public class RepairHistoryFragment extends Fragment implements
                     }
                     sorting = false;
                     getActivity().invalidateOptionsMenu();
+
                 } else if (categoryListView.getAdapter().getClass().equals(SessionCursorAdapter.class)) {
                     //Stuff for Sessions
                 }
@@ -259,7 +276,7 @@ public class RepairHistoryFragment extends Fragment implements
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if (id == SESSION_DATE_LOADER) {
             Log.d("Repair Session", "Initiate Cursor Loader for DATE");
-            return null;
+            return TCDatabaseHelper.get(this.getContext()).getSessionsFromDateCursorLoader(args.getString("date"));
         } else if (id == SESSION_DEVICE_LOADER) {
             Log.d("Repair Session", "Initiate Cursor Loader for DEVICE");
             return TCDatabaseHelper.get(this.getContext()).getSessionsFromChartCursorLoader(args.getString("id"));
