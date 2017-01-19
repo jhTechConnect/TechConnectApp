@@ -51,6 +51,16 @@
 
     </ListView>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:id="@+id/exportButton"
+        android:text="@string/export_repair_history"
+        android:textColor="@android:color/white"
+        android:background="@color/colorPrimary"
+        android:clickable="true"
+        />
+
 
 
     <LinearLayout

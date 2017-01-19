@@ -10,6 +10,8 @@ import android.support.v4.content.CursorLoader;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.opencsv.CSVWriter;
+
 import org.techconnect.model.Comment;
 import org.techconnect.model.Edge;
 import org.techconnect.model.FlowChart;
@@ -28,6 +30,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -639,6 +642,24 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         Log.d(this.getClass().getName(), "Session Info Inserted Successfully");
     }
 
+    public void upsertSession(Session s) {
+        ContentValues sessionContentValues = getSessionContentValues(s);
+        //Insert session into database
+        try {
+            int id = (int) getWritableDatabase().insertWithOnConflict(TCDatabaseContract.SessionEntry.TABLE_NAME, null, sessionContentValues, SQLiteDatabase.CONFLICT_IGNORE);
+            if (id == -1) {
+                Log.d(this.getClass().getName(), "Attempting Update of Existing Entry");
+                String selection = TCDatabaseContract.SessionEntry.ID + " = ?";
+                String[] selectionArgs = new String[] {sessionContentValues.getAsString(TCDatabaseContract.SessionEntry.ID)};
+                getWritableDatabase().update(TCDatabaseContract.SessionEntry.TABLE_NAME, sessionContentValues, selection, selectionArgs);  // number 1 is the _id here, update to variable for your code
+            }
+        } catch (Exception e) {
+            Log.e(this.getClass().getName(), e.getMessage());
+        }
+
+        Log.d(this.getClass().getName(), "Session Info Inserted Successfully");
+    }
+
     public Session getSession(String id, Context context) {
         String selection = TCDatabaseContract.SessionEntry.ID + " = ?";
         String selectionArgs[] = {id};
@@ -861,6 +882,48 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         };
     }
 
+    /**
+     * Write the current repair history to a csv file
+     * @param writer - CSVWriter object that writes the SQL data to a specific file
+     */
+    public void writeRepairHistoryToFile(CSVWriter writer) {
+        //Choose columns appropriately
+        String[] columnsSelect = {TCDatabaseContract.SessionEntry.FLOWCHART_ID,TCDatabaseContract.SessionEntry.CREATED_DATE,TCDatabaseContract.SessionEntry.MANUFACTURER,
+            TCDatabaseContract.SessionEntry.DEPARTMENT, TCDatabaseContract.SessionEntry.MODEL, TCDatabaseContract.SessionEntry.SERIAL, TCDatabaseContract.SessionEntry.NOTES,
+            TCDatabaseContract.SessionEntry.FINISHED};
+
+        //Get Cursor representing data
+        Cursor csvCursor = getReadableDatabase().query(TCDatabaseContract.SessionEntry.TABLE_NAME,
+                columnsSelect, null, null, null, null, null);
+
+        //Set Column Titles for CSV
+        String[] columnTitle = {"Device",TCDatabaseContract.SessionEntry.CREATED_DATE,TCDatabaseContract.SessionEntry.MANUFACTURER,
+                TCDatabaseContract.SessionEntry.DEPARTMENT, TCDatabaseContract.SessionEntry.MODEL, TCDatabaseContract.SessionEntry.SERIAL, TCDatabaseContract.SessionEntry.NOTES,
+                TCDatabaseContract.SessionEntry.FINISHED};
+
+        //Start writing the table
+        writer.writeNext(columnTitle);
+        while (csvCursor.moveToNext()) {
+            //Get Device Name from Flowchart_ID
+            String device = getChartIDsAndNames().get(csvCursor.getString(0));
+            //Convert Date to simple DateFormat based on Locale
+            String dateCreated = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()).format(csvCursor.getLong(1));
+            //Determine finished state
+            String status;
+            if (csvCursor.getString(7).equals("1")) {
+                status = "Finished";
+            } else {
+                status = "In Progress";
+            }
+
+            String[] entry = {device,dateCreated,csvCursor.getString(2),csvCursor.getString(3),csvCursor.getString(4),csvCursor.getString(5),
+                csvCursor.getString(6), status};
+            writer.writeNext(entry);
+        }
+
+
+    }
+
 
     public Session getSessionFromCursor(Cursor c) {
         String flowchart_id = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FLOWCHART_ID));
@@ -892,7 +955,9 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
 
     private ContentValues getSessionContentValues(Session s) {
         ContentValues sessionContentValues = new ContentValues();
-        s.setId(getRandomId()); //Set the random ID field
+        if (s.getId() == null) {
+            s.setId(getRandomId()); //Set the random ID field
+        }
         sessionContentValues.put(TCDatabaseContract.SessionEntry.ID,s.getId());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.CREATED_DATE, s.getCreatedDate());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.MANUFACTURER, s.getManufacturer());
