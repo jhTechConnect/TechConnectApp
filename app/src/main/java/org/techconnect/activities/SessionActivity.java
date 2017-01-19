@@ -7,6 +7,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import org.centum.techconnect.R;
@@ -43,6 +44,10 @@ public class SessionActivity extends AppCompatActivity {
     TextView stepTextView;
     @Bind(R.id.notes_textView)
     TextView notesTextView;
+    @Bind(R.id.resumeButton)
+    Button resumeButton;
+    @Bind(R.id.deleteButton)
+    Button deleteButton;
     private Session session;
 
     @Override
@@ -73,6 +78,11 @@ public class SessionActivity extends AppCompatActivity {
             stepTextView.setText(session.getCurrentVertex().getName());
             notesTextView.setText(session.getNotes());
 
+            //If active, hide the "Resume Session" button as this is not possible
+            if(session.isFinished()) {
+                resumeButton.setVisibility(View.GONE);
+            }
+
         } else {
             //Not very clean at the moment
             manufacturerTextView.setVisibility(View.GONE);
@@ -88,8 +98,7 @@ public class SessionActivity extends AppCompatActivity {
     public void resumeSession(View view) {
         FirebaseEvents.logResumeSession(this, session);
         Intent intent = new Intent(this, PlayGuideActivity.class);
-        intent.putExtra(PlayGuideActivity.EXTRA_CHART_ID, session.getFlowchart().getId());
-        intent.putExtra(PlayGuideActivity.EXTRA_SESSION, session.getId());//Let the next activity load in the session
+        intent.putExtra(PlayGuideActivity.EXTRA_SESSION, session);//Let the next activity load in the session
         startActivity(intent);
     }
 

@@ -61,7 +61,7 @@ public class CategoryListAdapter extends BaseAdapter {
         CategoryListAdapter.ViewHolder holder;
         if (view == null) { //Has not been initialized
             holder = new CategoryListAdapter.ViewHolder();
-            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.listitem_view_category, null);
+            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.listitem_view_category, viewGroup, false);
             holder.category_view = (CategoryListItemView) view;
             view.setTag(holder);
         } else {

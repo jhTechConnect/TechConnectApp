@@ -21,7 +21,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -62,8 +61,9 @@ public class MainActivity extends AppCompatActivity
 
     public static final int FRAGMENT_CATALOG = 0;
     public static final int FRAGMENT_GUIDES = 1;
-    public static final int FRAGMENT_REPORTS = 2;
-    public static final int FRAGMENT_DIRECTORY = 3;
+    public static final int FRAGMENT_RESUME = 2;
+    public static final int FRAGMENT_HISTORY = 3;
+    public static final int FRAGMENT_DIRECTORY = 4;
     private static final int PERMISSIONS_REQUEST_READ_STORAGE = 1;
     private static final String SHOWN_TUTORIAL = "org.techconnect.prefs.shownturotial";
     private static final String USER_LEARNED_DRAWER = "org.techconnect.prefs.shownturotial.learneddrawer";
@@ -384,36 +384,6 @@ public class MainActivity extends AppCompatActivity
             this.currentFragment = frag;
             navigationView.getMenu().findItem(FRAGMENT_MENU_IDS[frag]).setChecked(true);
         }
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.activity_main_toolbar_menu, menu);
-        MenuItem item = menu.findItem(R.id.action_sort);
-        item.setVisible(false);
-        /*
-        Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
-
-        String[] arraySpinner = new String[] {
-                "Date", "Device"
-        };
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, arraySpinner);
-        spinner.setAdapter(adapter);
-        */
-
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.isChecked())
-            item.setChecked(false);
-        else
-            item.setChecked(true);
-        return true;
     }
 
 }
