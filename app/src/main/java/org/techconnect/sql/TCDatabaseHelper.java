@@ -10,6 +10,8 @@ import android.support.v4.content.CursorLoader;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.opencsv.CSVWriter;
+
 import org.techconnect.model.Comment;
 import org.techconnect.model.Edge;
 import org.techconnect.model.FlowChart;
@@ -28,6 +30,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -877,6 +880,48 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
                 return getSessionsFromDate(date);
             }
         };
+    }
+
+    /**
+     * Write the current repair history to a csv file
+     * @param writer - CSVWriter object that writes the SQL data to a specific file
+     */
+    public void writeRepairHistoryToFile(CSVWriter writer) {
+        //Choose columns appropriately
+        String[] columnsSelect = {TCDatabaseContract.SessionEntry.FLOWCHART_ID,TCDatabaseContract.SessionEntry.CREATED_DATE,TCDatabaseContract.SessionEntry.MANUFACTURER,
+            TCDatabaseContract.SessionEntry.DEPARTMENT, TCDatabaseContract.SessionEntry.MODEL, TCDatabaseContract.SessionEntry.SERIAL, TCDatabaseContract.SessionEntry.NOTES,
+            TCDatabaseContract.SessionEntry.FINISHED};
+
+        //Get Cursor representing data
+        Cursor csvCursor = getReadableDatabase().query(TCDatabaseContract.SessionEntry.TABLE_NAME,
+                columnsSelect, null, null, null, null, null);
+
+        //Set Column Titles for CSV
+        String[] columnTitle = {"Device",TCDatabaseContract.SessionEntry.CREATED_DATE,TCDatabaseContract.SessionEntry.MANUFACTURER,
+                TCDatabaseContract.SessionEntry.DEPARTMENT, TCDatabaseContract.SessionEntry.MODEL, TCDatabaseContract.SessionEntry.SERIAL, TCDatabaseContract.SessionEntry.NOTES,
+                TCDatabaseContract.SessionEntry.FINISHED};
+
+        //Start writing the table
+        writer.writeNext(columnTitle);
+        while (csvCursor.moveToNext()) {
+            //Get Device Name from Flowchart_ID
+            String device = getChartIDsAndNames().get(csvCursor.getString(0));
+            //Convert Date to simple DateFormat based on Locale
+            String dateCreated = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()).format(csvCursor.getLong(1));
+            //Determine finished state
+            String status;
+            if (csvCursor.getString(7).equals("1")) {
+                status = "Finished";
+            } else {
+                status = "In Progress";
+            }
+
+            String[] entry = {device,dateCreated,csvCursor.getString(2),csvCursor.getString(3),csvCursor.getString(4),csvCursor.getString(5),
+                csvCursor.getString(6), status};
+            writer.writeNext(entry);
+        }
+
+
     }
 
 

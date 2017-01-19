@@ -1,6 +1,7 @@
 package org.techconnect.fragments;
 
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -18,6 +20,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -29,6 +33,7 @@ import org.centum.techconnect.R;
 import org.techconnect.activities.SessionActivity;
 import org.techconnect.adapters.CategoryListAdapter;
 import org.techconnect.adapters.SessionCursorAdapter;
+import org.techconnect.asynctasks.ExportHistoryAsyncTask;
 import org.techconnect.sql.TCDatabaseHelper;
 import org.techconnect.views.SessionListItemView;
 
@@ -61,6 +66,8 @@ public class RepairHistoryFragment extends Fragment implements
     ProgressBar progressBar;
     @Bind(R.id.categoryLayout)
     RelativeLayout categoryLayout;
+    @Bind(R.id.exportButton)
+    Button exportButton;
 
 
     //Adapters
@@ -118,8 +125,11 @@ public class RepairHistoryFragment extends Fragment implements
             }
         });
 
-        //Design an adpater to use a map<String, Integer> to make a ListView of the format desired
-        dateAdapter.setBaseMap(dateCounts);
+        //Set the click listener for the export button
+        exportButton.setOnClickListener(this);
+
+                //Design an adpater to use a map<String, Integer> to make a ListView of the format desired
+                dateAdapter.setBaseMap(dateCounts);
         deviceAdapter.setBaseMap(deviceCounts);
 
         //Setup the ListView w/ adapter and itemClickListener
@@ -202,11 +212,6 @@ public class RepairHistoryFragment extends Fragment implements
 
     public void onRefresh() {
         Log.d("Resume Session", "Refresh Session List");
-    }
-
-    @Override
-    public void onClick(View view) {
-
     }
 
     @Override
@@ -316,6 +321,71 @@ public class RepairHistoryFragment extends Fragment implements
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.exportButton) {
+            //Open Dialog Box to get email
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+            builder.setTitle(R.string.export_repair_history);
+            builder.setMessage("Send History to Email");
+            View v = inflater.inflate(R.layout.dialog_fragment_export_history,null);
+            builder.setView(v);
+
+            final EditText email = (EditText) v.findViewById(R.id.comments_editText);
+
+            builder.setPositiveButton(R.string.send, new DialogInterface.OnClickListener()
+            {
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    //Do nothing here because we override this button later to change the close behaviour.
+                    //However, we still need this because on older versions of Android unless we
+                    //pass a handler the button doesn't get instantiated
+                }
+            });
+            builder.setNegativeButton(R.string.cancel,new DialogInterface.OnClickListener()
+            {
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    //Do nothing here because we override this button later to change the close behaviour.
+                    //However, we still need this because on older versions of Android unless we
+                    //pass a handler the button doesn't get instantiated
+                }
+            });
+
+            //Need to overwrite with funky custom listener
+            final AlertDialog dialog = builder.create();
+            dialog.show();
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //Create CSV in Documents directory based on date of export
+                    ExportHistoryAsyncTask task = new ExportHistoryAsyncTask(getContext());
+                    if (android.util.Patterns.EMAIL_ADDRESS.matcher(email.getText().toString()).matches()) {
+                        Log.d("Repair History", "Valid email");
+                        task.execute(email.getText().toString());
+                        dialog.dismiss();
+                    } else {
+                        //Show error in the dialog box
+                        Log.d("Repair History", "Invalid email");
+                        email.setError(getResources().getString(R.string.error_invalid_email));
+                    }
+                }
+            });
+
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+
+        }
     }
 }
 
