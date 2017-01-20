@@ -70,6 +70,8 @@ public class RepairHistoryFragment extends Fragment implements
     RelativeLayout categoryLayout;
     @Bind(R.id.exportButton)
     Button exportButton;
+    @Bind(R.id.emptyTextView)
+    TextView emptyTextView;
 
 
     //Adapters
@@ -103,6 +105,16 @@ public class RepairHistoryFragment extends Fragment implements
         //Determine the number of sessions associated with each device
         updateCountAdapters();
 
+        if (dateAdapter.getCount() == 0 || deviceAdapter.getCount() == 0) { //no data
+            emptyTextView.setVisibility(View.VISIBLE);
+            categoryListView.setVisibility(View.GONE);
+            exportButton.setVisibility(View.GONE);
+        } else {
+            emptyTextView.setVisibility(View.GONE);
+            categoryListView.setVisibility(View.VISIBLE);
+            exportButton.setVisibility(View.VISIBLE);
+        }
+
         //Set the click listener for the imagebutton
         categoryButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,6 +128,7 @@ public class RepairHistoryFragment extends Fragment implements
                     //Bring back the device list
                     categoryListView.setAdapter(deviceAdapter);
                 }
+                exportButton.setVisibility(View.VISIBLE);
                 getActivity().invalidateOptionsMenu();
             }
         });
@@ -156,6 +169,7 @@ public class RepairHistoryFragment extends Fragment implements
 
                     //Startup the ProgressBar
                     categoryListView.setVisibility(View.GONE);
+                    exportButton.setVisibility(View.GONE);
                     progressBar.setVisibility(View.VISIBLE);
 
                     //Make the categoryLayoutVisible
@@ -190,11 +204,24 @@ public class RepairHistoryFragment extends Fragment implements
         if (getActivity() != null) {
             getActivity().setTitle(R.string.repair_history);
         }
+
+        if (dateAdapter.getCount() == 0 || deviceAdapter.getCount() == 0) { //no data
+            emptyTextView.setVisibility(View.VISIBLE);
+            categoryListView.setVisibility(View.GONE);
+            exportButton.setVisibility(View.GONE);
+        } else {
+            emptyTextView.setVisibility(View.GONE);
+            categoryListView.setVisibility(View.VISIBLE);
+            exportButton.setVisibility(View.VISIBLE);
+        }
     }
 
 
     private void refreshData() {
         Log.d("Repair History", "Refresh Session List");
+        //Startup the ProgressBar
+        categoryListView.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
 
         if (categoryState) { //Date
             Bundle args = new Bundle();
@@ -206,9 +233,6 @@ public class RepairHistoryFragment extends Fragment implements
             getLoaderManager().initLoader(SESSION_DEVICE_LOADER,args,this);
         }
 
-        //Startup the ProgressBar
-        categoryListView.setVisibility(View.GONE);
-        progressBar.setVisibility(View.VISIBLE);
         //Update the other adapters
         updateCountAdapters();
     }
@@ -228,6 +252,7 @@ public class RepairHistoryFragment extends Fragment implements
         //Design an adpater to use a map<String, Integer> to make a ListView of the format desired
         dateAdapter.setBaseMap(dateCounts);
         deviceAdapter.setBaseMap(deviceCounts);
+
     }
 
     @Override
@@ -248,6 +273,7 @@ public class RepairHistoryFragment extends Fragment implements
     private void setAdapter(ListAdapter a) {
         categoryListView.setAdapter(a);
     }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -320,13 +346,29 @@ public class RepairHistoryFragment extends Fragment implements
 
         Log.d("Repair Session", "Made it through loader");
         //Have a bit of a delay to ensure the progressBar doesn't mess with UI
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                categoryListView.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.GONE);
-            }
-        };
+
+        Runnable r;
+        if (sessionAdapter.getCount() == 0) { //Do data
+            r = new Runnable() {
+                @Override
+                public void run() {
+                    emptyTextView.setVisibility(View.VISIBLE);
+                    categoryListView.setVisibility(View.GONE);
+                    categoryLayout.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.GONE);
+                }
+            };
+        } else {
+            r = new Runnable() {
+                @Override
+                public void run() {
+                    emptyTextView.setVisibility(View.GONE);
+                    categoryListView.setVisibility(View.VISIBLE);
+                    categoryLayout.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.GONE);
+                }
+            };
+        }
 
         Handler h = new Handler();
         h.postDelayed(r, 500);
