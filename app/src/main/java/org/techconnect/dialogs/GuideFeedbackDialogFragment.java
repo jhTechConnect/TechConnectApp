@@ -108,6 +108,7 @@ public class GuideFeedbackDialogFragment extends DialogFragment {
         } else {
             FirebaseEvents.logGuideFeedback(getActivity(), session, selectedExpFeedback, selectedContactFeedback, commentsEditText.getText().toString());
             dismiss();
+            getActivity().finish(); //Close the activity that it was a part of
         }
     }
 
