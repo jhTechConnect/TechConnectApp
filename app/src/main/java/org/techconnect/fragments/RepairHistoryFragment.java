@@ -128,7 +128,16 @@ public class RepairHistoryFragment extends Fragment implements
                     //Bring back the device list
                     categoryListView.setAdapter(deviceAdapter);
                 }
-                exportButton.setVisibility(View.VISIBLE);
+                if (dateAdapter.getCount() == 0 || deviceAdapter.getCount() == 0) {
+                    exportButton.setVisibility(View.GONE);
+                    categoryListView.setVisibility(View.GONE);
+                    emptyTextView.setVisibility(View.VISIBLE);
+                } else {
+                    exportButton.setVisibility(View.VISIBLE);
+                    categoryListView.setVisibility(View.VISIBLE);
+                    emptyTextView.setVisibility(View.GONE);
+
+                }
                 getActivity().invalidateOptionsMenu();
             }
         });
@@ -137,7 +146,12 @@ public class RepairHistoryFragment extends Fragment implements
         exportButton.setOnClickListener(this);
 
         //Setup the ListView w/ adapter and itemClickListener
-        categoryListView.setAdapter(dateAdapter);
+        if (categoryState) {
+            categoryListView.setAdapter(dateAdapter);
+        } else {
+            categoryListView.setAdapter(deviceAdapter);
+        }
+
         final LoaderManager.LoaderCallbacks<Cursor> temp = this; //Needed for listener
 
         categoryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -154,7 +168,6 @@ public class RepairHistoryFragment extends Fragment implements
                         getLoaderManager().destroyLoader(SESSION_DEVICE_LOADER);
                         getLoaderManager().destroyLoader(SESSION_DATE_LOADER); //clear the loader so it's ready for new one
                         getLoaderManager().initLoader(SESSION_DATE_LOADER,args,temp);
-
                     } else { //Device
                         Log.d("Repair History", "Doing Device");
                         Bundle args = new Bundle();
@@ -168,9 +181,9 @@ public class RepairHistoryFragment extends Fragment implements
                     }
 
                     //Startup the ProgressBar
-                    categoryListView.setVisibility(View.GONE);
-                    exportButton.setVisibility(View.GONE);
-                    progressBar.setVisibility(View.VISIBLE);
+                    //categoryListView.setVisibility(View.GONE);
+                    //exportButton.setVisibility(View.GONE);
+                    //progressBar.setVisibility(View.VISIBLE);
 
                     //Make the categoryLayoutVisible
                     categoryLayout.setVisibility(View.VISIBLE);
@@ -205,23 +218,41 @@ public class RepairHistoryFragment extends Fragment implements
             getActivity().setTitle(R.string.repair_history);
         }
 
-        if (dateAdapter.getCount() == 0 || deviceAdapter.getCount() == 0) { //no data
-            emptyTextView.setVisibility(View.VISIBLE);
-            categoryListView.setVisibility(View.GONE);
-            exportButton.setVisibility(View.GONE);
-        } else {
-            emptyTextView.setVisibility(View.GONE);
-            categoryListView.setVisibility(View.VISIBLE);
-            exportButton.setVisibility(View.VISIBLE);
+        if (sorting) { //High level
+            if (dateAdapter.getCount() == 0 || deviceAdapter.getCount() == 0) { //no data
+                emptyTextView.setVisibility(View.VISIBLE);
+                categoryListView.setVisibility(View.GONE);
+                exportButton.setVisibility(View.GONE);
+            } else {
+                emptyTextView.setVisibility(View.GONE);
+                categoryListView.setVisibility(View.VISIBLE);
+                exportButton.setVisibility(View.VISIBLE);
+            }
+        } else { //Dove into specific case
+            Log.d("Repair History", String.format("Specific Case check, %d", sessionAdapter.getCount()));
+            if (sessionAdapter.getCount() == 0) {
+                categoryListView.setVisibility(View.GONE);
+                emptyTextView.setVisibility(View.VISIBLE);
+            } else {
+                categoryListView.setVisibility(View.VISIBLE);
+                emptyTextView.setVisibility(View.GONE);
+            }
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //Here, we need to make sure we pause in the right way
+        sorting = true; //Makes sure we back out, but in the correct sorting
+
     }
 
 
     private void refreshData() {
         Log.d("Repair History", "Refresh Session List");
-        //Startup the ProgressBar
-        categoryListView.setVisibility(View.GONE);
-        progressBar.setVisibility(View.VISIBLE);
+        //Update the other adapters
+        updateCountAdapters();
 
         if (categoryState) { //Date
             Bundle args = new Bundle();
@@ -230,11 +261,8 @@ public class RepairHistoryFragment extends Fragment implements
         } else {
             Bundle args = new Bundle();
             args.putString("id",device_map.get(categoryData[0]));
-            getLoaderManager().initLoader(SESSION_DEVICE_LOADER,args,this);
+            getLoaderManager().restartLoader(SESSION_DEVICE_LOADER,args,this);
         }
-
-        //Update the other adapters
-        updateCountAdapters();
     }
 
     private void updateCountAdapters() {
@@ -307,13 +335,11 @@ public class RepairHistoryFragment extends Fragment implements
                 Log.d("Repair History","DATE");
                 setAdapter(dateAdapter);
                 categoryState = true;
-                //categoryAdapter.setBaseMap(date_counts);
                 break;
             case R.id.device_item:
                 Log.d("Repair History","DEVICE");
                 setAdapter(deviceAdapter);
                 categoryState = false;
-                //categoryAdapter.setBaseMap(device_counts);
                 break;
             case R.id.action_sort:
                 Log.d("Repair History","SORT");
@@ -329,6 +355,11 @@ public class RepairHistoryFragment extends Fragment implements
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        //Startup the ProgressBar
+        categoryListView.setVisibility(View.GONE);
+        exportButton.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+
         if (id == SESSION_DATE_LOADER) {
             Log.d("Repair Session", "Initiate Cursor Loader for DATE");
             return TCDatabaseHelper.get(this.getContext()).getSessionsFromDateCursorLoader(args.getString("date"));
@@ -347,29 +378,32 @@ public class RepairHistoryFragment extends Fragment implements
         Log.d("Repair Session", "Made it through loader");
         //Have a bit of a delay to ensure the progressBar doesn't mess with UI
 
-        Runnable r;
-        if (sessionAdapter.getCount() == 0) { //Do data
-            r = new Runnable() {
+        Runnable r = new Runnable() {
                 @Override
                 public void run() {
-                    emptyTextView.setVisibility(View.VISIBLE);
-                    categoryListView.setVisibility(View.GONE);
-                    categoryLayout.setVisibility(View.GONE);
                     progressBar.setVisibility(View.GONE);
+                    if (sorting) { //High level
+                        if (dateAdapter.getCount() == 0 || deviceAdapter.getCount() == 0) { //no data
+                            emptyTextView.setVisibility(View.VISIBLE);
+                            categoryListView.setVisibility(View.GONE);
+                            exportButton.setVisibility(View.GONE);
+                        } else {
+                            emptyTextView.setVisibility(View.GONE);
+                            categoryListView.setVisibility(View.VISIBLE);
+                            exportButton.setVisibility(View.VISIBLE);
+                        }
+                    } else { //Dove into specific case
+                        Log.d("Repair History", String.format("Specific Case check, %d", sessionAdapter.getCount()));
+                        if (sessionAdapter.getCount() == 0) {
+                            categoryListView.setVisibility(View.GONE);
+                            emptyTextView.setVisibility(View.VISIBLE);
+                        } else {
+                            categoryListView.setVisibility(View.VISIBLE);
+                            emptyTextView.setVisibility(View.GONE);
+                        }
+                    }
                 }
             };
-        } else {
-            r = new Runnable() {
-                @Override
-                public void run() {
-                    emptyTextView.setVisibility(View.GONE);
-                    categoryListView.setVisibility(View.VISIBLE);
-                    categoryLayout.setVisibility(View.VISIBLE);
-                    progressBar.setVisibility(View.GONE);
-                }
-            };
-        }
-
         Handler h = new Handler();
         h.postDelayed(r, 500);
 
