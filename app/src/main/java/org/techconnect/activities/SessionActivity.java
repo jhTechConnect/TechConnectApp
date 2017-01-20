@@ -29,6 +29,9 @@ import butterknife.ButterKnife;
 public class SessionActivity extends AppCompatActivity {
 
     public static String EXTRA_SESSION = "org.techconnect.sessionactivity.session";
+    public static final int SESSION_DELETED = 2;
+    public static final int SESSION_STABLE = 3;
+    public static final int SESSION_RESUME = 1;
     //Bind all of the editable text views relevant to the session
     @Bind(R.id.manufacturer_textView)
     TextView manufacturerTextView;
@@ -87,6 +90,7 @@ public class SessionActivity extends AppCompatActivity {
             //If active, hide the "Resume Session" button as this is not possible
             if(session.isFinished()) {
                 resumeButton.setVisibility(View.GONE);
+                deleteButton.setVisibility(View.GONE);//Don't want them to delete completed sessions
                 finishedDateHeader.setVisibility(View.VISIBLE);
                 finishedDateTextView.setVisibility(View.VISIBLE);
                 finishedDateTextView.setText(new SimpleDateFormat("MM/dd/yyyy, HH:mm:ss").format(new Date(session.getFinishedDate())));
@@ -110,6 +114,9 @@ public class SessionActivity extends AppCompatActivity {
         FirebaseEvents.logResumeSession(this, session);
         Intent intent = new Intent(this, PlayGuideActivity.class);
         intent.putExtra(PlayGuideActivity.EXTRA_SESSION, session);//Let the next activity load in the session
+        //Need another intent for result
+        Intent resultIntent = new Intent();
+        setResult(SESSION_RESUME, resultIntent);
         startActivity(intent);
     }
 
@@ -145,10 +152,12 @@ public class SessionActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle back arrow click here
         if (item.getItemId() == android.R.id.home) {
-            //Want to go back to the list of past session
+            //Want to go back to the list of past sessions
+            Intent resultIntent = new Intent();
+            setResult(SESSION_STABLE, resultIntent);
             finish();
         }
-
         return super.onOptionsItemSelected(item);
     }
+
 }

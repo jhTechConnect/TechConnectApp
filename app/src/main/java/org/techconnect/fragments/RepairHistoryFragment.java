@@ -1,6 +1,7 @@
 package org.techconnect.fragments;
 
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -54,6 +55,7 @@ public class RepairHistoryFragment extends Fragment implements
     //Loader Types
     private static final int SESSION_DATE_LOADER = 0;
     private static final int SESSION_DEVICE_LOADER = 1;
+    private static final int VIEW_SESSION_REQUEST = 2;
 
     //All of the binds
     @Bind(R.id.categoryButton)
@@ -75,6 +77,8 @@ public class RepairHistoryFragment extends Fragment implements
     private CategoryListAdapter dateAdapter = new CategoryListAdapter();
     private CategoryListAdapter deviceAdapter = new CategoryListAdapter();
     private boolean categoryState = true; //True == Date, False == Device
+    private String[] categoryData;
+    private Map<String,String> device_map;
     private boolean sorting = true; //Sorting between date and device
 
     //Storage for list data
@@ -95,18 +99,9 @@ public class RepairHistoryFragment extends Fragment implements
         //Startup the SessionCursor
         sessionAdapter = new SessionCursorAdapter(this.getContext());
         //Load the map of Name -> Id
-        final Map<String,String> device_map = TCDatabaseHelper.get(this.getContext()).getChartNamesAndIDs();
+        device_map = TCDatabaseHelper.get(this.getContext()).getChartNamesAndIDs();
         //Determine the number of sessions associated with each device
-        for (String dev : device_map.keySet()) {
-            int count = TCDatabaseHelper.get(this.getContext()).getSessionsChartCount(device_map.get(dev));
-            deviceCounts.put(dev,count);
-            Log.d("Repair History", String.format("Device: %s, Count: %d", dev, count ));
-        }
-        //Determine months/years available in the session database
-        dateCounts = TCDatabaseHelper.get(this.getContext()).getSessionDatesCounts();
-        for (String comb : dateCounts.keySet()) {
-            Log.d("Repair History", String.format("Date: %s, Count: %d",comb,dateCounts.get(comb)));
-        }
+        updateCountAdapters();
 
         //Set the click listener for the imagebutton
         categoryButton.setOnClickListener(new View.OnClickListener() {
@@ -128,10 +123,6 @@ public class RepairHistoryFragment extends Fragment implements
         //Set the click listener for the export button
         exportButton.setOnClickListener(this);
 
-                //Design an adpater to use a map<String, Integer> to make a ListView of the format desired
-                dateAdapter.setBaseMap(dateCounts);
-        deviceAdapter.setBaseMap(deviceCounts);
-
         //Setup the ListView w/ adapter and itemClickListener
         categoryListView.setAdapter(dateAdapter);
         final LoaderManager.LoaderCallbacks<Cursor> temp = this; //Needed for listener
@@ -140,44 +131,37 @@ public class RepairHistoryFragment extends Fragment implements
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if (categoryListView.getAdapter().getClass().equals(CategoryListAdapter.class)) {
-                    String[] items = (String[]) categoryListView.getItemAtPosition(i);
-                    Log.d("Repair History", String.format("Testing Click: %s, %s", items[0], items[1]));
+                    categoryData = (String[]) categoryListView.getItemAtPosition(i);
+                    Log.d("Repair History", String.format("Testing Click: %s, %s",categoryData[0], categoryData[1]));
                     if (categoryState) { //Date
                         Log.d("Repair History", "Doing Date");
                         Bundle args = new Bundle();
-                        args.putString("date",items[0]);
+                        args.putString("date",categoryData[0]);
                         categoryListView.setAdapter(sessionAdapter);
                         getLoaderManager().destroyLoader(SESSION_DEVICE_LOADER);
                         getLoaderManager().destroyLoader(SESSION_DATE_LOADER); //clear the loader so it's ready for new one
                         getLoaderManager().initLoader(SESSION_DATE_LOADER,args,temp);
 
-                        //Startup the ProgressBar
-                        categoryListView.setVisibility(View.GONE);
-                        progressBar.setVisibility(View.VISIBLE);
-
-                        //Make the categoryLayoutVisible
-                        categoryLayout.setVisibility(View.VISIBLE);
-                        categoryTextView.setText(items[0]);
-
                     } else { //Device
                         Log.d("Repair History", "Doing Device");
                         Bundle args = new Bundle();
-                        args.putString("id",device_map.get(items[0]));
-                        Log.d("Repair History",device_map.get(items[0]));
+                        args.putString("id",device_map.get(categoryData[0]));
+                        Log.d("Repair History",device_map.get(categoryData[0]));
                         categoryListView.setAdapter(sessionAdapter);
                         getLoaderManager().destroyLoader(SESSION_DATE_LOADER);
                         getLoaderManager().destroyLoader(SESSION_DEVICE_LOADER); //clear the loader so it's ready for new one
                         getLoaderManager().initLoader(SESSION_DEVICE_LOADER,args,temp);
 
-                        //Startup the ProgressBar
-                        categoryListView.setVisibility(View.GONE);
-                        progressBar.setVisibility(View.VISIBLE);
-
-                        //Make the categoryLayoutVisible
-                        categoryLayout.setVisibility(View.VISIBLE);
-                        categoryTextView.setText(items[0]);
-
                     }
+
+                    //Startup the ProgressBar
+                    categoryListView.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.VISIBLE);
+
+                    //Make the categoryLayoutVisible
+                    categoryLayout.setVisibility(View.VISIBLE);
+                    categoryTextView.setText(categoryData[0]);
+
                     sorting = false;
                     getActivity().invalidateOptionsMenu();
 
@@ -188,7 +172,7 @@ public class RepairHistoryFragment extends Fragment implements
                     // Get the non-stub chart and open
                     intent.putExtra(SessionActivity.EXTRA_SESSION,
                             sessionView.getSession()); //Maybe? Not sure if this is a good idea
-                    startActivity(intent);
+                    startActivityForResult(intent,VIEW_SESSION_REQUEST);
                 }
             }
         });
@@ -201,17 +185,49 @@ public class RepairHistoryFragment extends Fragment implements
 
     @Override
     public void onResume() {
-        Log.d("Resume Session", "Resume Fragment");
+        Log.d("Repair History", "Resume Fragment");
         super.onResume();
         if (getActivity() != null) {
             getActivity().setTitle(R.string.repair_history);
         }
-        onRefresh();
     }
 
 
-    public void onRefresh() {
-        Log.d("Resume Session", "Refresh Session List");
+    private void refreshData() {
+        Log.d("Repair History", "Refresh Session List");
+
+        if (categoryState) { //Date
+            Bundle args = new Bundle();
+            args.putString("date",categoryData[0]);
+            getLoaderManager().restartLoader(SESSION_DATE_LOADER,args,this);
+        } else {
+            Bundle args = new Bundle();
+            args.putString("id",device_map.get(categoryData[0]));
+            getLoaderManager().initLoader(SESSION_DEVICE_LOADER,args,this);
+        }
+
+        //Startup the ProgressBar
+        categoryListView.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+        //Update the other adapters
+        updateCountAdapters();
+    }
+
+    private void updateCountAdapters() {
+        for (String dev : device_map.keySet()) {
+            int count = TCDatabaseHelper.get(this.getContext()).getSessionsChartCount(device_map.get(dev));
+            deviceCounts.put(dev,count);
+            Log.d("Repair History", String.format("Device: %s, Count: %d", dev, count ));
+        }
+        //Determine months/years available in the session database
+        dateCounts = TCDatabaseHelper.get(this.getContext()).getSessionDatesCounts();
+        for (String comb : dateCounts.keySet()) {
+            Log.d("Repair History", String.format("Date: %s, Count: %d",comb,dateCounts.get(comb)));
+        }
+
+        //Design an adpater to use a map<String, Integer> to make a ListView of the format desired
+        dateAdapter.setBaseMap(dateCounts);
+        deviceAdapter.setBaseMap(deviceCounts);
     }
 
     @Override
@@ -226,7 +242,6 @@ public class RepairHistoryFragment extends Fragment implements
 
     @Override
     public void afterTextChanged(Editable editable) {
-        onRefresh();
     }
 
 
@@ -386,6 +401,18 @@ public class RepairHistoryFragment extends Fragment implements
             });
 
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == VIEW_SESSION_REQUEST) {
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Need to update listview
+                refreshData();
+            }
+        }
+
     }
 }
 
