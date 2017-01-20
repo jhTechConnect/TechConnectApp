@@ -36,6 +36,7 @@ public class Session implements Parcelable {
     private GraphTraversal traversal; //Step through the graph
 
     private long createdDate;
+    private long finishedDate;
     private String manufacturer = "";
     private String department = "";
     private String modelNumber = "";
@@ -62,6 +63,7 @@ public class Session implements Parcelable {
     public Session(Parcel in) {
         this.id = in.readString();
         this.createdDate = in.readLong();
+        this.finishedDate = in.readLong();
         finished = in.readByte() != 0;
         this.department = in.readString();
         this.manufacturer = in.readString();
@@ -210,6 +212,7 @@ public class Session implements Parcelable {
         //FlowChart graph object and the end of history if need be
         parcel.writeString(id);
         parcel.writeLong(createdDate);
+        parcel.writeLong(finishedDate);
         parcel.writeByte((byte) (finished ? 1 : 0));
         parcel.writeString(department);
         parcel.writeString(manufacturer);
@@ -237,5 +240,14 @@ public class Session implements Parcelable {
 
     public void setManufacturer(String manufacturer) {
         this.manufacturer = manufacturer;
+    }
+
+
+    public long getFinishedDate() {
+        return finishedDate;
+    }
+
+    public void setFinishedDate(long finishedDate) {
+        this.finishedDate = finishedDate;
     }
 }

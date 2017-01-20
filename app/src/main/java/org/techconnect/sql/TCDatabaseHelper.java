@@ -888,7 +888,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
      */
     public void writeRepairHistoryToFile(CSVWriter writer) {
         //Choose columns appropriately
-        String[] columnsSelect = {TCDatabaseContract.SessionEntry.FLOWCHART_ID,TCDatabaseContract.SessionEntry.CREATED_DATE,TCDatabaseContract.SessionEntry.MANUFACTURER,
+        String[] columnsSelect = {TCDatabaseContract.SessionEntry.FLOWCHART_ID,TCDatabaseContract.SessionEntry.CREATED_DATE, TCDatabaseContract.SessionEntry.FINISHED_DATE, TCDatabaseContract.SessionEntry.MANUFACTURER,
             TCDatabaseContract.SessionEntry.DEPARTMENT, TCDatabaseContract.SessionEntry.MODEL, TCDatabaseContract.SessionEntry.SERIAL, TCDatabaseContract.SessionEntry.NOTES,
             TCDatabaseContract.SessionEntry.FINISHED};
 
@@ -897,9 +897,8 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
                 columnsSelect, null, null, null, null, null);
 
         //Set Column Titles for CSV
-        String[] columnTitle = {"Device",TCDatabaseContract.SessionEntry.CREATED_DATE,TCDatabaseContract.SessionEntry.MANUFACTURER,
-                TCDatabaseContract.SessionEntry.DEPARTMENT, TCDatabaseContract.SessionEntry.MODEL, TCDatabaseContract.SessionEntry.SERIAL, TCDatabaseContract.SessionEntry.NOTES,
-                TCDatabaseContract.SessionEntry.FINISHED};
+        String[] columnTitle = {"Device",TCDatabaseContract.SessionEntry.CREATED_DATE, TCDatabaseContract.SessionEntry.FINISHED_DATE, TCDatabaseContract.SessionEntry.MANUFACTURER,
+                TCDatabaseContract.SessionEntry.DEPARTMENT, TCDatabaseContract.SessionEntry.MODEL, TCDatabaseContract.SessionEntry.SERIAL, TCDatabaseContract.SessionEntry.NOTES};
 
         //Start writing the table
         writer.writeNext(columnTitle);
@@ -908,16 +907,16 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             String device = getChartIDsAndNames().get(csvCursor.getString(0));
             //Convert Date to simple DateFormat based on Locale
             String dateCreated = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()).format(csvCursor.getLong(1));
-            //Determine finished state
-            String status;
-            if (csvCursor.getString(7).equals("1")) {
-                status = "Finished";
+            String dateFinished;
+            //Determine Date Finished
+            if (csvCursor.getString(8).equals("1")) {
+                dateFinished = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()).format(csvCursor.getLong(2));
             } else {
-                status = "In Progress";
+                dateFinished = "In Progress";
             }
 
-            String[] entry = {device,dateCreated,csvCursor.getString(2),csvCursor.getString(3),csvCursor.getString(4),csvCursor.getString(5),
-                csvCursor.getString(6), status};
+            String[] entry = {device,dateCreated,dateFinished,csvCursor.getString(3),csvCursor.getString(4),csvCursor.getString(5),csvCursor.getString(6),
+                csvCursor.getString(7)};
             writer.writeNext(entry);
         }
 
@@ -931,6 +930,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         Session s = new Session(flow);
         s.setId(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.ID)));
         s.setCreatedDate(c.getLong(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.CREATED_DATE)));
+        s.setFinishedDate(c.getLong(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FINISHED_DATE)));
         s.setManufacturer(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.MANUFACTURER)));
         s.setDepartment(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.DEPARTMENT)));
         s.setModelNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.MODEL)));
@@ -962,6 +962,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         sessionContentValues.put(TCDatabaseContract.SessionEntry.CREATED_DATE, s.getCreatedDate());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.MANUFACTURER, s.getManufacturer());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.FINISHED, s.isFinished());
+        sessionContentValues.put(TCDatabaseContract.SessionEntry.FINISHED_DATE,s.getFinishedDate());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.DEPARTMENT, s.getDepartment());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.MODEL, s.getModelNumber());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.SERIAL, s.getSerialNumber());

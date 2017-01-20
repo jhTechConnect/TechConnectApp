@@ -18,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import org.centum.techconnect.R;
 import org.techconnect.activities.SessionActivity;
@@ -42,6 +43,8 @@ public class ResumeSessionFragment extends Fragment implements
     LinearLayout contentLinearLayout;
     @Bind(R.id.session_ListView)
     ListView sessionListView;
+    @Bind(R.id.emptyTextView)
+    TextView emptyTextView;
     private SessionCursorAdapter adapter;
     private Cursor current_adapter;
     private boolean isLoading = false;
@@ -126,16 +129,30 @@ public class ResumeSessionFragment extends Fragment implements
         adapter.notifyDataSetChanged();
         Log.d("Resume Session", String.format("Update Adapter, %d", adapter.getCount()));
 
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                sessionListView.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.GONE);
-            }
-        };
+        Runnable r;
+        if (adapter.getCount() == 0) { //Do data
+            r = new Runnable() {
+                @Override
+                public void run() {
+                    emptyTextView.setVisibility(View.VISIBLE);
+                    sessionListView.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.GONE);
+                }
+            };
+        } else {
+            r = new Runnable() {
+                @Override
+                public void run() {
+                    emptyTextView.setVisibility(View.GONE);
+                    sessionListView.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.GONE);
+                }
+            };
+        }
 
         Handler h = new Handler();
         h.postDelayed(r, 500);
+
 
     }
 
