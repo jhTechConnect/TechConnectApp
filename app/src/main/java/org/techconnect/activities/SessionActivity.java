@@ -38,8 +38,14 @@ public class SessionActivity extends AppCompatActivity {
     TextView serialTextView;
     @Bind(R.id.date_textView)
     TextView dateTextView;
+    @Bind(R.id.finishedDateHeader)
+    TextView finishedDateHeader;
+    @Bind(R.id.finishedDateTextView)
+    TextView finishedDateTextView;
     @Bind(R.id.device_textView)
     TextView deviceTextView;
+    @Bind(R.id.step_header)
+    TextView stepHeader;
     @Bind(R.id.step_textView)
     TextView stepTextView;
     @Bind(R.id.notes_textView)
@@ -81,6 +87,11 @@ public class SessionActivity extends AppCompatActivity {
             //If active, hide the "Resume Session" button as this is not possible
             if(session.isFinished()) {
                 resumeButton.setVisibility(View.GONE);
+                finishedDateHeader.setVisibility(View.VISIBLE);
+                finishedDateTextView.setVisibility(View.VISIBLE);
+                finishedDateTextView.setText(new SimpleDateFormat("MM/dd/yyyy, HH:mm:ss").format(new Date(session.getFinishedDate())));
+                stepHeader.setVisibility(View.GONE);
+                stepTextView.setVisibility(View.GONE);
             }
 
         } else {

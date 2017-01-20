@@ -191,7 +191,9 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
 
     @Override
     public void onSessionComplete() {
+        //Set finished, set time finished
         session.setFinished(true);
+        session.setFinishedDate(System.currentTimeMillis());
         endSession();
         if (flowChart != null) {
             FirebaseEvents.logSessionComplete(this, flowChart);

@@ -116,6 +116,29 @@
                 android:text="TextView"
                 android:textSize="16sp" />
 
+            <TextView
+                android:id="@+id/finishedDateHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:text="@string/finished_date"
+                android:textSize="16sp"
+                android:textStyle="normal|bold"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/finishedDateTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="4dp"
+                android:text="TextView"
+                android:textSize="16sp"
+                android:visibility="gone"/>
+
 
 
             <TextView
