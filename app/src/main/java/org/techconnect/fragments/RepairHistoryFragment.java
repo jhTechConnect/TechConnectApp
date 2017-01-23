@@ -57,6 +57,11 @@ public class RepairHistoryFragment extends Fragment implements
     private static final int SESSION_DEVICE_LOADER = 1;
     private static final int VIEW_SESSION_REQUEST = 2;
 
+    //States
+    private static final int STATE_DATE = 0;
+    private static final int STATE_DEVICE = 1;
+    private static final int STATE_ACTIVE = 2;
+
     //All of the binds
     @Bind(R.id.categoryButton)
     ImageButton categoryButton;
@@ -116,6 +121,7 @@ public class RepairHistoryFragment extends Fragment implements
         }
 
         //Set the click listener for the imagebutton
+        /*
         categoryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -141,6 +147,7 @@ public class RepairHistoryFragment extends Fragment implements
                 getActivity().invalidateOptionsMenu();
             }
         });
+        */
 
         //Set the click listener for the export button
         exportButton.setOnClickListener(this);
@@ -161,15 +168,28 @@ public class RepairHistoryFragment extends Fragment implements
                     categoryData = (String[]) categoryListView.getItemAtPosition(i);
                     Log.d("Repair History", String.format("Testing Click: %s, %s",categoryData[0], categoryData[1]));
                     if (categoryState) { //Date
+                        //
                         Log.d("Repair History", "Doing Date");
+                        Bundle args = new Bundle();
+                        args.putString("date",categoryData[0]);
+                        //
+                        /*
                         Bundle args = new Bundle();
                         args.putString("date",categoryData[0]);
                         categoryListView.setAdapter(sessionAdapter);
                         getLoaderManager().destroyLoader(SESSION_DEVICE_LOADER);
                         getLoaderManager().destroyLoader(SESSION_DATE_LOADER); //clear the loader so it's ready for new one
                         getLoaderManager().initLoader(SESSION_DATE_LOADER,args,temp);
+                        */
+
                     } else { //Device
+
                         Log.d("Repair History", "Doing Device");
+                        Bundle args = new Bundle();
+                        args.putString("id",device_map.get(categoryData[0]));
+                        //
+
+                        /*
                         Bundle args = new Bundle();
                         args.putString("id",device_map.get(categoryData[0]));
                         Log.d("Repair History",device_map.get(categoryData[0]));
@@ -177,6 +197,7 @@ public class RepairHistoryFragment extends Fragment implements
                         getLoaderManager().destroyLoader(SESSION_DATE_LOADER);
                         getLoaderManager().destroyLoader(SESSION_DEVICE_LOADER); //clear the loader so it's ready for new one
                         getLoaderManager().initLoader(SESSION_DEVICE_LOADER,args,temp);
+                        */
 
                     }
 
@@ -186,14 +207,16 @@ public class RepairHistoryFragment extends Fragment implements
                     //progressBar.setVisibility(View.VISIBLE);
 
                     //Make the categoryLayoutVisible
+                    /*
                     categoryLayout.setVisibility(View.VISIBLE);
                     categoryTextView.setText(categoryData[0]);
 
                     sorting = false;
                     getActivity().invalidateOptionsMenu();
+                    */
 
                 } else if (categoryListView.getAdapter().getClass().equals(SessionCursorAdapter.class)) {
-                    //Want to initiate a Session Activity just like in ResumeSessionFragment
+                    //Want to initiate a Session Activity just like in SessionListFragment
                     SessionListItemView sessionView = ((SessionListItemView) view);
                     Intent intent = new Intent(getContext(), SessionActivity.class);
                     // Get the non-stub chart and open

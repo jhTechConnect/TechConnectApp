@@ -30,10 +30,6 @@
             android:icon="@android:drawable/ic_menu_help"
             android:title="@string/guides" />
         <item
-            android:id="@+id/nav_resume_session"
-            android:icon="@android:drawable/ic_menu_agenda"
-            android:title="@string/resume_session" />
-        <item
             android:id="@+id/nav_repair_history"
             android:icon = "@drawable/ic_history_black_24dp"
             android:title = "@string/repair_history" />

@@ -37,7 +37,6 @@ import org.techconnect.fragments.CatalogFragment;
 import org.techconnect.fragments.DirectoryFragment;
 import org.techconnect.fragments.GuidesFragment;
 import org.techconnect.fragments.RepairHistoryFragment;
-import org.techconnect.fragments.ResumeSessionFragment;
 import org.techconnect.misc.ResourceHandler;
 import org.techconnect.misc.auth.AuthListener;
 import org.techconnect.misc.auth.AuthManager;
@@ -61,16 +60,15 @@ public class MainActivity extends AppCompatActivity
 
     public static final int FRAGMENT_CATALOG = 0;
     public static final int FRAGMENT_GUIDES = 1;
-    public static final int FRAGMENT_RESUME = 2;
-    public static final int FRAGMENT_HISTORY = 3;
-    public static final int FRAGMENT_DIRECTORY = 4;
+    public static final int FRAGMENT_HISTORY = 2;
+    public static final int FRAGMENT_DIRECTORY = 3;
     private static final int PERMISSIONS_REQUEST_READ_STORAGE = 1;
     private static final String SHOWN_TUTORIAL = "org.techconnect.prefs.shownturotial";
     private static final String USER_LEARNED_DRAWER = "org.techconnect.prefs.shownturotial.learneddrawer";
     private static final String ASKED_PERMISSION = "org.techconnect.prefs.shownturotial.askedpermission";
     private final Fragment[] FRAGMENTS = new Fragment[]{new CatalogFragment(),
-            new GuidesFragment(), new ResumeSessionFragment(), new RepairHistoryFragment(), new DirectoryFragment()};
-    private final int[] FRAGMENT_MENU_IDS = new int[]{R.id.nav_catalog, R.id.nav_guides, R.id.nav_resume_session, R.id.nav_repair_history, R.id.call_dir};
+            new GuidesFragment(), new RepairHistoryFragment(), new DirectoryFragment()};
+    private final int[] FRAGMENT_MENU_IDS = new int[]{R.id.nav_catalog, R.id.nav_guides, R.id.nav_repair_history, R.id.call_dir};
 
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout coordinatorLayout;
@@ -371,6 +369,15 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     public void setCurrentFragment(int frag) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (this.currentFragment != frag || this.currentFragment == -1) {
@@ -385,7 +392,6 @@ public class MainActivity extends AppCompatActivity
             navigationView.getMenu().findItem(FRAGMENT_MENU_IDS[frag]).setChecked(true);
         }
     }
-
 }
 
 
