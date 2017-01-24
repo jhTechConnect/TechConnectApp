@@ -139,7 +139,7 @@ public class SessionListActivity extends AppCompatActivity implements
             Log.d("SessionList Activity", "Initiate Cursor Loader for ACTIVE");
             return TCDatabaseHelper.get(this).getActiveSessionsCursorLoader();
         } else if (id == SESSION_FINISHED_LOADER) {
-            return null; //Replace with loader for all of the Finished sessions in the database
+            return TCDatabaseHelper.get(this).getFinishedSessionsCursorLoader();
         }
         return null;
     }

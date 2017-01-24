@@ -77,6 +77,7 @@ public class RepairHistoryFragment extends Fragment implements
     //Storage for list data
     private Map<String, Integer> deviceCounts = new HashMap<String,Integer>();
     private Map<String, Integer> dateCounts = new HashMap<String,Integer>();
+    private Map<String, Integer> activeCounts = new HashMap<String,Integer>();
 
     public RepairHistoryFragment() {
         // Required empty public constructor
@@ -144,7 +145,8 @@ public class RepairHistoryFragment extends Fragment implements
                         case STATE_ACTIVE:
                             Log.d("Repair History", "Doing Active");
                             args.putBoolean("status",categoryData[0].equals("Active"));
-                            intent.putExtra(SessionListActivity.EXTRA_LOADER,SessionListActivity.SESSION_ACTIVE_LOADER);
+                            intent.putExtra(SessionListActivity.EXTRA_LOADER,categoryData[0].equals("Active") ?
+                                    SessionListActivity.SESSION_ACTIVE_LOADER : SessionListActivity.SESSION_FINISHED_LOADER);
                             break;
                     }
                     intent.putExtra(SessionListActivity.EXTRA_TITLE,categoryData[0]);
@@ -214,9 +216,13 @@ public class RepairHistoryFragment extends Fragment implements
             Log.d("Repair History", String.format("Date: %s, Count: %d",comb,dateCounts.get(comb)));
         }
 
+        //Determine the number of active/finished sessions in the database
+        activeCounts = TCDatabaseHelper.get(this.getContext()).getActiveSessionsCounts();
+
         //Design an adpater to use a map<String, Integer> to make a ListView of the format desired
         dateAdapter.setBaseMap(dateCounts);
         deviceAdapter.setBaseMap(deviceCounts);
+        activeAdapter.setBaseMap(activeCounts);
     }
 
     @Override
