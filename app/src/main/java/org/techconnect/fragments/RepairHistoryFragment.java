@@ -1,15 +1,10 @@
 package org.techconnect.fragments;
 
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -31,12 +26,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.centum.techconnect.R;
-import org.techconnect.activities.SessionActivity;
+import org.techconnect.activities.SessionListActivity;
 import org.techconnect.adapters.CategoryListAdapter;
-import org.techconnect.adapters.SessionCursorAdapter;
 import org.techconnect.asynctasks.ExportHistoryAsyncTask;
 import org.techconnect.sql.TCDatabaseHelper;
-import org.techconnect.views.SessionListItemView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,13 +42,7 @@ import butterknife.ButterKnife;
  */
 public class RepairHistoryFragment extends Fragment implements
         View.OnClickListener,
-        TextWatcher,
-        LoaderManager.LoaderCallbacks<Cursor> {
-
-    //Loader Types
-    private static final int SESSION_DATE_LOADER = 0;
-    private static final int SESSION_DEVICE_LOADER = 1;
-    private static final int VIEW_SESSION_REQUEST = 2;
+        TextWatcher {
 
     //States
     private static final int STATE_DATE = 0;
@@ -80,13 +67,12 @@ public class RepairHistoryFragment extends Fragment implements
 
 
     //Adapters
-    private SessionCursorAdapter sessionAdapter;
     private CategoryListAdapter dateAdapter = new CategoryListAdapter();
     private CategoryListAdapter deviceAdapter = new CategoryListAdapter();
-    private boolean categoryState = true; //True == Date, False == Device
+    private CategoryListAdapter activeAdapter = new CategoryListAdapter();
+    private int categoryState = STATE_DATE;
     private String[] categoryData;
     private Map<String,String> device_map;
-    private boolean sorting = true; //Sorting between date and device
 
     //Storage for list data
     private Map<String, Integer> deviceCounts = new HashMap<String,Integer>();
@@ -103,8 +89,6 @@ public class RepairHistoryFragment extends Fragment implements
         View view = inflater.inflate(R.layout.fragment_repair_history, container, false);
         ButterKnife.bind(this, view);
 
-        //Startup the SessionCursor
-        sessionAdapter = new SessionCursorAdapter(this.getContext());
         //Load the map of Name -> Id
         device_map = TCDatabaseHelper.get(this.getContext()).getChartNamesAndIDs();
         //Determine the number of sessions associated with each device
@@ -120,46 +104,23 @@ public class RepairHistoryFragment extends Fragment implements
             exportButton.setVisibility(View.VISIBLE);
         }
 
-        //Set the click listener for the imagebutton
-        /*
-        categoryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sorting = true; //Bring back menu item
-                categoryLayout.setVisibility(View.GONE);
-                if (categoryState) {
-                    //Bring back the date list
-                    categoryListView.setAdapter(dateAdapter);
-                } else {
-                    //Bring back the device list
-                    categoryListView.setAdapter(deviceAdapter);
-                }
-                if (dateAdapter.getCount() == 0 || deviceAdapter.getCount() == 0) {
-                    exportButton.setVisibility(View.GONE);
-                    categoryListView.setVisibility(View.GONE);
-                    emptyTextView.setVisibility(View.VISIBLE);
-                } else {
-                    exportButton.setVisibility(View.VISIBLE);
-                    categoryListView.setVisibility(View.VISIBLE);
-                    emptyTextView.setVisibility(View.GONE);
-
-                }
-                getActivity().invalidateOptionsMenu();
-            }
-        });
-        */
-
         //Set the click listener for the export button
         exportButton.setOnClickListener(this);
 
         //Setup the ListView w/ adapter and itemClickListener
-        if (categoryState) {
-            categoryListView.setAdapter(dateAdapter);
-        } else {
-            categoryListView.setAdapter(deviceAdapter);
+        switch (categoryState) {
+            case STATE_DATE:
+                categoryListView.setAdapter(dateAdapter);
+                break;
+            case STATE_DEVICE:
+                categoryListView.setAdapter(deviceAdapter);
+                break;
+            case STATE_ACTIVE:
+                categoryListView.setAdapter(activeAdapter);
+                break;
+            default:
+                categoryListView.setAdapter(null);
         }
-
-        final LoaderManager.LoaderCallbacks<Cursor> temp = this; //Needed for listener
 
         categoryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -167,62 +128,28 @@ public class RepairHistoryFragment extends Fragment implements
                 if (categoryListView.getAdapter().getClass().equals(CategoryListAdapter.class)) {
                     categoryData = (String[]) categoryListView.getItemAtPosition(i);
                     Log.d("Repair History", String.format("Testing Click: %s, %s",categoryData[0], categoryData[1]));
-                    if (categoryState) { //Date
-                        //
-                        Log.d("Repair History", "Doing Date");
-                        Bundle args = new Bundle();
-                        args.putString("date",categoryData[0]);
-                        //
-                        /*
-                        Bundle args = new Bundle();
-                        args.putString("date",categoryData[0]);
-                        categoryListView.setAdapter(sessionAdapter);
-                        getLoaderManager().destroyLoader(SESSION_DEVICE_LOADER);
-                        getLoaderManager().destroyLoader(SESSION_DATE_LOADER); //clear the loader so it's ready for new one
-                        getLoaderManager().initLoader(SESSION_DATE_LOADER,args,temp);
-                        */
-
-                    } else { //Device
-
-                        Log.d("Repair History", "Doing Device");
-                        Bundle args = new Bundle();
-                        args.putString("id",device_map.get(categoryData[0]));
-                        //
-
-                        /*
-                        Bundle args = new Bundle();
-                        args.putString("id",device_map.get(categoryData[0]));
-                        Log.d("Repair History",device_map.get(categoryData[0]));
-                        categoryListView.setAdapter(sessionAdapter);
-                        getLoaderManager().destroyLoader(SESSION_DATE_LOADER);
-                        getLoaderManager().destroyLoader(SESSION_DEVICE_LOADER); //clear the loader so it's ready for new one
-                        getLoaderManager().initLoader(SESSION_DEVICE_LOADER,args,temp);
-                        */
-
+                    Bundle args = new Bundle();
+                    Intent intent = new Intent(getContext(), SessionListActivity.class);
+                    switch (categoryState) {
+                        case STATE_DATE:
+                            Log.d("Repair History", "Doing Date");
+                            args.putString("date",categoryData[0]);
+                            intent.putExtra(SessionListActivity.EXTRA_LOADER,SessionListActivity.SESSION_DATE_LOADER);
+                            break;
+                        case STATE_DEVICE:
+                            Log.d("Repair History", "Doing Device");
+                            args.putString("id",device_map.get(categoryData[0]));
+                            intent.putExtra(SessionListActivity.EXTRA_LOADER,SessionListActivity.SESSION_DEVICE_LOADER);
+                            break;
+                        case STATE_ACTIVE:
+                            Log.d("Repair History", "Doing Active");
+                            args.putBoolean("status",categoryData[0].equals("Active"));
+                            intent.putExtra(SessionListActivity.EXTRA_LOADER,SessionListActivity.SESSION_ACTIVE_LOADER);
+                            break;
                     }
-
-                    //Startup the ProgressBar
-                    //categoryListView.setVisibility(View.GONE);
-                    //exportButton.setVisibility(View.GONE);
-                    //progressBar.setVisibility(View.VISIBLE);
-
-                    //Make the categoryLayoutVisible
-                    /*
-                    categoryLayout.setVisibility(View.VISIBLE);
-                    categoryTextView.setText(categoryData[0]);
-
-                    sorting = false;
-                    getActivity().invalidateOptionsMenu();
-                    */
-
-                } else if (categoryListView.getAdapter().getClass().equals(SessionCursorAdapter.class)) {
-                    //Want to initiate a Session Activity just like in SessionListFragment
-                    SessionListItemView sessionView = ((SessionListItemView) view);
-                    Intent intent = new Intent(getContext(), SessionActivity.class);
-                    // Get the non-stub chart and open
-                    intent.putExtra(SessionActivity.EXTRA_SESSION,
-                            sessionView.getSession()); //Maybe? Not sure if this is a good idea
-                    startActivityForResult(intent,VIEW_SESSION_REQUEST);
+                    intent.putExtra(SessionListActivity.EXTRA_TITLE,categoryData[0]);
+                    intent.putExtra(SessionListActivity.EXTRA_ARGS,args);
+                    startActivity(intent);
                 }
             }
         });
@@ -240,53 +167,40 @@ public class RepairHistoryFragment extends Fragment implements
         if (getActivity() != null) {
             getActivity().setTitle(R.string.repair_history);
         }
+        updateCountAdapters();
 
-        if (sorting) { //High level
-            if (dateAdapter.getCount() == 0 || deviceAdapter.getCount() == 0) { //no data
-                emptyTextView.setVisibility(View.VISIBLE);
-                categoryListView.setVisibility(View.GONE);
-                exportButton.setVisibility(View.GONE);
-            } else {
-                emptyTextView.setVisibility(View.GONE);
-                categoryListView.setVisibility(View.VISIBLE);
-                exportButton.setVisibility(View.VISIBLE);
-            }
-        } else { //Dove into specific case
-            Log.d("Repair History", String.format("Specific Case check, %d", sessionAdapter.getCount()));
-            if (sessionAdapter.getCount() == 0) {
-                categoryListView.setVisibility(View.GONE);
-                emptyTextView.setVisibility(View.VISIBLE);
-            } else {
-                categoryListView.setVisibility(View.VISIBLE);
-                emptyTextView.setVisibility(View.GONE);
-            }
+        if (dateAdapter.getCount() == 0 || deviceAdapter.getCount() == 0) { //no data
+            emptyTextView.setVisibility(View.VISIBLE);
+            categoryListView.setVisibility(View.GONE);
+            exportButton.setVisibility(View.GONE);
+        } else {
+            emptyTextView.setVisibility(View.GONE);
+            categoryListView.setVisibility(View.VISIBLE);
+            exportButton.setVisibility(View.VISIBLE);
+        }
+
+        //Setup the ListView w/ adapter and itemClickListener
+        switch (categoryState) {
+            case STATE_DATE:
+                categoryListView.setAdapter(dateAdapter);
+                break;
+            case STATE_DEVICE:
+                categoryListView.setAdapter(deviceAdapter);
+                break;
+            case STATE_ACTIVE:
+                categoryListView.setAdapter(activeAdapter);
+                break;
+            default:
+                categoryListView.setAdapter(null);
         }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        //Here, we need to make sure we pause in the right way
-        sorting = true; //Makes sure we back out, but in the correct sorting
 
     }
 
-
-    private void refreshData() {
-        Log.d("Repair History", "Refresh Session List");
-        //Update the other adapters
-        updateCountAdapters();
-
-        if (categoryState) { //Date
-            Bundle args = new Bundle();
-            args.putString("date",categoryData[0]);
-            getLoaderManager().restartLoader(SESSION_DATE_LOADER,args,this);
-        } else {
-            Bundle args = new Bundle();
-            args.putString("id",device_map.get(categoryData[0]));
-            getLoaderManager().restartLoader(SESSION_DEVICE_LOADER,args,this);
-        }
-    }
 
     private void updateCountAdapters() {
         for (String dev : device_map.keySet()) {
@@ -303,7 +217,6 @@ public class RepairHistoryFragment extends Fragment implements
         //Design an adpater to use a map<String, Integer> to make a ListView of the format desired
         dateAdapter.setBaseMap(dateCounts);
         deviceAdapter.setBaseMap(deviceCounts);
-
     }
 
     @Override
@@ -330,20 +243,23 @@ public class RepairHistoryFragment extends Fragment implements
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.activity_main_toolbar_menu, menu);
         MenuItem item = menu.findItem(R.id.action_sort);
-        if (sorting) {
-            item.setVisible(true);
-            //Select correct button
-            if (categoryState) { //Date
+        item.setVisible(true);
+
+        switch (categoryState) { //Date
+            case STATE_DATE:
                 //Initially, will have date be the initial way to sort the sessions
                 item.getSubMenu().findItem(R.id.date_item).setChecked(true);
-            } else {
-                //Initially, will have date be the initial way to sort the sessions
+                categoryState = STATE_DATE;
+                break;
+            case STATE_DEVICE:
                 item.getSubMenu().findItem(R.id.device_item).setChecked(true);
-            }
-        } else {
-            item.setVisible(false);
+                categoryState = STATE_DEVICE;
+                break;
+            case STATE_ACTIVE:
+                item.getSubMenu().findItem(R.id.active_item).setChecked(true);
+                categoryState = STATE_ACTIVE;
+                break;
         }
-
     }
 
     @Override
@@ -357,84 +273,22 @@ public class RepairHistoryFragment extends Fragment implements
             case R.id.date_item:
                 Log.d("Repair History","DATE");
                 setAdapter(dateAdapter);
-                categoryState = true;
+                categoryState = STATE_DATE;
                 break;
             case R.id.device_item:
                 Log.d("Repair History","DEVICE");
                 setAdapter(deviceAdapter);
-                categoryState = false;
+                categoryState = STATE_DEVICE;
                 break;
-            case R.id.action_sort:
-                Log.d("Repair History","SORT");
+            case R.id.active_item:
+                Log.d("Repair History","ACTIVE");
+                setAdapter(activeAdapter);
+                categoryState = STATE_ACTIVE;
                 break;
-            default:
-                Log.d("Repair History","DEVICE");
-                //categoryAdapter.setBaseMap(null);
         }
 
 
         return true;
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        //Startup the ProgressBar
-        categoryListView.setVisibility(View.GONE);
-        exportButton.setVisibility(View.GONE);
-        progressBar.setVisibility(View.VISIBLE);
-
-        if (id == SESSION_DATE_LOADER) {
-            Log.d("Repair Session", "Initiate Cursor Loader for DATE");
-            return TCDatabaseHelper.get(this.getContext()).getSessionsFromDateCursorLoader(args.getString("date"));
-        } else if (id == SESSION_DEVICE_LOADER) {
-            Log.d("Repair Session", "Initiate Cursor Loader for DEVICE");
-            return TCDatabaseHelper.get(this.getContext()).getSessionsFromChartCursorLoader(args.getString("id"));
-        }
-        return null;
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        sessionAdapter.swapCursor(data);
-        sessionAdapter.notifyDataSetChanged();
-
-        Log.d("Repair Session", "Made it through loader");
-        //Have a bit of a delay to ensure the progressBar doesn't mess with UI
-
-        Runnable r = new Runnable() {
-                @Override
-                public void run() {
-                    progressBar.setVisibility(View.GONE);
-                    if (sorting) { //High level
-                        if (dateAdapter.getCount() == 0 || deviceAdapter.getCount() == 0) { //no data
-                            emptyTextView.setVisibility(View.VISIBLE);
-                            categoryListView.setVisibility(View.GONE);
-                            exportButton.setVisibility(View.GONE);
-                        } else {
-                            emptyTextView.setVisibility(View.GONE);
-                            categoryListView.setVisibility(View.VISIBLE);
-                            exportButton.setVisibility(View.VISIBLE);
-                        }
-                    } else { //Dove into specific case
-                        Log.d("Repair History", String.format("Specific Case check, %d", sessionAdapter.getCount()));
-                        if (sessionAdapter.getCount() == 0) {
-                            categoryListView.setVisibility(View.GONE);
-                            emptyTextView.setVisibility(View.VISIBLE);
-                        } else {
-                            categoryListView.setVisibility(View.VISIBLE);
-                            emptyTextView.setVisibility(View.GONE);
-                        }
-                    }
-                }
-            };
-        Handler h = new Handler();
-        h.postDelayed(r, 500);
-
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-
     }
 
     @Override
@@ -500,18 +354,6 @@ public class RepairHistoryFragment extends Fragment implements
             });
 
         }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == VIEW_SESSION_REQUEST) {
-            if (resultCode == Activity.RESULT_CANCELED) {
-                //Need to update listview
-                refreshData();
-            }
-        }
-
     }
 }
 
