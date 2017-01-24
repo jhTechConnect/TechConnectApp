@@ -32,7 +32,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class GuidesFragment extends Fragment
+public class  GuidesFragment extends Fragment
         implements SwipeRefreshLayout.OnRefreshListener,
         View.OnClickListener,
         TextWatcher,
