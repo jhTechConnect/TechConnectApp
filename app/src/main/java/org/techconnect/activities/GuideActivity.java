@@ -7,8 +7,10 @@ import android.os.ResultReceiver;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -25,6 +27,7 @@ import org.techconnect.model.FlowChart;
 import org.techconnect.services.TCService;
 import org.techconnect.sql.TCDatabaseHelper;
 import org.techconnect.views.CommentsResourcesTabbedView;
+import org.techconnect.views.ThumbFeedbackView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -48,6 +51,7 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
     @Bind(R.id.scrollView)
     ScrollView scrollView;
     CommentsResourcesTabbedView commentsResourcesTabbedView;
+    ThumbFeedbackView thumbFeedbackView;
     private FlowChart flowChart;
     private boolean inDB = true;
     private boolean downloadingChart = false;
@@ -61,6 +65,13 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         commentsResourcesTabbedView = (CommentsResourcesTabbedView) getLayoutInflater()
                 .inflate(R.layout.comments_resources_tabbed_view, contentLinearLayout, false);
+        thumbFeedbackView = (ThumbFeedbackView) getLayoutInflater().inflate(R.layout.view_thumbfeedback,contentLinearLayout,false);
+        //Add Thumb up/down view prior to the tabbed view
+        contentLinearLayout.addView(thumbFeedbackView);
+        View ruler = new View(this);
+        ruler.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+        contentLinearLayout.addView(ruler,
+                new ViewGroup.LayoutParams( ViewGroup.LayoutParams.FILL_PARENT, 2));
         contentLinearLayout.addView(commentsResourcesTabbedView);
         swipeRefreshLayout.setOnRefreshListener(this);
         scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
@@ -82,6 +93,9 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
         if (getIntent() != null && getIntent().hasExtra(EXTRA_ALLOW_REFRESH)) {
             swipeRefreshLayout.setEnabled(getIntent().getBooleanExtra(EXTRA_ALLOW_REFRESH, true));
         }
+
+        //Use the flowchart to determine the number of up vs. down votes
+        thumbFeedbackView.setUpCount(flowChart.getScore());
     }
 
     private void checkDBForFlowchart() {
@@ -188,5 +202,14 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
                 }
             });
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("Guide Activity", "Pause");
+        //Check to see whether the chart feedback changed during activity and update server
+        //Use TCNetworkHelper.postFeedback(flowchart.getId(), vote, AuthManager.get(this).getAuth())
+        // to post feedback. This function is likely going to change as we update the endpoints
     }
 }
