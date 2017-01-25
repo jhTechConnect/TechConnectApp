@@ -36,7 +36,7 @@
         <item
             android:id="@+id/call_dir"
             android:icon="@android:drawable/ic_menu_call"
-            android:title="@string/call_directory" />
+            android:title="@string/directory" />
     </group>
 
     <group

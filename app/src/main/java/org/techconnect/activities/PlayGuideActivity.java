@@ -160,12 +160,16 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
             //Need to check that all fields are filled out
             if (TextUtils.isEmpty(departmentEditText.getText().toString())) {
                 departmentEditText.setError(getString(R.string.required_fields));
+                departmentEditText.requestFocus();
             } else if (TextUtils.isEmpty(manufacturerEditText.getText().toString())) {
                 manufacturerEditText.setError(getString(R.string.required_fields));
+                manufacturerEditText.requestFocus();
             } else if (TextUtils.isEmpty(modelEditText.getText().toString())) {
                 modelEditText.setError(getString(R.string.required_fields));
+                modelEditText.requestFocus();
             } else if (TextUtils.isEmpty(serialEditText.getText().toString())) {
                 serialEditText.setError(getString(R.string.required_fields));
+                serialEditText.requestFocus();
             } else { //All necessary entries are filled
                 session = new Session(flowChart);
                 session.setManufacturer(manufacturerEditText.getText().toString());
