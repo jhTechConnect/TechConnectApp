@@ -7,7 +7,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.centum.techconnect.R;
@@ -33,6 +35,8 @@ public class SessionActivity extends AppCompatActivity {
     public static final int SESSION_STABLE = 3;
     public static final int SESSION_RESUME = 1;
     //Bind all of the editable text views relevant to the session
+    @Bind(R.id.sessionScrollView)
+    ScrollView sessionScrollView;
     @Bind(R.id.manufacturer_textView)
     TextView manufacturerTextView;
     @Bind(R.id.model_textView)
@@ -96,6 +100,10 @@ public class SessionActivity extends AppCompatActivity {
                 finishedDateTextView.setText(new SimpleDateFormat("MM/dd/yyyy, HH:mm:ss").format(new Date(session.getFinishedDate())));
                 stepHeader.setVisibility(View.GONE);
                 stepTextView.setVisibility(View.GONE);
+                //Update the height of the scrollview to fill the screen
+                ViewGroup.LayoutParams params = sessionScrollView.getLayoutParams();
+                params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                sessionScrollView.setLayoutParams(params);
             }
 
         } else {
@@ -146,6 +154,14 @@ public class SessionActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 }).show();
+    }
+
+    @Override
+    public void onResume() {
+        //Reload the session from the Database, hopefull don't need a cursor loader
+        super.onResume();
+        session = TCDatabaseHelper.get(this).getSession(session.getId(),this);
+        updateViews();
     }
 
     @Override
