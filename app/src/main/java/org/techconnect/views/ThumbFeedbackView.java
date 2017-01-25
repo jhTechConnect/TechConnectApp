@@ -2,7 +2,6 @@ package org.techconnect.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -16,7 +15,7 @@ import butterknife.ButterKnife;
  * Created by doranwalsten on 1/24/17.
  */
 
-public class ThumbFeedbackView extends RelativeLayout implements View.OnClickListener {
+public class ThumbFeedbackView extends RelativeLayout {
 
     //UI Objects
     @Bind(R.id.upThumbButton)
@@ -32,6 +31,7 @@ public class ThumbFeedbackView extends RelativeLayout implements View.OnClickLis
     private int upCount = 0;
     private int downCount = 0;
     private int currentState = 0; //Neutral to start
+    private boolean active = true; //Active to start
 
     //Status
     public static final int STATE_NEUTRAL = 0;
@@ -57,9 +57,6 @@ public class ThumbFeedbackView extends RelativeLayout implements View.OnClickLis
         super.onFinishInflate();
         ButterKnife.bind(this);
         updateViews();
-
-        upThumbButton.setOnClickListener(this);
-        downThumbButton.setOnClickListener(this);
     }
 
 
@@ -67,22 +64,27 @@ public class ThumbFeedbackView extends RelativeLayout implements View.OnClickLis
         downCountTextView.setText(String.format("%d",downCount));
         upCountTextView.setText(String.format("%d",upCount));
 
-        switch(currentState) {
-            case STATE_NEUTRAL:
-                //Make sure border icon is used
-                downThumbButton.setImageResource(R.drawable.ic_thumb_down_border_24dp);
-                upThumbButton.setImageResource(R.drawable.ic_thumb_up_border_24dp);
-                break;
-            case STATE_UP:
-                //Make sure green icon is used for up, border used for down
-                upThumbButton.setImageResource(R.drawable.ic_thumb_up_primary_24dp);
-                downThumbButton.setImageResource(R.drawable.ic_thumb_down_border_24dp);
-                break;
-            case STATE_DOWN:
-                //make sure green icon is used for down, border used for up
-                upThumbButton.setImageResource(R.drawable.ic_thumb_up_border_24dp);
-                downThumbButton.setImageResource(R.drawable.ic_thumb_down_primary_24dp);
-                break;
+        if (active) {
+            switch (currentState) {
+                case STATE_NEUTRAL:
+                    //Make sure border icon is used
+                    downThumbButton.setImageResource(R.drawable.ic_thumb_down_border_24dp);
+                    upThumbButton.setImageResource(R.drawable.ic_thumb_up_border_24dp);
+                    break;
+                case STATE_UP:
+                    //Make sure green icon is used for up, border used for down
+                    upThumbButton.setImageResource(R.drawable.ic_thumb_up_primary_24dp);
+                    downThumbButton.setImageResource(R.drawable.ic_thumb_down_border_24dp);
+                    break;
+                case STATE_DOWN:
+                    //make sure green icon is used for down, border used for up
+                    upThumbButton.setImageResource(R.drawable.ic_thumb_up_border_24dp);
+                    downThumbButton.setImageResource(R.drawable.ic_thumb_down_primary_24dp);
+                    break;
+            }
+        } else {
+            downThumbButton.setImageResource(R.drawable.ic_thumb_down_border_24dp);
+            upThumbButton.setImageResource(R.drawable.ic_thumb_up_border_24dp);
         }
     }
 
@@ -116,46 +118,11 @@ public class ThumbFeedbackView extends RelativeLayout implements View.OnClickLis
         updateViews();
     }
 
-    @Override
-    public void onClick(View view) {
-        if (view.getId() == R.id.upThumbButton) {
-            //Check to see what current state is
-            switch(currentState) {
-                case STATE_NEUTRAL:
-                    upThumbButton.setImageResource(R.drawable.ic_thumb_up_primary_24dp);
-                    currentState = STATE_UP;
-                    break;
-                case STATE_UP:
-                    //Make sure green icon is used for up, border used for down
-                    upThumbButton.setImageResource(R.drawable.ic_thumb_up_border_24dp);
-                    currentState = STATE_NEUTRAL;
-                    break;
-                case STATE_DOWN:
-                    //make sure green icon is used for down, border used for up
-                    upThumbButton.setImageResource(R.drawable.ic_thumb_up_primary_24dp);
-                    downThumbButton.setImageResource(R.drawable.ic_thumb_down_border_24dp);
-                    currentState = STATE_UP;
-                    break;
-            }
-        } else if (view.getId() == R.id.downThumbButton) {
-            switch(currentState) {
-                case STATE_NEUTRAL:
-                    downThumbButton.setImageResource(R.drawable.ic_thumb_down_primary_24dp);
-                    currentState = STATE_DOWN;
-                    break;
-                case STATE_UP:
-                    //Make sure green icon is used for up, border used for down
-                    upThumbButton.setImageResource(R.drawable.ic_thumb_up_border_24dp);
-                    downThumbButton.setImageResource(R.drawable.ic_thumb_down_primary_24dp);
-                    currentState = STATE_DOWN;
-                    break;
-                case STATE_DOWN:
-                    //make sure green icon is used for down, border used for up
-                    downThumbButton.setImageResource(R.drawable.ic_thumb_down_border_24dp);
-                    currentState = STATE_NEUTRAL;
-                    break;
-            }
-        }
+    public boolean isActive() {
+        return active;
+    }
 
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

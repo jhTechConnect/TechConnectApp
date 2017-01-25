@@ -1,10 +1,12 @@
 package org.techconnect.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -23,6 +25,7 @@ import com.squareup.picasso.Picasso;
 import org.centum.techconnect.R;
 import org.techconnect.analytics.FirebaseEvents;
 import org.techconnect.misc.ResourceHandler;
+import org.techconnect.misc.auth.AuthManager;
 import org.techconnect.model.FlowChart;
 import org.techconnect.services.TCService;
 import org.techconnect.sql.TCDatabaseHelper;
@@ -33,7 +36,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, View.OnClickListener {
 
     public static String EXTRA_CHART = "org.techconnect.guideactivity.flowchart";
     public static String EXTRA_ALLOW_REFRESH = "org.techconnect.guideactivity.allow_refresh";
@@ -65,7 +68,12 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         commentsResourcesTabbedView = (CommentsResourcesTabbedView) getLayoutInflater()
                 .inflate(R.layout.comments_resources_tabbed_view, contentLinearLayout, false);
+
         thumbFeedbackView = (ThumbFeedbackView) getLayoutInflater().inflate(R.layout.view_thumbfeedback,contentLinearLayout,false);
+        thumbFeedbackView.setOnClickListener(this);
+        if (!AuthManager.get(this).hasAuth()) { //If not logged in, want to make sure you can't vote or comment
+            thumbFeedbackView.setActive(false);
+        }
         //Add Thumb up/down view prior to the tabbed view
         contentLinearLayout.addView(thumbFeedbackView);
         View ruler = new View(this);
@@ -205,11 +213,81 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        //Check to see if login status has changed, update Feedback bar approprioately
+        if (AuthManager.get(this).hasAuth()) {
+            thumbFeedbackView.setActive(true);
+        }
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         Log.d("Guide Activity", "Pause");
         //Check to see whether the chart feedback changed during activity and update server
         //Use TCNetworkHelper.postFeedback(flowchart.getId(), vote, AuthManager.get(this).getAuth())
         // to post feedback. This function is likely going to change as we update the endpoints
+    }
+
+    @Override
+    public void onClick(View view) {
+
+    }
+
+    /**
+     * Use this method to handle clicks of the buttons in the ThumbFeedbackView
+     * @param view
+     */
+    public void onFeedbackClick(View view) {
+        if (thumbFeedbackView.isActive()) {
+            if (view.getId() == R.id.upThumbButton) {
+                //Check to see what current state is
+                switch (thumbFeedbackView.getCurrentState()) {
+                    case ThumbFeedbackView.STATE_NEUTRAL:
+                        thumbFeedbackView.setCurrentState(ThumbFeedbackView.STATE_UP);
+                        break;
+                    case ThumbFeedbackView.STATE_UP:
+                        //Make sure green icon is used for up, border used for down
+                        thumbFeedbackView.setCurrentState(ThumbFeedbackView.STATE_NEUTRAL);
+                        break;
+                    case ThumbFeedbackView.STATE_DOWN:
+                        //make sure green icon is used for down, border used for up
+                        thumbFeedbackView.setCurrentState(ThumbFeedbackView.STATE_UP);
+                        break;
+                }
+            } else if (view.getId() == R.id.downThumbButton) {
+                switch (thumbFeedbackView.getCurrentState()) {
+                    case ThumbFeedbackView.STATE_NEUTRAL:
+                        thumbFeedbackView.setCurrentState(ThumbFeedbackView.STATE_DOWN);
+                        break;
+                    case ThumbFeedbackView.STATE_UP:
+                        thumbFeedbackView.setCurrentState(ThumbFeedbackView.STATE_DOWN);
+                        break;
+                    case ThumbFeedbackView.STATE_DOWN:
+                        //make sure green icon is used for down, border used for up
+                        thumbFeedbackView.setCurrentState(ThumbFeedbackView.STATE_NEUTRAL);
+                        break;
+                }
+            }
+        } else {
+            Log.d("Guide Activity", "Would activate alert dialog");
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Please Sign in to Vote");
+            builder.setPositiveButton(R.string.action_sign_in, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Intent intent = new Intent(GuideActivity.this,LoginActivity.class);
+                    startActivity(intent);
+                }
+            });
+            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                }
+            });
+            builder.create().show();
+        }
     }
 }
