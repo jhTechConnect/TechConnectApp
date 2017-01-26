@@ -27,6 +27,7 @@ import org.techconnect.analytics.FirebaseEvents;
 import org.techconnect.misc.ResourceHandler;
 import org.techconnect.misc.auth.AuthManager;
 import org.techconnect.model.FlowChart;
+import org.techconnect.model.User;
 import org.techconnect.services.TCService;
 import org.techconnect.sql.TCDatabaseHelper;
 import org.techconnect.views.CommentsResourcesTabbedView;
@@ -39,6 +40,7 @@ import butterknife.OnClick;
 public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, View.OnClickListener {
 
     public static String EXTRA_CHART = "org.techconnect.guideactivity.flowchart";
+    public static String EXTRA_USER = "org.techconnect.guideactivity.user";
     public static String EXTRA_ALLOW_REFRESH = "org.techconnect.guideactivity.allow_refresh";
 
     @Bind(R.id.content_linearLayout)
@@ -56,6 +58,7 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
     CommentsResourcesTabbedView commentsResourcesTabbedView;
     ThumbFeedbackView thumbFeedbackView;
     private FlowChart flowChart;
+    private User user;
     private boolean inDB = true;
     private boolean downloadingChart = false;
 
@@ -66,14 +69,15 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
         ButterKnife.bind(this);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
         commentsResourcesTabbedView = (CommentsResourcesTabbedView) getLayoutInflater()
                 .inflate(R.layout.comments_resources_tabbed_view, contentLinearLayout, false);
 
         thumbFeedbackView = (ThumbFeedbackView) getLayoutInflater().inflate(R.layout.view_thumbfeedback,contentLinearLayout,false);
         thumbFeedbackView.setOnClickListener(this);
-        if (!AuthManager.get(this).hasAuth()) { //If not logged in, want to make sure you can't vote or comment
-            thumbFeedbackView.setActive(false);
-        }
+
+
         //Add Thumb up/down view prior to the tabbed view
         contentLinearLayout.addView(thumbFeedbackView);
         View ruler = new View(this);
@@ -92,7 +96,6 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
                 }
             }
         });
-
         if (getIntent() != null && getIntent().hasExtra(EXTRA_CHART)) {
             flowChart = getIntent().getParcelableExtra(EXTRA_CHART);
             FirebaseEvents.logViewGuide(this, flowChart);
@@ -101,6 +104,21 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
         if (getIntent() != null && getIntent().hasExtra(EXTRA_ALLOW_REFRESH)) {
             swipeRefreshLayout.setEnabled(getIntent().getBooleanExtra(EXTRA_ALLOW_REFRESH, true));
         }
+
+        if (getIntent() != null && getIntent().hasExtra(EXTRA_USER)) {
+            user = getIntent().getParcelableExtra(EXTRA_USER);
+            thumbFeedbackView.setActive(true);
+            if (user.hasUpVoted(flowChart.getId())) {
+                thumbFeedbackView.setCurrentState(ThumbFeedbackView.STATE_UP);
+            } else if (user.hasDownVoted(flowChart.getId())) {
+                thumbFeedbackView.setCurrentState(ThumbFeedbackView.STATE_DOWN);
+            } else {
+                thumbFeedbackView.setCurrentState(ThumbFeedbackView.STATE_NEUTRAL);
+            }
+        } else {
+            thumbFeedbackView.setActive(false);
+        }
+
 
         //Use the flowchart to determine the number of up vs. down votes
         thumbFeedbackView.setUpCount(flowChart.getScore());
@@ -138,6 +156,7 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
         }
         descriptionTextView.setText(flowChart.getDescription());
         commentsResourcesTabbedView.setItems(flowChart, flowChart.getResources(), flowChart.getId());
+        thumbFeedbackView.setUpCount(flowChart.getScore());
         updateHeaderImage();
     }
 
@@ -228,6 +247,9 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
         //Check to see whether the chart feedback changed during activity and update server
         //Use TCNetworkHelper.postFeedback(flowchart.getId(), vote, AuthManager.get(this).getAuth())
         // to post feedback. This function is likely going to change as we update the endpoints
+
+        //First, we try to update the user in the local database
+        TCDatabaseHelper.get(this).upsertUser(user);
     }
 
     @Override
@@ -242,33 +264,11 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
     public void onFeedbackClick(View view) {
         if (thumbFeedbackView.isActive()) {
             if (view.getId() == R.id.upThumbButton) {
-                //Check to see what current state is
-                switch (thumbFeedbackView.getCurrentState()) {
-                    case ThumbFeedbackView.STATE_NEUTRAL:
-                        thumbFeedbackView.setCurrentState(ThumbFeedbackView.STATE_UP);
-                        break;
-                    case ThumbFeedbackView.STATE_UP:
-                        //Make sure green icon is used for up, border used for down
-                        thumbFeedbackView.setCurrentState(ThumbFeedbackView.STATE_NEUTRAL);
-                        break;
-                    case ThumbFeedbackView.STATE_DOWN:
-                        //make sure green icon is used for down, border used for up
-                        thumbFeedbackView.setCurrentState(ThumbFeedbackView.STATE_UP);
-                        break;
-                }
+                user.upVote(flowChart.getId());
+                thumbFeedbackView.upVote();
             } else if (view.getId() == R.id.downThumbButton) {
-                switch (thumbFeedbackView.getCurrentState()) {
-                    case ThumbFeedbackView.STATE_NEUTRAL:
-                        thumbFeedbackView.setCurrentState(ThumbFeedbackView.STATE_DOWN);
-                        break;
-                    case ThumbFeedbackView.STATE_UP:
-                        thumbFeedbackView.setCurrentState(ThumbFeedbackView.STATE_DOWN);
-                        break;
-                    case ThumbFeedbackView.STATE_DOWN:
-                        //make sure green icon is used for down, border used for up
-                        thumbFeedbackView.setCurrentState(ThumbFeedbackView.STATE_NEUTRAL);
-                        break;
-                }
+                user.downVote(flowChart.getId());
+                thumbFeedbackView.downVote();
             }
         } else {
             Log.d("Guide Activity", "Would activate alert dialog");
@@ -289,5 +289,13 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
             });
             builder.create().show();
         }
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

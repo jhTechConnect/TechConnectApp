@@ -21,6 +21,8 @@ public class TCDatabaseContract {
         public static final String ORGANIZATION = "organization";
         public static final String PIC = "pic";
         public static final String EXPERTISES = "expertises";
+        public static final String UPCHARTS  = "upCharts";
+        public static final String DOWNCHARTS = "downCharts";
         // Create the users table
         public static final String CREATE_USER_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
                 ID + " TEXT PRIMARY KEY NOT NULL UNIQUE," +
@@ -30,7 +32,9 @@ public class TCDatabaseContract {
                 COUNTRY + " TEXT," +
                 ORGANIZATION + " TEXT," +
                 PIC + " TEXT," +
-                EXPERTISES + " TEXT);";
+                EXPERTISES + " TEXT," +
+                UPCHARTS + " TEXT," +
+                DOWNCHARTS + " TEXT);";
     }
 
     /**

@@ -30,6 +30,8 @@ public class User implements Parcelable, Cloneable {
     private String organization;
     private String pic;
     private List<String> expertises;
+    private List<String> upCharts;
+    private List<String> downCharts;
 
     public User() {
     }
@@ -43,6 +45,48 @@ public class User implements Parcelable, Cloneable {
         organization = in.readString();
         pic = in.readString();
         expertises = in.createStringArrayList();
+        upCharts = in.createStringArrayList();
+        downCharts = in.createStringArrayList();
+}
+
+    //Methods to determine if user likes a chart
+    public boolean hasUpVoted(String id) {
+        return upCharts.contains(id);
+    }
+
+    public boolean hasDownVoted(String id) {
+        return downCharts.contains(id);
+    }
+
+    //Methods to up or downvote
+    public boolean upVote(String id) {
+        if (!upCharts.contains(id) && downCharts.contains(id)) {
+            upCharts.add(id);
+            downCharts.remove(id);
+            return true;
+        } else if (!upCharts.contains(id) && !downCharts.contains(id)) {
+            upCharts.add(id);
+            return true;
+        } else if (upCharts.contains(id)) {
+            upCharts.remove(id);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean downVote(String id) {
+        if (upCharts.contains(id) && !downCharts.contains(id)) {
+            upCharts.remove(id);
+            downCharts.add(id);
+            return true;
+        } else if (!upCharts.contains(id) && !downCharts.contains(id)) {
+            downCharts.add(id);
+            return true;
+        } else if (downCharts.contains(id)) {
+            downCharts.remove(id);
+            return true;
+        }
+        return false;
     }
 
     public String get_id() {
@@ -140,5 +184,23 @@ public class User implements Parcelable, Cloneable {
         parcel.writeString(organization);
         parcel.writeString(pic);
         parcel.writeStringList(expertises);
+        parcel.writeStringList(upCharts);
+        parcel.writeStringList(downCharts);
+    }
+
+    public List<String> getUpCharts() {
+        return upCharts;
+    }
+
+    public void setUpCharts(List<String> upCharts) {
+        this.upCharts = upCharts;
+    }
+
+    public List<String> getDownCharts() {
+        return downCharts;
+    }
+
+    public void setDownCharts(List<String> downCharts) {
+        this.downCharts = downCharts;
     }
 }

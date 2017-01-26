@@ -110,6 +110,8 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(TCDatabaseContract.UserEntry.ORGANIZATION, user.getOrganization());
         contentValues.put(TCDatabaseContract.UserEntry.PIC, user.getPic());
         contentValues.put(TCDatabaseContract.UserEntry.EXPERTISES, TextUtils.join(",", user.getExpertises()));
+        contentValues.put(TCDatabaseContract.UserEntry.UPCHARTS, TextUtils.join(",", user.getUpCharts()));
+        contentValues.put(TCDatabaseContract.UserEntry.DOWNCHARTS, TextUtils.join(",", user.getDownCharts()));
         getWritableDatabase().insertWithOnConflict(TCDatabaseContract.UserEntry.TABLE_NAME, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
@@ -135,6 +137,18 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             user.setExpertises(new ArrayList<String>(0));
         } else {
             user.setExpertises(Arrays.asList(expertises.split(",")));
+        }
+        String upCharts = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.UPCHARTS));
+        if (TextUtils.isEmpty(upCharts.trim())) {
+            user.setUpCharts(new ArrayList<String>(0));
+        } else {
+            user.setUpCharts(Arrays.asList(upCharts.split(",")));
+        }
+        String downCharts = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.DOWNCHARTS));
+        if (TextUtils.isEmpty(downCharts.trim())) {
+            user.setDownCharts(new ArrayList<String>(0));
+        } else {
+            user.setDownCharts(Arrays.asList(downCharts.split(",")));
         }
         c.close();
         return user;
@@ -162,6 +176,18 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
                 user.setExpertises(new ArrayList<String>(0));
             } else {
                 user.setExpertises(Arrays.asList(expertises.split(",")));
+            }
+            String upCharts = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.UPCHARTS));
+            if (TextUtils.isEmpty(upCharts.trim())) {
+                user.setUpCharts(new ArrayList<String>(0));
+            } else {
+                user.setUpCharts(Arrays.asList(upCharts.split(",")));
+            }
+            String downCharts = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.DOWNCHARTS));
+            if (TextUtils.isEmpty(downCharts.trim())) {
+                user.setDownCharts(new ArrayList<String>(0));
+            } else {
+                user.setDownCharts(Arrays.asList(downCharts.split(",")));
             }
             users.add(user);
             c.moveToNext();
