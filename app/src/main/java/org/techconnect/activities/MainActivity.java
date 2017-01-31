@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.ResultReceiver;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -42,7 +40,6 @@ import org.techconnect.misc.auth.AuthListener;
 import org.techconnect.misc.auth.AuthManager;
 import org.techconnect.model.User;
 import org.techconnect.model.UserAuth;
-import org.techconnect.services.TCService;
 import org.techconnect.sql.TCDatabaseHelper;
 
 import java.util.ArrayList;
@@ -229,20 +226,6 @@ public class MainActivity extends AppCompatActivity
         return havePermission;
     }
 
-    private void updateResources() {
-        loadingLayout.setVisibility(View.VISIBLE);
-        String ids[] = TCDatabaseHelper.get(this).getAllChartIds();
-        TCService.startLoadCharts(this, ids, new ResultReceiver(new Handler()) {
-            @Override
-            protected void onReceiveResult(int resultCode, Bundle resultData) {
-                loadingLayout.setVisibility(View.GONE);
-                if (currentFragment == FRAGMENT_GUIDES) {
-                    ((GuidesFragment) FRAGMENTS[FRAGMENT_GUIDES]).onRefresh();
-                }
-            }
-        });
-    }
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -280,11 +263,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
         if (newFragIndex == -1) {
-            if (id == R.id.nav_refresh) {
-                updateResources();
-                drawer.closeDrawer(GravityCompat.START);
-                return true;
-            } else if (id == R.id.nav_view_tut) {
+            if (id == R.id.nav_view_tut) {
                 startActivity(new Intent(this, IntroTutorial.class));
                 drawer.closeDrawer(GravityCompat.START);
                 return true;

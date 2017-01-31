@@ -320,6 +320,8 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         chart.setImage(c.getString(c.getColumnIndexOrThrow(ChartEntry.IMAGE)));
         chart.setType(FlowChart.ChartType.valueOf(c.getString(c.getColumnIndexOrThrow(ChartEntry.TYPE))));
         chart.setScore(c.getInt(c.getColumnIndexOrThrow(ChartEntry.SCORE)));
+        chart.setUpvotes(c.getInt(c.getColumnIndexOrThrow(ChartEntry.UPVOTES)));
+        chart.setDownvotes(c.getInt(c.getColumnIndexOrThrow(ChartEntry.DOWNVOTES)));
         return chart;
     }
 
@@ -427,6 +429,8 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
 
         chartContentValues.put(ChartEntry.TYPE, flowChart.getType().toString());
         chartContentValues.put(ChartEntry.SCORE, flowChart.getScore());
+        chartContentValues.put(ChartEntry.UPVOTES, flowChart.getUpvotes());
+        chartContentValues.put(ChartEntry.SCORE, flowChart.getDownvotes());
         return chartContentValues;
     }
 
