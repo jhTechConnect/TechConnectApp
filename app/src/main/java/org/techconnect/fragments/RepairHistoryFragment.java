@@ -1,11 +1,9 @@
 package org.techconnect.fragments;
 
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -17,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -300,65 +297,9 @@ public class RepairHistoryFragment extends Fragment implements
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.exportButton) {
-            //Open Dialog Box to get email
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-            LayoutInflater inflater = getActivity().getLayoutInflater();
-            builder.setTitle(R.string.export_repair_history);
-            builder.setMessage("Send History to Email");
-            View v = inflater.inflate(R.layout.dialog_fragment_export_history,null);
-            builder.setView(v);
-
-            final EditText email = (EditText) v.findViewById(R.id.comments_editText);
-
-            builder.setPositiveButton(R.string.send, new DialogInterface.OnClickListener()
-            {
-                @Override
-                public void onClick(DialogInterface dialog, int which)
-                {
-                    //Do nothing here because we override this button later to change the close behaviour.
-                    //However, we still need this because on older versions of Android unless we
-                    //pass a handler the button doesn't get instantiated
-                }
-            });
-            builder.setNegativeButton(R.string.cancel,new DialogInterface.OnClickListener()
-            {
-                @Override
-                public void onClick(DialogInterface dialog, int which)
-                {
-                    //Do nothing here because we override this button later to change the close behaviour.
-                    //However, we still need this because on older versions of Android unless we
-                    //pass a handler the button doesn't get instantiated
-                }
-            });
-
-            //Need to overwrite with funky custom listener
-            final AlertDialog dialog = builder.create();
-            dialog.show();
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //Create CSV in Documents directory based on date of export
-                    ExportHistoryAsyncTask task = new ExportHistoryAsyncTask(getContext());
-                    if (android.util.Patterns.EMAIL_ADDRESS.matcher(email.getText().toString()).matches()) {
-                        Log.d("Repair History", "Valid email");
-                        task.execute(email.getText().toString());
-                        dialog.dismiss();
-                    } else {
-                        //Show error in the dialog box
-                        Log.d("Repair History", "Invalid email");
-                        email.setError(getResources().getString(R.string.error_invalid_email));
-                    }
-                }
-            });
-
-            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                }
-            });
-
+            //Start a new task to export history
+            ExportHistoryAsyncTask task = new ExportHistoryAsyncTask(getContext());
+            task.execute();
         }
     }
 }

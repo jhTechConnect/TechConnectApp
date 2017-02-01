@@ -16,6 +16,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -89,6 +90,35 @@ public class LoginActivity extends AppCompatActivity {
             mEmailView.setText(savedInstanceState.getString("emailTextView"));
             mPasswordView.setText(savedInstanceState.getString("password"));
         }
+
+        //Set the enter key of PasswordView to login
+        mPasswordView.setOnEditorActionListener( new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+                if (event==null) {
+                    if (actionId==EditorInfo.IME_ACTION_DONE) {
+                        // Capture soft enters in a singleLine EditText that is the last EditText.
+                        Log.d("Login", "First");
+                        attemptLogin();
+                    } else if (actionId==EditorInfo.IME_ACTION_NEXT) {
+                        // Capture soft enters in other singleLine EditTexts
+                        Log.d("Login", "Second");
+                    } else return false;  // Let system handle all other null KeyEvents
+                }
+                else if (actionId==EditorInfo.IME_NULL) {
+                    // Capture most soft enters in multi-line EditTexts and all hard enters.
+                    // They supply a zero actionId and a valid KeyEvent rather than
+                    // a non-zero actionId and a null event like the previous cases.
+                    if (event.getAction()==KeyEvent.ACTION_DOWN) {
+                        // We capture the event when key is first pressed.
+                        Log.d("Login", "Third");
+                    } else  return true;   // We consume the event when the key is released.
+                }
+                else  return false;
+
+                return true;   // Consume the event
+            }
+        });
     }
 
     @Override

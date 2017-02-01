@@ -109,6 +109,44 @@ public class ThumbFeedbackView extends RelativeLayout {
         updateViews();
     }
 
+    public void upVote() {
+        switch (currentState) {
+            case ThumbFeedbackView.STATE_NEUTRAL:
+                upCount++;
+                currentState = STATE_UP;
+                break;
+            case ThumbFeedbackView.STATE_UP:
+                upCount--;
+                currentState = STATE_NEUTRAL;
+                break;
+            case ThumbFeedbackView.STATE_DOWN:
+                upCount++;
+                downCount--;
+                currentState =STATE_UP;
+                break;
+        }
+        updateViews();
+    }
+
+    public void downVote() {
+        switch (currentState) {
+            case ThumbFeedbackView.STATE_NEUTRAL:
+                downCount++;
+                currentState = STATE_DOWN;
+                break;
+            case ThumbFeedbackView.STATE_UP:
+                upCount--;
+                downCount++;
+                currentState = STATE_DOWN;
+                break;
+            case ThumbFeedbackView.STATE_DOWN:
+                downCount--;
+                currentState = STATE_NEUTRAL;
+                break;
+        }
+        updateViews();
+    }
+
     public int getDownCount() {
         return downCount;
     }

@@ -108,7 +108,7 @@ public class DirectoryFragment extends Fragment implements View.OnClickListener 
     public void onResume() {
         super.onResume();
         if (getActivity() != null) {
-            getActivity().setTitle(R.string.call_directory);
+            getActivity().setTitle(R.string.directory);
         }
         onRefresh(true);
     }

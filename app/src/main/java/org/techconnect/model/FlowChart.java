@@ -33,6 +33,8 @@ public class FlowChart implements Parcelable, Commentable {
     private List<String> resources;
     private ChartType type;
     private int score;
+    private int upvotes;
+    private int downvotes;
 
     public FlowChart() {
 
@@ -51,6 +53,8 @@ public class FlowChart implements Parcelable, Commentable {
         image = in.readString();
         resources = in.createStringArrayList();
         score = in.readInt();
+        upvotes = in.readInt();
+        downvotes = in.readInt();
         type = ChartType.valueOf(in.readString());
         graph = in.readParcelable(Graph.class.getClassLoader());
     }
@@ -183,6 +187,8 @@ public class FlowChart implements Parcelable, Commentable {
         parcel.writeString(image);
         parcel.writeStringList(resources);
         parcel.writeInt(score);
+        parcel.writeInt(upvotes);
+        parcel.writeInt(downvotes);
         parcel.writeString(type.name());
         parcel.writeParcelable(graph, 0);
     }
@@ -193,6 +199,22 @@ public class FlowChart implements Parcelable, Commentable {
 
     public void setAllUserIds(List<String> all_user_ids) {
         this.all_usr_ids = all_user_ids;
+    }
+
+    public int getUpvotes() {
+        return upvotes;
+    }
+
+    public void setUpvotes(int upvotes) {
+        this.upvotes = upvotes;
+    }
+
+    public int getDownvotes() {
+        return downvotes;
+    }
+
+    public void setDownvotes(int downvotes) {
+        this.downvotes = downvotes;
     }
 
     public enum ChartType {

@@ -36,16 +36,12 @@
         <item
             android:id="@+id/call_dir"
             android:icon="@android:drawable/ic_menu_call"
-            android:title="@string/call_directory" />
+            android:title="@string/directory" />
     </group>
 
     <group
         android:id="@+id/opts_group"
         android:checkableBehavior="none">
-        <item
-            android:id="@+id/nav_refresh"
-            android:icon="@android:drawable/stat_notify_sync_noanim"
-            android:title="@string/sync_online_resources" />
         <item
             android:id="@+id/nav_view_tut"
             android:icon="@android:drawable/ic_menu_info_details"

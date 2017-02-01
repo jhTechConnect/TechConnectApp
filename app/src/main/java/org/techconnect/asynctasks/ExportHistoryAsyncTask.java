@@ -72,11 +72,10 @@ public class ExportHistoryAsyncTask extends AsyncTask<String,Void,Integer> {
                 csvWrite.close();
 
                 //Send email based on String arguments
-                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + args[0]));
-                emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
-                        "Your Repair History");
+                Intent emailIntent = new Intent(Intent.ACTION_SEND);
                 emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
-                context.startActivity(Intent.createChooser(emailIntent, "Email"));
+                emailIntent.setType("text/csv");
+                context.startActivity(Intent.createChooser(emailIntent, "Select App"));
                 return 1;
             } catch (IOException e) {
                 Log.e("Export History", e.getMessage(), e);
