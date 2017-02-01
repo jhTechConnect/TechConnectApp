@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.ResultReceiver;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -37,13 +35,11 @@ import org.techconnect.fragments.CatalogFragment;
 import org.techconnect.fragments.DirectoryFragment;
 import org.techconnect.fragments.GuidesFragment;
 import org.techconnect.fragments.RepairHistoryFragment;
-import org.techconnect.fragments.ResumeSessionFragment;
 import org.techconnect.misc.ResourceHandler;
 import org.techconnect.misc.auth.AuthListener;
 import org.techconnect.misc.auth.AuthManager;
 import org.techconnect.model.User;
 import org.techconnect.model.UserAuth;
-import org.techconnect.services.TCService;
 import org.techconnect.sql.TCDatabaseHelper;
 
 import java.util.ArrayList;
@@ -61,16 +57,15 @@ public class MainActivity extends AppCompatActivity
 
     public static final int FRAGMENT_CATALOG = 0;
     public static final int FRAGMENT_GUIDES = 1;
-    public static final int FRAGMENT_RESUME = 2;
-    public static final int FRAGMENT_HISTORY = 3;
-    public static final int FRAGMENT_DIRECTORY = 4;
+    public static final int FRAGMENT_HISTORY = 2;
+    public static final int FRAGMENT_DIRECTORY = 3;
     private static final int PERMISSIONS_REQUEST_READ_STORAGE = 1;
     private static final String SHOWN_TUTORIAL = "org.techconnect.prefs.shownturotial";
     private static final String USER_LEARNED_DRAWER = "org.techconnect.prefs.shownturotial.learneddrawer";
     private static final String ASKED_PERMISSION = "org.techconnect.prefs.shownturotial.askedpermission";
     private final Fragment[] FRAGMENTS = new Fragment[]{new CatalogFragment(),
-            new GuidesFragment(), new ResumeSessionFragment(), new RepairHistoryFragment(), new DirectoryFragment()};
-    private final int[] FRAGMENT_MENU_IDS = new int[]{R.id.nav_catalog, R.id.nav_guides, R.id.nav_resume_session, R.id.nav_repair_history, R.id.call_dir};
+            new GuidesFragment(), new RepairHistoryFragment(), new DirectoryFragment()};
+    private final int[] FRAGMENT_MENU_IDS = new int[]{R.id.nav_catalog, R.id.nav_guides, R.id.nav_repair_history, R.id.call_dir};
 
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout coordinatorLayout;
@@ -231,20 +226,6 @@ public class MainActivity extends AppCompatActivity
         return havePermission;
     }
 
-    private void updateResources() {
-        loadingLayout.setVisibility(View.VISIBLE);
-        String ids[] = TCDatabaseHelper.get(this).getAllChartIds();
-        TCService.startLoadCharts(this, ids, new ResultReceiver(new Handler()) {
-            @Override
-            protected void onReceiveResult(int resultCode, Bundle resultData) {
-                loadingLayout.setVisibility(View.GONE);
-                if (currentFragment == FRAGMENT_GUIDES) {
-                    ((GuidesFragment) FRAGMENTS[FRAGMENT_GUIDES]).onRefresh();
-                }
-            }
-        });
-    }
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -282,11 +263,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
         if (newFragIndex == -1) {
-            if (id == R.id.nav_refresh) {
-                updateResources();
-                drawer.closeDrawer(GravityCompat.START);
-                return true;
-            } else if (id == R.id.nav_view_tut) {
+            if (id == R.id.nav_view_tut) {
                 startActivity(new Intent(this, IntroTutorial.class));
                 drawer.closeDrawer(GravityCompat.START);
                 return true;
@@ -371,6 +348,15 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     public void setCurrentFragment(int frag) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (this.currentFragment != frag || this.currentFragment == -1) {
@@ -385,7 +371,6 @@ public class MainActivity extends AppCompatActivity
             navigationView.getMenu().findItem(FRAGMENT_MENU_IDS[frag]).setChecked(true);
         }
     }
-
 }
 
 

@@ -22,7 +22,9 @@ import org.techconnect.activities.MainActivity;
 import org.techconnect.adapters.FlowchartAdapter;
 import org.techconnect.adapters.FlowchartCursorAdapter;
 import org.techconnect.asynctasks.GetCatalogAsyncTask;
+import org.techconnect.misc.auth.AuthManager;
 import org.techconnect.model.FlowChart;
+import org.techconnect.sql.TCDatabaseHelper;
 import org.techconnect.views.GuideListItemView;
 
 import butterknife.Bind;
@@ -76,6 +78,11 @@ public class CatalogFragment extends Fragment implements TextWatcher, View.OnCli
                 GuideListItemView guideView = ((GuideListItemView) view);
                 Intent intent = new Intent(getActivity(), GuideActivity.class);
                 intent.putExtra(GuideActivity.EXTRA_CHART, guideView.getFlowChart());
+                //If the user is logged in, we'd like to send that information to the GuideActivity
+                if (AuthManager.get(getActivity()).hasAuth()) {
+                    intent.putExtra(GuideActivity.EXTRA_USER,
+                            TCDatabaseHelper.get(getActivity()).getUser(AuthManager.get(getActivity()).getAuth().getUserId()));
+                }
                 intent.putExtra(GuideActivity.EXTRA_ALLOW_REFRESH, false);
                 startActivity(intent);
             }

@@ -3,6 +3,7 @@ package org.techconnect.sql;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
@@ -109,6 +110,8 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(TCDatabaseContract.UserEntry.ORGANIZATION, user.getOrganization());
         contentValues.put(TCDatabaseContract.UserEntry.PIC, user.getPic());
         contentValues.put(TCDatabaseContract.UserEntry.EXPERTISES, TextUtils.join(",", user.getExpertises()));
+        contentValues.put(TCDatabaseContract.UserEntry.UPCHARTS, TextUtils.join(",", user.getUpCharts()));
+        contentValues.put(TCDatabaseContract.UserEntry.DOWNCHARTS, TextUtils.join(",", user.getDownCharts()));
         getWritableDatabase().insertWithOnConflict(TCDatabaseContract.UserEntry.TABLE_NAME, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
@@ -134,6 +137,18 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             user.setExpertises(new ArrayList<String>(0));
         } else {
             user.setExpertises(Arrays.asList(expertises.split(",")));
+        }
+        String upCharts = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.UPCHARTS));
+        if (TextUtils.isEmpty(upCharts.trim())) {
+            user.setUpCharts(new ArrayList<String>(0));
+        } else {
+            user.setUpCharts(Arrays.asList(upCharts.split(",")));
+        }
+        String downCharts = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.DOWNCHARTS));
+        if (TextUtils.isEmpty(downCharts.trim())) {
+            user.setDownCharts(new ArrayList<String>(0));
+        } else {
+            user.setDownCharts(Arrays.asList(downCharts.split(",")));
         }
         c.close();
         return user;
@@ -161,6 +176,18 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
                 user.setExpertises(new ArrayList<String>(0));
             } else {
                 user.setExpertises(Arrays.asList(expertises.split(",")));
+            }
+            String upCharts = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.UPCHARTS));
+            if (TextUtils.isEmpty(upCharts.trim())) {
+                user.setUpCharts(new ArrayList<String>(0));
+            } else {
+                user.setUpCharts(Arrays.asList(upCharts.split(",")));
+            }
+            String downCharts = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.UserEntry.DOWNCHARTS));
+            if (TextUtils.isEmpty(downCharts.trim())) {
+                user.setDownCharts(new ArrayList<String>(0));
+            } else {
+                user.setDownCharts(Arrays.asList(downCharts.split(",")));
             }
             users.add(user);
             c.moveToNext();
@@ -293,6 +320,8 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         chart.setImage(c.getString(c.getColumnIndexOrThrow(ChartEntry.IMAGE)));
         chart.setType(FlowChart.ChartType.valueOf(c.getString(c.getColumnIndexOrThrow(ChartEntry.TYPE))));
         chart.setScore(c.getInt(c.getColumnIndexOrThrow(ChartEntry.SCORE)));
+        chart.setUpvotes(c.getInt(c.getColumnIndexOrThrow(ChartEntry.UPVOTES)));
+        chart.setDownvotes(c.getInt(c.getColumnIndexOrThrow(ChartEntry.DOWNVOTES)));
         return chart;
     }
 
@@ -400,6 +429,8 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
 
         chartContentValues.put(ChartEntry.TYPE, flowChart.getType().toString());
         chartContentValues.put(ChartEntry.SCORE, flowChart.getScore());
+        chartContentValues.put(ChartEntry.UPVOTES, flowChart.getUpvotes());
+        chartContentValues.put(ChartEntry.DOWNVOTES, flowChart.getDownvotes());
         return chartContentValues;
     }
 
@@ -672,6 +703,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             Session s = new Session(flow);
             s.setId(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.ID)));
             s.setCreatedDate(c.getLong(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.CREATED_DATE)));
+            s.setFinishedDate(c.getLong(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FINISHED_DATE)));
             s.setManufacturer(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.MANUFACTURER)));
             s.setDepartment(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.DEPARTMENT)));
             s.setModelNumber(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.MODEL)));
@@ -767,6 +799,13 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
                 null, selection, selectionArgs, null, null, null);
     }
 
+    public Cursor getFinishedSessionsCursor() {
+        String selection = TCDatabaseContract.SessionEntry.FINISHED + " = ?";
+        String selectionArgs[] = {"1"}; //False in boolean
+        return getReadableDatabase().query(TCDatabaseContract.SessionEntry.TABLE_NAME,
+                null, selection, selectionArgs, null, null, null);
+    }
+
     public CursorLoader getActiveSessionsCursorLoader() {
         return new CursorLoader(context, null, null, null, null, null) {
             @Override
@@ -774,6 +813,41 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
                 return getActiveSessionsCursor();
             }
         };
+    }
+
+    public CursorLoader getFinishedSessionsCursorLoader() {
+        return new CursorLoader(context, null, null, null, null, null) {
+            @Override
+            public Cursor loadInBackground() {
+                return getFinishedSessionsCursor();
+            }
+        };
+    }
+
+
+
+    /**
+     * Determine the number of Active vs. Finished session and report as a map
+     * @return
+     */
+    public Map<String,Integer> getActiveSessionsCounts() {
+        //First, get the total number of entries
+        int cnt  = (int) DatabaseUtils.queryNumEntries(getReadableDatabase(), TCDatabaseContract.SessionEntry.TABLE_NAME);
+        String selection = "SELECT COUNT( " + TCDatabaseContract.SessionEntry.FINISHED + " ) FROM "
+                + TCDatabaseContract.SessionEntry.TABLE_NAME + " WHERE " + TCDatabaseContract.SessionEntry.FINISHED
+                + " = ?";
+        String selectionArgs[] = {"0"};
+        Cursor cursor = getReadableDatabase().rawQuery(selection, selectionArgs);
+        cursor.moveToFirst();
+        int counter = cursor.getInt(0); //Total number of Active sessions
+        cursor.close();
+
+        //Setup the map
+        HashMap<String,Integer> map = new HashMap<>();
+        map.put("Active",counter);
+        map.put("Finished",cnt - counter);
+
+        return map;
     }
 
     //Need a method to get all unique devices stored in the

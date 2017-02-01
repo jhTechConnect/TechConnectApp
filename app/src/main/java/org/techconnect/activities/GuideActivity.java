@@ -1,14 +1,18 @@
 package org.techconnect.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -20,19 +24,25 @@ import com.squareup.picasso.Picasso;
 
 import org.centum.techconnect.R;
 import org.techconnect.analytics.FirebaseEvents;
+import org.techconnect.asynctasks.PostVoteAsyncTask;
+import org.techconnect.asynctasks.UpdateUserAsyncTask;
 import org.techconnect.misc.ResourceHandler;
+import org.techconnect.misc.auth.AuthManager;
 import org.techconnect.model.FlowChart;
+import org.techconnect.model.User;
 import org.techconnect.services.TCService;
 import org.techconnect.sql.TCDatabaseHelper;
 import org.techconnect.views.CommentsResourcesTabbedView;
+import org.techconnect.views.ThumbFeedbackView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, View.OnClickListener {
 
     public static String EXTRA_CHART = "org.techconnect.guideactivity.flowchart";
+    public static String EXTRA_USER = "org.techconnect.guideactivity.user";
     public static String EXTRA_ALLOW_REFRESH = "org.techconnect.guideactivity.allow_refresh";
 
     @Bind(R.id.content_linearLayout)
@@ -48,7 +58,9 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
     @Bind(R.id.scrollView)
     ScrollView scrollView;
     CommentsResourcesTabbedView commentsResourcesTabbedView;
+    ThumbFeedbackView thumbFeedbackView;
     private FlowChart flowChart;
+    private User user;
     private boolean inDB = true;
     private boolean downloadingChart = false;
 
@@ -59,8 +71,21 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
         ButterKnife.bind(this);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
         commentsResourcesTabbedView = (CommentsResourcesTabbedView) getLayoutInflater()
                 .inflate(R.layout.comments_resources_tabbed_view, contentLinearLayout, false);
+
+        thumbFeedbackView = (ThumbFeedbackView) getLayoutInflater().inflate(R.layout.view_thumbfeedback,contentLinearLayout,false);
+        thumbFeedbackView.setOnClickListener(this);
+
+
+        //Add Thumb up/down view prior to the tabbed view
+        contentLinearLayout.addView(thumbFeedbackView);
+        View ruler = new View(this);
+        ruler.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+        contentLinearLayout.addView(ruler,
+                new ViewGroup.LayoutParams( ViewGroup.LayoutParams.FILL_PARENT, 2));
         contentLinearLayout.addView(commentsResourcesTabbedView);
         swipeRefreshLayout.setOnRefreshListener(this);
         scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
@@ -73,7 +98,6 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
                 }
             }
         });
-
         if (getIntent() != null && getIntent().hasExtra(EXTRA_CHART)) {
             flowChart = getIntent().getParcelableExtra(EXTRA_CHART);
             FirebaseEvents.logViewGuide(this, flowChart);
@@ -82,6 +106,26 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
         if (getIntent() != null && getIntent().hasExtra(EXTRA_ALLOW_REFRESH)) {
             swipeRefreshLayout.setEnabled(getIntent().getBooleanExtra(EXTRA_ALLOW_REFRESH, true));
         }
+
+        if (getIntent() != null && getIntent().hasExtra(EXTRA_USER)) {
+            user = getIntent().getParcelableExtra(EXTRA_USER);
+            thumbFeedbackView.setActive(true);
+            if (user.hasUpVoted(flowChart.getId())) {
+                thumbFeedbackView.setCurrentState(ThumbFeedbackView.STATE_UP);
+            } else if (user.hasDownVoted(flowChart.getId())) {
+                thumbFeedbackView.setCurrentState(ThumbFeedbackView.STATE_DOWN);
+            } else {
+                thumbFeedbackView.setCurrentState(ThumbFeedbackView.STATE_NEUTRAL);
+            }
+        } else {
+            thumbFeedbackView.setActive(false);
+            user = null;//confirm that it is null
+        }
+
+
+        //Use the flowchart to determine the number of up vs. down votes
+        thumbFeedbackView.setUpCount(flowChart.getUpvotes());
+        thumbFeedbackView.setDownCount(flowChart.getDownvotes());
     }
 
     private void checkDBForFlowchart() {
@@ -116,6 +160,8 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
         }
         descriptionTextView.setText(flowChart.getDescription());
         commentsResourcesTabbedView.setItems(flowChart, flowChart.getResources(), flowChart.getId());
+        thumbFeedbackView.setUpCount(flowChart.getUpvotes());
+        thumbFeedbackView.setDownCount(flowChart.getDownvotes());
         updateHeaderImage();
     }
 
@@ -188,5 +234,124 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
                 }
             });
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //Check to see if login status has changed, update Feedback bar approprioately
+        if (AuthManager.get(this).hasAuth()) {
+            thumbFeedbackView.setActive(true);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("Guide Activity", "Pause");
+        //Check to see whether the chart feedback changed during activity and update server
+        //Use TCNetworkHelper.postFeedback(flowchart.getId(), vote, AuthManager.get(this).getAuth())
+        // to post feedback. This function is likely going to change as we update the endpoints
+
+
+        if (user != null) {
+            //We try to update the user in the cloud, only if it succeeds do we update user locally
+            new UpdateUserAsyncTask(this) {
+                @Override
+                protected void onPostExecute(User u) {
+                    if (u != null) {
+                        TCDatabaseHelper.get(getBaseContext()).upsertUser(user);
+                    }
+                }
+            }.execute(user);
+
+            //Followed by updating the chart
+            Log.d("Guide",String.format("Upvotes: %d, Downvotes: %d",flowChart.getUpvotes(), flowChart.getDownvotes()));
+            switch (thumbFeedbackView.getCurrentState()) {
+                case ThumbFeedbackView.STATE_UP:
+                    new PostVoteAsyncTask(flowChart.getId(), "true", AuthManager.get(this).getAuth(), false) {
+                        @Override
+                        protected void onPostExecute(FlowChart chart) {
+                            if (chart != null) {
+                                //Update the local copy
+                                TCDatabaseHelper.get(getBaseContext()).upsertChart(chart);
+                                Log.d("Guide",String.format("Upvotes: %d, Downvotes: %d",chart.getUpvotes(), chart.getDownvotes()));
+                            }
+                        }
+                    }.execute();
+                    break;
+                case ThumbFeedbackView.STATE_DOWN:
+                    new PostVoteAsyncTask(flowChart.getId(), "false", AuthManager.get(this).getAuth(), false) {
+                        @Override
+                        protected void onPostExecute(FlowChart chart) {
+                            if (chart != null) {
+                                //Update the local copy
+                                TCDatabaseHelper.get(getBaseContext()).upsertChart(chart);
+                                Log.d("Guide",String.format("Upvotes: %d, Downvotes: %d",chart.getUpvotes(), chart.getDownvotes()));
+                            }
+                        }
+                    }.execute();
+                    break;
+                case ThumbFeedbackView.STATE_NEUTRAL:
+                    new PostVoteAsyncTask(flowChart.getId(), "empty", AuthManager.get(this).getAuth(), true) {
+                        @Override
+                        protected void onPostExecute(FlowChart chart) {
+                            if (chart != null) {
+                                //Update the local copy
+                                TCDatabaseHelper.get(getBaseContext()).upsertChart(chart);
+                                Log.d("Guide",String.format("Upvotes: %d, Downvotes: %d",chart.getUpvotes(), chart.getDownvotes()));
+                            }
+                        }
+                    }.execute();
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+
+    }
+
+    /**
+     * Use this method to handle clicks of the buttons in the ThumbFeedbackView
+     * @param view
+     */
+    public void onFeedbackClick(View view) {
+        if (thumbFeedbackView.isActive()) {
+            if (view.getId() == R.id.upThumbButton) {
+                user.upVote(flowChart.getId());
+                thumbFeedbackView.upVote();
+            } else if (view.getId() == R.id.downThumbButton) {
+                user.downVote(flowChart.getId());
+                thumbFeedbackView.downVote();
+            }
+        } else {
+            Log.d("Guide Activity", "Would activate alert dialog");
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Please Sign in to Vote");
+            builder.setPositiveButton(R.string.action_sign_in, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Intent intent = new Intent(GuideActivity.this,LoginActivity.class);
+                    startActivity(intent);
+                }
+            });
+            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                }
+            });
+            builder.create().show();
+        }
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

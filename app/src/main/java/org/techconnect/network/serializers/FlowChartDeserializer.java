@@ -32,6 +32,9 @@ public class FlowChartDeserializer implements JsonDeserializer<FlowChart> {
         final String v = jsonObject.get("version").getAsString();
         final String owner = jsonObject.get("owner").getAsString();
         final int score = jsonObject.get("score").getAsInt();
+        final int upvotes = jsonObject.get("upvotes").getAsInt();
+        final int downvotes = jsonObject.get("downvotes").getAsInt();
+
 
         //Now, getting the resources and comments fields
         final ArrayList<String> all_res = new ArrayList<>();
@@ -82,6 +85,8 @@ public class FlowChartDeserializer implements JsonDeserializer<FlowChart> {
         flowchart.setComments(comments);
         flowchart.setType(type);
         flowchart.setScore(score);
+        flowchart.setUpvotes(upvotes);
+        flowchart.setDownvotes(downvotes);
 
         //Here are the nullable fields
         final JsonElement image = jsonObject.get("image");

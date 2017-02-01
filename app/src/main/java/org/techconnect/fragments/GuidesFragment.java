@@ -25,6 +25,7 @@ import org.centum.techconnect.R;
 import org.techconnect.activities.GuideActivity;
 import org.techconnect.activities.MainActivity;
 import org.techconnect.adapters.FlowchartCursorAdapter;
+import org.techconnect.misc.auth.AuthManager;
 import org.techconnect.sql.TCDatabaseHelper;
 import org.techconnect.views.GuideListItemView;
 
@@ -32,7 +33,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class GuidesFragment extends Fragment
+public class  GuidesFragment extends Fragment
         implements SwipeRefreshLayout.OnRefreshListener,
         View.OnClickListener,
         TextWatcher,
@@ -85,6 +86,11 @@ public class GuidesFragment extends Fragment
                 // Get the non-stub chart and open
                 intent.putExtra(GuideActivity.EXTRA_CHART,
                         TCDatabaseHelper.get(getActivity()).getChart(guideView.getFlowChart().getId()));
+                //If the user is logged in, we'd like to send that information to the GuideActivity
+                if (AuthManager.get(getActivity()).hasAuth()) {
+                    intent.putExtra(GuideActivity.EXTRA_USER,
+                            TCDatabaseHelper.get(getActivity()).getUser(AuthManager.get(getActivity()).getAuth().getUserId()));
+                }
                 startActivity(intent);
             }
         });
@@ -111,11 +117,13 @@ public class GuidesFragment extends Fragment
         super.onResume();
         if (getActivity() != null) {
             getActivity().setTitle(R.string.guides);
+
         }
     }
 
     public void onRefresh() {
         if (getActivity() != null) {
+
             getLoaderManager().restartLoader(GUIDE_LOADER, null, this);
         }
     }

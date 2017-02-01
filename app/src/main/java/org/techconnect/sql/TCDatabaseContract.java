@@ -21,6 +21,8 @@ public class TCDatabaseContract {
         public static final String ORGANIZATION = "organization";
         public static final String PIC = "pic";
         public static final String EXPERTISES = "expertises";
+        public static final String UPCHARTS  = "upCharts";
+        public static final String DOWNCHARTS = "downCharts";
         // Create the users table
         public static final String CREATE_USER_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
                 ID + " TEXT PRIMARY KEY NOT NULL UNIQUE," +
@@ -30,7 +32,9 @@ public class TCDatabaseContract {
                 COUNTRY + " TEXT," +
                 ORGANIZATION + " TEXT," +
                 PIC + " TEXT," +
-                EXPERTISES + " TEXT);";
+                EXPERTISES + " TEXT," +
+                UPCHARTS + " TEXT," +
+                DOWNCHARTS + " TEXT);";
     }
 
     /**
@@ -50,6 +54,9 @@ public class TCDatabaseContract {
         public static final String RESOURCES = "resources";
         public static final String TYPE = "type";
         public static final String SCORE = "score";
+        public static final String UPVOTES = "upvotes";
+        public static final String DOWNVOTES = "downvotes";
+
         //Create the Chart Table object
         public static final String CREATE_CHART_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
                 ID + " TEXT PRIMARY KEY NOT NULL UNIQUE," +
@@ -64,6 +71,8 @@ public class TCDatabaseContract {
                 RESOURCES + " TEXT," +
                 TYPE + " TEXT," +
                 SCORE + " INTEGER," +
+                UPVOTES + " INTEGER," +
+                DOWNVOTES + " INTEGER," +
                 " FOREIGN KEY (graphId) REFERENCES " + GraphEntry.TABLE_NAME + " (_id)) WITHOUT ROWID;";
 
         private ChartEntry() {
