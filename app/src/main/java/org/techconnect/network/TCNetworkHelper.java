@@ -314,12 +314,15 @@ public class TCNetworkHelper {
     /**
      * Use this method to provide feedback on the chart (up-vote, down-vote currently)
      *
-     * @param upVote - Boolean which determines whether up-vote (true)
+     * @param vote - String which determines whether up-vote (true)
+     * @param clear - boolean that determines whether server should remove all feedback from user
      */
-    public FlowChart postFeedback(String chart_id, boolean upVote, UserAuth auth) throws IOException {
-        String vote = upVote ? "true" : "false";
+    public FlowChart postFeedback(String chart_id, String vote, UserAuth auth, boolean clear) throws IOException {
         JsonObject body = new JsonObject();
         body.addProperty("feedback", vote);
+        if (clear) {
+            body.addProperty("clear", true);
+        }
         RequestBody requestBody = RequestBody.create(JSON, body.toString());
 
         Response<JsendResponse> resp = service.postFeedback(auth.getAuthToken(),

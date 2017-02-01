@@ -32,8 +32,7 @@ public class PostVoteAsyncTask extends AsyncTask<Void, Void, FlowChart> {
     protected FlowChart doInBackground(Void... voids) {
         TCNetworkHelper helper = new TCNetworkHelper();
         try {
-            FlowChart chart = helper.postFeedback(flowchart_id,vote,auth,clear);
-            return chart;
+            return helper.postFeedback(flowchart_id,vote,auth,clear);
         } catch (IOException e) {
             Log.e(getClass().toString(),e.getMessage());
             return null;

@@ -430,7 +430,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         chartContentValues.put(ChartEntry.TYPE, flowChart.getType().toString());
         chartContentValues.put(ChartEntry.SCORE, flowChart.getScore());
         chartContentValues.put(ChartEntry.UPVOTES, flowChart.getUpvotes());
-        chartContentValues.put(ChartEntry.SCORE, flowChart.getDownvotes());
+        chartContentValues.put(ChartEntry.DOWNVOTES, flowChart.getDownvotes());
         return chartContentValues;
     }
 

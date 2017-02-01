@@ -24,6 +24,8 @@ import com.squareup.picasso.Picasso;
 
 import org.centum.techconnect.R;
 import org.techconnect.analytics.FirebaseEvents;
+import org.techconnect.asynctasks.PostVoteAsyncTask;
+import org.techconnect.asynctasks.UpdateUserAsyncTask;
 import org.techconnect.misc.ResourceHandler;
 import org.techconnect.misc.auth.AuthManager;
 import org.techconnect.model.FlowChart;
@@ -117,11 +119,13 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
             }
         } else {
             thumbFeedbackView.setActive(false);
+            user = null;//confirm that it is null
         }
 
 
         //Use the flowchart to determine the number of up vs. down votes
-        thumbFeedbackView.setUpCount(flowChart.getScore());
+        thumbFeedbackView.setUpCount(flowChart.getUpvotes());
+        thumbFeedbackView.setDownCount(flowChart.getDownvotes());
     }
 
     private void checkDBForFlowchart() {
@@ -156,7 +160,8 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
         }
         descriptionTextView.setText(flowChart.getDescription());
         commentsResourcesTabbedView.setItems(flowChart, flowChart.getResources(), flowChart.getId());
-        thumbFeedbackView.setUpCount(flowChart.getScore());
+        thumbFeedbackView.setUpCount(flowChart.getUpvotes());
+        thumbFeedbackView.setDownCount(flowChart.getDownvotes());
         updateHeaderImage();
     }
 
@@ -248,8 +253,59 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
         //Use TCNetworkHelper.postFeedback(flowchart.getId(), vote, AuthManager.get(this).getAuth())
         // to post feedback. This function is likely going to change as we update the endpoints
 
-        //First, we try to update the user in the local database
-        TCDatabaseHelper.get(this).upsertUser(user);
+
+        if (user != null) {
+            //We try to update the user in the cloud, only if it succeeds do we update user locally
+            new UpdateUserAsyncTask(this) {
+                @Override
+                protected void onPostExecute(User u) {
+                    if (u != null) {
+                        TCDatabaseHelper.get(getBaseContext()).upsertUser(user);
+                    }
+                }
+            }.execute(user);
+
+            //Followed by updating the chart
+            Log.d("Guide",String.format("Upvotes: %d, Downvotes: %d",flowChart.getUpvotes(), flowChart.getDownvotes()));
+            switch (thumbFeedbackView.getCurrentState()) {
+                case ThumbFeedbackView.STATE_UP:
+                    new PostVoteAsyncTask(flowChart.getId(), "true", AuthManager.get(this).getAuth(), false) {
+                        @Override
+                        protected void onPostExecute(FlowChart chart) {
+                            if (chart != null) {
+                                //Update the local copy
+                                TCDatabaseHelper.get(getBaseContext()).upsertChart(chart);
+                                Log.d("Guide",String.format("Upvotes: %d, Downvotes: %d",chart.getUpvotes(), chart.getDownvotes()));
+                            }
+                        }
+                    }.execute();
+                    break;
+                case ThumbFeedbackView.STATE_DOWN:
+                    new PostVoteAsyncTask(flowChart.getId(), "false", AuthManager.get(this).getAuth(), false) {
+                        @Override
+                        protected void onPostExecute(FlowChart chart) {
+                            if (chart != null) {
+                                //Update the local copy
+                                TCDatabaseHelper.get(getBaseContext()).upsertChart(chart);
+                                Log.d("Guide",String.format("Upvotes: %d, Downvotes: %d",chart.getUpvotes(), chart.getDownvotes()));
+                            }
+                        }
+                    }.execute();
+                    break;
+                case ThumbFeedbackView.STATE_NEUTRAL:
+                    new PostVoteAsyncTask(flowChart.getId(), "empty", AuthManager.get(this).getAuth(), true) {
+                        @Override
+                        protected void onPostExecute(FlowChart chart) {
+                            if (chart != null) {
+                                //Update the local copy
+                                TCDatabaseHelper.get(getBaseContext()).upsertChart(chart);
+                                Log.d("Guide",String.format("Upvotes: %d, Downvotes: %d",chart.getUpvotes(), chart.getDownvotes()));
+                            }
+                        }
+                    }.execute();
+                    break;
+            }
+        }
     }
 
     @Override

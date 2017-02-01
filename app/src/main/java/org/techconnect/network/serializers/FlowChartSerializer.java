@@ -27,6 +27,9 @@ public class FlowChartSerializer implements JsonSerializer<FlowChart> {
 		jsonObject.addProperty("version", flowchart.getVersion());
 		jsonObject.addProperty("owner", flowchart.getOwner());
 		jsonObject.addProperty("score",flowchart.getScore());
+		jsonObject.addProperty("upvotes",flowchart.getUpvotes());
+		jsonObject.addProperty("downvotes",flowchart.getDownvotes());
+
 	
 		//Determine type
 		switch(flowchart.getType()) {

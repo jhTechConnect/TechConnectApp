@@ -117,6 +117,7 @@ public class  GuidesFragment extends Fragment
         super.onResume();
         if (getActivity() != null) {
             getActivity().setTitle(R.string.guides);
+
         }
     }
 
