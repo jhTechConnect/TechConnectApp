@@ -32,7 +32,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
- * Created by Phani on 11/16/2016.
+ * Created by Phani on 11/1 6/2016.
  */
 
 public class CatalogFragment extends Fragment implements TextWatcher, View.OnClickListener {
@@ -110,6 +110,8 @@ public class CatalogFragment extends Fragment implements TextWatcher, View.OnCli
         super.onResume();
         if (getActivity() != null) {
             getActivity().setTitle(R.string.guide_catalog);
+            //Update the flowchart associated with the GuideView
+            loadCatalog();
         }
     }
 
