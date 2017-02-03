@@ -256,6 +256,7 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
                 thumbFeedbackView.setCurrentState(ThumbFeedbackView.STATE_NEUTRAL);
             }
         }
+        updateViews();
     }
 
     @Override
