@@ -45,7 +45,14 @@ import butterknife.OnClick;
  */
 public class LoginActivity extends AppCompatActivity {
     private static final int REGISTER_REQUEST = 1;
+    //Results
+    public static final int LOGIN_SUCCESS = 2;
+    public static final int LOGIN_FAILURE = 3;
+    public static final String LOGIN_USER = "org.techconnect.login.user";
+
+    //Strings
     private static final String SHOW_SKIP_ALERT = "org.techconnect.login.skipalert";
+
     // UI references.
     @Bind(R.id.email)
     EditText mEmailView;
@@ -166,6 +173,8 @@ public class LoginActivity extends AppCompatActivity {
                             if (checkBox.isChecked()) {
                                 prefs.edit().putBoolean(SHOW_SKIP_ALERT, false).apply();
                             }
+                            Intent resultIntent = new Intent();
+                            setResult(LOGIN_FAILURE,resultIntent);
                             LoginActivity.this.finish();
                         }
                     })
@@ -176,6 +185,8 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }).show();
         } else {
+            Intent resultIntent = new Intent();
+            setResult(LOGIN_FAILURE,resultIntent);
             LoginActivity.this.finish();
         }
     }
@@ -294,6 +305,8 @@ public class LoginActivity extends AppCompatActivity {
             if (objs[0] == null) {
                 Snackbar.make(coordinatorLayout, R.string.couldnt_login, Snackbar.LENGTH_LONG).show();
                 mPasswordView.requestFocus();
+                Intent resultIntent = new Intent();
+                setResult(LOGIN_FAILURE, resultIntent);
             } else {
                 // Store user
                 User user = (User) objs[0];
@@ -301,6 +314,10 @@ public class LoginActivity extends AppCompatActivity {
                 TCDatabaseHelper.get(LoginActivity.this).upsertUser(user);
                 AuthManager.get(LoginActivity.this).setAuth(auth);
                 FirebaseEvents.logSignin(LoginActivity.this);
+                //For cases where we need result
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra(GuideActivity.EXTRA_USER,user);
+                setResult(LOGIN_SUCCESS, resultIntent);
                 finish();
             }
         }
