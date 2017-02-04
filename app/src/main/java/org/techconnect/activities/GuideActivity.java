@@ -237,6 +237,7 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
                     button.setEnabled(true);
                     checkDBForFlowchart();
                     swipeRefreshLayout.setRefreshing(false);
+                    updateViews();
                 }
             });
         }
