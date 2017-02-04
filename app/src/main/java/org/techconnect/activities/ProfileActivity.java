@@ -130,14 +130,14 @@ public class ProfileActivity extends AppCompatActivity {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.save_changes)
                     .setMessage(R.string.save_changes_msg)
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             dialogInterface.dismiss();
                             updateUser();
                         }
                     })
-                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             dialogInterface.dismiss();
@@ -169,14 +169,25 @@ public class ProfileActivity extends AppCompatActivity {
         icon.setImageResource(R.drawable.ic_add_box_black_24dp);
         add_skill = (EditText) toAdd.findViewById(R.id.edit_skill_text);
         skill_text = (TextView) toAdd.findViewById(R.id.skill_text);
+        skill_text.setText("Add Skill");
+
+        add_skill.setVisibility(View.GONE);
+        skill_text.setVisibility(View.VISIBLE);
 
         icon.setOnClickListener(new View.OnClickListener() {
             boolean adding = true; //Initially, adding a new row
 
             @Override
             public void onClick(View view) {
-                //User actually entered something
                 if (adding) {
+                    //User wants to add something
+                    //tmp_skills.add(add_skill.getText().toString());
+                    icon.setImageResource(R.drawable.ic_close_black_24dp);
+                    skill_text.setVisibility(View.GONE);
+                    add_skill.setVisibility(View.VISIBLE);
+                    onRowAddRequest();
+                    adding = false;
+                    /*
                     if (add_skill.getText().length() > 0) {
                         skill_text.setText(add_skill.getText());
                         tmp_skills.add(add_skill.getText().toString());//Add to temp user
@@ -186,10 +197,11 @@ public class ProfileActivity extends AppCompatActivity {
                         onRowAddRequest();
                         adding = false;
                     }
+                    */
                 } else {
                     //We want to delete the entire row that it belongs to
                     skills_table.removeViewAt(row_buttons.indexOf(icon));
-                    tmp_skills.remove(row_buttons.indexOf(icon));//Remove expertise
+                    //tmp_skills.remove(row_buttons.indexOf(icon));//Remove expertise
                     row_buttons.remove(icon);
                 }
             }
@@ -204,7 +216,27 @@ public class ProfileActivity extends AppCompatActivity {
     public void updateUser() {
         //Use the temp_user object to write any user changes to the database
         final Context context = this;
+        //Run through the rows of the skills view and add to tmp skills
+        for (int i = 0; i < skills_table.getChildCount(); i++) {
+            TableRow r = (TableRow) skills_table.getChildAt(i);
+            EditText editText = (EditText) r.findViewById(R.id.edit_skill_text);
+            //If text is present, add to tmp_skills
+            if (editText.getText().toString().trim().length() > 0) {
+                tmp_skills.add(editText.getText().toString().trim());
+            }
+            editText.setVisibility(View.GONE);
+        }
         temp_user.setExpertises(tmp_skills);
+
+        //Update organization if necessary
+        org.setVisibility(View.VISIBLE);
+        if (edit_org.getText().toString().trim().length() > 0) {
+            org.setText(edit_org.getText());
+            temp_user.setOrganization(edit_org.getText().toString());
+        }
+        edit_org_layout.setVisibility(View.GONE);
+
+
         new UpdateUserAsyncTask(context) {
             ProgressDialog pd;
 
@@ -219,38 +251,54 @@ public class ProfileActivity extends AppCompatActivity {
                 pd.dismiss();
                 pd = null;
                 if (u != null) {
-                    Log.d("Update User", u.getEmail());
+                    //Log.d("Update User", u.getEmail());
                     TCDatabaseHelper.get(context).upsertUser(u);
-
+                    for (String s: u.getExpertises()) {
+                        Log.d("Update user",s);
+                    }
+                    head_user = TCDatabaseHelper.get(context).getUser(temp_user.get_id());
+                    skills_table.removeAllViews(); //Clear out all previous rows
+                    tmp_skills.clear(); // Clear out all temporary skills
+                    org.setVisibility(View.VISIBLE);
+                    setupProfile();
                 } else {
                     new AlertDialog.Builder(context)
                             .setTitle(R.string.error)
                             .setMessage(R.string.failed_update_user)
                             .show();
+                    discardUserChanges();
 
                 }
             }
         }.execute(temp_user);
-        //Reset the head user to be the newly edited version, which is now stored in the database
-        head_user = TCDatabaseHelper.get(context).getUser(temp_user.get_id());
 
+        //Restore the edit and save buttons
+        editWork.setVisibility(View.VISIBLE);
+        editSkill.setVisibility(View.VISIBLE);
         saveButton.setVisibility(View.GONE);
         discardButton.setVisibility(View.GONE);
+
+
     }
 
-    public void discardUserChanges(View v) {
+    @OnClick(R.id.discard_button)
+    public void discardUserChanges() {
         //Want to restore the original user (head_user)
         skills_table.removeAllViews(); //Clear out all previous rows
         tmp_skills.clear(); // Clear out all temporary skills
+        org.setVisibility(View.VISIBLE);
+        edit_org_layout.setVisibility(View.GONE);
         setupProfile();
         try {
             temp_user = head_user.clone();
         } catch (CloneNotSupportedException e) {
             Log.e("Profile", e.getMessage());
         }
-
-        v.setVisibility(View.GONE);
+        //Restore the edit and save buttons
+        editWork.setVisibility(View.VISIBLE);
+        editSkill.setVisibility(View.VISIBLE);
         saveButton.setVisibility(View.GONE);
+        discardButton.setVisibility(View.GONE);
     }
 
 
@@ -316,18 +364,21 @@ public class ProfileActivity extends AppCompatActivity {
         edit_org.setText(head_user.getOrganization());
 
         //Setup the edit button listeners to make changes to the profile info
+        /*
         if (isEditable) {
             setUpEditButtons();
         }
+        */
 
     }
 
+
+    /*
     private void setUpEditButtons() {
         //Setup the edit button listeners to make changes to the profile info
         editWork.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                isEditing = !isEditing;
                 updateEditViews();
             }
         });
@@ -339,6 +390,18 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //Add a new row to the list of skills or deleting old skills
+                if (tmp_skills.size() == 0) {
+                    skills_table.removeViewAt(0);//Remove dummy row
+                }
+                for (ImageButton button : row_buttons) {
+                    button.setClickable(true);
+                    button.setImageResource(R.drawable.ic_close_black_24dp);
+                }
+                onRowAddRequest();
+                editSkill.setVisibility(View.GONE);
+                saveButton.setVisibility(View.VISIBLE);
+                discardButton.setVisibility(View.VISIBLE);
+                /*
                 if (!isAdding) {
                     //Check to see if the temp user currently has no skills
                     if (tmp_skills.size() == 0) {
@@ -349,7 +412,8 @@ public class ProfileActivity extends AppCompatActivity {
                         button.setImageResource(R.drawable.ic_close_black_24dp);
                     }
                     onRowAddRequest();
-                    editSkill.setImageResource(R.drawable.ic_done_black_24dp);
+                    editSkill.setVisibility(View.GONE);
+                    //editSkill.setImageResource(R.drawable.ic_done_black_24dp);
                 } else { //Stopping adding
                     skills_table.removeViewAt(skills_table.getChildCount() - 1);//Always delete the last one
                     row_buttons.remove(row_buttons.size() - 1); //Remove the last one
@@ -380,25 +444,55 @@ public class ProfileActivity extends AppCompatActivity {
                     discardButton.setVisibility(View.VISIBLE);
                 }
                 isAdding = !isAdding;
+
             }
         });
         editSkill.setClickable(isEditable);
     }
+     */
 
-    private void updateEditViews() {
+    public void updateEditViews(View v) {
+
+        if (v.getId() == R.id.edit_work_button) {
+                org.setVisibility(View.GONE);
+                edit_org_layout.setVisibility(View.VISIBLE);
+                editWork.setVisibility(View.GONE);
+                editSkill.setVisibility(View.GONE);
+                saveButton.setVisibility(View.VISIBLE);
+                discardButton.setVisibility(View.VISIBLE);
+        } else if (v.getId() == R.id.edit_skill_button) {
+                if (tmp_skills.size() == 0) {
+                    skills_table.removeViewAt(0);//Remove dummy row
+                }
+                for (ImageButton button : row_buttons) {
+                    button.setClickable(true);
+                    button.setImageResource(R.drawable.ic_close_black_24dp);
+                }
+                onRowAddRequest();
+                editWork.setVisibility(View.GONE);
+                editSkill.setVisibility(View.GONE);
+                saveButton.setVisibility(View.VISIBLE);
+                discardButton.setVisibility(View.VISIBLE);
+
+        }
+        isEditing = !isEditing;
+        /*
         if (isEditing) {
             org.setVisibility(View.GONE);
             edit_org_layout.setVisibility(View.VISIBLE);
-            editWork.setImageResource(R.drawable.ic_done_black_24dp);
+            editWork.setVisibility(View.GONE);
+            //editWork.setImageResource(R.drawable.ic_done_black_24dp);
         } else {
             org.setVisibility(View.VISIBLE);
             org.setText(edit_org.getText());
             temp_user.setOrganization(edit_org.getText().toString());//Update Reference
 
             edit_org_layout.setVisibility(View.GONE);
+
             editWork.setImageResource(R.drawable.ic_mode_edit_black_24dp);
             saveButton.setVisibility(View.VISIBLE);
             discardButton.setVisibility(View.VISIBLE);
         }
+        */
     }
 }

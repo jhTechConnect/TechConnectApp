@@ -165,6 +165,8 @@ public class User implements Parcelable, Cloneable {
         new_user.set_id(this.get_id());
         new_user.setEmail(this.getEmail());
         new_user.setExpertises(this.getExpertises());
+        new_user.setUpCharts(this.getUpCharts());
+        new_user.setDownCharts(this.getDownCharts());
         new_user.setCountry(this.getCountry());
         new_user.setCountryCode(this.getCountryCode());
         new_user.setName(this.getName());

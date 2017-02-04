@@ -183,4 +183,6 @@
     <string name="finished_date">End Date</string>
     <string name="status">Status</string>
     <string name="required_fields">All fields except Notes are required</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>
