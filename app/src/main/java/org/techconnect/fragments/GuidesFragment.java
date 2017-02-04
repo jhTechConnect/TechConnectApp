@@ -117,13 +117,12 @@ public class GuidesFragment extends Fragment
         super.onResume();
         if (getActivity() != null) {
             getActivity().setTitle(R.string.guides);
-
+            onRefresh();
         }
     }
 
     public void onRefresh() {
         if (getActivity() != null) {
-
             getLoaderManager().restartLoader(GUIDE_LOADER, null, this);
         }
     }
