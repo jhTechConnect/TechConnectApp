@@ -41,7 +41,7 @@ import java.util.Map;
  */
 public class TCDatabaseHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "FlowChart.db";
     private static TCDatabaseHelper instance = null;
     private Context context;
@@ -85,7 +85,19 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int fromV, int toV) {
+    public void onUpgrade(SQLiteDatabase sql, int fromV, int toV) {
+        if (fromV == 1 && toV == 2) {
+            // User: Add upcharts, downcharts
+            // Chart: Add upvotes, downvotes
+            // Session: finishedDate, manufacturer
+
+            sql.execSQL(TCDatabaseContract.UserEntry.UPGRADE_V1_V2_ADD_DOWNCHARTS);
+            sql.execSQL(TCDatabaseContract.UserEntry.UPGRADE_V1_V2_ADD_UPCHARTS);
+            sql.execSQL(ChartEntry.UPGRADE_V1_V2_ADD_DOWNVOTES);
+            sql.execSQL(ChartEntry.UPGRADE_V1_V2_ADD_UPVOTES);
+            sql.execSQL(TCDatabaseContract.SessionEntry.UPGRADE_V1_V2_ADD_FINISHED_DATE);
+            sql.execSQL(TCDatabaseContract.SessionEntry.UPGRADE_V1_V2_ADD_MANUFACTURER);
+        }
     }
 
     public void upsertCharts(FlowChart charts[]) {
@@ -681,7 +693,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             if (id == -1) {
                 Log.d(this.getClass().getName(), "Attempting Update of Existing Entry");
                 String selection = TCDatabaseContract.SessionEntry.ID + " = ?";
-                String[] selectionArgs = new String[] {sessionContentValues.getAsString(TCDatabaseContract.SessionEntry.ID)};
+                String[] selectionArgs = new String[]{sessionContentValues.getAsString(TCDatabaseContract.SessionEntry.ID)};
                 getWritableDatabase().update(TCDatabaseContract.SessionEntry.TABLE_NAME, sessionContentValues, selection, selectionArgs);  // number 1 is the _id here, update to variable for your code
             }
         } catch (Exception e) {
@@ -746,7 +758,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         String selection = TCDatabaseContract.SessionEntry.ID + " = ?";
         String selectionArgs[] = {s.getId()};
         int result = getWritableDatabase().delete(TCDatabaseContract.SessionEntry.TABLE_NAME, selection, selectionArgs);
-        Log.d("Delete Session",String.format("%d",result));
+        Log.d("Delete Session", String.format("%d", result));
     }
 
     /**
@@ -825,14 +837,14 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-
     /**
      * Determine the number of Active vs. Finished session and report as a map
+     *
      * @return
      */
-    public Map<String,Integer> getActiveSessionsCounts() {
+    public Map<String, Integer> getActiveSessionsCounts() {
         //First, get the total number of entries
-        int cnt  = (int) DatabaseUtils.queryNumEntries(getReadableDatabase(), TCDatabaseContract.SessionEntry.TABLE_NAME);
+        int cnt = (int) DatabaseUtils.queryNumEntries(getReadableDatabase(), TCDatabaseContract.SessionEntry.TABLE_NAME);
         String selection = "SELECT COUNT( " + TCDatabaseContract.SessionEntry.FINISHED + " ) FROM "
                 + TCDatabaseContract.SessionEntry.TABLE_NAME + " WHERE " + TCDatabaseContract.SessionEntry.FINISHED
                 + " = ?";
@@ -843,9 +855,9 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
 
         //Setup the map
-        HashMap<String,Integer> map = new HashMap<>();
-        map.put("Active",counter);
-        map.put("Finished",cnt - counter);
+        HashMap<String, Integer> map = new HashMap<>();
+        map.put("Active", counter);
+        map.put("Finished", cnt - counter);
 
         return map;
     }
@@ -869,18 +881,16 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     *
      * @param id - ID of chart of interest
      * @return Cursor that points to all stored sessions associated with the flowchart of interest
      */
     public Cursor getSessionsFromChart(String id) {
         String selection = TCDatabaseContract.SessionEntry.FLOWCHART_ID + " = ?";
         return getReadableDatabase().query(TCDatabaseContract.SessionEntry.TABLE_NAME,
-                null, selection, new String[] {id}, null, null, null);
+                null, selection, new String[]{id}, null, null, null);
     }
 
     /**
-     *
      * @return
      */
     public CursorLoader getSessionsFromChartCursorLoader(final String id) {
@@ -919,7 +929,6 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     *
      * @param date - Date in the format "MMMM yyyy"
      * @return Cursor representing all entries belonging to that month/year combo
      */
@@ -932,8 +941,8 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             Date d = new SimpleDateFormat("MMMM").parse(selectionArgs[0]);
             Calendar cal = Calendar.getInstance();
             cal.setTime(d);
-            selectionArgs[0] = String.format("%02d",cal.get(Calendar.MONTH)+1);
-            Log.d("SQL Database",String.format("%s, %s",selectionArgs[0],selectionArgs[1]));
+            selectionArgs[0] = String.format("%02d", cal.get(Calendar.MONTH) + 1);
+            Log.d("SQL Database", String.format("%s, %s", selectionArgs[0], selectionArgs[1]));
         } catch (ParseException e) {
             Log.e("SQL Database", "Error in Month format for session recovery");
         }
@@ -944,7 +953,6 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     *
      * @return
      */
     public CursorLoader getSessionsFromDateCursorLoader(final String date) {
@@ -958,20 +966,21 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Write the current repair history to a csv file
+     *
      * @param writer - CSVWriter object that writes the SQL data to a specific file
      */
     public void writeRepairHistoryToFile(CSVWriter writer) {
         //Choose columns appropriately
-        String[] columnsSelect = {TCDatabaseContract.SessionEntry.FLOWCHART_ID,TCDatabaseContract.SessionEntry.CREATED_DATE, TCDatabaseContract.SessionEntry.FINISHED_DATE, TCDatabaseContract.SessionEntry.MANUFACTURER,
-            TCDatabaseContract.SessionEntry.DEPARTMENT, TCDatabaseContract.SessionEntry.MODEL, TCDatabaseContract.SessionEntry.SERIAL, TCDatabaseContract.SessionEntry.NOTES,
-            TCDatabaseContract.SessionEntry.FINISHED};
+        String[] columnsSelect = {TCDatabaseContract.SessionEntry.FLOWCHART_ID, TCDatabaseContract.SessionEntry.CREATED_DATE, TCDatabaseContract.SessionEntry.FINISHED_DATE, TCDatabaseContract.SessionEntry.MANUFACTURER,
+                TCDatabaseContract.SessionEntry.DEPARTMENT, TCDatabaseContract.SessionEntry.MODEL, TCDatabaseContract.SessionEntry.SERIAL, TCDatabaseContract.SessionEntry.NOTES,
+                TCDatabaseContract.SessionEntry.FINISHED};
 
         //Get Cursor representing data
         Cursor csvCursor = getReadableDatabase().query(TCDatabaseContract.SessionEntry.TABLE_NAME,
                 columnsSelect, null, null, null, null, null);
 
         //Set Column Titles for CSV
-        String[] columnTitle = {"Device",TCDatabaseContract.SessionEntry.CREATED_DATE, TCDatabaseContract.SessionEntry.FINISHED_DATE, TCDatabaseContract.SessionEntry.MANUFACTURER,
+        String[] columnTitle = {"Device", TCDatabaseContract.SessionEntry.CREATED_DATE, TCDatabaseContract.SessionEntry.FINISHED_DATE, TCDatabaseContract.SessionEntry.MANUFACTURER,
                 TCDatabaseContract.SessionEntry.DEPARTMENT, TCDatabaseContract.SessionEntry.MODEL, TCDatabaseContract.SessionEntry.SERIAL, TCDatabaseContract.SessionEntry.NOTES};
 
         //Start writing the table
@@ -989,8 +998,8 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
                 dateFinished = "In Progress";
             }
 
-            String[] entry = {device,dateCreated,dateFinished,csvCursor.getString(3),csvCursor.getString(4),csvCursor.getString(5),csvCursor.getString(6),
-                csvCursor.getString(7)};
+            String[] entry = {device, dateCreated, dateFinished, csvCursor.getString(3), csvCursor.getString(4), csvCursor.getString(5), csvCursor.getString(6),
+                    csvCursor.getString(7)};
             writer.writeNext(entry);
         }
 
@@ -1032,11 +1041,11 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         if (s.getId() == null) {
             s.setId(getRandomId()); //Set the random ID field
         }
-        sessionContentValues.put(TCDatabaseContract.SessionEntry.ID,s.getId());
+        sessionContentValues.put(TCDatabaseContract.SessionEntry.ID, s.getId());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.CREATED_DATE, s.getCreatedDate());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.MANUFACTURER, s.getManufacturer());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.FINISHED, s.isFinished());
-        sessionContentValues.put(TCDatabaseContract.SessionEntry.FINISHED_DATE,s.getFinishedDate());
+        sessionContentValues.put(TCDatabaseContract.SessionEntry.FINISHED_DATE, s.getFinishedDate());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.DEPARTMENT, s.getDepartment());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.MODEL, s.getModelNumber());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.SERIAL, s.getSerialNumber());
