@@ -31,7 +31,6 @@ import org.techconnect.analytics.FirebaseEvents;
 import org.techconnect.asynctasks.LogoutAsyncTask;
 import org.techconnect.asynctasks.PostAppFeedbackAsyncTask;
 import org.techconnect.dialogs.SendFeedbackDialogFragment;
-import org.techconnect.fragments.CatalogFragment;
 import org.techconnect.fragments.DirectoryFragment;
 import org.techconnect.fragments.GuidesFragment;
 import org.techconnect.fragments.RepairHistoryFragment;
@@ -55,17 +54,15 @@ import butterknife.OnClick;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    public static final int FRAGMENT_CATALOG = 0;
-    public static final int FRAGMENT_GUIDES = 1;
-    public static final int FRAGMENT_HISTORY = 2;
-    public static final int FRAGMENT_DIRECTORY = 3;
+    public static final int FRAGMENT_GUIDES = 0;
+    public static final int FRAGMENT_HISTORY = 1;
+    public static final int FRAGMENT_DIRECTORY = 2;
     private static final int PERMISSIONS_REQUEST_READ_STORAGE = 1;
     private static final String SHOWN_TUTORIAL = "org.techconnect.prefs.shownturotial";
     private static final String USER_LEARNED_DRAWER = "org.techconnect.prefs.shownturotial.learneddrawer";
     private static final String ASKED_PERMISSION = "org.techconnect.prefs.shownturotial.askedpermission";
-    private final Fragment[] FRAGMENTS = new Fragment[]{new CatalogFragment(),
-            new GuidesFragment(), new RepairHistoryFragment(), new DirectoryFragment()};
-    private final int[] FRAGMENT_MENU_IDS = new int[]{R.id.nav_catalog, R.id.nav_guides, R.id.nav_repair_history, R.id.call_dir};
+    private final Fragment[] FRAGMENTS = new Fragment[]{new GuidesFragment(), new RepairHistoryFragment(), new DirectoryFragment()};
+    private final int[] FRAGMENT_MENU_IDS = new int[]{R.id.nav_guides, R.id.nav_repair_history, R.id.call_dir};
 
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout coordinatorLayout;
@@ -144,7 +141,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         int numCharts = TCDatabaseHelper.get(this).getNumFlowcharts();
-        int fragToOpen = numCharts > 0 ? FRAGMENT_GUIDES : FRAGMENT_CATALOG;
+        int fragToOpen = FRAGMENT_GUIDES;
         if (savedInstanceState != null) {
             fragToOpen = savedInstanceState.getInt("frag", fragToOpen);
             showedLogin = savedInstanceState.getBoolean("shown_login");
