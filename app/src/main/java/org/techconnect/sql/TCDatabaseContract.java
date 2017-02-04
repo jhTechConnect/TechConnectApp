@@ -221,7 +221,7 @@ public class TCDatabaseContract {
                 ");";
 
         public static final String UPGRADE_V1_V2_ADD_FINISHED_DATE = "ALTER TABLE "
-                + TABLE_NAME + " ADD " + FINISHED_DATE + " DATE DEFAULT CURRENT_TIMESTAMP";
+                + TABLE_NAME + " ADD " + FINISHED_DATE + " DATE DEFAULT 0";
         public static final String UPGRADE_V1_V2_ADD_MANUFACTURER = "ALTER TABLE "
                 + TABLE_NAME + " ADD " + MANUFACTURER + " TEXT DEFAULT ''";
 
