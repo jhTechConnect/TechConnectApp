@@ -21,7 +21,7 @@ public class TCDatabaseContract {
         public static final String ORGANIZATION = "organization";
         public static final String PIC = "pic";
         public static final String EXPERTISES = "expertises";
-        public static final String UPCHARTS  = "upCharts";
+        public static final String UPCHARTS = "upCharts";
         public static final String DOWNCHARTS = "downCharts";
         // Create the users table
         public static final String CREATE_USER_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
@@ -35,6 +35,10 @@ public class TCDatabaseContract {
                 EXPERTISES + " TEXT," +
                 UPCHARTS + " TEXT," +
                 DOWNCHARTS + " TEXT);";
+        public static final String UPGRADE_V1_V2_ADD_UPCHARTS = "ALTER TABLE "
+                + TABLE_NAME + " ADD " + UPCHARTS + " TEXT DEFAULT ''";
+        public static final String UPGRADE_V1_V2_ADD_DOWNCHARTS = "ALTER TABLE "
+                + TABLE_NAME + " ADD " + DOWNCHARTS + " TEXT DEFAULT ''";
     }
 
     /**
@@ -74,6 +78,11 @@ public class TCDatabaseContract {
                 UPVOTES + " INTEGER," +
                 DOWNVOTES + " INTEGER," +
                 " FOREIGN KEY (graphId) REFERENCES " + GraphEntry.TABLE_NAME + " (_id)) WITHOUT ROWID;";
+
+        public static final String UPGRADE_V1_V2_ADD_UPVOTES = "ALTER TABLE "
+                + TABLE_NAME + " ADD " + UPVOTES + " INTEGER DEFAULT 0";
+        public static final String UPGRADE_V1_V2_ADD_DOWNVOTES = "ALTER TABLE "
+                + TABLE_NAME + " ADD " + DOWNVOTES + " INTEGER DEFAULT 0";
 
         private ChartEntry() {
 
@@ -210,6 +219,11 @@ public class TCDatabaseContract {
                 OPTION_HISTORY + " TEXT,\n" +
                 FLOWCHART_ID + " TEXT" +
                 ");";
+
+        public static final String UPGRADE_V1_V2_ADD_FINISHED_DATE = "ALTER TABLE "
+                + TABLE_NAME + " ADD " + FINISHED_DATE + " DATE DEFAULT CURRENT_TIMESTAMP";
+        public static final String UPGRADE_V1_V2_ADD_MANUFACTURER = "ALTER TABLE "
+                + TABLE_NAME + " ADD " + MANUFACTURER + " TEXT DEFAULT ''";
 
         private SessionEntry() {
         }
