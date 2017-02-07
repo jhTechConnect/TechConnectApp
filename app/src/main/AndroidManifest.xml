@@ -67,7 +67,8 @@
             android:label="@string/session_title"/>
         <activity
             android:name="org.techconnect.activities.PlayGuideActivity"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:screenOrientation="locked"/>
         <activity
             android:name="org.techconnect.activities.RegisterActivity"
             android:label="@string/register"/>
