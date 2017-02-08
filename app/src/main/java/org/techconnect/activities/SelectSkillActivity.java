@@ -8,7 +8,10 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -16,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.centum.techconnect.R;
 import org.techconnect.sql.TCDatabaseHelper;
@@ -72,13 +76,13 @@ public class SelectSkillActivity extends AppCompatActivity {
                     //Open up a dialog window to enter text
                     final EditText editText = new EditText(context);
                     final AlertDialog dialog = new AlertDialog.Builder(context).setTitle("Enter Skill").setView(editText)
-                    .setPositiveButton(getString(android.R.string.yes), null)
-                    .setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    }).create();
+                            .setPositiveButton(getString(android.R.string.yes), null)
+                            .setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                }
+                            }).create();
 
                     dialog.setOnShowListener(new DialogInterface.OnShowListener() {
                         @Override
@@ -100,6 +104,42 @@ public class SelectSkillActivity extends AppCompatActivity {
                                     }
                                 }
                             });
+                        }
+                    });
+                    editText.setSingleLine(true);
+                    editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+                    editText.setOnEditorActionListener( new TextView.OnEditorActionListener() {
+                        @Override
+                        public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+                            if (event==null) {
+                                if (actionId==EditorInfo.IME_ACTION_DONE) {
+                                    // Capture soft enters in a singleLine EditText that is the last EditText.
+                                    Log.d("Login", "First");
+                                    if (TextUtils.isEmpty(editText.getText().toString())) {
+                                        Log.d(getClass().toString(),"HERE");
+                                        editText.setError("Must enter text");
+                                    } else {
+                                        Intent result = new Intent();
+                                        result.putExtra(ProfileActivity.EXTRA_SKILL, editText.getText().toString());
+                                        setResult(SKILL_SELECT, result);
+                                        finish();
+                                        dialog.dismiss();
+                                    }
+                                } else return false;  // Let system handle all other null KeyEvents
+                            }
+                            return true;   // Consume the event
+                        }
+                    });
+                    editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                        @Override
+                        public void onFocusChange(View v, boolean hasFocus) {
+                            if (hasFocus) {
+                                try {
+                                    dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                                } catch (NullPointerException e) {
+                                    Log.e(getClass().toString(),e.getMessage());
+                                }
+                            }
                         }
                     });
 

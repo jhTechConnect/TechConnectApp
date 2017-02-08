@@ -69,7 +69,7 @@ public class ProfileActivity extends AppCompatActivity {
     private List<ImageButton> row_buttons;
     private User head_user; //In cases without editing, this is only user needed
     private User temp_user; //In cases with editing, need temporary user to store changes until committed
-    
+
     private boolean isEditable;
     private boolean isEditing = false;
 
@@ -347,7 +347,6 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     public void updateEditViews(View v) {
-
         if (v.getId() == R.id.edit_work_button) {
                 org.setVisibility(View.GONE);
                 edit_org_layout.setVisibility(View.VISIBLE);
@@ -356,7 +355,7 @@ public class ProfileActivity extends AppCompatActivity {
                 saveButton.setVisibility(View.VISIBLE);
                 discardButton.setVisibility(View.VISIBLE);
         } else if (v.getId() == R.id.edit_skill_button) {
-                if (skills_table.getChildCount() == 1) {
+                if (temp_user.getExpertises().size() == 0) {
                     skills_table.removeViewAt(0);//Remove dummy row
                 }
                 for (ImageButton button : row_buttons) {
