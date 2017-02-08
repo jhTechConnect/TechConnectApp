@@ -60,6 +60,12 @@ public class ProfileActivity extends AppCompatActivity {
     @Bind(R.id.discard_button)
     Button discardButton;
 
+    //Intent requests
+    public static int SKILL_REQUEST = 0;
+
+    //Extra types
+    public static String EXTRA_SKILL = "org.techconnect.profileactivity.skill";
+
     private List<ImageButton> row_buttons;
     private User head_user; //In cases without editing, this is only user needed
     private User temp_user; //In cases with editing, need temporary user to store changes until committed
@@ -178,13 +184,12 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (adding) {
-                    //User wants to add something
-                    //tmp_skills.add(add_skill.getText().toString());
-                    icon.setImageResource(R.drawable.ic_close_black_24dp);
-                    skill_text.setVisibility(View.GONE);
-                    add_skill.setVisibility(View.VISIBLE);
-                    onRowAddRequest();
                     adding = false;
+                    icon.setImageResource(R.drawable.ic_close_black_24dp);
+                    //User wants to add something
+                    Intent intent = new Intent(ProfileActivity.this, SelectSkillActivity.class);
+                    startActivityForResult(intent,SKILL_REQUEST);
+                    onRowAddRequest();
                 } else {
                     //We want to delete the entire row that it belongs to
                     skills_table.removeViewAt(row_buttons.indexOf(icon));
@@ -375,5 +380,21 @@ public class ProfileActivity extends AppCompatActivity {
 
         }
         isEditing = !isEditing;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SKILL_REQUEST) {
+            if (resultCode == SelectSkillActivity.SKILL_SELECT) {
+                Log.d(getClass().toString(),data.getStringExtra(EXTRA_SKILL));
+                //Update the textview of the row
+                TableRow target = (TableRow) skills_table.getChildAt(skills_table.getChildCount() - 2);
+                ((TextView) target.findViewById(R.id.skill_text)).setText(data.getStringExtra(EXTRA_SKILL));
+            } else {
+                //Delete the 2nd to last row of the skills table
+                skills_table.removeView(skills_table.getChildAt(skills_table.getChildCount() - 2));
+            }
+        }
     }
 }
