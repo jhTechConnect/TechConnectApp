@@ -69,8 +69,7 @@ public class ProfileActivity extends AppCompatActivity {
     private List<ImageButton> row_buttons;
     private User head_user; //In cases without editing, this is only user needed
     private User temp_user; //In cases with editing, need temporary user to store changes until committed
-
-    private List<String> tmp_skills; //Hold onto the actual final set of skills for the user
+    
     private boolean isEditable;
     private boolean isEditing = false;
 
@@ -89,7 +88,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         //Only setup the temp user and skills in case where user is actual user
         if (isEditable) {
-            tmp_skills = new ArrayList<String>();
             try {
                 temp_user = head_user.clone();
             } catch (CloneNotSupportedException e) {
@@ -208,16 +206,16 @@ public class ProfileActivity extends AppCompatActivity {
         //Use the temp_user object to write any user changes to the database
         final Context context = this;
         //Run through the rows of the skills view and add to tmp skills
-        for (int i = 0; i < skills_table.getChildCount(); i++) {
+        ArrayList<String> skills = new ArrayList<String>();
+        for (int i = 0; i < skills_table.getChildCount() - 1; i++) {
             TableRow r = (TableRow) skills_table.getChildAt(i);
-            EditText editText = (EditText) r.findViewById(R.id.edit_skill_text);
-            //If text is present, add to tmp_skills
-            if (editText.getText().toString().trim().length() > 0) {
-                tmp_skills.add(editText.getText().toString().trim());
+            TextView skillText = (TextView) r.findViewById(R.id.skill_text);
+            //If text is present, add to skills
+            if (skillText.getText().toString().trim().length() > 0) {
+                skills.add(skillText.getText().toString().trim());
             }
-            editText.setVisibility(View.GONE);
         }
-        temp_user.setExpertises(tmp_skills);
+        temp_user.setExpertises(skills);
 
         //Update organization if necessary
         org.setVisibility(View.VISIBLE);
@@ -249,7 +247,6 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                     head_user = TCDatabaseHelper.get(context).getUser(temp_user.get_id());
                     skills_table.removeAllViews(); //Clear out all previous rows
-                    tmp_skills.clear(); // Clear out all temporary skills
                     org.setVisibility(View.VISIBLE);
                     setupProfile();
                 } else {
@@ -276,7 +273,6 @@ public class ProfileActivity extends AppCompatActivity {
     public void discardUserChanges() {
         //Want to restore the original user (head_user)
         skills_table.removeAllViews(); //Clear out all previous rows
-        tmp_skills.clear(); // Clear out all temporary skills
         org.setVisibility(View.VISIBLE);
         edit_org_layout.setVisibility(View.GONE);
         setupProfile();
@@ -331,7 +327,6 @@ public class ProfileActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         //We want to delete the entire row that it belongs to
                         skills_table.removeViewAt(row_buttons.indexOf(row_button));
-                        tmp_skills.remove(row_buttons.indexOf(row_button));
                         row_buttons.remove(row_button);
                     }
                 });
@@ -342,10 +337,6 @@ public class ProfileActivity extends AppCompatActivity {
                 TextView toAddText = (TextView) toAdd.findViewById(R.id.skill_text);
                 toAddText.setText(head_user.getExpertises().get(i));
                 toAddText.setVisibility(View.VISIBLE);
-
-                if (isEditable) { //Only need tmp_skills if editing
-                    tmp_skills.add(head_user.getExpertises().get(i));
-                }
 
                 skills_table.addView(toAdd);
             }
@@ -365,7 +356,7 @@ public class ProfileActivity extends AppCompatActivity {
                 saveButton.setVisibility(View.VISIBLE);
                 discardButton.setVisibility(View.VISIBLE);
         } else if (v.getId() == R.id.edit_skill_button) {
-                if (tmp_skills.size() == 0) {
+                if (skills_table.getChildCount() == 1) {
                     skills_table.removeViewAt(0);//Remove dummy row
                 }
                 for (ImageButton button : row_buttons) {
