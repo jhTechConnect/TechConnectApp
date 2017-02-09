@@ -224,6 +224,7 @@ public class ProfileActivity extends AppCompatActivity {
                     skills.add(skillText.getText().toString().trim());
                 }
             }
+            
             temp_user.setExpertises(skills);
         }
 
