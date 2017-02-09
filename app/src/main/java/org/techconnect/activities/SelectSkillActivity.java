@@ -6,14 +6,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -22,6 +23,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.centum.techconnect.R;
+import org.techconnect.adapters.SkillListAdapter;
 import org.techconnect.sql.TCDatabaseHelper;
 
 import java.util.ArrayList;
@@ -30,7 +32,7 @@ import java.util.Map;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class SelectSkillActivity extends AppCompatActivity {
+public class SelectSkillActivity extends AppCompatActivity implements TextWatcher {
 
     @Bind(R.id.search_editText)
     EditText searchEditText;
@@ -40,7 +42,8 @@ public class SelectSkillActivity extends AppCompatActivity {
     LinearLayout contentLinearLayout;
     @Bind(R.id.skillListView)
     ListView skillListView;
-    ArrayAdapter<String> mAdapter;
+    private ArrayList<String> devices;
+    private SkillListAdapter mAdapter;
 
     //Results
     public static final int SKILL_SELECT = 0;
@@ -51,18 +54,27 @@ public class SelectSkillActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_skill);
         ButterKnife.bind(this);
+        searchEditText.addTextChangedListener(this);
+
         Map<String,String> map = TCDatabaseHelper.get(this).getChartNamesAndIDs();
-        ArrayList<String> devices = new ArrayList<String>();
+        devices = new ArrayList<String>();
+        ArrayList<String> items = new ArrayList<String>();
         for (String key: map.keySet()) {
             devices.add(key);
+            items.add(key);
         }
-        devices.add(getString(R.string.other));
-        mAdapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,devices);
+        mAdapter = new SkillListAdapter(this,items);
         skillListView.setAdapter(mAdapter);
-        setTitle("Select skill");
+        setTitle("Select Skill");
 
         //Set the click listener
         final Context context = this;
+        clearSearchImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                searchEditText.setText(null);
+            }
+        });
         skillListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -154,5 +166,20 @@ public class SelectSkillActivity extends AppCompatActivity {
         Intent result = new Intent();
         setResult(SKILL_CANCEL, result);
         super.onBackPressed();
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        mAdapter.filter(charSequence.toString());
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+
     }
 }
