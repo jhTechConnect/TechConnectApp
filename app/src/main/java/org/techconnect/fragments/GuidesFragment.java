@@ -22,8 +22,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import org.centum.techconnect.R;
+import org.techconnect.activities.CatalogActivity;
 import org.techconnect.activities.GuideActivity;
-import org.techconnect.activities.MainActivity;
 import org.techconnect.adapters.FlowchartCursorAdapter;
 import org.techconnect.misc.auth.AuthManager;
 import org.techconnect.sql.TCDatabaseHelper;
@@ -33,7 +33,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class  GuidesFragment extends Fragment
+public class GuidesFragment extends Fragment
         implements SwipeRefreshLayout.OnRefreshListener,
         View.OnClickListener,
         TextWatcher,
@@ -117,13 +117,12 @@ public class  GuidesFragment extends Fragment
         super.onResume();
         if (getActivity() != null) {
             getActivity().setTitle(R.string.guides);
-
+            onRefresh();
         }
     }
 
     public void onRefresh() {
         if (getActivity() != null) {
-
             getLoaderManager().restartLoader(GUIDE_LOADER, null, this);
         }
     }
@@ -137,9 +136,7 @@ public class  GuidesFragment extends Fragment
 
     @OnClick(R.id.download_guides_button)
     public void onDownloadGuides() {
-        if (getActivity() != null && getActivity() instanceof MainActivity) {
-            ((MainActivity) getActivity()).setCurrentFragment(MainActivity.FRAGMENT_CATALOG);
-        }
+        startActivity(new Intent(getActivity(), CatalogActivity.class));
     }
 
     @Override
