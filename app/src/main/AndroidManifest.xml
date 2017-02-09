@@ -72,9 +72,10 @@
             android:name="org.techconnect.activities.RegisterActivity"
             android:label="@string/register" />
         <activity
-            android:name="org.techconnect.activities.SessionListActivity"
-            android:label="SessionList" />
-        <activity android:name="org.techconnect.activities.CatalogActivity"></activity>
+            android:name="org.techconnect.activities.SelectSkillActivity"
+            android:label="@string/select_skill">
+        </activity>
+        <activity android:name="org.techconnect.activities.SessionListActivity" />
     </application>
 
 </manifest>
