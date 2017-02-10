@@ -1029,7 +1029,8 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             }
             response = response + g.getVertex(questions.get(questions.size() - 1)).getName();
             Log.d(getClass().toString(),response);
-            return response;
+            totalResponse = String.format("%s\nSteps Completed\n\n%s",header, response);
+            return totalResponse;
         } else { //Complete session
             for (int i = 0; i < questions.size(); i++) {
                 response = response + String.format("%s ... %s\n",g.getVertex(questions.get(i)).getName(), answers.get(i));
