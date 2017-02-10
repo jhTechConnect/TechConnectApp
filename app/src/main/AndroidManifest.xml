@@ -76,6 +76,7 @@
             android:label="@string/select_skill">
         </activity>
         <activity android:name="org.techconnect.activities.SessionListActivity" />
+        <activity android:name="org.techconnect.activities.CatalogActivity" />
     </application>
 
 </manifest>

@@ -703,7 +703,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         Log.d(this.getClass().getName(), "Session Info Inserted Successfully");
     }
 
-    public Session getSession(String id, Context context) {
+    public Session getSession(String id) {
         String selection = TCDatabaseContract.SessionEntry.ID + " = ?";
         String selectionArgs[] = {id};
         Cursor c = getReadableDatabase().query(TCDatabaseContract.SessionEntry.TABLE_NAME,
@@ -1005,6 +1005,41 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
 
 
     }
+
+    /**
+     * Used to convert the response history of a session
+     * @return
+     */
+    public String writeResponsesToString(String id) {
+        //Use the id to get the session
+        Session s = getSession(id);
+        Graph g = s.getFlowchart().getGraph();
+        String response = "";
+        String totalResponse;
+        //Make String description of the session
+        String header = String.format("Device: %s\nManufacturer: %s\nModel #: %s\nSerial #: %s\nNotes: %s\n",s.getFlowchart().getName(),s.getManufacturer()
+            ,s.getModelNumber(),s.getSerialNumber(),s.getNotes());
+        List<String> questions = s.getHistory();
+        List<String> answers = s.getOptionHistory();
+        //Paused session
+        if (questions.size() != answers.size()) {
+            Log.d(getClass().toString(),String.format("Unequal size of question and answers: %d, %d",questions.size(), answers.size()));
+            for (int i = 0; i < questions.size() - 1; i++) {
+                response = response + String.format("%s ... %s\n",g.getVertex(questions.get(i)).getName(), answers.get(i));
+            }
+            response = response + g.getVertex(questions.get(questions.size() - 1)).getName();
+            Log.d(getClass().toString(),response);
+            return response;
+        } else { //Complete session
+            for (int i = 0; i < questions.size(); i++) {
+                response = response + String.format("%s ... %s\n",g.getVertex(questions.get(i)).getName(), answers.get(i));
+            }
+            totalResponse = String.format("%s\nSteps Completed\n\n%s",header, response);
+            Log.d(getClass().toString(),totalResponse);
+            return totalResponse;
+        }
+    }
+
 
 
     public Session getSessionFromCursor(Cursor c) {

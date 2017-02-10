@@ -242,7 +242,6 @@ public class Session implements Parcelable {
         this.manufacturer = manufacturer;
     }
 
-
     public long getFinishedDate() {
         return finishedDate;
     }
