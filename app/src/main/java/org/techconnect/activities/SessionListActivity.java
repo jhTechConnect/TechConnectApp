@@ -36,6 +36,7 @@ public class SessionListActivity extends AppCompatActivity implements
 
     //Loader options
     //private static final int SESSION_LOADER = 0;
+
     //Loader Types
     public static final int SESSION_DATE_LOADER = 0;
     public static final int SESSION_DEVICE_LOADER = 1;
@@ -73,7 +74,7 @@ public class SessionListActivity extends AppCompatActivity implements
         ButterKnife.bind(this);
 
         //CursorLoader loader = TCDatabaseHelper.get(this.getContext()).getActiveSessionsCursorLoader();
-        adapter = new SessionCursorAdapter(this);
+        adapter = new SessionCursorAdapter(this, false);
         sessionListView.setAdapter(adapter);
         sessionListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

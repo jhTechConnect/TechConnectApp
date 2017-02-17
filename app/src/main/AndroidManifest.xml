@@ -77,6 +77,10 @@
         </activity>
         <activity android:name="org.techconnect.activities.SessionListActivity" />
         <activity android:name="org.techconnect.activities.CatalogActivity" />
+        <activity android:name="org.techconnect.activities.PostQuestionActivity"
+            android:label="@string/post_question"
+            android:theme= "@style/Theme.AppCompat.Light.Dialog">
+        </activity>
     </application>
 
 </manifest>
