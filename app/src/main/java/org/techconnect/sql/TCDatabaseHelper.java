@@ -22,6 +22,7 @@ import org.techconnect.model.Vertex;
 import org.techconnect.model.session.Session;
 import org.techconnect.sql.TCDatabaseContract.ChartEntry;
 
+import java.io.FileWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

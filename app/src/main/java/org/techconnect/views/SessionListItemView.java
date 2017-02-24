@@ -146,4 +146,8 @@ public class SessionListItemView extends LinearLayout {
     public void setChecklist(boolean checklist) {
         this.checklist = checklist;
     }
+
+    public boolean isChecked() {
+        return sessionCheckbox.isChecked();
+    }
 }

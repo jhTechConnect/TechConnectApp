@@ -1,6 +1,5 @@
 package org.techconnect.activities;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,7 +14,11 @@ import android.widget.ProgressBar;
 
 import org.centum.techconnect.R;
 import org.techconnect.adapters.SessionCursorAdapter;
+import org.techconnect.asynctasks.PostQuestionAsyncTask;
 import org.techconnect.sql.TCDatabaseHelper;
+import org.techconnect.views.SessionListItemView;
+
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -55,10 +58,19 @@ public class PostQuestionActivity extends AppCompatActivity implements
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.positiveButton) {
-            //Continue to email
-            Intent emailIntent = new Intent(Intent.ACTION_SEND);
-            emailIntent.setType("message");
-            //Setup the email a bit further
+            //Determine which sessions have been clicked within the listview
+            ArrayList<String> ids = new ArrayList<String>();
+            for (int i = 0; i < sessionListView.getChildCount(); i++) {
+                SessionListItemView v = (SessionListItemView) sessionListView.getChildAt(i);
+                if (v.isChecked()) {
+                    ids.add(v.getSession().getId());//Add to array of IDs to include include
+                }
+            }
+            //Use PostQuestionAsyncTask to open gmail
+            String[] ids_array = new String[ids.size()];
+            ids_array = ids.toArray(ids_array);
+            new PostQuestionAsyncTask(this).execute(ids_array);
+            finish();
         } else if (view.getId() == R.id.negativeButton) {
             //Cancl, terminate activity
             finish();
