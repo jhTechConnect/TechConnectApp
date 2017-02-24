@@ -11,6 +11,10 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="org.techconnect.activities.PostQuestionActivity">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/post_question_prompt"/>
     <ListView
         android:id = "@+id/sessionListView"
         android:layout_width="match_parent"

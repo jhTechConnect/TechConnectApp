@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 
+import org.centum.techconnect.R;
 import org.techconnect.sql.TCDatabaseHelper;
 
 import java.io.File;
@@ -69,7 +70,7 @@ public class PostQuestionAsyncTask extends AsyncTask<String, Void, Integer> {
             //Send email based on String arguments
             Intent emailIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
             emailIntent.setType("message/rfc822");
-            emailIntent.putExtra(Intent.EXTRA_EMAIL,new String[]{"jhu.techconnect@gmail.com"});
+            emailIntent.putExtra(Intent.EXTRA_EMAIL,new String[]{context.getString(R.string.company_email)});
             emailIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, attachments);
             emailIntent.setType("text/plain");
             context.startActivity(Intent.createChooser(emailIntent, "Send email using"));

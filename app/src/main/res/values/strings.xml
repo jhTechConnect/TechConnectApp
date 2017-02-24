@@ -190,4 +190,6 @@
     <string name="select_skill">Select Skill</string>
     <string name="post_a_question">Post a Question</string>
     <string name="post_question">Post Question</string>
+    <string name="post_question_prompt">Select an active session to include with question (optional)</string>
+    <string name="company_email">jhu.techconnect@gmail.com</string>
 </resources>
