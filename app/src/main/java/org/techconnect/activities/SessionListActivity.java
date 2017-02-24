@@ -124,6 +124,12 @@ public class SessionListActivity extends AppCompatActivity implements
         Log.d("Resume Session", "Resume Fragment");
         super.onResume();
         setTitle(currentTitle);
+        if (currentLoader == SESSION_ACTIVE_LOADER ) {
+            //Need to update listview
+            progressBar.setVisibility(View.VISIBLE);
+            sessionListView.setVisibility(View.GONE);
+            getSupportLoaderManager().restartLoader(currentLoader,currentArgs,this);
+        }
     }
 
 
