@@ -52,7 +52,7 @@ import butterknife.OnClick;
  * Entry activity.
  */
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener{
 
     public static final int FRAGMENT_GUIDES = 0;
     public static final int FRAGMENT_HISTORY = 1;
@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity
     MenuItem logoutMenuItem;
     MenuItem loginMenuItem;
     MenuItem viewProfileMenuItem;
+
 
     private int currentFragment = -1;
     private boolean showedLogin = false;
@@ -270,8 +271,11 @@ public class MainActivity extends AppCompatActivity
             } else if (id == R.id.logout) {
                 onLogout();
                 return true;
+            } else if (id == R.id.postQuestion) {
+                //drawer.closeDrawer(GravityCompat.START);
+                onPostQuestion();
+                return true;
             } else if (id == R.id.post_feedback) {
-                drawer.closeDrawer(GravityCompat.START);
                 onSendFeedback();
                 return true;
             } else if (id == R.id.profile) {
@@ -282,6 +286,12 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         setCurrentFragment(newFragIndex);
         return true;
+    }
+
+    private void onPostQuestion() {
+        Intent intent = new Intent(MainActivity.this, PostQuestionActivity.class);
+        startActivity(intent);
+        //questionDialogFragment.show(getSupportFragmentManager(),"postQuestion");
     }
 
     private void onSendFeedback() {

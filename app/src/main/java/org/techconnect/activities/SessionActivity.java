@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 
 import org.centum.techconnect.R;
 import org.techconnect.analytics.FirebaseEvents;
+import org.techconnect.asynctasks.ExportResponsesAsyncTask;
 import org.techconnect.dialogs.GuideFeedbackDialogFragment;
 import org.techconnect.model.session.Session;
 import org.techconnect.sql.TCDatabaseHelper;
@@ -160,8 +163,18 @@ public class SessionActivity extends AppCompatActivity {
     public void onResume() {
         //Reload the session from the Database, hopefull don't need a cursor loader
         super.onResume();
-        session = TCDatabaseHelper.get(this).getSession(session.getId(),this);
+        session = TCDatabaseHelper.get(this).getSession(session.getId());
         updateViews();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.activity_session_toolbar, menu);
+        MenuItem item = menu.findItem(R.id.actionSend);
+        item.setVisible(true);
+        return true;
     }
 
     @Override
@@ -172,6 +185,9 @@ public class SessionActivity extends AppCompatActivity {
             Intent resultIntent = new Intent();
             setResult(SESSION_STABLE, resultIntent);
             finish();
+        } else if (item.getItemId() == R.id.actionSend) {
+            //Start an intent to send a message with question/response data
+            new ExportResponsesAsyncTask(this).execute(session.getId());
         }
         return super.onOptionsItemSelected(item);
     }

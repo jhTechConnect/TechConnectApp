@@ -31,7 +31,9 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class PlayGuideActivity extends AppCompatActivity implements SessionListener {
+public class PlayGuideActivity extends AppCompatActivity implements
+        SessionListener,
+        DialogInterface.OnDismissListener {
 
     public static final String EXTRA_CHART_ID = "org.techconnect.playguide.chartid";
     public static final String EXTRA_SESSION = "org.techconnect.playguide.session"; //Resuming from session
@@ -247,7 +249,9 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
                         }).show();
             } else {
                 saveSession();
-                GuideFeedbackDialogFragment.newInstance(session).show(getFragmentManager(), "guide_feedback");
+                GuideFeedbackDialogFragment frag = GuideFeedbackDialogFragment.newInstance(session);
+                frag.setOnDismissListener(this);
+                frag.show(getFragmentManager(), "guide_feedback");
             }
             FirebaseEvents.logSessionDuration(this, session);
         } else {
@@ -258,6 +262,14 @@ public class PlayGuideActivity extends AppCompatActivity implements SessionListe
     @Override
     public void onSessionPaused() {
         // TODO store the progress_spinner made somewhere
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialogInterface) {
+        //This means that the dialog box that came up was exited, meaning that the session is no
+        //longer finished
+        session.setFinished(false);
+        session.goBack();//Go back to previous question
     }
 }
 

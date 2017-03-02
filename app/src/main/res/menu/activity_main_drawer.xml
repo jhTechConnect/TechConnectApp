@@ -47,10 +47,16 @@
 
     <group android:id="@+id/feedback_group">
         <item
+            android:id="@+id/postQuestion"
+            android:icon="@android:drawable/ic_menu_help"
+            android:title="@string/post_a_question"
+            android:visible="true"/>
+        <item
             android:id="@+id/post_feedback"
             android:icon="@android:drawable/ic_menu_send"
             android:title="@string/action_post_app_feedback"
             android:visible="true" />
+
     </group>
 
 </menu>
