@@ -22,7 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.centum.techconnect.R;
+import org.techconnect.R;
 import org.techconnect.adapters.SkillListAdapter;
 import org.techconnect.sql.TCDatabaseHelper;
 

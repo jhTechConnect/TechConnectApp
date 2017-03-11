@@ -7,7 +7,7 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 
-import org.centum.techconnect.R;
+import org.techconnect.R;
 import org.techconnect.sql.TCDatabaseHelper;
 
 import java.io.File;

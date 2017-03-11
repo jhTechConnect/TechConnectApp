@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-import org.centum.techconnect.R;
+import org.techconnect.R;
 
 public class CatalogActivity extends AppCompatActivity {
 

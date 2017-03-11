@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import org.centum.techconnect.R;
+import org.techconnect.R;
 
 import java.util.ArrayList;
 import java.util.List;

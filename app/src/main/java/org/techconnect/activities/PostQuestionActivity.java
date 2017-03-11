@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import org.centum.techconnect.R;
+import org.techconnect.R;
 import org.techconnect.adapters.SessionCursorAdapter;
 import org.techconnect.asynctasks.PostQuestionAsyncTask;
 import org.techconnect.sql.TCDatabaseHelper;
