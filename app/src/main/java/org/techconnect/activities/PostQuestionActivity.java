@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import org.techconnect.R;
 import org.techconnect.adapters.SessionCursorAdapter;
@@ -35,6 +36,8 @@ public class PostQuestionActivity extends AppCompatActivity implements
     ListView sessionListView;
     @Bind(R.id.progressBar)
     ProgressBar progress;
+    @Bind(R.id.emptyTextView)
+    TextView emptyTextView;
     @Bind(R.id.negativeButton)
     Button negativeButton;
     @Bind(R.id.positiveButton)
@@ -109,7 +112,13 @@ public class PostQuestionActivity extends AppCompatActivity implements
             @Override
             public void run() {
                 progress.setVisibility(View.GONE);
-                sessionListView.setVisibility(View.VISIBLE);
+                if (mAdapter.getCount() > 0) {
+                    sessionListView.setVisibility(View.VISIBLE);
+                    emptyTextView.setVisibility(View.GONE);
+                } else {
+                    sessionListView.setVisibility(View.GONE);
+                    emptyTextView.setVisibility(View.VISIBLE);
+                }
             }
         };
         Handler h = new Handler();
