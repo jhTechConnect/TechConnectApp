@@ -95,7 +95,7 @@ public class ExportHistoryAsyncTask extends AsyncTask<String,Void,Integer> {
             this.dialog.dismiss();
         }
         if (success == 1){
-            Toast.makeText(this.context, "Export successful!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this.context, "Export successful!", Toast.LENGTH_SHORT).show();
         }
         else {
             Toast.makeText(this.context, "Export failed!", Toast.LENGTH_SHORT).show();
