@@ -1,6 +1,7 @@
 package org.techconnect.activities;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -181,6 +183,13 @@ public class PlayGuideActivity extends AppCompatActivity implements
                 session.setNotes(notesEditText.getText().toString());
                 session.setCreatedDate(System.currentTimeMillis());
                 flowView.setSession(session, this);
+
+                //Force close the keyboard if open
+                View view = this.getCurrentFocus();
+                if (view != null) {
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
                 updateViews();
             }
         }
