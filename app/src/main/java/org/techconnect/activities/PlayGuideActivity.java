@@ -231,10 +231,10 @@ public class PlayGuideActivity extends AppCompatActivity implements
         if (session != null) {
             final DialogInterface.OnDismissListener dismissListener = this;
             if (!session.isFinished()) {
-                new AlertDialog.Builder(this)
+                final AlertDialog follow = new AlertDialog.Builder(this)
                         .setTitle(R.string.save_session)
                         .setMessage(R.string.save_session_msg)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 saveSession();
@@ -242,7 +242,7 @@ public class PlayGuideActivity extends AppCompatActivity implements
                                 finish();
                             }
                         })
-                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 GuideFeedbackDialogFragment frag = GuideFeedbackDialogFragment.newInstance(session);
@@ -253,6 +253,22 @@ public class PlayGuideActivity extends AppCompatActivity implements
                                     }
                                 });
                                 frag.show(getFragmentManager(), "guide_feedback");
+                                dialog.dismiss();
+                            }
+                        }).create();
+                new AlertDialog.Builder(this)
+                        .setTitle("Quit Session")
+                        .setMessage("Would you like to quit this session?")
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                follow.show();
+                            }
+                        })
+                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
                             }
                         }).show();
