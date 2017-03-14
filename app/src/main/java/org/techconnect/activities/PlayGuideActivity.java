@@ -229,6 +229,7 @@ public class PlayGuideActivity extends AppCompatActivity implements
 
     private void endSession() {
         if (session != null) {
+            final DialogInterface.OnDismissListener dismissListener = this;
             if (!session.isFinished()) {
                 new AlertDialog.Builder(this)
                         .setTitle(R.string.save_session)
@@ -247,9 +248,8 @@ public class PlayGuideActivity extends AppCompatActivity implements
                                 GuideFeedbackDialogFragment frag = GuideFeedbackDialogFragment.newInstance(session);
                                 frag.setOnDismissListener(new DialogInterface.OnDismissListener() {
                                     @Override
-                                    public void onDismiss(DialogInterface dialog) {
+                                    public void onDismiss(DialogInterface dialogInterface) {
 
-                                        finish();
                                     }
                                 });
                                 frag.show(getFragmentManager(), "guide_feedback");
