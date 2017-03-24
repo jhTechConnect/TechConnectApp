@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class PostQuestionActivity extends AppCompatActivity implements
+public class ContactAnExpertActivity extends AppCompatActivity implements
         View.OnClickListener,
         LoaderManager.LoaderCallbacks<Cursor> {
 

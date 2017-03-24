@@ -280,7 +280,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void onPostQuestion() {
-        Intent intent = new Intent(MainActivity.this, PostQuestionActivity.class);
+        Intent intent = new Intent(MainActivity.this, ContactAnExpertActivity.class);
         startActivity(intent);
         //questionDialogFragment.show(getSupportFragmentManager(),"postQuestion");
     }
