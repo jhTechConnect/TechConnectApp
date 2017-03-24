@@ -39,7 +39,7 @@
     <string name="tutorial_msg_welcome">Swipe for some quick tips</string>
 
     <string name="tutorial_title_guides_home">Guide Homescreen</string>
-    <string name="tutorial_msg_guides_home">This screen contains all charts that have been downloaded to the device. Additional guides can be added by pressing the yellow button</string>
+    <string name="tutorial_msg_guides_home">This screen contains all charts that have been downloaded to the device. Additional guides can be added by pressing the button at the bottom of the screen</string>
 
     <string name="tutorial_title_device_home">View device details and start a session</string>
     <string name="tutorial_msg_device_home">Each device has a page with additional resources and comments on the guide as a whole. Press the \"Start Session\" button to begin</string>
@@ -192,4 +192,6 @@
     <string name="post_question">Post Question</string>
     <string name="post_question_prompt">Select an active session to include with question (optional)</string>
     <string name="company_email">jhu.techconnect@gmail.com</string>
+    <string name="help">Help</string>
+    <string name="contact_an_expert">Contact an Expert</string>
 </resources>
