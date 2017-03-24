@@ -271,12 +271,18 @@ public class MainActivity extends AppCompatActivity
                 onViewProfile();
                 return true;
             } else if (id == R.id.get_help) {
+                onGetHelp();
                 return true;
             }
         }
         drawer.closeDrawer(GravityCompat.START);
         setCurrentFragment(newFragIndex);
         return true;
+    }
+
+    private void onGetHelp() {
+        Intent intent = new Intent(MainActivity.this,HelpActivity.class);
+        startActivity(intent);
     }
 
     private void onPostQuestion() {
