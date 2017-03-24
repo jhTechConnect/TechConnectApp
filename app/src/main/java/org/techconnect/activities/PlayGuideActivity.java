@@ -61,12 +61,16 @@ public class PlayGuideActivity extends AppCompatActivity implements
     EditText modelEditText;
     @Bind(R.id.serial_editText)
     EditText serialEditText;
-    @Bind(R.id.notes_editText)
-    EditText notesEditText;
+    @Bind(R.id.problem_editText)
+    EditText problemEditText;
+    @Bind(R.id.solution_editText)
+    EditText solutionEditText;
 
     private GuideFlowView flowView;
     private FlowChart flowChart = null;
     private Session session;
+    private Menu mOptionsMenu;
+    private int currentLayout = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +87,10 @@ public class PlayGuideActivity extends AppCompatActivity implements
             this.session = savedInstanceState.getParcelable(STATE_SESSION);
             flowView.setSession(session, this);
         }
+        if (session == null) {
+            session = new Session(flowChart); //Make a session based on flowchart, but no info on the device yet
+            flowView.setSession(session, this);
+        }
         updateViews();
     }
 
@@ -94,7 +102,8 @@ public class PlayGuideActivity extends AppCompatActivity implements
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_play_guide, menu);
+        mOptionsMenu = menu;
+        getMenuInflater().inflate(R.menu.activity_play_guide, mOptionsMenu);
         return true;
     }
 
@@ -109,13 +118,33 @@ public class PlayGuideActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-        if (session != null && flowView.goBack()) {
-            return;
-        }
-        if (session != null) {
-            onEndSession();
+        if (currentLayout == LAYOUT_FLOW) {
+            if (session != null && flowView.goBack()) {
+                return;
+            }
+            if (session != null) {
+                onEndSession();
+            }
+        } else if (currentLayout == LAYOUT_INFO) {
+            //We need to ask if you'd like to quit without saving, this time just leave
+            new AlertDialog.Builder(this)
+                    .setTitle("Quit Session")
+                    .setMessage("Would you like to quit this session without saving?")
+                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            finish();
+                        }
+                    })
+                    .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    }).show();
         } else {
-            super.onBackPressed();
+                super.onBackPressed();
         }
     }
 
@@ -127,8 +156,13 @@ public class PlayGuideActivity extends AppCompatActivity implements
     }
 
     private void saveSession() {
-        if (session != null) {
+        if (!session.getManufacturer().equals("")) { //This is a previously resumed session
             TCDatabaseHelper.get(this).upsertSession(session);//Write to the SQL Database
+            finish(); //End the activity
+        } else { //This is a newly paused session
+            setVisibleLayout(LAYOUT_INFO);
+            setTitle(flowChart.getName());
+            currentLayout = LAYOUT_INFO;
         }
     }
 
@@ -148,10 +182,14 @@ public class PlayGuideActivity extends AppCompatActivity implements
     private void updateViews() {
         if (flowChart == null) {
             setVisibleLayout(LAYOUT_ERROR);
+            currentLayout = LAYOUT_ERROR;
             syncButton.setEnabled(true);
         } else if (session == null) {
-            setVisibleLayout(LAYOUT_INFO);
+            setVisibleLayout(LAYOUT_FLOW);
             setTitle(flowChart.getName());
+            currentLayout = LAYOUT_FLOW;
+            //setVisibleLayout(LAYOUT_INFO);
+            //setTitle(flowChart.getName());
         } else {
             setVisibleLayout(LAYOUT_FLOW);
             setTitle(flowChart.getName());
@@ -159,7 +197,7 @@ public class PlayGuideActivity extends AppCompatActivity implements
     }
 
     @OnClick(R.id.start_button)
-    protected void onStartSession() {
+    protected void onSaveSession() {
         if (flowChart != null) {
             //Need to check that all fields are filled out
             if (TextUtils.isEmpty(departmentEditText.getText().toString())) {
@@ -175,22 +213,24 @@ public class PlayGuideActivity extends AppCompatActivity implements
                 serialEditText.setError(getString(R.string.required_fields));
                 serialEditText.requestFocus();
             } else { //All necessary entries are filled
-                session = new Session(flowChart);
                 session.setManufacturer(manufacturerEditText.getText().toString());
                 session.setDepartment(departmentEditText.getText().toString());
                 session.setModelNumber(modelEditText.getText().toString());
                 session.setSerialNumber(serialEditText.getText().toString());
-                session.setNotes(notesEditText.getText().toString());
+                session.setProblem(problemEditText.getText().toString());
+                session.setSolution(solutionEditText.getText().toString());
+                //session.setNotes(notesEditText.getText().toString());
                 session.setCreatedDate(System.currentTimeMillis());
                 flowView.setSession(session, this);
-
                 //Force close the keyboard if open
                 View view = this.getCurrentFocus();
                 if (view != null) {
                     InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
-                updateViews();
+                //Save the session to the database and close the activity
+                TCDatabaseHelper.get(this).upsertSession(session);
+                finish();
             }
         }
     }
@@ -214,6 +254,11 @@ public class PlayGuideActivity extends AppCompatActivity implements
         flowContainer.setVisibility(layout == LAYOUT_FLOW ? View.VISIBLE : View.GONE);
         sessionInfoLayout.setVisibility(layout == LAYOUT_INFO ? View.VISIBLE : View.GONE);
         errorLayout.setVisibility(layout == LAYOUT_ERROR ? View.VISIBLE : View.GONE);
+
+        if (layout == LAYOUT_INFO) {
+            //hide the cancel button in menu
+            mOptionsMenu.findItem(R.id.end_session).setVisible(false);
+        }
     }
 
     @Override
@@ -239,7 +284,6 @@ public class PlayGuideActivity extends AppCompatActivity implements
                             public void onClick(DialogInterface dialog, int which) {
                                 saveSession();
                                 dialog.dismiss();
-                                finish();
                             }
                         })
                         .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {

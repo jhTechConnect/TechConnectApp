@@ -41,6 +41,8 @@ public class Session implements Parcelable {
     private String department = "";
     private String modelNumber = "";
     private String serialNumber = "";
+    private String problem = "";
+    private String solution = "";
     private String notes = "";
     private boolean finished = false;
 
@@ -69,6 +71,8 @@ public class Session implements Parcelable {
         this.manufacturer = in.readString();
         this.modelNumber = in.readString();
         this.serialNumber = in.readString();
+        this.problem = in.readString();
+        this.solution = in.readString();
         this.notes = in.readString();
         in.readList(this.history, String.class.getClassLoader());
         in.readList(this.optionHistory, String.class.getClassLoader());
@@ -218,6 +222,8 @@ public class Session implements Parcelable {
         parcel.writeString(manufacturer);
         parcel.writeString(modelNumber);
         parcel.writeString(serialNumber);
+        parcel.writeString(problem);
+        parcel.writeString(solution);
         parcel.writeString(notes);
         parcel.writeList(history);
         parcel.writeList(optionHistory);
@@ -248,5 +254,21 @@ public class Session implements Parcelable {
 
     public void setFinishedDate(long finishedDate) {
         this.finishedDate = finishedDate;
+    }
+
+    public String getProblem() {
+        return problem;
+    }
+
+    public void setProblem(String problem) {
+        this.problem = problem;
+    }
+
+    public String getSolution() {
+        return solution;
+    }
+
+    public void setSolution(String solution) {
+        this.solution = solution;
     }
 }
