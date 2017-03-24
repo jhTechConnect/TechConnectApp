@@ -49,7 +49,7 @@ public class ContactAnExpertActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_post_question);
+        setContentView(R.layout.activity_contact_an_expert);
         ButterKnife.bind(this);
 
         negativeButton.setOnClickListener(this);
