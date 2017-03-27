@@ -196,4 +196,6 @@
     <string name="contact_an_expert">Contact an Expert</string>
     <string name="problem">Problem</string>
     <string name="solution">Solution</string>
+    <string name="delete">Delete</string>
+    <string name="export_history">Export History</string>
 </resources>
