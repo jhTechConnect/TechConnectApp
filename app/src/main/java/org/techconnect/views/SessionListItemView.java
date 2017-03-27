@@ -86,9 +86,9 @@ public class SessionListItemView extends LinearLayout {
             }
 
             if (session.getManufacturer() == null || TextUtils.isEmpty(session.getManufacturer())) {
-                titleTextView.setText(session.getFlowchart().getName());
+                titleTextView.setText(session.getDeviceName());
             } else {
-                titleTextView.setText(String.format("%s, %s", session.getFlowchart().getName(), session.getManufacturer()));
+                titleTextView.setText(String.format("%s, %s", session.getDeviceName(), session.getManufacturer()));
             }
 
 
@@ -98,26 +98,36 @@ public class SessionListItemView extends LinearLayout {
                 devImageView.setVisibility(View.VISIBLE);
                 sessionCheckbox.setVisibility(View.GONE);
                 //Used the stored Flowchart to get the associated image needed for the image view
-                FlowChart flowChart = session.getFlowchart();
-                if (flowChart.getImage() != null && !TextUtils.isEmpty(flowChart.getImage())) {
-                    if (ResourceHandler.get(getContext()).hasStringResource(flowChart.getImage())) {
-                        // Load offline image
-                        Picasso.with(getContext())
-                                .load(getContext().getFileStreamPath(
-                                        ResourceHandler.get(getContext()).getStringResource(flowChart.getImage())))
-                                .fit()
-                                .error(R.drawable.flowchart_icon)
-                                .transform(new CircleTransform())
-                                .into(devImageView);
+                if (session.hasChart()) {
+                    FlowChart flowChart = session.getFlowchart();
+                    if (flowChart.getImage() != null && !TextUtils.isEmpty(flowChart.getImage())) {
+                        if (ResourceHandler.get(getContext()).hasStringResource(flowChart.getImage())) {
+                            // Load offline image
+                            Picasso.with(getContext())
+                                    .load(getContext().getFileStreamPath(
+                                            ResourceHandler.get(getContext()).getStringResource(flowChart.getImage())))
+                                    .fit()
+                                    .error(R.drawable.flowchart_icon)
+                                    .transform(new CircleTransform())
+                                    .into(devImageView);
+                        } else {
+                            // Try to load from online
+                            Picasso.with(getContext())
+                                    .load(flowChart.getImage())
+                                    .fit()
+                                    .error(R.drawable.flowchart_icon)
+                                    .transform(new CircleTransform())
+                                    .into(devImageView);
+                        }
                     } else {
-                        // Try to load from online
                         Picasso.with(getContext())
-                                .load(flowChart.getImage())
+                                .load(R.drawable.flowchart_icon)
                                 .fit()
-                                .error(R.drawable.flowchart_icon)
                                 .transform(new CircleTransform())
                                 .into(devImageView);
                     }
+                    dateTextView.setVisibility(View.VISIBLE);
+                    devImageView.setVisibility(View.VISIBLE);
                 } else {
                     Picasso.with(getContext())
                             .load(R.drawable.flowchart_icon)
@@ -125,8 +135,6 @@ public class SessionListItemView extends LinearLayout {
                             .transform(new CircleTransform())
                             .into(devImageView);
                 }
-                dateTextView.setVisibility(View.VISIBLE);
-                devImageView.setVisibility(View.VISIBLE);
             } else {
                 devImageView.setVisibility(View.GONE);
                 sessionCheckbox.setVisibility(View.VISIBLE);

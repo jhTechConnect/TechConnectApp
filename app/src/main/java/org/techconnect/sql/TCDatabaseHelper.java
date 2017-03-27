@@ -22,7 +22,6 @@ import org.techconnect.model.Vertex;
 import org.techconnect.model.session.Session;
 import org.techconnect.sql.TCDatabaseContract.ChartEntry;
 
-import java.io.FileWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -42,7 +41,7 @@ import java.util.Map;
  */
 public class TCDatabaseHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     private static final String DATABASE_NAME = "FlowChart.db";
     private static TCDatabaseHelper instance = null;
     private Context context;
@@ -98,6 +97,13 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             sql.execSQL(ChartEntry.UPGRADE_V1_V2_ADD_UPVOTES);
             sql.execSQL(TCDatabaseContract.SessionEntry.UPGRADE_V1_V2_ADD_FINISHED_DATE);
             sql.execSQL(TCDatabaseContract.SessionEntry.UPGRADE_V1_V2_ADD_MANUFACTURER);
+        } else if (fromV == 2 && toV == 3) {
+            sql.execSQL(TCDatabaseContract.SessionEntry.UPGRADE_V2_V3_ADD_DEVICE_NAME);
+            //Iterate over all sessions, updating the device name information
+            for (String id: getSessions()) {
+                Session s = getSession(id);
+                upsertSession(s);
+            }
         }
     }
 
@@ -379,6 +385,17 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             }
 
             Log.d(this.getClass().getName(), "Chart Info Updated Successfully");
+        }
+    }
+
+    public void deleteChart(FlowChart flowChart) {
+        deleteChartsGraph(flowChart);
+        deleteComments(flowChart.getId(),Comment.PARENT_TYPE_CHART);
+        String selection = TCDatabaseContract.ChartEntry.ID + " = ?";
+        String selectionArgs[] = {flowChart.getId()};
+        int result = getWritableDatabase().delete(TCDatabaseContract.ChartEntry.TABLE_NAME, selection, selectionArgs);
+        if (result == 0) {
+            Log.d(getClass().toString(),"Did not delete chart");
         }
     }
 
@@ -733,8 +750,12 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             s.setOptionHistory(opt_history);
 
             //Set the current vertex in the traversal as the most recent vertex ID in the history list
-            s.setCurrentVertex(history.get(history.size() - 1));
-            s.updateHistoryStack();
+            if (s.hasChart()) {
+                s.setCurrentVertex(history.get(history.size() - 1));
+                s.updateHistoryStack();
+            } else {
+                s.setDeviceName(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.DEVICE_NAME)));
+            }
             return s;
         }
         return null;
@@ -796,8 +817,12 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             s.setOptionHistory(opt_history);
 
             //Set the current vertex in the traversal as the most recent vertex ID in the history list
-            s.setCurrentVertex(history.get(history.size() - 1));
-            s.updateHistoryStack();
+            if (s.hasChart()) {
+                s.setCurrentVertex(history.get(history.size() - 1));
+                s.updateHistoryStack();
+            } else {
+                s.setDeviceName(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.DEVICE_NAME)));
+            }
 
             sessions.add(s);
             c.moveToNext();
@@ -972,7 +997,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
      */
     public void writeRepairHistoryToFile(CSVWriter writer) {
         //Choose columns appropriately
-        String[] columnsSelect = {TCDatabaseContract.SessionEntry.FLOWCHART_ID, TCDatabaseContract.SessionEntry.CREATED_DATE, TCDatabaseContract.SessionEntry.FINISHED_DATE, TCDatabaseContract.SessionEntry.MANUFACTURER,
+        String[] columnsSelect = {TCDatabaseContract.SessionEntry.DEVICE_NAME, TCDatabaseContract.SessionEntry.CREATED_DATE, TCDatabaseContract.SessionEntry.FINISHED_DATE, TCDatabaseContract.SessionEntry.MANUFACTURER,
                 TCDatabaseContract.SessionEntry.DEPARTMENT, TCDatabaseContract.SessionEntry.MODEL, TCDatabaseContract.SessionEntry.SERIAL, TCDatabaseContract.SessionEntry.NOTES,
                 TCDatabaseContract.SessionEntry.FINISHED};
 
@@ -981,14 +1006,14 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
                 columnsSelect, null, null, null, null, null);
 
         //Set Column Titles for CSV
-        String[] columnTitle = {"Device", TCDatabaseContract.SessionEntry.CREATED_DATE, TCDatabaseContract.SessionEntry.FINISHED_DATE, TCDatabaseContract.SessionEntry.MANUFACTURER,
+        String[] columnTitle = {TCDatabaseContract.SessionEntry.DEVICE_NAME, TCDatabaseContract.SessionEntry.CREATED_DATE, TCDatabaseContract.SessionEntry.FINISHED_DATE, TCDatabaseContract.SessionEntry.MANUFACTURER,
                 TCDatabaseContract.SessionEntry.DEPARTMENT, TCDatabaseContract.SessionEntry.MODEL, TCDatabaseContract.SessionEntry.SERIAL, TCDatabaseContract.SessionEntry.NOTES};
 
         //Start writing the table
         writer.writeNext(columnTitle);
         while (csvCursor.moveToNext()) {
             //Get Device Name from Flowchart_ID
-            String device = getChartIDsAndNames().get(csvCursor.getString(0));
+            String device = csvCursor.getString(0);
             //Convert Date to simple DateFormat based on Locale
             String dateCreated = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()).format(csvCursor.getLong(1));
             String dateFinished;
@@ -1018,7 +1043,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         String response = "";
         String totalResponse;
         //Make String description of the session
-        String header = String.format("Device: %s\nManufacturer: %s\nModel #: %s\nSerial #: %s\nNotes: %s\n",s.getFlowchart().getName(),s.getManufacturer()
+        String header = String.format("Device: %s\nManufacturer: %s\nModel #: %s\nSerial #: %s\nNotes: %s\n",s.getDeviceName(),s.getManufacturer()
             ,s.getModelNumber(),s.getSerialNumber(),s.getNotes());
         List<String> questions = s.getHistory();
         List<String> answers = s.getOptionHistory();
@@ -1067,8 +1092,12 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         s.setOptionHistory(opt_history);
 
         //Set the current vertex in the traversal as the most recent vertex ID in the history list
-        s.setCurrentVertex(history.get(history.size() - 1));
-        s.updateHistoryStack();
+        if (s.hasChart()) {
+            s.setCurrentVertex(history.get(history.size() - 1));
+            s.updateHistoryStack();
+        } else {
+            s.setDeviceName(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.DEVICE_NAME)));
+        }
 
         return s;
     }
@@ -1083,6 +1112,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         sessionContentValues.put(TCDatabaseContract.SessionEntry.MANUFACTURER, s.getManufacturer());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.FINISHED, s.isFinished());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.FINISHED_DATE, s.getFinishedDate());
+        sessionContentValues.put(TCDatabaseContract.SessionEntry.DEVICE_NAME, s.getDeviceName());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.DEPARTMENT, s.getDepartment());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.MODEL, s.getModelNumber());
         sessionContentValues.put(TCDatabaseContract.SessionEntry.SERIAL, s.getSerialNumber());
