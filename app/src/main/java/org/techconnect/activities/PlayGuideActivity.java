@@ -125,7 +125,7 @@ public class PlayGuideActivity extends AppCompatActivity implements
             if (session != null) {
                 onEndSession();
             }
-        } else if (currentLayout == LAYOUT_INFO) {
+        } else if (currentLayout == LAYOUT_INFO && !session.isFinished()) {
             //We need to ask if you'd like to quit without saving, this time just leave
             new AlertDialog.Builder(this)
                     .setTitle("Quit Session")
@@ -135,6 +135,26 @@ public class PlayGuideActivity extends AppCompatActivity implements
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
                             finish();
+                        }
+                    })
+                    .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    }).show();
+        } else if (currentLayout == LAYOUT_INFO && session.isFinished()) {
+            //We need to ask if you'd like to return to the troubleshooting session
+            new AlertDialog.Builder(this)
+                    .setTitle("Return to Troubleshooting")
+                    .setMessage("Would you like to return to troubleshooting instead of finishing this session?")
+                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            session.setFinished(false);
+                            session.goBack();
+                            updateViews();
                         }
                     })
                     .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -230,7 +250,10 @@ public class PlayGuideActivity extends AppCompatActivity implements
                 }
                 //Save the session to the database and close the activity
                 TCDatabaseHelper.get(this).upsertSession(session);
-                finish();
+                //Show the feedback dialog
+                GuideFeedbackDialogFragment frag = GuideFeedbackDialogFragment.newInstance(session);
+                frag.setOnDismissListener(this);
+                frag.show(getFragmentManager(), "guide_feedback");// Fragment will terminate the activity
             }
         }
     }
@@ -251,6 +274,7 @@ public class PlayGuideActivity extends AppCompatActivity implements
     }
 
     private void setVisibleLayout(int layout) {
+        currentLayout = layout;
         flowContainer.setVisibility(layout == LAYOUT_FLOW ? View.VISIBLE : View.GONE);
         sessionInfoLayout.setVisibility(layout == LAYOUT_INFO ? View.VISIBLE : View.GONE);
         errorLayout.setVisibility(layout == LAYOUT_ERROR ? View.VISIBLE : View.GONE);
@@ -258,6 +282,11 @@ public class PlayGuideActivity extends AppCompatActivity implements
         if (layout == LAYOUT_INFO) {
             //hide the cancel button in menu
             mOptionsMenu.findItem(R.id.end_session).setVisible(false);
+        } else {
+            //Make sure that the cancel button is visible
+            if (mOptionsMenu != null) {
+                mOptionsMenu.findItem(R.id.end_session).setVisible(true);
+            }
         }
     }
 
@@ -318,9 +347,6 @@ public class PlayGuideActivity extends AppCompatActivity implements
                         }).show();
             } else {
                 saveSession();
-                GuideFeedbackDialogFragment frag = GuideFeedbackDialogFragment.newInstance(session);
-                frag.setOnDismissListener(this);
-                frag.show(getFragmentManager(), "guide_feedback");
             }
             FirebaseEvents.logSessionDuration(this, session);
         } else {
@@ -337,8 +363,10 @@ public class PlayGuideActivity extends AppCompatActivity implements
     public void onDismiss(DialogInterface dialogInterface) {
         //This means that the dialog box that came up was exited, meaning that the session is no
         //longer finished
-        session.setFinished(false);
-        session.goBack();//Go back to previous question
+        if (!session.isFinished()) {
+            //We only care in the event that the user quits while still in the middle of the session at this point
+            session.goBack();//Go back to previous question
+        }
     }
 }
 
