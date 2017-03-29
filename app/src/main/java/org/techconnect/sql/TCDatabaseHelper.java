@@ -1043,8 +1043,8 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         String response = "";
         String totalResponse;
         //Make String description of the session
-        String header = String.format("Device: %s\nManufacturer: %s\nModel #: %s\nSerial #: %s\nNotes: %s\n",s.getDeviceName(),s.getManufacturer()
-            ,s.getModelNumber(),s.getSerialNumber(),s.getNotes());
+        String header = String.format("Device: %s\nManufacturer: %s\nModel #: %s\nSerial #: %s\nNotes: %s\n",
+                s.getDeviceName(),s.getManufacturer(),s.getModelNumber(),s.getSerialNumber(),s.getNotes());
         List<String> questions = s.getHistory();
         List<String> answers = s.getOptionHistory();
         //Paused session
