@@ -8,7 +8,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
+import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -16,11 +16,9 @@ import android.widget.TextView;
 
 import org.techconnect.R;
 import org.techconnect.adapters.SessionCursorAdapter;
-import org.techconnect.asynctasks.PostQuestionAsyncTask;
+import org.techconnect.asynctasks.ExportResponsesAsyncTask;
 import org.techconnect.sql.TCDatabaseHelper;
 import org.techconnect.views.SessionListItemView;
-
-import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -56,17 +54,7 @@ public class ContactAnExpertActivity extends AppCompatActivity implements
         positiveButton.setOnClickListener(this);
         mAdapter = new SessionCursorAdapter(this, true);
         sessionListView.setAdapter(mAdapter);
-        sessionListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-           @Override
-           public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-               if (((SessionListItemView) view).isChecked()) {
-                   ((SessionListItemView) view).setChecked(false);
-               } else {
-                   ((SessionListItemView) view).setChecked(true);
-               }
-               view.invalidate();
-           }
-        });
+        sessionListView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
         getSupportLoaderManager().initLoader(SESSION_ACTIVE_LOADER, null, this);
     }
 
@@ -74,17 +62,19 @@ public class ContactAnExpertActivity extends AppCompatActivity implements
     public void onClick(View view) {
         if (view.getId() == R.id.positiveButton) {
             //Determine which sessions have been clicked within the listview
-            ArrayList<String> ids = new ArrayList<String>();
+            int index = -1;
             for (int i = 0; i < sessionListView.getChildCount(); i++) {
-                SessionListItemView v = (SessionListItemView) sessionListView.getChildAt(i);
-                if (v.isChecked()) {
-                    ids.add(v.getSession().getId());//Add to array of IDs to include include
+                if (((SessionListItemView) sessionListView.getChildAt(i)).isChecked()) {
+                    index = i;
                 }
             }
-            //Use PostQuestionAsyncTask to open gmail
-            String[] ids_array = new String[ids.size()];
-            ids_array = ids.toArray(ids_array);
-            new PostQuestionAsyncTask(this).execute(ids_array);
+            Log.d(getClass().toString(),String.format("%d",index));
+            if (index != -1) {
+                String id = ((SessionListItemView) sessionListView.getChildAt(index)).getSession().getId();
+                new ExportResponsesAsyncTask(this).execute(id);
+            } else {
+                new ExportResponsesAsyncTask(this).execute();
+            }
             finish();
         } else if (view.getId() == R.id.negativeButton) {
             //Cancl, terminate activity

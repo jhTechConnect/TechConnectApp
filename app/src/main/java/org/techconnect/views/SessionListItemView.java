@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.Checkable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -27,7 +28,7 @@ import butterknife.ButterKnife;
  * Created by dwalsten on 11/23/16.
  */
 
-public class SessionListItemView extends LinearLayout {
+public class SessionListItemView extends LinearLayout implements Checkable {
 
     //Add all of the Butterknife Binds
     @Bind(R.id.device_imageView)
@@ -157,6 +158,13 @@ public class SessionListItemView extends LinearLayout {
 
     public boolean isChecked() {
         return sessionCheckbox.isChecked();
+    }
+
+    @Override
+    public void toggle() {
+        if (sessionCheckbox != null) {
+            sessionCheckbox.toggle();
+        }
     }
 
     public void setChecked(boolean b) {

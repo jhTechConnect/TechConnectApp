@@ -198,4 +198,7 @@
     <string name="solution">Solution</string>
     <string name="delete">Delete</string>
     <string name="export_history">Export History</string>
+    <string name="exportResponse_autofill">Hello,\nI am unable to repair this device, can you help me?\n</string>
+    <string name="exportResponse_subject">Assistance Requested</string>
+    <string name="my_repair_history">My Repair History</string>
 </resources>
