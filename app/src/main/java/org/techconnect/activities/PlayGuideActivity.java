@@ -21,7 +21,6 @@ import android.widget.ScrollView;
 
 import org.techconnect.R;
 import org.techconnect.analytics.FirebaseEvents;
-import org.techconnect.dialogs.GuideFeedbackDialogFragment;
 import org.techconnect.model.FlowChart;
 import org.techconnect.model.session.Session;
 import org.techconnect.model.session.SessionListener;
@@ -251,9 +250,12 @@ public class PlayGuideActivity extends AppCompatActivity implements
                 //Save the session to the database and close the activity
                 TCDatabaseHelper.get(this).upsertSession(session);
                 //Show the feedback dialog
+                /*
                 GuideFeedbackDialogFragment frag = GuideFeedbackDialogFragment.newInstance(session);
                 frag.setOnDismissListener(this);
                 frag.show(getFragmentManager(), "guide_feedback");// Fragment will terminate the activity
+                */
+                finish();
             }
         }
     }
@@ -318,6 +320,7 @@ public class PlayGuideActivity extends AppCompatActivity implements
                         .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                /*
                                 GuideFeedbackDialogFragment frag = GuideFeedbackDialogFragment.newInstance(session);
                                 frag.setOnDismissListener(new DialogInterface.OnDismissListener() {
                                     @Override
@@ -326,7 +329,9 @@ public class PlayGuideActivity extends AppCompatActivity implements
                                     }
                                 });
                                 frag.show(getFragmentManager(), "guide_feedback");
+                                */
                                 dialog.dismiss();
+                                finish();
                             }
                         }).create();
                 new AlertDialog.Builder(this)
