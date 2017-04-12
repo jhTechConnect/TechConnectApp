@@ -21,9 +21,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
-import org.centum.techconnect.R;
+import org.techconnect.R;
+
+import org.techconnect.activities.CatalogActivity;
 import org.techconnect.activities.GuideActivity;
-import org.techconnect.activities.MainActivity;
 import org.techconnect.adapters.FlowchartCursorAdapter;
 import org.techconnect.misc.auth.AuthManager;
 import org.techconnect.sql.TCDatabaseHelper;
@@ -33,7 +34,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class  GuidesFragment extends Fragment
+public class GuidesFragment extends Fragment
         implements SwipeRefreshLayout.OnRefreshListener,
         View.OnClickListener,
         TextWatcher,
@@ -117,13 +118,12 @@ public class  GuidesFragment extends Fragment
         super.onResume();
         if (getActivity() != null) {
             getActivity().setTitle(R.string.guides);
-
+            onRefresh();
         }
     }
 
     public void onRefresh() {
         if (getActivity() != null) {
-
             getLoaderManager().restartLoader(GUIDE_LOADER, null, this);
         }
     }
@@ -137,9 +137,7 @@ public class  GuidesFragment extends Fragment
 
     @OnClick(R.id.download_guides_button)
     public void onDownloadGuides() {
-        if (getActivity() != null && getActivity() instanceof MainActivity) {
-            ((MainActivity) getActivity()).setCurrentFragment(MainActivity.FRAGMENT_CATALOG);
-        }
+        startActivity(new Intent(getActivity(), CatalogActivity.class));
     }
 
     @Override
@@ -167,11 +165,9 @@ public class  GuidesFragment extends Fragment
     public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor data) {
         adapter.swapCursor(data);
         if (data.getCount() == 0 && TextUtils.isEmpty(searchEditText.getText().toString())) {
-            searchLinearLayout.setVisibility(View.GONE);
             noGuidesLayout.setVisibility(View.VISIBLE);
             guidesListView.setVisibility(View.GONE);
         } else {
-            searchLinearLayout.setVisibility(View.VISIBLE);
             noGuidesLayout.setVisibility(View.GONE);
             guidesListView.setVisibility(View.VISIBLE);
         }

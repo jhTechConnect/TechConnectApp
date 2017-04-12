@@ -29,7 +29,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/device_info"
-                android:textSize="16sp"
+                android:textSize="20sp"
                 android:textStyle="normal|bold" />
 
             <android.support.design.widget.TextInputLayout
@@ -110,10 +110,44 @@
                 android:textColorHint="?android:attr/textColorHint">
 
                 <EditText
+                    android:id="@+id/problem_editText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Describe the problem"
+                    android:inputType="textMultiLine"
+                    android:textColor="?android:attr/colorForeground"
+                    android:textSize="16sp" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColorHint="?android:attr/textColorHint">
+
+                <EditText
+                    android:id="@+id/solution_editText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Describe the solution"
+                    android:inputType="textMultiLine"
+                    android:textColor="?android:attr/colorForeground"
+                    android:textSize="16sp" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColorHint="?android:attr/textColorHint">
+
+                <EditText
                     android:id="@+id/notes_editText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/notes"
+                    android:hint="Any additional notes"
                     android:inputType="textMultiLine"
                     android:textColor="?android:attr/colorForeground"
                     android:textSize="16sp" />
@@ -126,7 +160,7 @@
                 android:layout_height="0dp"
                 android:layout_marginTop="16dp"
                 android:layout_weight="1"
-                android:text="@string/start_guide" />
+                android:text="@string/save_session" />
 
         </LinearLayout>
     </ScrollView>

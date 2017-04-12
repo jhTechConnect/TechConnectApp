@@ -8,25 +8,30 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
+import android.support.design.widget.TabLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.squareup.picasso.Picasso;
 
-import org.centum.techconnect.R;
+import org.techconnect.R;
 import org.techconnect.analytics.FirebaseEvents;
 import org.techconnect.asynctasks.PostVoteAsyncTask;
 import org.techconnect.asynctasks.UpdateUserAsyncTask;
@@ -64,7 +69,15 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
     TextView descriptionTextView;
     @Bind(R.id.scrollView)
     ScrollView scrollView;
+    @Bind(R.id.slidingCommentLayout)
+    SlidingUpPanelLayout slidingUpPanelLayout;
+    @Bind(R.id.tabContainer)
+    FrameLayout tabContatiner;
+    @Bind(R.id.commentsResourcesTabbedView)
     CommentsResourcesTabbedView commentsResourcesTabbedView;
+    @Bind(R.id.controlButton)
+    ImageButton controlButton;
+
     ThumbFeedbackView thumbFeedbackView;
     private FlowChart flowChart;
     private User user;
@@ -79,12 +92,82 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        controlButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
+                    slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+                    controlButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_keyboard_arrow_up_black_24dp));
+                } else {
+                    slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+                    controlButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_keyboard_arrow_down_black_24dp));
+                }
+            }
+        });
+        slidingUpPanelLayout.setFadeOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (scrollView.getScrollY() == 0) {
+                    swipeRefreshLayout.setEnabled(true);
+                }
+                slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+                controlButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_keyboard_arrow_up_black_24dp));
+            }
+        });
 
-        commentsResourcesTabbedView = (CommentsResourcesTabbedView) getLayoutInflater()
-                .inflate(R.layout.comments_resources_tabbed_view, contentLinearLayout, false);
+        slidingUpPanelLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
+            @Override
+            public void onPanelSlide(View panel, float slideOffset) {
 
+            }
+
+            @Override
+            public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
+                if (newState == SlidingUpPanelLayout.PanelState.EXPANDED) {
+                    //No swipe, make the button look nice
+                    swipeRefreshLayout.setEnabled(false);
+                    controlButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_keyboard_arrow_down_black_24dp));
+                } else if (newState == SlidingUpPanelLayout.PanelState.COLLAPSED) {
+                    if (scrollView.getScrollY() == 0) {
+                        swipeRefreshLayout.setEnabled(true);
+                    }
+                    controlButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_keyboard_arrow_up_black_24dp));
+                } else if (newState == SlidingUpPanelLayout.PanelState.DRAGGING) {
+                    switch(previousState) {
+                        case COLLAPSED:
+                            controlButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_keyboard_arrow_down_black_24dp));
+                            break;
+                        case EXPANDED:
+                            controlButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_keyboard_arrow_up_black_24dp));
+                            break;
+                    }
+                }
+            }
+        });
+
+        final TabLayout tabLayout = (TabLayout) commentsResourcesTabbedView.findViewById(R.id.tab_layout);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                commentsResourcesTabbedView.setVisibleTab(tab.getPosition());
+                if (slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.COLLAPSED) {
+                    slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                if (slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.COLLAPSED) {
+                    slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+                }
+            }
+        });
         thumbFeedbackView = (ThumbFeedbackView) getLayoutInflater().inflate(R.layout.view_thumbfeedback,contentLinearLayout,false);
-
 
         //Add Thumb up/down view prior to the tabbed view
         contentLinearLayout.addView(thumbFeedbackView);
@@ -92,18 +175,22 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
         ruler.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
         contentLinearLayout.addView(ruler,
                 new ViewGroup.LayoutParams( ViewGroup.LayoutParams.FILL_PARENT, 2));
-        contentLinearLayout.addView(commentsResourcesTabbedView);
+
+
         swipeRefreshLayout.setOnRefreshListener(this);
+
         scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
             public void onScrollChanged() {
-                if (scrollView.getScrollY() == 0) {
+                if (scrollView.getScrollY() == 0 && slidingUpPanelLayout.getPanelState() != SlidingUpPanelLayout.PanelState.EXPANDED) {
                     swipeRefreshLayout.setEnabled(true);
                 } else {
                     swipeRefreshLayout.setEnabled(false);
                 }
             }
         });
+
+
         if (getIntent() != null && getIntent().hasExtra(EXTRA_CHART)) {
             flowChart = getIntent().getParcelableExtra(EXTRA_CHART);
             FirebaseEvents.logViewGuide(this, flowChart);
@@ -194,10 +281,27 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
 
     private void onPlay() {
         if (flowChart != null) {
-            Intent intent = new Intent(this, PlayGuideActivity.class);
+            final Intent intent = new Intent(this, PlayGuideActivity.class);
             intent.putExtra(PlayGuideActivity.EXTRA_CHART_ID, flowChart.getId());
-            startActivity(intent);
+            new AlertDialog.Builder(this)
+                    .setTitle("Investigational Application")
+                    .setMessage(R.string.disclaimer)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                            startActivity(intent);
+                        }
+                    }).show();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.activity_guide_toolbar,menu);
+        return true;
+
     }
 
     @Override
@@ -206,6 +310,25 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
             case android.R.id.home:
                 onBackPressed();
                 return true;
+            case R.id.delete_guide:
+                new AlertDialog.Builder(this)
+                        .setTitle("Delete Guide")
+                        .setMessage("Would you like to delete this guide?")
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Delete guide from SQL?
+                                TCDatabaseHelper.get(getApplicationContext()).deleteChart(flowChart);
+                                dialogInterface.dismiss();
+                                finish();
+                            }
+                        })
+                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        }).show();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -284,54 +407,56 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
                     }
                 }.execute(user);
 
-                //Followed by updating the chart
-                Log.d("Guide", String.format("Upvotes: %d, Downvotes: %d", flowChart.getUpvotes(), flowChart.getDownvotes()));
-                switch (thumbFeedbackView.getCurrentState()) {
-                    case ThumbFeedbackView.STATE_UP:
-                        new PostVoteAsyncTask(flowChart.getId(), "true", AuthManager.get(this).getAuth(), false) {
-                            @Override
-                            protected void onPostExecute(FlowChart chart) {
-                                if (chart != null) {
-                                    //Update the local copy
-                                    TCDatabaseHelper.get(getBaseContext()).upsertChart(chart);
-                                    Log.d("Guide", String.format("Upvotes: %d, Downvotes: %d", chart.getUpvotes(), chart.getDownvotes()));
-                                } else {
-                                    //Error in posting feedback
-                                    Toast.makeText(getBaseContext(), "Unable to post vote", Toast.LENGTH_SHORT).show();
+                //Followed by updating the chart, if the chart still exits
+                if (TCDatabaseHelper.get(this).hasChart(flowChart.getId())) {
+                    Log.d("Guide", String.format("Upvotes: %d, Downvotes: %d", flowChart.getUpvotes(), flowChart.getDownvotes()));
+                    switch (thumbFeedbackView.getCurrentState()) {
+                        case ThumbFeedbackView.STATE_UP:
+                            new PostVoteAsyncTask(flowChart.getId(), "true", AuthManager.get(this).getAuth(), false) {
+                                @Override
+                                protected void onPostExecute(FlowChart chart) {
+                                    if (chart != null) {
+                                        //Update the local copy
+                                        TCDatabaseHelper.get(getBaseContext()).upsertChart(chart);
+                                        Log.d("Guide", String.format("Upvotes: %d, Downvotes: %d", chart.getUpvotes(), chart.getDownvotes()));
+                                    } else {
+                                        //Error in posting feedback
+                                        Toast.makeText(getBaseContext(), "Unable to post vote", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
-                            }
-                        }.execute();
-                        break;
-                    case ThumbFeedbackView.STATE_DOWN:
-                        new PostVoteAsyncTask(flowChart.getId(), "false", AuthManager.get(this).getAuth(), false) {
-                            @Override
-                            protected void onPostExecute(FlowChart chart) {
-                                if (chart != null) {
-                                    //Update the local copy
-                                    TCDatabaseHelper.get(getBaseContext()).upsertChart(chart);
-                                    Log.d("Guide", String.format("Upvotes: %d, Downvotes: %d", chart.getUpvotes(), chart.getDownvotes()));
-                                } else {
-                                    //Error in posting feedback
-                                    Toast.makeText(getBaseContext(), "Unable to post vote", Toast.LENGTH_SHORT).show();
+                            }.execute();
+                            break;
+                        case ThumbFeedbackView.STATE_DOWN:
+                            new PostVoteAsyncTask(flowChart.getId(), "false", AuthManager.get(this).getAuth(), false) {
+                                @Override
+                                protected void onPostExecute(FlowChart chart) {
+                                    if (chart != null) {
+                                        //Update the local copy
+                                        TCDatabaseHelper.get(getBaseContext()).upsertChart(chart);
+                                        Log.d("Guide", String.format("Upvotes: %d, Downvotes: %d", chart.getUpvotes(), chart.getDownvotes()));
+                                    } else {
+                                        //Error in posting feedback
+                                        Toast.makeText(getBaseContext(), "Unable to post vote", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
-                            }
-                        }.execute();
-                        break;
-                    case ThumbFeedbackView.STATE_NEUTRAL:
-                        new PostVoteAsyncTask(flowChart.getId(), "empty", AuthManager.get(this).getAuth(), true) {
-                            @Override
-                            protected void onPostExecute(FlowChart chart) {
-                                if (chart != null) {
-                                    //Update the local copy
-                                    TCDatabaseHelper.get(getBaseContext()).upsertChart(chart);
-                                    Log.d("Guide", String.format("Upvotes: %d, Downvotes: %d", chart.getUpvotes(), chart.getDownvotes()));
-                                } else {
-                                    //Error in posting feedback
-                                    Toast.makeText(getBaseContext(), "Unable to post vote", Toast.LENGTH_SHORT).show();
+                            }.execute();
+                            break;
+                        case ThumbFeedbackView.STATE_NEUTRAL:
+                            new PostVoteAsyncTask(flowChart.getId(), "empty", AuthManager.get(this).getAuth(), true) {
+                                @Override
+                                protected void onPostExecute(FlowChart chart) {
+                                    if (chart != null) {
+                                        //Update the local copy
+                                        TCDatabaseHelper.get(getBaseContext()).upsertChart(chart);
+                                        Log.d("Guide", String.format("Upvotes: %d, Downvotes: %d", chart.getUpvotes(), chart.getDownvotes()));
+                                    } else {
+                                        //Error in posting feedback
+                                        Toast.makeText(getBaseContext(), "Unable to post vote", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
-                            }
-                        }.execute();
-                        break;
+                            }.execute();
+                            break;
+                    }
                 }
             }
         }
@@ -405,6 +530,15 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
                 setUser((User) data.getParcelableExtra(EXTRA_USER));
             }
             //In theory, do not need to send another message that login failed
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
+            slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+        } else {
+            super.onBackPressed();
         }
     }
 }
