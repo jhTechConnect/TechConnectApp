@@ -18,7 +18,6 @@ import android.widget.Toast;
 import org.techconnect.R;
 import org.techconnect.analytics.FirebaseEvents;
 import org.techconnect.asynctasks.ExportResponsesAsyncTask;
-import org.techconnect.dialogs.GuideFeedbackDialogFragment;
 import org.techconnect.model.session.Session;
 import org.techconnect.sql.TCDatabaseHelper;
 
@@ -35,9 +34,15 @@ import butterknife.ButterKnife;
 public class SessionActivity extends AppCompatActivity {
 
     public static String EXTRA_SESSION = "org.techconnect.sessionactivity.session";
+
+    //Intent Result Types
     public static final int SESSION_DELETED = 2;
     public static final int SESSION_STABLE = 3;
     public static final int SESSION_RESUME = 1;
+
+    //Intent Request Types
+    private static final int EDIT_SESSION_REQUEST = 0;
+
     //Bind all of the editable text views relevant to the session
     @Bind(R.id.sessionScrollView)
     ScrollView sessionScrollView;
@@ -61,11 +66,18 @@ public class SessionActivity extends AppCompatActivity {
     TextView stepTextView;
     @Bind(R.id.notes_textView)
     TextView notesTextView;
+    @Bind(R.id.problem_textView)
+    TextView problemTextView;
+    @Bind(R.id.solution_textView)
+    TextView solutionTextView;
     @Bind(R.id.resumeButton)
     Button resumeButton;
+    /*
     @Bind(R.id.deleteButton)
     Button deleteButton;
+    */
     private Session session;
+    private boolean isEdited = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +104,8 @@ public class SessionActivity extends AppCompatActivity {
             serialTextView.setText(session.getSerialNumber());
             dateTextView.setText(new SimpleDateFormat("MM/dd/yyyy, HH:mm:ss").format(new Date(session.getCreatedDate())));
             deviceTextView.setText(session.getDeviceName());
+            problemTextView.setText(session.getProblem());
+            solutionTextView.setText(session.getSolution());
             notesTextView.setText(session.getNotes());
 
             if (session.hasChart()) {
@@ -103,7 +117,7 @@ public class SessionActivity extends AppCompatActivity {
             //If active, hide the "Resume Session" button as this is not possible
             if(session.isFinished()) {
                 resumeButton.setVisibility(View.GONE);
-                deleteButton.setVisibility(View.GONE);//Don't want them to delete completed sessions
+                //deleteButton.setVisibility(View.GONE);//Don't want them to delete completed sessions
                 finishedDateHeader.setVisibility(View.VISIBLE);
                 finishedDateTextView.setVisibility(View.VISIBLE);
                 finishedDateTextView.setText(new SimpleDateFormat("MM/dd/yyyy, HH:mm:ss").format(new Date(session.getFinishedDate())));
@@ -141,7 +155,7 @@ public class SessionActivity extends AppCompatActivity {
         }
     }
 
-    public void deleteSession(View view) {
+    public void deleteSession() {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.delete_session)
                 .setMessage(R.string.confirm_delete_session)
@@ -151,6 +165,7 @@ public class SessionActivity extends AppCompatActivity {
                         FirebaseEvents.logDeleteSession(SessionActivity.this, session);
                         TCDatabaseHelper.get(SessionActivity.this).deleteSession(session);
                         dialog.dismiss();
+                        /*
                         GuideFeedbackDialogFragment frag = GuideFeedbackDialogFragment.newInstance(session);
                         frag.setOnDismissListener(new DialogInterface.OnDismissListener() {
                             @Override
@@ -159,6 +174,8 @@ public class SessionActivity extends AppCompatActivity {
                             }
                         });
                         frag.show(getFragmentManager(), "guide_feedback");
+                        */
+                        finish();
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -190,20 +207,53 @@ public class SessionActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle back arrow click here
-        if (item.getItemId() == android.R.id.home) {
-            //Want to go back to the list of past sessions
-            Intent resultIntent = new Intent();
-            setResult(SESSION_STABLE, resultIntent);
-            finish();
-        } else if (item.getItemId() == R.id.actionSend) {
-            //Start an intent to send a message with question/response data
-            if (session.hasChart()) {
-                new ExportResponsesAsyncTask(this).execute(session.getId());
-            } else {
-                Toast.makeText(this,String.format("%s guide has been deleted. Cannot send completed steps",session.getDeviceName()),Toast.LENGTH_LONG).show();
-            }
+        switch(item.getItemId()) {
+            case android.R.id.home:
+                //Want to go back to the list of past sessions
+                Intent resultIntent = new Intent();
+                if (!isEdited) {
+                    setResult(SESSION_STABLE, resultIntent);
+                } else {
+                    setResult(SESSION_RESUME,resultIntent);//The session was changed
+                }
+                finish();
+                break;
+            case R.id.actionSend:
+                //Start an intent to send a message with question/response data
+                if (session.hasChart()) {
+                    new ExportResponsesAsyncTask(this).execute(session.getId());
+                } else {
+                    Toast.makeText(this, String.format("%s guide has been deleted. Cannot send completed steps", session.getDeviceName()), Toast.LENGTH_LONG).show();
+                }
+                break;
+            case R.id.deleteSession:
+                deleteSession(); //Delete the stored session
+                break;
+            case R.id.editSession:
+                //Open up the edit session activity
+                Intent intent = new Intent(SessionActivity.this, EditSessionActivity.class);
+                intent.putExtra(EditSessionActivity.EXTRA_SESSION,session);
+                startActivityForResult(intent,EDIT_SESSION_REQUEST);
+                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == EDIT_SESSION_REQUEST) {
+            if (resultCode == EditSessionActivity.SESSION_CHANGE) {
+                //Need to refresh the textviews
+                if (data.hasExtra(EXTRA_SESSION)) {
+                    this.session = data.getParcelableExtra(EXTRA_SESSION);
+                    updateViews();
+                    isEdited = true; //Store that the session was changed
+                } else {
+                    //Catch error
+                }
+            }
+        }
     }
 
 }

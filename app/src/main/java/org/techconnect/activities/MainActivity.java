@@ -166,6 +166,7 @@ public class MainActivity extends AppCompatActivity
             logoutMenuItem.setVisible(false);
             viewProfileMenuItem.setVisible(false);
         }
+
     }
 
     @Override
@@ -180,7 +181,7 @@ public class MainActivity extends AppCompatActivity
                     .edit()
                     .putBoolean(SHOWN_TUTORIAL, true)
                     .apply();
-            //startActivity(new Intent(MainActivity.this, IntroTutorial.class));
+            startActivity(new Intent(MainActivity.this, IntroTutorial.class));
         } else if (!showedLogin && !AuthManager.get(this).hasAuth() && hasPermissions) {
             onShowLogin();
         } else if (hasPermissions && !userLearnedDrawer) {

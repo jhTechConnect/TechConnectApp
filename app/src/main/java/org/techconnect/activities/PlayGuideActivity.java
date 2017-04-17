@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,7 +20,6 @@ import android.widget.ScrollView;
 
 import org.techconnect.R;
 import org.techconnect.analytics.FirebaseEvents;
-import org.techconnect.dialogs.GuideFeedbackDialogFragment;
 import org.techconnect.model.FlowChart;
 import org.techconnect.model.session.Session;
 import org.techconnect.model.session.SessionListener;
@@ -65,6 +63,8 @@ public class PlayGuideActivity extends AppCompatActivity implements
     EditText problemEditText;
     @Bind(R.id.solution_editText)
     EditText solutionEditText;
+    @Bind(R.id.notes_editText)
+    EditText notesEditText;
 
     private GuideFlowView flowView;
     private FlowChart flowChart = null;
@@ -119,8 +119,14 @@ public class PlayGuideActivity extends AppCompatActivity implements
     @Override
     public void onBackPressed() {
         if (currentLayout == LAYOUT_FLOW) {
-            if (session != null && flowView.goBack()) {
-                return;
+            if (session != null) {
+                if (!flowView.closeResourceMenu()) {
+                    if (flowView.goBack()) {
+                        return;
+                    }
+                } else {
+                    return;
+                }
             }
             if (session != null) {
                 onEndSession();
@@ -220,6 +226,7 @@ public class PlayGuideActivity extends AppCompatActivity implements
     protected void onSaveSession() {
         if (flowChart != null) {
             //Need to check that all fields are filled out
+            /*
             if (TextUtils.isEmpty(departmentEditText.getText().toString())) {
                 departmentEditText.setError(getString(R.string.required_fields));
                 departmentEditText.requestFocus();
@@ -233,13 +240,14 @@ public class PlayGuideActivity extends AppCompatActivity implements
                 serialEditText.setError(getString(R.string.required_fields));
                 serialEditText.requestFocus();
             } else { //All necessary entries are filled
+            */
                 session.setManufacturer(manufacturerEditText.getText().toString());
                 session.setDepartment(departmentEditText.getText().toString());
                 session.setModelNumber(modelEditText.getText().toString());
                 session.setSerialNumber(serialEditText.getText().toString());
                 session.setProblem(problemEditText.getText().toString());
                 session.setSolution(solutionEditText.getText().toString());
-                //session.setNotes(notesEditText.getText().toString());
+                session.setNotes(notesEditText.getText().toString());
                 session.setCreatedDate(System.currentTimeMillis());
                 flowView.setSession(session, this);
                 //Force close the keyboard if open
@@ -251,11 +259,13 @@ public class PlayGuideActivity extends AppCompatActivity implements
                 //Save the session to the database and close the activity
                 TCDatabaseHelper.get(this).upsertSession(session);
                 //Show the feedback dialog
+                /*
                 GuideFeedbackDialogFragment frag = GuideFeedbackDialogFragment.newInstance(session);
                 frag.setOnDismissListener(this);
                 frag.show(getFragmentManager(), "guide_feedback");// Fragment will terminate the activity
+                */
+                finish();
             }
-        }
     }
 
     @OnClick(R.id.sync_button)
@@ -318,6 +328,7 @@ public class PlayGuideActivity extends AppCompatActivity implements
                         .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                /*
                                 GuideFeedbackDialogFragment frag = GuideFeedbackDialogFragment.newInstance(session);
                                 frag.setOnDismissListener(new DialogInterface.OnDismissListener() {
                                     @Override
@@ -326,7 +337,9 @@ public class PlayGuideActivity extends AppCompatActivity implements
                                     }
                                 });
                                 frag.show(getFragmentManager(), "guide_feedback");
+                                */
                                 dialog.dismiss();
+                                finish();
                             }
                         }).create();
                 new AlertDialog.Builder(this)
