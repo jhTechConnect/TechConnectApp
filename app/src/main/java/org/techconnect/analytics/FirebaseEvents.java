@@ -48,7 +48,7 @@ public class FirebaseEvents {
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, flowChart.getId());
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, flowChart.getName());
         bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "guides");
-        FirebaseAnalytics.getInstance(c).logEvent("session_start", bundle);
+        FirebaseAnalytics.getInstance(c).logEvent("session_begin", bundle);
     }
 
     public static void logEndSessionEarly(Context c, FlowChart flowChart) {
