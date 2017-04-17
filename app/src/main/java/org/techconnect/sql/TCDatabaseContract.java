@@ -79,6 +79,23 @@ public class TCDatabaseContract {
                 DOWNVOTES + " INTEGER," +
                 " FOREIGN KEY (graphId) REFERENCES " + GraphEntry.TABLE_NAME + " (_id)) WITHOUT ROWID;";
 
+        public static final String CREATE_CHART_TABLE_KITKAT = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
+                ID + " TEXT PRIMARY KEY NOT NULL UNIQUE," +
+                NAME + " TEXT," +
+                DESCRIPTION + " TEXT," +
+                UPDATED_DATE + " DATE," +
+                VERSION + " TEXT," +
+                OWNER + " TEXT," +
+                GRAPH_ID + " TEXT," +
+                ALL_RESOURCES + " TEXT," +
+                IMAGE + " TEXT," +
+                RESOURCES + " TEXT," +
+                TYPE + " TEXT," +
+                SCORE + " INTEGER," +
+                UPVOTES + " INTEGER," +
+                DOWNVOTES + " INTEGER," +
+                " FOREIGN KEY (graphId) REFERENCES " + GraphEntry.TABLE_NAME + " (_id));";
+
         public static final String UPGRADE_V1_V2_ADD_UPVOTES = "ALTER TABLE "
                 + TABLE_NAME + " ADD " + UPVOTES + " INTEGER DEFAULT 0";
         public static final String UPGRADE_V1_V2_ADD_DOWNVOTES = "ALTER TABLE "
@@ -178,11 +195,21 @@ public class TCDatabaseContract {
         //Creates the Vertices Table Object
         public static final String CREATE_VERTEX_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
                 ID + " TEXT PRIMARY KEY NOT NULL UNIQUE," +
-                GRAPH_ID + " TEXT," +
                 NAME + " TEXT," +
                 DETAILS + " TEXT," +
                 RESOURCES + " TEXT," +
-                IMAGES + " TEXT, FOREIGN KEY (graphId) REFERENCES " + GraphEntry.TABLE_NAME + " (_id));";
+                IMAGES + " TEXT);";
+
+        //When we removed the graphId field
+        public static final String UPGRADE_V4_V5_REMOVE_GRAPHID =
+            "BEGIN TRANSACTION; "+
+            "CREATE TEMPORARY TABLE t1_backup(" + ID + ","+ NAME + "," + DETAILS +"," + RESOURCES + "," + IMAGES + ");" +
+            "INSERT INTO t1_backup SELECT " + ID + ","+ NAME + "," + DETAILS +"," + RESOURCES + "," + IMAGES + " FROM " + TABLE_NAME + ";"+
+            "DROP TABLE " + TABLE_NAME + ";" +
+            "CREATE TABLE " + TABLE_NAME + "(" + ID + ","+ NAME + "," + DETAILS +"," + RESOURCES + "," + IMAGES + ");" +
+            "INSERT INTO " + TABLE_NAME + " SELECT " + ID + ","+ NAME + "," + DETAILS +"," + RESOURCES + "," + IMAGES + " FROM " + TABLE_NAME + " FROM t1_backup;" +
+            "DROP TABLE t1_backup;" +
+            "COMMIT;";
 
         private VertexEntry() {
         }
@@ -193,12 +220,15 @@ public class TCDatabaseContract {
         public static final String TABLE_NAME = "sessions";
         public static final String ID = "_id";
         public static final String CREATED_DATE = "createdDate";
+        public static final String DEVICE_NAME = "deviceName";
         public static final String FINISHED = "finished";
         public static final String FINISHED_DATE = "finishDate";
         public static final String MANUFACTURER = "manufacturer";
         public static final String DEPARTMENT = "department";
         public static final String MODEL = "modelNumber";
         public static final String SERIAL = "serialNumber";
+        public static final String PROBLEM = "problem";
+        public static final String SOLUTION = "solution";
         public static final String NOTES = "notes";
         public static final String HISTORY = "history";
         public static final String OPTION_HISTORY = "optionHistory";
@@ -210,10 +240,13 @@ public class TCDatabaseContract {
                 CREATED_DATE + " DATE,\n" +
                 FINISHED + " BOOLEAN,\n" +
                 FINISHED_DATE + " DATE,\n" +
+                DEVICE_NAME + " TEXT,\n" +
                 MANUFACTURER + " TEXT,\n" +
                 DEPARTMENT + " TEXT,\n" +
                 MODEL + " TEXT,\n" +
                 SERIAL + " TEXT,\n" +
+                PROBLEM + " TEXT,\n" +
+                SOLUTION + " TEXT,\n" +
                 NOTES + " TEXT,\n" +
                 HISTORY + " TEXT,\n" +
                 OPTION_HISTORY + " TEXT,\n" +
@@ -224,6 +257,13 @@ public class TCDatabaseContract {
                 + TABLE_NAME + " ADD " + FINISHED_DATE + " DATE DEFAULT 0";
         public static final String UPGRADE_V1_V2_ADD_MANUFACTURER = "ALTER TABLE "
                 + TABLE_NAME + " ADD " + MANUFACTURER + " TEXT DEFAULT ''";
+        public static final String UPGRADE_V2_V3_ADD_DEVICE_NAME = "ALTER TABLE "
+                + TABLE_NAME + " ADD " + DEVICE_NAME + " TEXT DEFAULT ''";
+        public static final String UPGRADE_V2_V3_ADD_PROBLEM = "ALTER TABLE "
+                + TABLE_NAME + " ADD " + PROBLEM + " TEXT DEFAULT ''";
+        public static final String UPGRADE_V2_V3_ADD_SOLUTION = "ALTER TABLE "
+                + TABLE_NAME + " ADD " + SOLUTION + " TEXT DEFAULT ''";
+
 
         private SessionEntry() {
         }

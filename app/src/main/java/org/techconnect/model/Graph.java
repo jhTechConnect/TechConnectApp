@@ -49,9 +49,22 @@ public class Graph implements Parcelable {
                 Log.e(getClass().getName(), "Edge with nonexistant nodes: " + e.getInV() + " or " + e.getOutV());
             }
         }
-
         //Set the root ID in order for it to be readily accessible, as well as ID and Owner
         this.firstVertex = firstVertex;
+    }
+
+    /**
+     * Needed for the realization that the vertex database in SQL is no longer associated with a specific
+     * graph
+     * @param V - HashMap of vertices in the form needed for graph
+     * @param E - HashMap of edges in the form needed for the graph
+     * @param firstVertex - the firstVertex of the graph
+     */
+    public Graph(HashMap<String,Vertex> V, HashMap<String, Edge> E, String firstVertex) {
+        //Set the root ID in order for it to be readily accessible, as well as ID and Owner
+        this.firstVertex = firstVertex;
+        edges = E;
+        vertices = V;
     }
 
     protected Graph(Parcel in) {

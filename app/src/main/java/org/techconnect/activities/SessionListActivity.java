@@ -17,7 +17,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import org.centum.techconnect.R;
+import org.techconnect.R;
 import org.techconnect.adapters.SessionCursorAdapter;
 import org.techconnect.sql.TCDatabaseHelper;
 import org.techconnect.views.SessionListItemView;
@@ -36,6 +36,7 @@ public class SessionListActivity extends AppCompatActivity implements
 
     //Loader options
     //private static final int SESSION_LOADER = 0;
+
     //Loader Types
     public static final int SESSION_DATE_LOADER = 0;
     public static final int SESSION_DEVICE_LOADER = 1;
@@ -73,7 +74,7 @@ public class SessionListActivity extends AppCompatActivity implements
         ButterKnife.bind(this);
 
         //CursorLoader loader = TCDatabaseHelper.get(this.getContext()).getActiveSessionsCursorLoader();
-        adapter = new SessionCursorAdapter(this);
+        adapter = new SessionCursorAdapter(this, false);
         sessionListView.setAdapter(adapter);
         sessionListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -123,6 +124,12 @@ public class SessionListActivity extends AppCompatActivity implements
         Log.d("Resume Session", "Resume Fragment");
         super.onResume();
         setTitle(currentTitle);
+        if (currentLoader == SESSION_ACTIVE_LOADER ) {
+            //Need to update listview
+            progressBar.setVisibility(View.VISIBLE);
+            sessionListView.setVisibility(View.GONE);
+            getSupportLoaderManager().restartLoader(currentLoader,currentArgs,this);
+        }
     }
 
 
@@ -210,7 +217,7 @@ public class SessionListActivity extends AppCompatActivity implements
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == VIEW_SESSION_REQUEST) {
-            if (resultCode == Activity.RESULT_CANCELED) {
+            if (resultCode == Activity.RESULT_CANCELED || resultCode == SessionActivity.SESSION_RESUME) {
                 //Need to update listview
                 progressBar.setVisibility(View.VISIBLE);
                 sessionListView.setVisibility(View.GONE);
