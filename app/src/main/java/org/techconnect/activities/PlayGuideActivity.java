@@ -71,6 +71,7 @@ public class PlayGuideActivity extends AppCompatActivity implements
     private Session session;
     private Menu mOptionsMenu;
     private int currentLayout = 1;
+    private boolean isResumedSession = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,16 +81,22 @@ public class PlayGuideActivity extends AppCompatActivity implements
         flowView = (GuideFlowView) LayoutInflater.from(this).inflate(R.layout.guide_flow_view, flowContainer, false);
         flowContainer.addView(flowView);
         loadFlowchart();
-        if (flowChart != null) {
-            FirebaseEvents.logStartSession(this, flowChart);
-        }
+
         if (savedInstanceState != null && savedInstanceState.containsKey(STATE_SESSION)) {
             this.session = savedInstanceState.getParcelable(STATE_SESSION);
             flowView.setSession(session, this);
         }
+
         if (session == null) {
+
             session = new Session(flowChart); //Make a session based on flowchart, but no info on the device yet
+            //Want to generate ID ourselves so we can get and track
+            session.setId(TCDatabaseHelper.get(this).getRandomId());
             flowView.setSession(session, this);
+        }
+
+        if (flowChart != null) {
+            FirebaseEvents.logStartSession(this, session);
         }
         updateViews();
     }
@@ -176,7 +183,7 @@ public class PlayGuideActivity extends AppCompatActivity implements
 
     private void onEndSession() {
         if (flowChart != null) {
-            FirebaseEvents.logEndSessionEarly(PlayGuideActivity.this, flowChart);
+            FirebaseEvents.logEndSessionEarly(PlayGuideActivity.this, session);
         }
         endSession();
     }
@@ -184,6 +191,14 @@ public class PlayGuideActivity extends AppCompatActivity implements
     private void saveSession() {
         if (!session.getManufacturer().equals("")) { //This is a previously resumed session
             TCDatabaseHelper.get(this).upsertSession(session);//Write to the SQL Database
+            //Since automatically update SQL, update Firebase here
+            if (flowChart != null) {
+                if (session.isFinished()) {
+                    FirebaseEvents.logSessionCompleteStub(this, session);
+                } else {
+                    FirebaseEvents.logSessionPausedStub(this, session);
+                }
+            }
             finish(); //End the activity
         } else { //This is a newly paused session
             setVisibleLayout(LAYOUT_INFO);
@@ -198,10 +213,10 @@ public class PlayGuideActivity extends AppCompatActivity implements
         }
 
         if (getIntent() != null && getIntent().hasExtra(EXTRA_SESSION)) {
-            session = (Session) getIntent().getParcelableExtra(EXTRA_SESSION);//Leverage the parcelable aspect of session
+            session = getIntent().getParcelableExtra(EXTRA_SESSION);//Leverage the parcelable aspect of session
             flowChart = session.getFlowchart();
             flowView.setSession(session, this);
-
+            isResumedSession = true;
         }
     }
 
@@ -264,6 +279,14 @@ public class PlayGuideActivity extends AppCompatActivity implements
                 frag.setOnDismissListener(this);
                 frag.show(getFragmentManager(), "guide_feedback");// Fragment will terminate the activity
                 */
+                //Need to log that we've finished if we are actually finished
+                if (flowChart != null) {
+                    if (session.isFinished()) {
+                        FirebaseEvents.logSessionCompleteFull(this, session);
+                    } else {
+                        FirebaseEvents.logSessionPausedFull(this, session);
+                    }
+                }
                 finish();
             }
     }
@@ -306,9 +329,11 @@ public class PlayGuideActivity extends AppCompatActivity implements
         session.setFinished(true);
         session.setFinishedDate(System.currentTimeMillis());
         endSession();
+        /*
         if (flowChart != null) {
             FirebaseEvents.logSessionComplete(this, flowChart);
         }
+        */
     }
 
     private void endSession() {
@@ -361,7 +386,6 @@ public class PlayGuideActivity extends AppCompatActivity implements
             } else {
                 saveSession();
             }
-            FirebaseEvents.logSessionDuration(this, session);
         } else {
             finish();
         }

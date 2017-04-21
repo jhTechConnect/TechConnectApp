@@ -43,37 +43,63 @@ public class FirebaseEvents {
         FirebaseAnalytics.getInstance(c).logEvent(FirebaseAnalytics.Event.LOGIN, null);
     }
 
-    public static void logStartSession(Context c, FlowChart flowChart) {
+    public static void logStartSession(Context c, Session session) {
         Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, flowChart.getId());
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, flowChart.getName());
-        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "guides");
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
         FirebaseAnalytics.getInstance(c).logEvent("session_begin", bundle);
     }
 
-    public static void logEndSessionEarly(Context c, FlowChart flowChart) {
+    public static void logEndSessionEarly(Context c, Session session) {
         Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, flowChart.getId());
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, flowChart.getName());
-        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "guides");
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
         FirebaseAnalytics.getInstance(c).logEvent("session_end_early", bundle);
     }
 
-    public static void logSessionComplete(Context c, FlowChart flowChart) {
+    public static void logSessionPausedFull(Context c, Session session) {
         Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, flowChart.getId());
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, flowChart.getName());
-        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "guides");
-        FirebaseAnalytics.getInstance(c).logEvent("session_complete", bundle);
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
+        bundle.putString("department", session.getDepartment());
+        bundle.putString("manufacturer",session.getManufacturer());
+        bundle.putString("modelNumber", session.getSerialNumber());
+        bundle.putString("serialNumber",session.getSerialNumber());
+        FirebaseAnalytics.getInstance(c).logEvent("session_paused", bundle);
     }
 
-    public static void logSessionDuration(Context c, Session session) {
+    //If the session is resumed, don't need to repeat info
+    public static void logSessionPausedStub(Context c, Session session) {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
+        FirebaseAnalytics.getInstance(c).logEvent("session_paused", bundle);
+    }
+
+    public static void logSessionCompleteStub(Context c, Session session) {
         long endTime = System.currentTimeMillis();
         long duration = endTime - session.getCreatedDate();
         Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
         bundle.putLong(FirebaseAnalytics.Param.VALUE, duration);
-        FirebaseAnalytics.getInstance(c).logEvent("session_duration", bundle);
+        FirebaseAnalytics.getInstance(c).logEvent("session_complete", bundle);
     }
+
+    public static void logSessionCompleteFull(Context c, Session session) {
+        long endTime = System.currentTimeMillis();
+        long duration = endTime - session.getCreatedDate();
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
+        bundle.putLong(FirebaseAnalytics.Param.VALUE, duration);
+        bundle.putString("department", session.getDepartment());
+        bundle.putString("manufacturer",session.getManufacturer());
+        bundle.putString("modelNumber", session.getSerialNumber());
+        bundle.putString("serialNumber",session.getSerialNumber());
+        FirebaseAnalytics.getInstance(c).logEvent("session_complete", bundle);
+    }
+
 
     public static void logViewProfile(Context c, User user) {
         Bundle bundle = new Bundle();
@@ -110,16 +136,17 @@ public class FirebaseEvents {
     }
 
     public static void logDeleteSession(Context c, Session session) {
-        Bundle fbBundle = new Bundle();
-        fbBundle.putLong("session_created", session.getCreatedDate());
-        fbBundle.putBoolean("session_finished", session.isFinished());
-        FirebaseAnalytics.getInstance(c).logEvent("session_deleted", fbBundle);
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
+        FirebaseAnalytics.getInstance(c).logEvent("session_deleted", bundle);
     }
 
     public static void logResumeSession(Context c, Session session) {
-        Bundle fbBundle = new Bundle();
-        fbBundle.putLong("session_created", session.getCreatedDate());
-        FirebaseAnalytics.getInstance(c).logEvent("session_resumed", fbBundle);
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
+        FirebaseAnalytics.getInstance(c).logEvent("session_resumed", bundle);
     }
 
     public static void logGuideFeedback(Context c, Session session, String expFeedback, String contactFeedback, String comments) {
