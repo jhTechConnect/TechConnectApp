@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import org.techconnect.R;
 import org.techconnect.activities.PDFActivity;
+import org.techconnect.analytics.FirebaseEvents;
 import org.techconnect.misc.ResourceHandler;
 import org.techconnect.misc.Utils;
 
@@ -28,6 +29,7 @@ public class ResourcesView extends LinearLayout {
     TextView resourcesHeaderTextView;
 
     private List<String> resources;
+    private String parentChart = "";
 
     public ResourcesView(Context context) {
         super(context);
@@ -71,6 +73,8 @@ public class ResourcesView extends LinearLayout {
             button.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    //Activate a Firebase event which reports parent flowchart and attachment
+                    FirebaseEvents.logViewResource(getContext(),parentChart,att);
                     openAttachment(att);
                 }
             });
@@ -95,5 +99,13 @@ public class ResourcesView extends LinearLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
         ButterKnife.bind(this);
+    }
+
+    public String getParentChart() {
+        return parentChart;
+    }
+
+    public void setParentChart(String parentChart) {
+        this.parentChart = parentChart;
     }
 }

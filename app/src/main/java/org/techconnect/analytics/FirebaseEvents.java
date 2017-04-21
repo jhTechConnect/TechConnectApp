@@ -161,4 +161,12 @@ public class FirebaseEvents {
         fbBundle.putString("contactOpt", contactFeedback);
         FirebaseAnalytics.getInstance(c).logEvent("guide_feedback", fbBundle);
     }
+
+    public static void logViewResource(Context context, String parentChart, String att) {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME,att);
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY,parentChart);
+        FirebaseAnalytics.getInstance(context).logEvent("view_resource", bundle);
+
+    }
 }

@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 
 import org.techconnect.R;
 import org.techconnect.model.Commentable;
+import org.techconnect.sql.TCDatabaseHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +67,7 @@ public class CommentsResourcesTabbedView extends LinearLayout implements TabLayo
         this.resources = resources;
         this.chartId = chartId;
         updateViews();
+        resourcesView.setParentChart(TCDatabaseHelper.get(getContext()).getChartIDsAndNames().get(chartId));
     }
 
     public void updateViews() {
