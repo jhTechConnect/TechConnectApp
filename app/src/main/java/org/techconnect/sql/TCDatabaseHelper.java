@@ -64,7 +64,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
      *
      * @return A random ID
      */
-    private static String getRandomId() {
+    public String getRandomId() {
         String validChars = "23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz";
         char chars[] = new char[17];
         for (int i = 0; i < chars.length; i++) {
