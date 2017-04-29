@@ -1,6 +1,7 @@
 package org.techconnect;
 
 import android.app.Activity;
+import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.espresso.action.ViewActions;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
@@ -17,6 +18,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.techconnect.activities.MainActivity;
+import org.techconnect.helpers.TestingUtilities;
+import org.techconnect.model.session.Session;
 import org.techconnect.sql.TCDatabaseHelper;
 
 import java.util.Collection;
@@ -47,6 +50,7 @@ import static org.hamcrest.Matchers.anything;
 public class SessionTest {
 
     private int NUMBER_STEPS = 10;
+    private Session session;
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule(MainActivity.class);
@@ -55,10 +59,15 @@ public class SessionTest {
     public void startSession() {
         onData(anything()).inAdapterView(withId(R.id.guides_listView)).atPosition(0).perform(click());
         onView(withId(R.id.button)).perform(scrollTo(), click());
-        onView(withId(R.id.button)).perform(click());
+        //onView(withId(R.id.button)).perform(click());
 
         //Since we have a dialog pop-up, we need to find the ok button
-        onView(withId(android.R.id.button1)).perform(click());
+        try {
+            onView(withId(android.R.id.button1)).perform(click());
+        } catch (NoMatchingViewException e) {
+            onView(withId(R.id.button)).perform(click());
+            onView(withId(android.R.id.button1)).perform(click());
+        }
 
     }
 
@@ -124,10 +133,10 @@ public class SessionTest {
 
                 //Check that the session info is visible, save everything
                 onView(withId(R.id.session_info_layout)).check(matches(isDisplayed()));
-                onView(withId(R.id.department_editText)).perform(typeText(TCDatabaseHelper.get(getContext()).getRandomId()));
-                onView(withId(R.id.manufacturer_editText)).perform(typeText(TCDatabaseHelper.get(getContext()).getRandomId()));
-                onView(withId(R.id.model_editText)).perform(typeText(TCDatabaseHelper.get(getContext()).getRandomId()));
-                onView(withId(R.id.serial_editText)).perform(typeText(TCDatabaseHelper.get(getContext()).getRandomId()));
+                onView(withId(R.id.department_editText)).perform(typeText(TestingUtilities.getRandomString()));
+                onView(withId(R.id.manufacturer_editText)).perform(typeText(TestingUtilities.getRandomString()));
+                onView(withId(R.id.model_editText)).perform(typeText(TestingUtilities.getRandomString()));
+                onView(withId(R.id.serial_editText)).perform(typeText(TestingUtilities.getRandomString()));
 
                 //Click save
                 onView(withId(R.id.start_button)).perform(click());
@@ -158,10 +167,10 @@ public class SessionTest {
 
         //Check that the session info is visible, save everything
         onView(withId(R.id.session_info_layout)).check(matches(isDisplayed()));
-        onView(withId(R.id.department_editText)).perform(scrollTo(),typeText(TCDatabaseHelper.get(getContext()).getRandomId()));
-        onView(withId(R.id.manufacturer_editText)).perform(scrollTo(),typeText(TCDatabaseHelper.get(getContext()).getRandomId()));
-        onView(withId(R.id.model_editText)).perform(scrollTo(), typeText(TCDatabaseHelper.get(getContext()).getRandomId()));
-        onView(withId(R.id.serial_editText)).perform(scrollTo(),typeText(TCDatabaseHelper.get(getContext()).getRandomId()),closeSoftKeyboard());
+        onView(withId(R.id.department_editText)).perform(scrollTo(),typeText(TestingUtilities.getRandomString()));
+        onView(withId(R.id.manufacturer_editText)).perform(scrollTo(),typeText(TestingUtilities.getRandomString()));
+        onView(withId(R.id.model_editText)).perform(scrollTo(), typeText(TestingUtilities.getRandomString()));
+        onView(withId(R.id.serial_editText)).perform(scrollTo(),typeText(TestingUtilities.getRandomString()),closeSoftKeyboard());
 
         //Click save
         onView(withId(R.id.start_button)).perform(scrollTo(), click());

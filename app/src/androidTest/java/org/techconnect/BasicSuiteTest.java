@@ -1,6 +1,8 @@
 package org.techconnect;
 
+import org.junit.FixMethodOrder;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.junit.runners.Suite;
 
 /**
@@ -9,10 +11,10 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        LoginTest.class,
-        DownloadGuideTest.class,
-        SessionTest.class
+        LoginTest.class
+        , DownloadGuideTest.class
+        , SessionTest.class
 })
-
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class BasicSuiteTest {
 }

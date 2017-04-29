@@ -1,13 +1,19 @@
 package org.techconnect;
 
+import android.app.Instrumentation;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.Espresso;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.techconnect.activities.MainActivity;
+import org.techconnect.helpers.IntentServiceIdlingResource;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
@@ -27,11 +33,26 @@ import static org.hamcrest.Matchers.anything;
 @LargeTest
 public class DownloadGuideTest {
 
+    private IntentServiceIdlingResource idlingResource;
+
     @Rule
     public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule(MainActivity.class);
 
+    @Before
+    public void registerIntentServiceIdlingResource() {
+        Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
+        idlingResource = new IntentServiceIdlingResource(instrumentation.getTargetContext());
+        Espresso.registerIdlingResources(idlingResource);
+
+    }
+
+    @After
+    public void unregisterIntentServiceIdlingResource() {
+        Espresso.unregisterIdlingResources(idlingResource);
+    }
+
     @Test
-    public void downloadGuide() {
+    public void onDownloadGuide() {
         onView(withId(R.id.download_guides_button)).perform(click());
 
 

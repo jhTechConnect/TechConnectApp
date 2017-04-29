@@ -61,7 +61,7 @@ public class LoginTest {
         //Skip tutorial if needed
         try {
             onView(withText("SKIP")).perform(click());
-            allowCurrentPermission(device);
+            //allowCurrentPermission(device);
         } catch (Exception e ) {
             //Don't worry about it
         }
@@ -78,6 +78,7 @@ public class LoginTest {
         }
     }
 
+    /*
     @Test
     public void onASkipMainActivityShown() {
         //Find the skip sign-in button, test if MainActivity screen is shown
@@ -90,9 +91,10 @@ public class LoginTest {
         onView(withId(R.id.download_guides_button))
                 .check(matches(isDisplayed()));
     }
+    */
 
     @Test
-    public void onLogin() {
+    public void onBLogin() {
 
         //Enter in information, then press button
         onView(withId(R.id.email)).perform(typeText(user));
