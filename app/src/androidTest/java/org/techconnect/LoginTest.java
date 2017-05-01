@@ -61,7 +61,7 @@ public class LoginTest {
         //Skip tutorial if needed
         try {
             onView(withText("SKIP")).perform(click());
-            //allowCurrentPermission(device);
+            allowCurrentPermission(device);
         } catch (Exception e ) {
             //Don't worry about it
         }

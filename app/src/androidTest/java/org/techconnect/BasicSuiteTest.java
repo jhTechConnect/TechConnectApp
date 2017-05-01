@@ -13,7 +13,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
         LoginTest.class
         , DownloadGuideTest.class
-        , SessionTest.class
+        //, SessionTest.class
+        , RepairHistoryTest.class
 })
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class BasicSuiteTest {

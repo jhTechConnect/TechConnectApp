@@ -126,8 +126,8 @@ public class SessionListActivity extends AppCompatActivity implements
         setTitle(currentTitle);
         if (currentLoader == SESSION_ACTIVE_LOADER ) {
             //Need to update listview
-            progressBar.setVisibility(View.VISIBLE);
-            sessionListView.setVisibility(View.GONE);
+            //progressBar.setVisibility(View.VISIBLE);
+            //sessionListView.setVisibility(View.GONE);
             getSupportLoaderManager().restartLoader(currentLoader,currentArgs,this);
         }
     }
@@ -219,8 +219,8 @@ public class SessionListActivity extends AppCompatActivity implements
         if (requestCode == VIEW_SESSION_REQUEST) {
             if (resultCode == Activity.RESULT_CANCELED || resultCode == SessionActivity.SESSION_RESUME) {
                 //Need to update listview
-                progressBar.setVisibility(View.VISIBLE);
-                sessionListView.setVisibility(View.GONE);
+                //progressBar.setVisibility(View.VISIBLE);
+                //sessionListView.setVisibility(View.GONE);
                 getSupportLoaderManager().restartLoader(currentLoader,currentArgs,this);
             }
         }
