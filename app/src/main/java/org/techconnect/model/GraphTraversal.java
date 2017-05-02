@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.TreeSet;
 
 /**
  * This class allows me to have a structured approach to traversing
@@ -82,7 +83,12 @@ public class GraphTraversal implements Parcelable {
     }
 
     public Set<String> getOptions() {
-        return this.currentOptions.keySet();
+        //Use TreeSet to generate options in alphabetical order
+        TreeSet<String> set = new TreeSet<>();
+        for (String s: this.currentOptions.keySet()) {
+            set.add(s);
+        }
+        return set.descendingSet();
     }
 
     /**
