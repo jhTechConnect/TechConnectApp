@@ -317,7 +317,11 @@ public class GuideActivity extends AppCompatActivity implements SwipeRefreshLayo
                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                //Delete guide from SQL?
+                                //Remove Resources from internal storage
+                                for (String res : flowChart.getAllRes()) {
+                                    ResourceHandler.get(getApplicationContext()).removeStringResource(res,flowChart.getId());
+                                }
+                                //Delete guide from SQL
                                 TCDatabaseHelper.get(getApplicationContext()).deleteChart(flowChart);
                                 dialogInterface.dismiss();
                                 finish();

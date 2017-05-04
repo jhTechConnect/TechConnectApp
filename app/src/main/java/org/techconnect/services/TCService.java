@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -94,15 +95,17 @@ public class TCService extends IntentService {
         int resultCode;
         try {
             FlowChart[] flowCharts = TCNetworkHelper.getCharts(chartIds);
-            TCDatabaseHelper.get(getApplicationContext()).upsertCharts(flowCharts);
-            Set<String> res = new HashSet<>();
             Set<String> userIds = new HashSet<>();
             for (FlowChart chart : flowCharts) {
-                res.addAll(chart.getAllRes());
+                loadResources(chart);
                 userIds.addAll(chart.getAllUserIds());
+                //After making corrections to valid resources, NOW want to insert into database
+                TCDatabaseHelper.get(getApplicationContext()).upsertChart(chart);
             }
-            loadResources(res.toArray(new String[res.size()]));
+
             loadUsers(userIds.toArray(new String[userIds.size()]));
+
+
 
             for (FlowChart chart : flowCharts) {
                 FirebaseEvents.logDownloadGuide(this, chart);
@@ -146,23 +149,28 @@ public class TCService extends IntentService {
     /**
      * Downloads the resources and adds them to the resource handler.
      *
-     * @param resources
+     * @param flowchart
      */
-    private void loadResources(String resources[]) {
-        for (String resUrl : resources) {
+    private void loadResources(FlowChart flowchart) {
+        ArrayList<String> valid_res = new ArrayList<String>();
+        for (String resUrl : flowchart.getAllRes()) {
             if (ResourceHandler.get(getApplicationContext()).hasStringResource(resUrl)) {
                 Log.d(this.getClass().getName(), "ResourceHandler has \"" + resUrl + "\"");
+                ResourceHandler.get(getApplicationContext()).addChartToMap(resUrl,flowchart.getId());
+                valid_res.add(resUrl);
             } else {
                 String fileName;
                 try {
                     fileName = downloadFile(resUrl);
-                    ResourceHandler.get(getApplicationContext()).addStringResource(resUrl, fileName);
+                    ResourceHandler.get(getApplicationContext()).addStringResource(resUrl, fileName,flowchart.getId());
+                    valid_res.add(resUrl);
                 } catch (IOException e) {
                     e.printStackTrace();
                     Log.e(this.getClass().getName(), "Failed to load: " + resUrl);
                 }
             }
         }
+        flowchart.setAllRes(valid_res);
     }
 
     /**
