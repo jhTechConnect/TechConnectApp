@@ -11,11 +11,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.techconnect.R;
+import org.techconnect.adapters.SessionInfoAdapter;
 import org.techconnect.analytics.FirebaseEvents;
 import org.techconnect.asynctasks.ExportResponsesAsyncTask;
 import org.techconnect.model.session.Session;
@@ -23,6 +26,7 @@ import org.techconnect.sql.TCDatabaseHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -46,24 +50,11 @@ public class SessionActivity extends AppCompatActivity {
     //Bind all of the editable text views relevant to the session
     @Bind(R.id.sessionScrollView)
     ScrollView sessionScrollView;
-    @Bind(R.id.manufacturer_textView)
-    TextView manufacturerTextView;
-    @Bind(R.id.model_textView)
-    TextView modelTextView;
-    @Bind(R.id.serial_textView)
-    TextView serialTextView;
-    @Bind(R.id.date_textView)
-    TextView dateTextView;
-    @Bind(R.id.finishedDateHeader)
-    TextView finishedDateHeader;
-    @Bind(R.id.finishedDateTextView)
-    TextView finishedDateTextView;
-    @Bind(R.id.device_textView)
-    TextView deviceTextView;
-    @Bind(R.id.step_header)
-    TextView stepHeader;
-    @Bind(R.id.step_textView)
-    TextView stepTextView;
+    @Bind(R.id.deviceListView)
+    ListView deviceListView;
+    @Bind(R.id.repairListView)
+    ListView repairListView;
+
     @Bind(R.id.notes_textView)
     TextView notesTextView;
     @Bind(R.id.problem_textView)
@@ -72,12 +63,13 @@ public class SessionActivity extends AppCompatActivity {
     TextView solutionTextView;
     @Bind(R.id.resumeButton)
     Button resumeButton;
-    /*
-    @Bind(R.id.deleteButton)
-    Button deleteButton;
-    */
+
     private Session session;
     private boolean isEdited = false;
+    //Define the fields for the listview for device and repair info
+    private String[] deviceFields = {"Device","Manufacturer","Model Number","Serial Number"};
+    private String[] repairPausedFields = {"Start Date", "Current Step"};
+    private String[] repairCompleteFields = {"Start Date", "Finished Date"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,44 +91,60 @@ public class SessionActivity extends AppCompatActivity {
 
     private void updateViews() {
         if (this.session != null) {
-            manufacturerTextView.setText(session.getManufacturer());
-            modelTextView.setText(session.getModelNumber());
-            serialTextView.setText(session.getSerialNumber());
-            dateTextView.setText(new SimpleDateFormat("MM/dd/yyyy, HH:mm:ss").format(new Date(session.getCreatedDate())));
-            deviceTextView.setText(session.getDeviceName());
+            //Setup device info map
+            HashMap<String, String> deviceFieldMap = new HashMap<>();
+            deviceFieldMap.put("Device",session.getDeviceName());
+            deviceFieldMap.put("Manufacturer", session.getManufacturer());
+            deviceFieldMap.put("Model Number", session.getModelNumber());
+            deviceFieldMap.put("Serial Number", session.getSerialNumber());
+
+            //Setup repair info map
+            HashMap<String, String> repairFieldMap = new HashMap<>();
+            repairFieldMap.put("Start Date", new SimpleDateFormat("MM/dd/yyyy, HH:mm:ss").format(new Date(session.getCreatedDate())));
+            if (!session.isFinished()) {
+                if (session.hasChart()) {
+                    repairFieldMap.put("Current Step", session.getCurrentVertex().getName());
+                } else {
+                    repairFieldMap.put("Current Step",String.format("%s Guide unavailable. Download guide to view current step",session.getDeviceName()));
+                }
+            } else {
+                resumeButton.setVisibility(View.GONE);
+                repairFieldMap.put("Finish Date", new SimpleDateFormat("MM/dd/yyyy, HH:mm:ss").format(new Date(session.getFinishedDate())));
+                //Update the height of the scrollview to fill the screen
+                //ViewGroup.LayoutParams params = sessionScrollView.getLayoutParams();
+                //params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                //sessionScrollView.setLayoutParams(params);
+            }
+
             problemTextView.setText(session.getProblem());
             solutionTextView.setText(session.getSolution());
             notesTextView.setText(session.getNotes());
 
-            if (session.hasChart()) {
-                stepTextView.setText(session.getCurrentVertex().getName());
-            } else {
-                stepTextView.setText(String.format("%s Guide unavailable. Download guide to view current step",session.getDeviceName()));
-            }
-
             //If active, hide the "Resume Session" button as this is not possible
             if(session.isFinished()) {
                 resumeButton.setVisibility(View.GONE);
-                //deleteButton.setVisibility(View.GONE);//Don't want them to delete completed sessions
-                finishedDateHeader.setVisibility(View.VISIBLE);
-                finishedDateTextView.setVisibility(View.VISIBLE);
-                finishedDateTextView.setText(new SimpleDateFormat("MM/dd/yyyy, HH:mm:ss").format(new Date(session.getFinishedDate())));
-                stepHeader.setVisibility(View.GONE);
-                stepTextView.setVisibility(View.GONE);
-                //Update the height of the scrollview to fill the screen
                 ViewGroup.LayoutParams params = sessionScrollView.getLayoutParams();
                 params.height = ViewGroup.LayoutParams.MATCH_PARENT;
                 sessionScrollView.setLayoutParams(params);
             }
 
+            SessionInfoAdapter deviceFieldAdapter = new SessionInfoAdapter(this,deviceFieldMap,deviceFields);
+            SessionInfoAdapter repairFieldAdapter;
+            if (session.isFinished()) {
+                repairFieldAdapter = new SessionInfoAdapter(this, repairFieldMap, repairCompleteFields);
+            } else {
+                repairFieldAdapter = new SessionInfoAdapter(this, repairFieldMap, repairPausedFields);
+            }
+
+            deviceListView.setAdapter(deviceFieldAdapter);
+            repairListView.setAdapter(repairFieldAdapter);
+
+            setListViewHeightBasedOnChildren(deviceListView);
+            setListViewHeightBasedOnChildren(repairListView);
+
+
         } else {
             //Not very clean at the moment
-            manufacturerTextView.setVisibility(View.GONE);
-            modelTextView.setVisibility(View.GONE);
-            serialTextView.setVisibility(View.GONE);
-            dateTextView.setVisibility(View.GONE);
-            deviceTextView.setVisibility(View.GONE);
-            stepTextView.setVisibility(View.GONE);
             notesTextView.setVisibility(View.GONE);
         }
     }
@@ -254,6 +262,27 @@ public class SessionActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    public static void setListViewHeightBasedOnChildren(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null)
+            return;
+
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+        int totalHeight = 0;
+        View view = null;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            view = listAdapter.getView(i, view, listView);
+            if (i == 0)
+                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += view.getMeasuredHeight();
+        }
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        listView.setLayoutParams(params);
     }
 
 }

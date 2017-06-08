@@ -197,4 +197,6 @@
     <string name="edit">Edit</string>
     <string name="repair_info">Repair information</string>
     <string name="disclaimer">Please use best judgement to determine if the device is working and always calibrate the device before returning it to service.</string>
+    <string name="work_and_contact_info">Work and Contact Info</string>
+    <string name="skills_and_interests">Skills and Interests</string>
 </resources>
