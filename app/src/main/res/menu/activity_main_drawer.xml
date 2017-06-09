@@ -34,11 +34,6 @@
             android:id="@+id/contact_an_expert"
             android:icon="@android:drawable/ic_menu_call"
             android:title="@string/contact_an_expert" />
-        <!--
-        <item
-            android:id="@+id/call_dir"
-            android:icon="@android:drawable/ic_menu_call"
-            android:title="@string/directory" /> -->
     </group>
 
 

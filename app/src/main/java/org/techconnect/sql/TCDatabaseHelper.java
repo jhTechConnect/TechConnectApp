@@ -865,7 +865,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
     public List<Session> getActiveSessions() {
         String selection = TCDatabaseContract.SessionEntry.FINISHED + " = ?";
         String selectionArgs[] = {"0"}; //False in boolean
-        Cursor c = getReadableDatabase().query(TCDatabaseContract.GraphEntry.TABLE_NAME,
+        Cursor c = getReadableDatabase().query(TCDatabaseContract.SessionEntry.TABLE_NAME,
                 null, selection, selectionArgs, null, null, null);
         c.moveToFirst();
         List<Session> sessions = new ArrayList<Session>(c.getCount());
@@ -874,6 +874,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             String flowchart_id = c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.FLOWCHART_ID));
             FlowChart flow = getChart(flowchart_id);
             Session s = new Session(flow);
+            s.setId(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.ID)));
             s.setCreatedDate(c.getLong(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.CREATED_DATE)));
             s.setManufacturer(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.MANUFACTURER)));
             s.setDepartment(c.getString(c.getColumnIndexOrThrow(TCDatabaseContract.SessionEntry.DEPARTMENT)));

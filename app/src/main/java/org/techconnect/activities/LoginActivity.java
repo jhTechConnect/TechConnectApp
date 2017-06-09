@@ -333,11 +333,16 @@ public class LoginActivity extends AppCompatActivity {
         protected void onPostExecute(final Object[] objs) {
             mAuthTask = null;
             showProgress(false);
-            if (objs[0] == null) {
-                Snackbar.make(coordinatorLayout, R.string.couldnt_login, Snackbar.LENGTH_LONG).show();
-                mPasswordView.requestFocus();
+            if (objs == null) {
+                Toast.makeText(getBaseContext(),R.string.server_error, Toast.LENGTH_LONG).show();
                 Intent resultIntent = new Intent();
                 setResult(LOGIN_FAILURE, resultIntent);
+                finish();
+            } else if (objs[0] == null) {
+                    Snackbar.make(coordinatorLayout, R.string.couldnt_login, Snackbar.LENGTH_LONG).show();
+                    mPasswordView.requestFocus();
+                    Intent resultIntent = new Intent();
+                    setResult(LOGIN_FAILURE, resultIntent);
             } else {
                 // Store user
                 User user = (User) objs[0];
@@ -351,6 +356,7 @@ public class LoginActivity extends AppCompatActivity {
                 setResult(LOGIN_SUCCESS, resultIntent);
                 finish();
             }
+
         }
 
         @Override
