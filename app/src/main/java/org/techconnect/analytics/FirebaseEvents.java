@@ -68,10 +68,7 @@ public class FirebaseEvents {
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
         bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
-        bundle.putString("department", session.getDepartment());
-        bundle.putString("manufacturer",session.getManufacturer());
-        bundle.putString("modelNumber", session.getSerialNumber());
-        bundle.putString("serialNumber",session.getSerialNumber());
+        bundle.putStringArrayList("info",session.getSessionInfo());
         FirebaseAnalytics.getInstance(c).logEvent("session_paused", bundle);
     }
 
@@ -99,11 +96,7 @@ public class FirebaseEvents {
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
         bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
-        bundle.putLong(FirebaseAnalytics.Param.VALUE, duration);
-        bundle.putString("department", session.getDepartment());
-        bundle.putString("manufacturer",session.getManufacturer());
-        bundle.putString("modelNumber", session.getSerialNumber());
-        bundle.putString("serialNumber",session.getSerialNumber());
+        bundle.putStringArrayList("info",session.getSessionInfo());
         FirebaseAnalytics.getInstance(c).logEvent("session_complete", bundle);
     }
 
