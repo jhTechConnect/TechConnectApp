@@ -21,6 +21,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import org.techconnect.R;
 
 import org.techconnect.activities.CatalogActivity;
@@ -109,6 +111,7 @@ public class GuidesFragment extends Fragment
                 refreshLayout.setEnabled(firstVisibleItem == 0 && topRowVerticalPosition >= 0);
             }
         });
+
         return view;
     }
 
@@ -118,6 +121,7 @@ public class GuidesFragment extends Fragment
         super.onResume();
         if (getActivity() != null) {
             getActivity().setTitle(R.string.guides);
+            FirebaseAnalytics.getInstance(getContext()).setCurrentScreen(getActivity(),null,"GuidesFragment");
             onRefresh();
         }
     }

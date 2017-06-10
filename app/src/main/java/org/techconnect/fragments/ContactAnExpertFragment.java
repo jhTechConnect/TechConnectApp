@@ -16,6 +16,8 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import org.techconnect.R;
 import org.techconnect.adapters.ContactExpertListAdapter;
 import org.techconnect.asynctasks.ExportResponsesAsyncTask;
@@ -60,6 +62,7 @@ public class ContactAnExpertFragment extends Fragment implements
         super.onResume();
         if (getActivity() != null) {
             getActivity().setTitle(R.string.contact_an_expert);
+            FirebaseAnalytics.getInstance(getContext()).setCurrentScreen(getActivity(),null,"ContactFragment");
         }
     }
 
