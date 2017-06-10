@@ -86,6 +86,20 @@ public class Session implements Parcelable {
         this.traversal = in.readParcelable(GraphTraversal.class.getClassLoader());
     }
 
+    public ArrayList<String> getSessionInfo() {
+        ArrayList<String> info = new ArrayList<String>();
+        info.add(deviceName);
+        info.add(getDepartment());
+        info.add(getManufacturer());
+        info.add(getModelNumber());
+        info.add(getSerialNumber());
+        info.add(getProblem());
+        info.add(getSolution());
+        info.add(getNotes());
+
+        return info;
+    }
+
     public String getId() {
         return this.id;
     }

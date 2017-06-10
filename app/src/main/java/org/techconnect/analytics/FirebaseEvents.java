@@ -57,6 +57,13 @@ public class FirebaseEvents {
         FirebaseAnalytics.getInstance(c).logEvent("session_end_early", bundle);
     }
 
+    public static void logEndSessionEarlyNoSave(Context c, Session session) {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
+        FirebaseAnalytics.getInstance(c).logEvent("session_end_early_nosave", bundle);
+    }
+
     public static void logSessionPausedFull(Context c, Session session) {
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
@@ -97,6 +104,24 @@ public class FirebaseEvents {
         bundle.putString("manufacturer",session.getManufacturer());
         bundle.putString("modelNumber", session.getSerialNumber());
         bundle.putString("serialNumber",session.getSerialNumber());
+        FirebaseAnalytics.getInstance(c).logEvent("session_complete", bundle);
+    }
+
+    public static void logContactExpertFromFragment(Context c) {
+        FirebaseAnalytics.getInstance(c).logEvent("contact_expert_fragment",null);
+    }
+
+    public static void logContactExpertFromHistory(Context c, Session s) {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, s.getId());
+        FirebaseAnalytics.getInstance(c).logEvent("view_profile", bundle);
+    }
+
+    public static void logSessionInfoEdited(Context c, Session session) {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
+        bundle.putStringArrayList("info", session.getSessionInfo());
         FirebaseAnalytics.getInstance(c).logEvent("session_complete", bundle);
     }
 

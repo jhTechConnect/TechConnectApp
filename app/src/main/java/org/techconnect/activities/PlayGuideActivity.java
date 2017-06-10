@@ -140,12 +140,14 @@ public class PlayGuideActivity extends AppCompatActivity implements
             }
         } else if (currentLayout == LAYOUT_INFO && !session.isFinished()) {
             //We need to ask if you'd like to quit without saving, this time just leave
+            final Context context = this;
             new AlertDialog.Builder(this)
                     .setTitle("Quit Session")
                     .setMessage("Would you like to quit this session without saving?")
                     .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            FirebaseEvents.logEndSessionEarlyNoSave(context,session);
                             dialog.dismiss();
                             finish();
                         }
@@ -183,7 +185,7 @@ public class PlayGuideActivity extends AppCompatActivity implements
 
     private void onEndSession() {
         if (flowChart != null) {
-            FirebaseEvents.logEndSessionEarly(PlayGuideActivity.this, session);
+            //FirebaseEvents.logEndSessionEarly(PlayGuideActivity.this, session);
         }
         endSession();
     }
@@ -342,6 +344,7 @@ public class PlayGuideActivity extends AppCompatActivity implements
         if (session != null) {
             final DialogInterface.OnDismissListener dismissListener = this;
             if (!session.isFinished()) {
+                final Context context = this;
                 final AlertDialog follow = new AlertDialog.Builder(this)
                         .setTitle(R.string.save_session)
                         .setMessage(R.string.save_session_msg)
@@ -366,6 +369,7 @@ public class PlayGuideActivity extends AppCompatActivity implements
                                 });
                                 frag.show(getFragmentManager(), "guide_feedback");
                                 */
+                                FirebaseEvents.logEndSessionEarlyNoSave(context,session);
                                 dialog.dismiss();
                                 finish();
                             }

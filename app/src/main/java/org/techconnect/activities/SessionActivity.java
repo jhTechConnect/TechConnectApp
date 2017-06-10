@@ -230,6 +230,7 @@ public class SessionActivity extends AppCompatActivity {
                 //Start an intent to send a message with question/response data
                 if (session.hasChart()) {
                     new ExportResponsesAsyncTask(this).execute(session.getId());
+                    FirebaseEvents.logContactExpertFromHistory(this,session);
                 } else {
                     Toast.makeText(this, String.format("%s guide has been deleted. Cannot send completed steps", session.getDeviceName()), Toast.LENGTH_LONG).show();
                 }

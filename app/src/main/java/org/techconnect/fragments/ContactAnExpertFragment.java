@@ -20,6 +20,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.techconnect.R;
 import org.techconnect.adapters.ContactExpertListAdapter;
+import org.techconnect.analytics.FirebaseEvents;
 import org.techconnect.asynctasks.ExportResponsesAsyncTask;
 import org.techconnect.asynctasks.LoadActiveSessionsAsyncTask;
 import org.techconnect.model.session.Session;
@@ -128,8 +129,10 @@ public class ContactAnExpertFragment extends Fragment implements
             if (index != -1) {
                 String id = ((SessionListItemView) sessionListView.getChildAt(index)).getSession().getId();
                 new ExportResponsesAsyncTask(getContext()).execute(id);
+                FirebaseEvents.logContactExpertFromFragment(getContext());
             } else {
                 new ExportResponsesAsyncTask(getContext()).execute();
+                FirebaseEvents.logContactExpertFromFragment(getContext());
             }
         } else if (view.getId() == R.id.clearButton) {
             sessionListView.clearChoices();
