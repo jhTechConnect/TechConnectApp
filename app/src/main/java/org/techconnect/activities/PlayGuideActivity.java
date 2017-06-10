@@ -194,9 +194,11 @@ public class PlayGuideActivity extends AppCompatActivity implements
             //Since automatically update SQL, update Firebase here
             if (flowChart != null) {
                 if (session.isFinished()) {
-                    FirebaseEvents.logSessionCompleteStub(this, session);
+                    //FirebaseEvents.logSessionCompleteStub(this, session); Decided that because people can edit content, need this here
+                    FirebaseEvents.logSessionCompleteFull(this, session);
                 } else {
-                    FirebaseEvents.logSessionPausedStub(this, session);
+                    //FirebaseEvents.logSessionPausedStub(this, session); Same reasons as above
+                    FirebaseEvents.logSessionPausedFull(this, session);
                 }
             }
             finish(); //End the activity
@@ -353,6 +355,7 @@ public class PlayGuideActivity extends AppCompatActivity implements
                         .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+
                                 /*
                                 GuideFeedbackDialogFragment frag = GuideFeedbackDialogFragment.newInstance(session);
                                 frag.setOnDismissListener(new DialogInterface.OnDismissListener() {

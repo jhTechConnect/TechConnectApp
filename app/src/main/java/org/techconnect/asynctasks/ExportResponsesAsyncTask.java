@@ -24,7 +24,7 @@ public class ExportResponsesAsyncTask extends AsyncTask <String, Void, Integer> 
         //Get generated string
         String resp;
         if (strings.length > 0) {
-            resp = String.format("%s\n%s", context.getString(R.string.exportResponse_autofill), TCDatabaseHelper.get(context).writeResponsesToString(strings[0]));
+            resp = String.format("%s\n%s", context.getString(R.string.exportResponse_autofill), TCDatabaseHelper.get(context).writeResponsesToString(strings[0],true));
         } else {
             resp = context.getString(R.string.exportResponse_autofill);
         }

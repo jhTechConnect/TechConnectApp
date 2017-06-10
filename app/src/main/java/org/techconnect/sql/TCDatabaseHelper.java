@@ -1074,7 +1074,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
      */
     public void writeRepairHistoryToFile(CSVWriter writer) {
         //Choose columns appropriately
-        String[] columnsSelect = {TCDatabaseContract.SessionEntry.DEVICE_NAME, TCDatabaseContract.SessionEntry.CREATED_DATE, TCDatabaseContract.SessionEntry.FINISHED_DATE, TCDatabaseContract.SessionEntry.MANUFACTURER,
+        String[] columnsSelect = {TCDatabaseContract.SessionEntry.DEVICE_NAME, TCDatabaseContract.SessionEntry.CREATED_DATE, TCDatabaseContract.SessionEntry.FINISHED_DATE, TCDatabaseContract.SessionEntry.ID, TCDatabaseContract.SessionEntry.MANUFACTURER,
                 TCDatabaseContract.SessionEntry.DEPARTMENT, TCDatabaseContract.SessionEntry.MODEL, TCDatabaseContract.SessionEntry.SERIAL, TCDatabaseContract.SessionEntry.PROBLEM,
                 TCDatabaseContract.SessionEntry.SOLUTION, TCDatabaseContract.SessionEntry.NOTES, TCDatabaseContract.SessionEntry.FINISHED};
 
@@ -1083,7 +1083,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
                 columnsSelect, null, null, null, null, null);
 
         //Set Column Titles for CSV
-        String[] columnTitle = {TCDatabaseContract.SessionEntry.DEVICE_NAME, TCDatabaseContract.SessionEntry.CREATED_DATE, TCDatabaseContract.SessionEntry.FINISHED_DATE, TCDatabaseContract.SessionEntry.MANUFACTURER,
+        String[] columnTitle = {TCDatabaseContract.SessionEntry.DEVICE_NAME, TCDatabaseContract.SessionEntry.CREATED_DATE, TCDatabaseContract.SessionEntry.FINISHED_DATE, "Steps Completed", TCDatabaseContract.SessionEntry.MANUFACTURER,
                 TCDatabaseContract.SessionEntry.DEPARTMENT, TCDatabaseContract.SessionEntry.MODEL, TCDatabaseContract.SessionEntry.SERIAL, TCDatabaseContract.SessionEntry.PROBLEM,
                 TCDatabaseContract.SessionEntry.SOLUTION, TCDatabaseContract.SessionEntry.NOTES};
 
@@ -1096,14 +1096,16 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
             String dateCreated = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()).format(csvCursor.getLong(1));
             String dateFinished;
             //Determine Date Finished
-            if (csvCursor.getString(8).equals("1")) {
+            if (csvCursor.getString(9).equals("1")) {
                 dateFinished = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()).format(csvCursor.getLong(2));
             } else {
                 dateFinished = "In Progress";
             }
 
-            String[] entry = {device, dateCreated, dateFinished, csvCursor.getString(3), csvCursor.getString(4), csvCursor.getString(5), csvCursor.getString(6),
-                    csvCursor.getString(7), csvCursor.getString(8), csvCursor.getString(9) };
+            String steps = writeResponsesToString(csvCursor.getString(3), false);
+
+            String[] entry = {device, dateCreated, dateFinished, steps, csvCursor.getString(4), csvCursor.getString(5), csvCursor.getString(6), csvCursor.getString(7),
+                    csvCursor.getString(8), csvCursor.getString(9), csvCursor.getString(10) };
             writer.writeNext(entry);
         }
 
@@ -1114,7 +1116,7 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
      * Used to convert the response history of a session
      * @return
      */
-    public String writeResponsesToString(String id) {
+    public String writeResponsesToString(String id, boolean email) {
         //Use the id to get the session
         Session s = getSession(id);
         Graph g = s.getFlowchart().getGraph();
@@ -1128,19 +1130,36 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         //Paused session
         if (questions.size() != answers.size()) {
             Log.d(getClass().toString(),String.format("Unequal size of question and answers: %d, %d",questions.size(), answers.size()));
-            for (int i = 0; i < questions.size() - 1; i++) {
-                response = response + String.format("%s ... %s\n",g.getVertex(questions.get(i)).getName(), answers.get(i));
+            if (email) { //This is the format that we want for an email-based response
+                for (int i = 0; i < questions.size() - 1; i++) {
+                    response = response + String.format("%s ... %s\n", g.getVertex(questions.get(i)).getName(), answers.get(i));
+                }
+                response = response + g.getVertex(questions.get(questions.size() - 1)).getName();
+                Log.d(getClass().toString(), response);
+                totalResponse = String.format("%s\nSteps Completed\n\n%s", header, response);
+            } else { //This is for the exported history response
+                for (int i = 0; i < questions.size() - 1; i++) {
+                    response = response + String.format("%s:%s;", g.getVertex(questions.get(i)).getName(), answers.get(i));
+                }
+                response = response + g.getVertex(questions.get(questions.size() - 1)).getName();
+                Log.d(getClass().toString(), response);
+                totalResponse = response;
             }
-            response = response + g.getVertex(questions.get(questions.size() - 1)).getName();
-            Log.d(getClass().toString(),response);
-            totalResponse = String.format("%s\nSteps Completed\n\n%s",header, response);
             return totalResponse;
         } else { //Complete session
-            for (int i = 0; i < questions.size(); i++) {
-                response = response + String.format("%s ... %s\n",g.getVertex(questions.get(i)).getName(), answers.get(i));
+            if (email) {
+                for (int i = 0; i < questions.size(); i++) {
+                    response = response + String.format("%s ... %s\n", g.getVertex(questions.get(i)).getName(), answers.get(i));
+                }
+                totalResponse = String.format("%s\nSteps Completed\n\n%s", header, response);
+                Log.d(getClass().toString(), totalResponse);
+            } else {
+                for (int i = 0; i < questions.size(); i++) {
+                    response = response + String.format("%s:%s;", g.getVertex(questions.get(i)).getName(), answers.get(i));
+                }
+                totalResponse = response;
+                Log.d(getClass().toString(), totalResponse);
             }
-            totalResponse = String.format("%s\nSteps Completed\n\n%s",header, response);
-            Log.d(getClass().toString(),totalResponse);
             return totalResponse;
         }
     }
