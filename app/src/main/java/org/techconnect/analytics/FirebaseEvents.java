@@ -66,6 +66,15 @@ public class FirebaseEvents {
         FirebaseAnalytics.getInstance(c).logEvent("session_end_early_nosave", bundle);
     }
 
+    public static void logEndSessionEarlyNoSaveStub(Context c, Session session) {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
+        bundle.putStringArrayList("info",session.getSessionInfo());
+        bundle.putString("steps",session.getStepsCompleted());
+        FirebaseAnalytics.getInstance(c).logEvent("session_end_early_nosave_stub", bundle);
+    }
+
     public static void logSessionPausedFull(Context c, Session session) {
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
@@ -80,17 +89,18 @@ public class FirebaseEvents {
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
         bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
-        FirebaseAnalytics.getInstance(c).logEvent("session_paused", bundle);
+        bundle.putStringArrayList("info",session.getSessionInfo());
+        bundle.putString("steps",session.getStepsCompleted());
+        FirebaseAnalytics.getInstance(c).logEvent("session_paused_stub", bundle);
     }
 
     public static void logSessionCompleteStub(Context c, Session session) {
-        long endTime = System.currentTimeMillis();
-        long duration = endTime - session.getCreatedDate();
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
         bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
-        bundle.putLong(FirebaseAnalytics.Param.VALUE, duration);
-        FirebaseAnalytics.getInstance(c).logEvent("session_complete", bundle);
+        bundle.putStringArrayList("info",session.getSessionInfo());
+        bundle.putString("steps",session.getStepsCompleted());
+        FirebaseAnalytics.getInstance(c).logEvent("session_complete_stub", bundle);
     }
 
     public static void logSessionCompleteFull(Context c, Session session) {
@@ -100,6 +110,7 @@ public class FirebaseEvents {
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
         bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
         bundle.putStringArrayList("info",session.getSessionInfo());
+        bundle.putString("steps",session.getStepsCompleted());
         FirebaseAnalytics.getInstance(c).logEvent("session_complete", bundle);
     }
 

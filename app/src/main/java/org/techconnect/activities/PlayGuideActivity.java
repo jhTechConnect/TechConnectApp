@@ -147,7 +147,11 @@ public class PlayGuideActivity extends AppCompatActivity implements
                     .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            FirebaseEvents.logEndSessionEarlyNoSave(context,session);
+                            if (!session.getManufacturer().equals("")) { //Resumed session
+                                FirebaseEvents.logEndSessionEarlyNoSaveStub(context, session);
+                            } else {
+                                FirebaseEvents.logEndSessionEarlyNoSave(context, session);
+                            }
                             dialog.dismiss();
                             finish();
                         }
@@ -196,11 +200,11 @@ public class PlayGuideActivity extends AppCompatActivity implements
             //Since automatically update SQL, update Firebase here
             if (flowChart != null) {
                 if (session.isFinished()) {
-                    //FirebaseEvents.logSessionCompleteStub(this, session); Decided that because people can edit content, need this here
-                    FirebaseEvents.logSessionCompleteFull(this, session);
+                    FirebaseEvents.logSessionCompleteStub(this, session);
+                    //FirebaseEvents.logSessionCompleteFull(this, session);
                 } else {
-                    //FirebaseEvents.logSessionPausedStub(this, session); Same reasons as above
-                    FirebaseEvents.logSessionPausedFull(this, session);
+                    FirebaseEvents.logSessionPausedStub(this, session);
+                    //FirebaseEvents.logSessionPausedFull(this, session);
                 }
             }
             finish(); //End the activity
