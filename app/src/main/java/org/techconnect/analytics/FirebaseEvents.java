@@ -61,6 +61,8 @@ public class FirebaseEvents {
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
         bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
+        bundle.putStringArrayList("info",session.getSessionInfo());
+        bundle.putString("steps",session.getStepsCompleted());
         FirebaseAnalytics.getInstance(c).logEvent("session_end_early_nosave", bundle);
     }
 
@@ -69,6 +71,7 @@ public class FirebaseEvents {
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
         bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
         bundle.putStringArrayList("info",session.getSessionInfo());
+        bundle.putString("steps",session.getStepsCompleted());
         FirebaseAnalytics.getInstance(c).logEvent("session_paused", bundle);
     }
 
@@ -167,6 +170,8 @@ public class FirebaseEvents {
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
         bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
+        bundle.putStringArrayList("info",session.getSessionInfo());
+        bundle.putString("steps",session.getStepsCompleted());
         FirebaseAnalytics.getInstance(c).logEvent("session_deleted", bundle);
     }
 
