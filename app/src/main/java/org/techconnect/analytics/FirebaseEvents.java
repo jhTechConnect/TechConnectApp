@@ -105,6 +105,7 @@ public class FirebaseEvents {
         if (s != null) {
             bundle = new Bundle();
             bundle.putString(FirebaseAnalytics.Param.ITEM_ID, s.getId());
+            bundle.putStringArrayList("info",s.getSessionInfo());
         }
         FirebaseAnalytics.getInstance(c).logEvent("contact_expert_fragment",bundle);
     }
@@ -112,6 +113,7 @@ public class FirebaseEvents {
     public static void logContactExpertFromHistory(Context c, Session s) {
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, s.getId());
+        bundle.putStringArrayList("info",s.getSessionInfo());
         FirebaseAnalytics.getInstance(c).logEvent("contact_expert_history", bundle);
     }
 
