@@ -129,10 +129,10 @@ public class ContactAnExpertFragment extends Fragment implements
             if (index != -1) {
                 String id = ((SessionListItemView) sessionListView.getChildAt(index)).getSession().getId();
                 new ExportResponsesAsyncTask(getContext()).execute(id);
-                FirebaseEvents.logContactExpertFromFragment(getContext());
+                FirebaseEvents.logContactExpertFromFragment(getContext(),((SessionListItemView) sessionListView.getChildAt(index)).getSession());
             } else {
                 new ExportResponsesAsyncTask(getContext()).execute();
-                FirebaseEvents.logContactExpertFromFragment(getContext());
+                FirebaseEvents.logContactExpertFromFragment(getContext(), null);
             }
         } else if (view.getId() == R.id.clearButton) {
             sessionListView.clearChoices();

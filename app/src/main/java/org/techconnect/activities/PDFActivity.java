@@ -10,8 +10,10 @@ import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.ScrollBar;
 import com.github.barteksc.pdfviewer.exception.FileNotFoundException;
 import com.github.barteksc.pdfviewer.listener.OnErrorListener;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.techconnect.R;
+import org.techconnect.misc.Utils;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -35,6 +37,8 @@ public class PDFActivity extends AppCompatActivity {
     ImageView closeBtn;
     @Bind(R.id.errorImageView)
     ImageView errorImageView;
+
+    String filename;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,9 +64,11 @@ public class PDFActivity extends AppCompatActivity {
             if (getIntent() != null && getIntent().hasExtra(EXTRA_IS_FILE)) {
                 if (getIntent().getBooleanExtra(EXTRA_IS_FILE, false)) {
                     String file = getIntent().getStringExtra(EXTRA_FILE);
+                    filename = Utils.formatAttachmentName(file);
                     pdfView.fromFile(new File(file)).onError(onErrorListener).load();
                 } else {
                     String url = getIntent().getStringExtra(EXTRA_URI);
+                    filename = Utils.formatAttachmentName(url);
                     try {
                         pdfView.fromUri(Uri.parse(new URL(url).toURI().toString())).onError(onErrorListener).load();
                     } catch (URISyntaxException | MalformedURLException e) {
@@ -74,6 +80,12 @@ public class PDFActivity extends AppCompatActivity {
         } catch (FileNotFoundException ex) {
             onLoadError();
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        FirebaseAnalytics.getInstance(this).setCurrentScreen(this,null,String.format("PDFActivity_%s",filename));
     }
 
     private void onLoadError() {

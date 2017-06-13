@@ -258,6 +258,10 @@ public class TCDatabaseHelper extends SQLiteOpenHelper {
         return set;
     }
 
+    public String getChartNameFromId(String id) {
+        return getChartIDsAndNames().get(id);
+    }
+
 
 
     public int getNumFlowcharts() {

@@ -100,14 +100,19 @@ public class FirebaseEvents {
         FirebaseAnalytics.getInstance(c).logEvent("session_complete", bundle);
     }
 
-    public static void logContactExpertFromFragment(Context c) {
-        FirebaseAnalytics.getInstance(c).logEvent("contact_expert_fragment",null);
+    public static void logContactExpertFromFragment(Context c, Session s) {
+        Bundle bundle = null;
+        if (s != null) {
+            bundle = new Bundle();
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, s.getId());
+        }
+        FirebaseAnalytics.getInstance(c).logEvent("contact_expert_fragment",bundle);
     }
 
     public static void logContactExpertFromHistory(Context c, Session s) {
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, s.getId());
-        FirebaseAnalytics.getInstance(c).logEvent("view_profile", bundle);
+        FirebaseAnalytics.getInstance(c).logEvent("contact_expert_history", bundle);
     }
 
     public static void logSessionInfoEdited(Context c, Session session) {
@@ -141,8 +146,11 @@ public class FirebaseEvents {
         FirebaseAnalytics.getInstance(c).logEvent(FirebaseAnalytics.Event.SIGN_UP, null);
     }
 
-    public static void logPostComment(Context c) {
-        FirebaseAnalytics.getInstance(c).logEvent("post_comment", null);
+    public static void logPostComment(Context c, String id, String name) {
+        Bundle fbBundle = new Bundle();
+        fbBundle.putString(FirebaseAnalytics.Param.ITEM_ID, id);
+        fbBundle.putString(FirebaseAnalytics.Param.ITEM_NAME, name);
+        FirebaseAnalytics.getInstance(c).logEvent("post_comment", fbBundle);
     }
 
     public static void logDownloadGuide(Context c, FlowChart chart) {
