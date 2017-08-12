@@ -56,8 +56,8 @@
         <activity
             android:name=".activities.GuideActivity"
             android:label="@string/title_activity_guide"
-            android:windowSoftInputMode="adjustPan"
-            android:parentActivityName=".activities.MainActivity">
+            android:parentActivityName=".activities.MainActivity"
+            android:windowSoftInputMode="adjustPan">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.techconnect.activities.MainActivity" />
@@ -77,10 +77,7 @@
             android:label="@string/select_skill" />
         <activity android:name=".activities.SessionListActivity" />
         <activity android:name=".activities.CatalogActivity" />
-        <activity
-            android:name=".activities.ContactAnExpertActivity"
-            android:label="@string/contact_an_expert"
-            android:theme="@style/Theme.AppCompat.Light.Dialog" />
+        <!-- android:theme="@style/Theme.AppCompat.Light.Dialog" -->
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -94,7 +91,8 @@
             android:label="@string/help" />
         <activity
             android:name=".activities.EditSessionActivity"
-            android:label="Edit Session"/>
+            android:label="Edit Session" />
+        <activity android:name=".activities.EditProfileActivity"></activity>
     </application>
 
 </manifest>

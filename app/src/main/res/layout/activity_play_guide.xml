@@ -28,7 +28,7 @@
                 android:id="@+id/textView21"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/device_info"
+                android:text="@string/device_info_long"
                 android:textSize="20sp"
                 android:textStyle="normal|bold" />
 

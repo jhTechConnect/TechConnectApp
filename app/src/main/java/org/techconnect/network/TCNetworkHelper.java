@@ -212,10 +212,13 @@ public class TCNetworkHelper {
             for (JsonElement j : obj.get("flowcharts").getAsJsonArray()) {
                 //For sake of the virtual study, only want a couple guides to appear
                 FlowChart f = gson.fromJson(j, FlowChart.class);
+                flowcharts.add(f);
+                /*
                 //Only Suction machine and Autoclave
                 if (f.getId().equals("B9C9E7A23G9F3GDJ8") || f.getId().equals("JE2C662E39H5E2265")) {
                     flowcharts.add(f);
                 }
+                */
             }
             return flowcharts.toArray(new FlowChart[flowcharts.size()]);
         }

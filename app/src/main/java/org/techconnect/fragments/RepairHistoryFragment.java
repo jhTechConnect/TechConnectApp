@@ -21,6 +21,8 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import org.techconnect.R;
 import org.techconnect.activities.SessionListActivity;
 import org.techconnect.adapters.CategoryListAdapter;
@@ -161,6 +163,7 @@ public class RepairHistoryFragment extends Fragment implements
         super.onResume();
         if (getActivity() != null) {
             getActivity().setTitle(R.string.repair_history);
+            FirebaseAnalytics.getInstance(getContext()).setCurrentScreen(getActivity(),null,"HistoryFragment");
         }
         updateCountAdapters();
 

@@ -10,6 +10,7 @@ import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.ScrollBar;
 import com.github.barteksc.pdfviewer.exception.FileNotFoundException;
 import com.github.barteksc.pdfviewer.listener.OnErrorListener;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.techconnect.R;
 
@@ -24,6 +25,7 @@ import butterknife.ButterKnife;
 public class PDFActivity extends AppCompatActivity {
 
     public static final String EXTRA_FILE = "file";
+    public static final String EXTRA_FILENAME = "filename";
     public static final String EXTRA_URI = "uri";
     public static final String EXTRA_IS_FILE = "isFile";
 
@@ -35,6 +37,8 @@ public class PDFActivity extends AppCompatActivity {
     ImageView closeBtn;
     @Bind(R.id.errorImageView)
     ImageView errorImageView;
+
+    String filename;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,10 +74,21 @@ public class PDFActivity extends AppCompatActivity {
                         onLoadError();
                     }
                 }
+            } else if (getIntent() != null && getIntent().hasExtra(EXTRA_FILENAME)) {
+                filename = getIntent().getStringExtra(EXTRA_FILENAME);
             }
         } catch (FileNotFoundException ex) {
             onLoadError();
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getIntent() != null && getIntent().hasExtra(EXTRA_FILENAME)) {
+            filename = getIntent().getStringExtra(EXTRA_FILENAME);
+        }
+        FirebaseAnalytics.getInstance(this).setCurrentScreen(this,null,String.format("PDFActivity_%s",filename));
     }
 
     private void onLoadError() {

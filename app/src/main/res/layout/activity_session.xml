@@ -7,161 +7,44 @@
         android:id="@+id/sessionScrollView"
         android:layout_width="match_parent"
         android:layout_height="440dp">
+
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <TextView
-                android:id="@+id/device_header"
+                android:id="@+id/deviceHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text = "@string/device_info"
+                android:textSize="24dp"
+                android:textStyle="bold"/>
+
+            <ListView
+                android:id="@+id/deviceListView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="16dp"
-                android:text="@string/device"
-                android:textSize="16sp"
-                android:textStyle="normal|bold" />
+                android:listSelector="@android:color/transparent">
+            </ListView>
 
             <TextView
-                android:id="@+id/device_textView"
+                android:id="@+id/repairHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text = "@string/repair_info"
+                android:textSize="24dp"
+                android:textStyle="bold"/>
+
+            <ListView
+                android:id="@+id/repairListView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="4dp"
-                android:text="TextView"
-                android:textSize="16sp" />
-            <TextView
-                android:id="@+id/manufacturer_header"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-
-                android:text="@string/manufacturer"
-                android:textSize="16sp"
-                android:textStyle="normal|bold" />
-
-            <TextView
-                android:id="@+id/manufacturer_textView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="4dp"
-                android:text="TextView"
-                android:textSize="16sp" />
-            <TextView
-                android:id="@+id/model_header"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-
-                android:text="@string/model_number"
-                android:textSize="16sp"
-                android:textStyle="normal|bold" />
-
-            <TextView
-                android:id="@+id/model_textView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="4dp"
-                android:text="TextView"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/serial_header"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:text="@string/serial_number"
-                android:textSize="16sp"
-                android:textStyle="normal|bold" />
-
-            <TextView
-                android:id="@+id/serial_textView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="4dp"
-                android:text="TextView"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/date_header"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:text="@string/start_date"
-                android:textSize="16sp"
-                android:textStyle="normal|bold" />
-
-            <TextView
-                android:id="@+id/date_textView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="4dp"
-                android:text="TextView"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/finishedDateHeader"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:text="@string/finished_date"
-                android:textSize="16sp"
-                android:textStyle="normal|bold"
-                android:visibility="gone"/>
-
-            <TextView
-                android:id="@+id/finishedDateTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="4dp"
-                android:text="TextView"
-                android:textSize="16sp"
-                android:visibility="gone"/>
-
-
-
-            <TextView
-                android:id="@+id/step_header"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:text="@string/curr_step"
-                android:textSize="16sp"
-                android:textStyle="normal|bold" />
-
-            <TextView
-                android:id="@+id/step_textView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="4dp"
-                android:text="TextView"
-                android:textSize="16sp" />
+                android:listSelector="@android:color/transparent">
+            </ListView>
 
             <TextView
                 android:id="@+id/problem_header"
@@ -225,7 +108,6 @@
                 android:layout_marginTop="4dp"
                 android:text="TextView"
                 android:textSize="16sp" />
-
 
         </LinearLayout>
     </ScrollView>

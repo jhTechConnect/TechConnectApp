@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import org.techconnect.R;
+import org.techconnect.analytics.FirebaseEvents;
 import org.techconnect.model.session.Session;
 import org.techconnect.sql.TCDatabaseHelper;
 
@@ -129,16 +130,19 @@ public class EditSessionActivity extends AppCompatActivity {
 
     private void saveChanges() {
         //Get text from each field,update session, upsert in database
-        session.setDepartment(departmentEditText.getText().toString());
-        session.setManufacturer(manufacturerEditText.getText().toString());
-        session.setModelNumber(modelEditText.getText().toString());
-        session.setSerialNumber(serialEditText.getText().toString());
+        if (isEdited()) {
+            session.setDepartment(departmentEditText.getText().toString());
+            session.setManufacturer(manufacturerEditText.getText().toString());
+            session.setModelNumber(modelEditText.getText().toString());
+            session.setSerialNumber(serialEditText.getText().toString());
 
-        session.setProblem(problemEditText.getText().toString());
-        session.setSolution(solutionEditText.getText().toString());
-        session.setNotes(notesEditText.getText().toString());
+            session.setProblem(problemEditText.getText().toString());
+            session.setSolution(solutionEditText.getText().toString());
+            session.setNotes(notesEditText.getText().toString());
 
-        TCDatabaseHelper.get(this).upsertSession(session); //Update session in database
+            TCDatabaseHelper.get(this).upsertSession(session); //Update session in database
+            FirebaseEvents.logSessionInfoEdited(this,session);
+        }
     }
 
     /**

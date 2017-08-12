@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import android.util.Log;
 
 import org.techconnect.model.FlowChart;
+import org.techconnect.model.Graph;
 import org.techconnect.model.GraphTraversal;
 import org.techconnect.model.Vertex;
 
@@ -86,6 +87,20 @@ public class Session implements Parcelable {
         this.traversal = in.readParcelable(GraphTraversal.class.getClassLoader());
     }
 
+    public ArrayList<String> getSessionInfo() {
+        ArrayList<String> info = new ArrayList<String>();
+        info.add(deviceName);
+        info.add(getDepartment());
+        info.add(getManufacturer());
+        info.add(getModelNumber());
+        info.add(getSerialNumber());
+        info.add(getProblem());
+        info.add(getSolution());
+        info.add(getNotes());
+
+        return info;
+    }
+
     public String getId() {
         return this.id;
     }
@@ -145,6 +160,28 @@ public class Session implements Parcelable {
 
     public void setHistory(List<String> hist) {
         this.history = hist;
+    }
+
+    public String getStepsCompleted() {
+        Graph g = flowChart.getGraph();
+        String response = "";
+        String totalResponse;
+        //Paused session
+        if (history.size() != optionHistory.size()) {
+            Log.d(getClass().toString(), String.format("Unequal size of question and answers: %d, %d", history.size(), optionHistory.size()));
+            for (int i = 0; i < history.size() - 1; i++) {
+                response = response + String.format("%s:%s;", g.getVertex(history.get(i)).getName(), optionHistory.get(i));
+            }
+            response = response + g.getVertex(history.get(history.size() - 1)).getName();
+            Log.d(getClass().toString(), response);
+            totalResponse = response;
+        } else { //Complete session
+            for (int i = 0; i < history.size(); i++) {
+                response = response + String.format("%s:%s;", g.getVertex(history.get(i)).getName(), optionHistory.get(i));
+            }
+            totalResponse = response;
+        }
+        return totalResponse;
     }
 
     /**

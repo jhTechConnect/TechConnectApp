@@ -28,6 +28,7 @@ import android.widget.TextView;
 import org.techconnect.R;
 import org.techconnect.analytics.FirebaseEvents;
 import org.techconnect.asynctasks.LogoutAsyncTask;
+import org.techconnect.fragments.ContactAnExpertFragment;
 import org.techconnect.fragments.GuidesFragment;
 import org.techconnect.fragments.RepairHistoryFragment;
 import org.techconnect.misc.ResourceHandler;
@@ -57,8 +58,8 @@ public class MainActivity extends AppCompatActivity
     private static final String SHOWN_TUTORIAL = "org.techconnect.prefs.shownturotial";
     private static final String USER_LEARNED_DRAWER = "org.techconnect.prefs.shownturotial.learneddrawer";
     private static final String ASKED_PERMISSION = "org.techconnect.prefs.shownturotial.askedpermission";
-    private final Fragment[] FRAGMENTS = new Fragment[]{new GuidesFragment(), new RepairHistoryFragment()};
-    private final int[] FRAGMENT_MENU_IDS = new int[]{R.id.nav_guides, R.id.nav_repair_history};
+    private final Fragment[] FRAGMENTS = new Fragment[]{new GuidesFragment(), new RepairHistoryFragment(), new ContactAnExpertFragment()};
+    private final int[] FRAGMENT_MENU_IDS = new int[]{R.id.nav_guides, R.id.nav_repair_history, R.id.contact_an_expert};
 
     @Bind(R.id.coordinatorLayout)
     CoordinatorLayout coordinatorLayout;
@@ -263,11 +264,11 @@ public class MainActivity extends AppCompatActivity
             } else if (id == R.id.logout) {
                 onLogout();
                 return true;
-            } else if (id == R.id.contact_an_expert) {
+            } /*else if (id == R.id.contact_an_expert) {
                 //drawer.closeDrawer(GravityCompat.START);
                 onPostQuestion();
                 return true;
-            } else if (id == R.id.profile) {
+            }*/ else if (id == R.id.profile) {
                 onViewProfile();
                 return true;
             } else if (id == R.id.get_help) {
@@ -283,12 +284,6 @@ public class MainActivity extends AppCompatActivity
     private void onGetHelp() {
         Intent intent = new Intent(MainActivity.this,HelpActivity.class);
         startActivity(intent);
-    }
-
-    private void onPostQuestion() {
-        Intent intent = new Intent(MainActivity.this, ContactAnExpertActivity.class);
-        startActivity(intent);
-        //questionDialogFragment.show(getSupportFragmentManager(),"postQuestion");
     }
 
     /*

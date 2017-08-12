@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:id="@+id/acct_group">
         <item
@@ -33,12 +34,8 @@
             android:id="@+id/contact_an_expert"
             android:icon="@android:drawable/ic_menu_call"
             android:title="@string/contact_an_expert" />
-        <!--
-        <item
-            android:id="@+id/call_dir"
-            android:icon="@android:drawable/ic_menu_call"
-            android:title="@string/directory" /> -->
     </group>
+
 
     <group android:id="@+id/help_group">
 

@@ -37,7 +37,7 @@ public class PostCommentAsyncTask extends AsyncTask<Void, Void, Comment> {
             } else {
                 TCDatabaseHelper.get(context).insertComment(postedComment, chartId, Comment.PARENT_TYPE_CHART);
             }
-            FirebaseEvents.logPostComment(context);
+            FirebaseEvents.logPostComment(context, chartId, TCDatabaseHelper.get(context).getChartNameFromId(chartId));
             return postedComment;
         } catch (IOException e) {
             e.printStackTrace();

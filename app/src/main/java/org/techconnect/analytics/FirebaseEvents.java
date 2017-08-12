@@ -43,37 +43,102 @@ public class FirebaseEvents {
         FirebaseAnalytics.getInstance(c).logEvent(FirebaseAnalytics.Event.LOGIN, null);
     }
 
-    public static void logStartSession(Context c, FlowChart flowChart) {
+    public static void logStartSession(Context c, Session session) {
         Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, flowChart.getId());
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, flowChart.getName());
-        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "guides");
-        FirebaseAnalytics.getInstance(c).logEvent("session_start", bundle);
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
+        FirebaseAnalytics.getInstance(c).logEvent("session_begin", bundle);
     }
 
-    public static void logEndSessionEarly(Context c, FlowChart flowChart) {
+    public static void logEndSessionEarly(Context c, Session session) {
         Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, flowChart.getId());
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, flowChart.getName());
-        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "guides");
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
         FirebaseAnalytics.getInstance(c).logEvent("session_end_early", bundle);
     }
 
-    public static void logSessionComplete(Context c, FlowChart flowChart) {
+    public static void logEndSessionEarlyNoSave(Context c, Session session) {
         Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, flowChart.getId());
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, flowChart.getName());
-        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, "guides");
-        FirebaseAnalytics.getInstance(c).logEvent("session_complete", bundle);
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
+        bundle.putStringArrayList("info",session.getSessionInfo());
+        bundle.putString("steps",session.getStepsCompleted());
+        FirebaseAnalytics.getInstance(c).logEvent("session_end_early_nosave", bundle);
     }
 
-    public static void logSessionDuration(Context c, Session session) {
+    public static void logEndSessionEarlyNoSaveStub(Context c, Session session) {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
+        bundle.putStringArrayList("info",session.getSessionInfo());
+        bundle.putString("steps",session.getStepsCompleted());
+        FirebaseAnalytics.getInstance(c).logEvent("session_end_early_nosave_stub", bundle);
+    }
+
+    public static void logSessionPausedFull(Context c, Session session) {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
+        bundle.putStringArrayList("info",session.getSessionInfo());
+        bundle.putString("steps",session.getStepsCompleted());
+        FirebaseAnalytics.getInstance(c).logEvent("session_paused", bundle);
+    }
+
+    //If the session is resumed, don't need to repeat info
+    public static void logSessionPausedStub(Context c, Session session) {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
+        bundle.putStringArrayList("info",session.getSessionInfo());
+        bundle.putString("steps",session.getStepsCompleted());
+        FirebaseAnalytics.getInstance(c).logEvent("session_paused_stub", bundle);
+    }
+
+    public static void logSessionCompleteStub(Context c, Session session) {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
+        bundle.putStringArrayList("info",session.getSessionInfo());
+        bundle.putString("steps",session.getStepsCompleted());
+        FirebaseAnalytics.getInstance(c).logEvent("session_complete_stub", bundle);
+    }
+
+    public static void logSessionCompleteFull(Context c, Session session) {
         long endTime = System.currentTimeMillis();
         long duration = endTime - session.getCreatedDate();
         Bundle bundle = new Bundle();
-        bundle.putLong(FirebaseAnalytics.Param.VALUE, duration);
-        FirebaseAnalytics.getInstance(c).logEvent("session_duration", bundle);
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
+        bundle.putStringArrayList("info",session.getSessionInfo());
+        bundle.putString("steps",session.getStepsCompleted());
+        FirebaseAnalytics.getInstance(c).logEvent("session_complete", bundle);
     }
+
+    public static void logContactExpertFromFragment(Context c, Session s) {
+        Bundle bundle = null;
+        if (s != null) {
+            bundle = new Bundle();
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, s.getId());
+            bundle.putStringArrayList("info",s.getSessionInfo());
+        }
+        FirebaseAnalytics.getInstance(c).logEvent("contact_expert_fragment",bundle);
+    }
+
+    public static void logContactExpertFromHistory(Context c, Session s) {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, s.getId());
+        bundle.putStringArrayList("info",s.getSessionInfo());
+        FirebaseAnalytics.getInstance(c).logEvent("contact_expert_history", bundle);
+    }
+
+    public static void logSessionInfoEdited(Context c, Session session) {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
+        bundle.putStringArrayList("info", session.getSessionInfo());
+        FirebaseAnalytics.getInstance(c).logEvent("session_complete", bundle);
+    }
+
 
     public static void logViewProfile(Context c, User user) {
         Bundle bundle = new Bundle();
@@ -97,8 +162,11 @@ public class FirebaseEvents {
         FirebaseAnalytics.getInstance(c).logEvent(FirebaseAnalytics.Event.SIGN_UP, null);
     }
 
-    public static void logPostComment(Context c) {
-        FirebaseAnalytics.getInstance(c).logEvent("post_comment", null);
+    public static void logPostComment(Context c, String id, String name) {
+        Bundle fbBundle = new Bundle();
+        fbBundle.putString(FirebaseAnalytics.Param.ITEM_ID, id);
+        fbBundle.putString(FirebaseAnalytics.Param.ITEM_NAME, name);
+        FirebaseAnalytics.getInstance(c).logEvent("post_comment", fbBundle);
     }
 
     public static void logDownloadGuide(Context c, FlowChart chart) {
@@ -110,16 +178,19 @@ public class FirebaseEvents {
     }
 
     public static void logDeleteSession(Context c, Session session) {
-        Bundle fbBundle = new Bundle();
-        fbBundle.putLong("session_created", session.getCreatedDate());
-        fbBundle.putBoolean("session_finished", session.isFinished());
-        FirebaseAnalytics.getInstance(c).logEvent("session_deleted", fbBundle);
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
+        bundle.putStringArrayList("info",session.getSessionInfo());
+        bundle.putString("steps",session.getStepsCompleted());
+        FirebaseAnalytics.getInstance(c).logEvent("session_deleted", bundle);
     }
 
     public static void logResumeSession(Context c, Session session) {
-        Bundle fbBundle = new Bundle();
-        fbBundle.putLong("session_created", session.getCreatedDate());
-        FirebaseAnalytics.getInstance(c).logEvent("session_resumed", fbBundle);
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, session.getFlowchart().getName());
+        FirebaseAnalytics.getInstance(c).logEvent("session_resumed", bundle);
     }
 
     public static void logGuideFeedback(Context c, Session session, String expFeedback, String contactFeedback, String comments) {
@@ -133,5 +204,13 @@ public class FirebaseEvents {
         fbBundle.putString("experienceOpt", expFeedback);
         fbBundle.putString("contactOpt", contactFeedback);
         FirebaseAnalytics.getInstance(c).logEvent("guide_feedback", fbBundle);
+    }
+
+    public static void logViewResource(Context context, String parentChart, String att) {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME,att);
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY,parentChart);
+        FirebaseAnalytics.getInstance(context).logEvent("view_resource", bundle);
+
     }
 }

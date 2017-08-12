@@ -71,6 +71,7 @@ public class PlayGuideActivity extends AppCompatActivity implements
     private Session session;
     private Menu mOptionsMenu;
     private int currentLayout = 1;
+    private boolean isResumedSession = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,16 +81,22 @@ public class PlayGuideActivity extends AppCompatActivity implements
         flowView = (GuideFlowView) LayoutInflater.from(this).inflate(R.layout.guide_flow_view, flowContainer, false);
         flowContainer.addView(flowView);
         loadFlowchart();
-        if (flowChart != null) {
-            FirebaseEvents.logStartSession(this, flowChart);
-        }
+
         if (savedInstanceState != null && savedInstanceState.containsKey(STATE_SESSION)) {
             this.session = savedInstanceState.getParcelable(STATE_SESSION);
             flowView.setSession(session, this);
         }
+
         if (session == null) {
+
             session = new Session(flowChart); //Make a session based on flowchart, but no info on the device yet
+            //Want to generate ID ourselves so we can get and track
+            session.setId(TCDatabaseHelper.get(this).getRandomId());
             flowView.setSession(session, this);
+        }
+
+        if (flowChart != null) {
+            FirebaseEvents.logStartSession(this, session);
         }
         updateViews();
     }
@@ -133,12 +140,18 @@ public class PlayGuideActivity extends AppCompatActivity implements
             }
         } else if (currentLayout == LAYOUT_INFO && !session.isFinished()) {
             //We need to ask if you'd like to quit without saving, this time just leave
+            final Context context = this;
             new AlertDialog.Builder(this)
                     .setTitle("Quit Session")
                     .setMessage("Would you like to quit this session without saving?")
                     .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            if (!session.getManufacturer().equals("")) { //Resumed session
+                                FirebaseEvents.logEndSessionEarlyNoSaveStub(context, session);
+                            } else {
+                                FirebaseEvents.logEndSessionEarlyNoSave(context, session);
+                            }
                             dialog.dismiss();
                             finish();
                         }
@@ -176,7 +189,7 @@ public class PlayGuideActivity extends AppCompatActivity implements
 
     private void onEndSession() {
         if (flowChart != null) {
-            FirebaseEvents.logEndSessionEarly(PlayGuideActivity.this, flowChart);
+            //FirebaseEvents.logEndSessionEarly(PlayGuideActivity.this, session);
         }
         endSession();
     }
@@ -184,6 +197,16 @@ public class PlayGuideActivity extends AppCompatActivity implements
     private void saveSession() {
         if (!session.getManufacturer().equals("")) { //This is a previously resumed session
             TCDatabaseHelper.get(this).upsertSession(session);//Write to the SQL Database
+            //Since automatically update SQL, update Firebase here
+            if (flowChart != null) {
+                if (session.isFinished()) {
+                    FirebaseEvents.logSessionCompleteStub(this, session);
+                    //FirebaseEvents.logSessionCompleteFull(this, session);
+                } else {
+                    FirebaseEvents.logSessionPausedStub(this, session);
+                    //FirebaseEvents.logSessionPausedFull(this, session);
+                }
+            }
             finish(); //End the activity
         } else { //This is a newly paused session
             setVisibleLayout(LAYOUT_INFO);
@@ -198,10 +221,10 @@ public class PlayGuideActivity extends AppCompatActivity implements
         }
 
         if (getIntent() != null && getIntent().hasExtra(EXTRA_SESSION)) {
-            session = (Session) getIntent().getParcelableExtra(EXTRA_SESSION);//Leverage the parcelable aspect of session
+            session = getIntent().getParcelableExtra(EXTRA_SESSION);//Leverage the parcelable aspect of session
             flowChart = session.getFlowchart();
             flowView.setSession(session, this);
-
+            isResumedSession = true;
         }
     }
 
@@ -264,6 +287,14 @@ public class PlayGuideActivity extends AppCompatActivity implements
                 frag.setOnDismissListener(this);
                 frag.show(getFragmentManager(), "guide_feedback");// Fragment will terminate the activity
                 */
+                //Need to log that we've finished if we are actually finished
+                if (flowChart != null) {
+                    if (session.isFinished()) {
+                        FirebaseEvents.logSessionCompleteFull(this, session);
+                    } else {
+                        FirebaseEvents.logSessionPausedFull(this, session);
+                    }
+                }
                 finish();
             }
     }
@@ -306,15 +337,18 @@ public class PlayGuideActivity extends AppCompatActivity implements
         session.setFinished(true);
         session.setFinishedDate(System.currentTimeMillis());
         endSession();
+        /*
         if (flowChart != null) {
             FirebaseEvents.logSessionComplete(this, flowChart);
         }
+        */
     }
 
     private void endSession() {
         if (session != null) {
             final DialogInterface.OnDismissListener dismissListener = this;
             if (!session.isFinished()) {
+                final Context context = this;
                 final AlertDialog follow = new AlertDialog.Builder(this)
                         .setTitle(R.string.save_session)
                         .setMessage(R.string.save_session_msg)
@@ -328,6 +362,7 @@ public class PlayGuideActivity extends AppCompatActivity implements
                         .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+
                                 /*
                                 GuideFeedbackDialogFragment frag = GuideFeedbackDialogFragment.newInstance(session);
                                 frag.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -338,6 +373,7 @@ public class PlayGuideActivity extends AppCompatActivity implements
                                 });
                                 frag.show(getFragmentManager(), "guide_feedback");
                                 */
+                                FirebaseEvents.logEndSessionEarlyNoSave(context,session);
                                 dialog.dismiss();
                                 finish();
                             }
@@ -361,7 +397,6 @@ public class PlayGuideActivity extends AppCompatActivity implements
             } else {
                 saveSession();
             }
-            FirebaseEvents.logSessionDuration(this, session);
         } else {
             finish();
         }

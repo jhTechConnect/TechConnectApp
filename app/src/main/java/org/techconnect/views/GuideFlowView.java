@@ -111,7 +111,7 @@ public class GuideFlowView extends LinearLayout implements View.OnClickListener 
             Button button = new Button(getContext());
             button.setTransformationMethod(null);
             button.setText(option);
-            button.setOnClickListener(new OnClickListener() {
+            button.setOnClickListener( new OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     advanceFlow(option);

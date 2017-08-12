@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import org.techconnect.R;
 import org.techconnect.activities.PDFActivity;
+import org.techconnect.analytics.FirebaseEvents;
 import org.techconnect.misc.ResourceHandler;
 import org.techconnect.misc.Utils;
 
@@ -28,6 +29,7 @@ public class ResourcesView extends LinearLayout {
     TextView resourcesHeaderTextView;
 
     private List<String> resources;
+    private String parentChart = "";
 
     public ResourcesView(Context context) {
         super(context);
@@ -64,21 +66,23 @@ public class ResourcesView extends LinearLayout {
         }
 
         for (final String att : resources) {
-            String name = Utils.formatAttachmentName(att);
+            final String name = Utils.formatAttachmentName(att);
             Button button = new Button(getContext());
             button.setTransformationMethod(null);
             button.setText(name);
             button.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    openAttachment(att);
+                    //Activate a Firebase event which reports parent flowchart and attachment
+                    FirebaseEvents.logViewResource(getContext(),parentChart,att);
+                    openAttachment(att,name);
                 }
             });
             addView(button);
         }
     }
 
-    private void openAttachment(String att) {
+    private void openAttachment(String att, String name) {
         Intent intent = new Intent(getContext(), PDFActivity.class);
         intent.putExtra(PDFActivity.EXTRA_IS_FILE, true);
         if (ResourceHandler.get(getContext()).hasStringResource(att)) {
@@ -88,6 +92,7 @@ public class ResourcesView extends LinearLayout {
         } else {
             intent.putExtra(PDFActivity.EXTRA_FILE, "");
         }
+        intent.putExtra(PDFActivity.EXTRA_FILENAME,name);
         getContext().startActivity(intent);
     }
 
@@ -95,5 +100,13 @@ public class ResourcesView extends LinearLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
         ButterKnife.bind(this);
+    }
+
+    public String getParentChart() {
+        return parentChart;
+    }
+
+    public void setParentChart(String parentChart) {
+        this.parentChart = parentChart;
     }
 }

@@ -96,7 +96,8 @@
     <string name="error_play_guide">There was an error displaying this guide. Try re-downloading the guide</string>
     <string name="update_guide">Update Guide</string>
     <string name="serial_number">Serial Number</string>
-    <string name="device_info">Enter Device Information Below If Known, then press Save Session</string>
+    <string name="device_info_long">Enter device information below if known, then press save session</string>
+    <string name="device_info">Device information</string>
     <string name="manufacturer">Manufacturer</string>
     <string name="model_number">Model Number</string>
     <string name="start_guide">Start Guide</string>
@@ -194,6 +195,9 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="anonymous">Anonymous</string>
     <string name="edit">Edit</string>
-    <string name="repair_info">Repair Information</string>
+    <string name="repair_info">Repair information</string>
     <string name="disclaimer">Please use best judgement to determine if the device is working and always calibrate the device before returning it to service.</string>
+    <string name="work_and_contact_info">Work and Contact Info</string>
+    <string name="skills_and_interests">Skills and Interests</string>
+    <string name="server_error">Could not connect to TechConnect server, please try again later</string>
 </resources>
