@@ -51,10 +51,6 @@ public class ProfileActivity extends AppCompatActivity {
     EditText edit_org;
 
     //All of the edit buttons
-    @Bind(R.id.edit_work_button)
-    ImageButton editWork;
-    @Bind(R.id.edit_skill_button)
-    ImageButton editSkill;
     @Bind(R.id.save_button)
     Button saveButton;
     @Bind(R.id.discard_button)
@@ -65,6 +61,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     //Extra types
     public static String EXTRA_SKILL = "org.techconnect.profileactivity.skill";
+    public static String EXTRA_USER = "org.techconnect.profileactivity.user";
 
     private List<ImageButton> row_buttons;
     private User head_user; //In cases without editing, this is only user needed
@@ -94,8 +91,10 @@ public class ProfileActivity extends AppCompatActivity {
                 Log.e("Profile", e.getMessage());
             }
         } else {
+            /*
             editWork.setVisibility(View.GONE);
             editSkill.setVisibility(View.GONE);
+            */
         }
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -121,6 +120,11 @@ public class ProfileActivity extends AppCompatActivity {
 
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.actionEdit) {
+            //Open the edit profile activity
+            Intent intent = new Intent(ProfileActivity.this, EditProfileActivity.class);
+            intent.putExtra(EditProfileActivity.EXTRA_USER, head_user);
+            startActivity(intent);
         } else if (id == android.R.id.home) {
             onBackPressed();
         }
@@ -170,7 +174,7 @@ public class ProfileActivity extends AppCompatActivity {
         final TextView skill_text;
 
         toAdd = (TableRow) getLayoutInflater().inflate(R.layout.tablerow_skill, null, false);
-        icon = (ImageButton) toAdd.findViewById(R.id.skill_icon);
+        icon = (ImageButton) toAdd.findViewById(R.id.delete_icon);
         icon.setImageResource(R.drawable.ic_add_box_black_24dp);
         add_skill = (EditText) toAdd.findViewById(R.id.edit_skill_text);
         skill_text = (TextView) toAdd.findViewById(R.id.skill_text);
@@ -266,8 +270,8 @@ public class ProfileActivity extends AppCompatActivity {
         }.execute(temp_user);
 
         //Restore the edit and save buttons
-        editWork.setVisibility(View.VISIBLE);
-        editSkill.setVisibility(View.VISIBLE);
+        //editWork.setVisibility(View.VISIBLE);
+        //editSkill.setVisibility(View.VISIBLE);
         saveButton.setVisibility(View.GONE);
         discardButton.setVisibility(View.GONE);
 
@@ -287,8 +291,8 @@ public class ProfileActivity extends AppCompatActivity {
             Log.e("Profile", e.getMessage());
         }
         //Restore the edit and save buttons
-        editWork.setVisibility(View.VISIBLE);
-        editSkill.setVisibility(View.VISIBLE);
+        //editWork.setVisibility(View.VISIBLE);
+        //editSkill.setVisibility(View.VISIBLE);
         saveButton.setVisibility(View.GONE);
         discardButton.setVisibility(View.GONE);
     }
@@ -305,12 +309,8 @@ public class ProfileActivity extends AppCompatActivity {
         if (head_user.getExpertises().size() == 0) {
             //Current User lists no skills
             TableRow toAdd = (TableRow) getLayoutInflater().inflate(R.layout.tablerow_skill, null, false);
-            ImageButton row_button = (ImageButton) toAdd.findViewById(R.id.skill_icon);
             TextView toAddText = (TextView) toAdd.findViewById(R.id.skill_text);
 
-            //Make the button invisible
-            row_button.setVisibility(View.INVISIBLE);
-            row_button.setClickable(false);
             //Chance the text to be appropriate to having no skills
             toAddText.setText(R.string.no_skills);
             toAddText.setTextColor(Color.GRAY);
@@ -322,6 +322,7 @@ public class ProfileActivity extends AppCompatActivity {
         } else {
             for (int i = 0; i < head_user.getExpertises().size(); i++) {
                 TableRow toAdd = (TableRow) getLayoutInflater().inflate(R.layout.tablerow_skill, null, false);
+                /*
                 final ImageButton row_button = (ImageButton) toAdd.findViewById(R.id.skill_icon);
                 row_buttons.add(row_button);
                 row_button.setTag(i); //View that the button belongs to
@@ -336,6 +337,7 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                 });
                 row_button.setClickable(false);
+                */
 
                 TextInputLayout addSkill = (TextInputLayout) toAdd.findViewById(R.id.edit_skill_layout);
                 addSkill.setVisibility(View.GONE);
@@ -352,6 +354,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     public void updateEditViews(View v) {
+        /*
         if (v.getId() == R.id.edit_work_button) {
             org.setVisibility(View.GONE);
             edit_org_layout.setVisibility(View.VISIBLE);
@@ -375,6 +378,7 @@ public class ProfileActivity extends AppCompatActivity {
             discardButton.setVisibility(View.VISIBLE);
             isEditing = false;
         }
+        */
     }
 
     @Override
