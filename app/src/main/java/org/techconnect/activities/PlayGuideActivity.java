@@ -82,6 +82,9 @@ public class PlayGuideActivity extends AppCompatActivity implements
         loadFlowchart();
         if (flowChart != null) {
             FirebaseEvents.logStartSession(this, flowChart);
+
+            //Do this for the analytics logging
+            PlayGuideActivity.this.setTitle(flowChart.getName());
         }
         if (savedInstanceState != null && savedInstanceState.containsKey(STATE_SESSION)) {
             this.session = savedInstanceState.getParcelable(STATE_SESSION);

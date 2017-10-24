@@ -2,6 +2,8 @@ package org.techconnect.views;
 
 import android.content.Context;
 import android.content.Intent;
+import android.service.restrictions.RestrictionsReceiver;
+import android.text.method.ScrollingMovementMethod;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
@@ -10,6 +12,7 @@ import android.widget.TextView;
 
 import org.techconnect.R;
 import org.techconnect.activities.PDFActivity;
+import org.techconnect.activities.HTMLActivity;
 import org.techconnect.misc.ResourceHandler;
 import org.techconnect.misc.Utils;
 
@@ -63,6 +66,7 @@ public class ResourcesView extends LinearLayout {
             resourcesHeaderTextView.setText(R.string.resources_general_msg);
         }
 
+
         for (final String att : resources) {
             String name = Utils.formatAttachmentName(att);
             Button button = new Button(getContext());
@@ -76,19 +80,42 @@ public class ResourcesView extends LinearLayout {
             });
             addView(button);
         }
+
+        resourcesHeaderTextView.setMovementMethod(new ScrollingMovementMethod());
     }
 
     private void openAttachment(String att) {
-        Intent intent = new Intent(getContext(), PDFActivity.class);
-        intent.putExtra(PDFActivity.EXTRA_IS_FILE, true);
         if (ResourceHandler.get(getContext()).hasStringResource(att)) {
-            intent.putExtra(PDFActivity.EXTRA_FILE, getContext()
-                    .getFileStreamPath(ResourceHandler.get(getContext()).getStringResource(att))
-                    .getAbsolutePath());
+
+            Intent intent = new Intent(getContext(), HTMLActivity.class);
+
+            String file_loader = "file:///" + getContext().getFileStreamPath(ResourceHandler.get(getContext()).getStringResource(att)).getAbsolutePath();
+            intent.putExtra(HTMLActivity.EXTRA_HTML, file_loader);
+            intent.putExtra(HTMLActivity.EXTRA_HTML_TITLE, Utils.formatAttachmentName(att));
+            getContext().startActivity(intent);
+
+
+//            intent.putExtra(HTMLActivity.EXTRA_FILE, getContext()
+//                    .getFileStreamPath(ResourceHandler.get(getContext()).getStringResource(att))
+//                    .getAbsolutePath());
         } else {
-            intent.putExtra(PDFActivity.EXTRA_FILE, "");
+            //Send nothing with intent
+
+            //intent.putExtra(HTMLActivity.EXTRA_FILE, "");
         }
-        getContext().startActivity(intent);
+
+
+
+//        Intent intent = new Intent(getContext(), PDFActivity.class);
+//        intent.putExtra(PDFActivity.EXTRA_IS_FILE, true);
+//        if (ResourceHandler.get(getContext()).hasStringResource(att)) {
+//            intent.putExtra(PDFActivity.EXTRA_FILE, getContext()
+//                    .getFileStreamPath(ResourceHandler.get(getContext()).getStringResource(att))
+//                    .getAbsolutePath());
+//        } else {
+//            intent.putExtra(PDFActivity.EXTRA_FILE, "");
+//        }
+//        getContext().startActivity(intent);
     }
 
     @Override

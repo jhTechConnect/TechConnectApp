@@ -134,4 +134,26 @@ public class FirebaseEvents {
         fbBundle.putString("contactOpt", contactFeedback);
         FirebaseAnalytics.getInstance(c).logEvent("guide_feedback", fbBundle);
     }
+
+
+    /*
+    Analytic events for all events I saw that were not implemented
+    */
+
+    public static void logSessionBegin(Context c, Session session, FlowChart flowChart) {
+        Bundle fbBundle = new Bundle();
+        fbBundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
+        fbBundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, flowChart.getId());
+        FirebaseAnalytics.getInstance(c).logEvent("session_begin", fbBundle);
+    }
+
+    public static void logSessionPaused(Context c, Session session, FlowChart flowChart) {
+        Bundle fbBundle = new Bundle();
+        fbBundle.putString(FirebaseAnalytics.Param.ITEM_ID, session.getId());
+        fbBundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, flowChart.getId());
+        FirebaseAnalytics.getInstance(c).logEvent("session_paused", fbBundle);
+    }
+
+
+
 }

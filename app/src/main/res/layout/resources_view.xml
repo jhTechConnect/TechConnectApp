@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:text="@string/resources_general_msg"
+        android:scrollbars="vertical"
         android:textSize="18sp"
         android:textStyle="normal|bold" />
 </org.techconnect.views.ResourcesView>

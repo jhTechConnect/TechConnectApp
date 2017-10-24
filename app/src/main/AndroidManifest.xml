@@ -81,6 +81,9 @@
             android:name=".activities.ContactAnExpertActivity"
             android:label="@string/contact_an_expert"
             android:theme="@style/Theme.AppCompat.Light.Dialog" />
+        <activity
+            android:name=".activities.HTMLActivity"
+            android:label="Test HTML" />
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.

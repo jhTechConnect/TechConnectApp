@@ -107,6 +107,8 @@ public class DirectoryFragment extends Fragment implements View.OnClickListener 
     @Override
     public void onResume() {
         super.onResume();
+
+        //Do this for the analytics logging
         if (getActivity() != null) {
             getActivity().setTitle(R.string.directory);
         }
